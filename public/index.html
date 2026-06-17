@@ -127,11 +127,10 @@
 
   /* section heads */
   section{position:relative}
-  .twoup{padding:150px 0 120px;position:relative}
+  .twoup{padding:150px 0 120px;position:relative;display:grid;grid-template-columns:1fr 1fr;gap:0}
   .twoup::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;
     background:var(--frame);transform:translateX(-0.5px)}
-  .twoup .grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-  .twoup .col{padding:0 56px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center}
+  .twoup .col{padding:0 64px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center}
   .twoup .col h2,.twoup .col p,.twoup .col .vis{width:100%;text-align:center}
   .twoup .col p{margin-left:auto;margin-right:auto}
   .vis{margin-top:54px;min-height:300px;display:flex;align-items:center;justify-content:center;width:100%}
@@ -240,8 +239,7 @@
   @media (max-width:900px){
     .wrap{padding:0 22px}
     .hero{padding-top:64px}
-    .twoup{padding:90px 0 70px}
-    .twoup .grid{grid-template-columns:1fr;gap:80px}
+    .twoup{grid-template-columns:1fr;padding:90px 0 70px}
     .twoup::before{display:none}
     .bleed{grid-template-columns:1fr}
     .bleed .copy{padding:80px 28px 20px;text-align:center;align-items:center;border-right:none}
@@ -318,7 +316,6 @@
 
 <!-- TWO-UP -->
 <section class="twoup">
-  <div class="wrap grid">
     <div class="col">
       <h2 class="serif">Read any statement</h2>
       <p>PaySwitch pulls every fee, rate and hidden line item from any provider's statement — automatically, no spreadsheets.</p>
@@ -346,7 +343,6 @@
         </div>
       </div>
     </div>
-  </div>
 </section>
 
 <!-- FULL-BLEED WARM -->
