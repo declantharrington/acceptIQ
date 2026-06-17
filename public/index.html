@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PaySwitch — never overpay on payments again (blue)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F1218;            /* cool charcoal */
+    --bg2:#171C26;
+    --cream:#E6EBF6;
+    --cream-soft:rgba(224,233,246,0.60);
+    --cream-faint:rgba(224,233,246,0.38);
+    --line:rgba(224,233,246,0.12);
+    --frame:rgba(224,233,246,0.15);
+    --btn:#E4EAF6;
+    --ink:#0F1218;
+    --rose:#7FA6E6; --peach:#A9CCF2; --orange:#3F77D6; --mauve:#4A5BA8; --gold:#E7B27A;
+    --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --serif:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{ font-family:var(--sans); background:var(--bg); color:var(--cream);
+    -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden; }
+  a{color:inherit;text-decoration:none}
+  .wrap{width:100%;max-width:1200px;margin:0 auto;padding:0 32px}
+  /* framed column: gutters on both sides + full-height hairline borders */
+  .shell{position:relative;margin:0 clamp(14px,4.5vw,132px);
+    border-left:1px solid var(--frame);border-right:1px solid var(--frame)}
+  ::selection{background:var(--rose);color:var(--ink)}
+
+  /* serif display */
+  .serif{ font-family:var(--serif); font-weight:500; letter-spacing:-0.02em; }
+
+  /* buttons */
+  .btn{ display:inline-flex;align-items:center;gap:12px;cursor:pointer;font-family:var(--sans);
+    font-size:15px;font-weight:600;letter-spacing:-0.01em;padding:14px 22px;border-radius:9px;
+    border:1px solid transparent;transition:transform .2s ease,background .2s ease,opacity .2s ease; }
+  .btn-cream{ background:var(--btn);color:var(--ink); }
+  .btn-cream:hover{ transform:translateY(-2px);opacity:.92 }
+  .btn-ghost{ background:transparent;color:var(--cream);border-color:var(--line) }
+  .btn-ghost:hover{ background:rgba(224,233,246,0.06);border-color:rgba(224,233,246,0.24) }
+  .btn .arr{width:17px;height:17px}
+  .btn-lg{padding:16px 26px;font-size:16px}
+
+  /* nav */
+  header{position:sticky;top:0;z-index:60;background:rgba(15,18,24,0.72);
+    backdrop-filter:saturate(160%) blur(12px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:72px}
+  .brand{display:flex;align-items:center;gap:11px;font-size:21px;font-weight:600;letter-spacing:-0.01em}
+  .mark{width:24px;height:24px;color:var(--cream)}
+  .nav-right{display:flex;align-items:center;gap:26px}
+  .nav-right a.lnk{font-size:15px;color:var(--cream-soft)}
+  .nav-right a.lnk:hover{color:var(--cream)}
+
+  /* hero */
+  .hero{position:relative;text-align:center;padding:96px 0 0;overflow:hidden}
+  .hero h1{font-size:clamp(34px,5vw,64px);line-height:1.06;color:var(--cream);text-wrap:balance}
+  .hero .sub{font-family:var(--sans);font-size:clamp(18px,1.7vw,22px);color:var(--cream-soft);
+    max-width:560px;margin:26px auto 0;line-height:1.5}
+  .hero .cta{margin-top:34px;display:flex;justify-content:center}
+  .hero-stage{position:relative;margin-top:60px;min-height:560px}
+  /* the warm cinematic band behind the phone */
+  .glow{position:absolute;left:50%;bottom:-60px;transform:translateX(-50%);
+    width:min(1600px,150vw);height:880px;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(44% 42% at 28% 80%, rgba(120,162,232,0.78), transparent 60%),
+      radial-gradient(46% 46% at 74% 78%, rgba(150,196,244,0.72), transparent 60%),
+      radial-gradient(50% 44% at 50% 98%, rgba(64,124,224,0.82), transparent 58%),
+      radial-gradient(40% 50% at 36% 62%, rgba(92,108,188,0.55), transparent 60%),
+      radial-gradient(46% 40% at 70% 56%, rgba(76,96,168,0.42), transparent 64%),
+      linear-gradient(180deg, transparent 26%, rgba(76,96,160,0.30) 50%, rgba(84,148,224,0.40) 72%, rgba(176,210,247,0.42) 90%);
+    -webkit-mask-image:linear-gradient(180deg,transparent,#000 20%,#000 88%,transparent);
+            mask-image:linear-gradient(180deg,transparent,#000 20%,#000 88%,transparent)}
+  .glow::after{content:'';position:absolute;inset:0;background-image:var(--grain);
+    background-size:160px 160px;mix-blend-mode:overlay;opacity:.5}
+  .hero .phone{position:relative;z-index:2;margin:0 auto}
+
+  /* phone */
+  .phone{width:316px;border-radius:48px;background:#080A0E;padding:11px;
+    box-shadow:0 50px 110px -34px rgba(0,0,0,0.7),0 10px 30px rgba(0,0,0,0.4);position:relative}
+  .phone::after{content:'';position:absolute;top:22px;left:50%;transform:translateX(-50%);
+    width:108px;height:26px;background:#080A0E;border-radius:0 0 16px 16px;z-index:5}
+  .screen{position:relative;border-radius:37px;overflow:hidden;background:#151A22;
+    aspect-ratio:300/630;display:flex;flex-direction:column}
+  .sbar{display:flex;justify-content:space-between;align-items:center;padding:15px 24px 4px;
+    font-size:13px;font-weight:600;color:var(--cream)}
+  .sbar .r{display:flex;gap:5px;align-items:center;opacity:.85;font-size:11px;letter-spacing:1px}
+  .chead{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 12px;border-bottom:1px solid rgba(255,255,255,0.06)}
+  .chead .av{width:30px;height:30px;color:var(--cream)}
+  .chead .nm{font-size:12px;color:var(--cream-soft)}
+  .crow{display:flex;justify-content:space-between;padding:6px 18px 0;color:var(--cream-soft)}
+
+  /* chat: user = pink bubble, assistant = plain text */
+  .chat{flex:1;display:flex;flex-direction:column;gap:14px;padding:18px 16px;justify-content:flex-end}
+  .msg-you{align-self:flex-end;max-width:82%;padding:11px 15px;border-radius:20px 20px 6px 20px;
+    font-size:13.5px;line-height:1.42;color:#0E1A2E;
+    background:linear-gradient(135deg,#5E8FE0,#A6CBF2)}
+  .msg-them{align-self:flex-start;max-width:88%;font-size:13.5px;line-height:1.46;color:rgba(224,233,246,0.82)}
+  .msg-them b{color:var(--cream)} .msg-them .save{color:#9FD9B4;font-weight:600}
+  .cinput{margin:8px 14px 16px;height:40px;border-radius:999px;border:1px solid rgba(255,255,255,0.1);
+    display:flex;align-items:center;padding:0 16px;color:var(--cream-faint);font-size:12.5px}
+
+  /* generic dark app body */
+  .abody{flex:1;padding:18px 16px;display:flex;flex-direction:column;gap:13px}
+  .akick{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-faint);font-weight:600}
+  .acard{background:rgba(224,233,246,0.05);border:1px solid var(--line);border-radius:16px;padding:14px}
+  .arow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .arow+.arow{margin-top:11px}
+  .arow .l{font-size:12.5px;color:var(--cream-soft)}
+  .arow .v{font-size:13px;font-weight:700;color:var(--cream)}
+  .bar{height:7px;border-radius:6px;background:rgba(224,233,246,0.08);overflow:hidden;flex:1;margin:8px 0 2px}
+  .bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--orange),var(--peach))}
+  .big{font-family:var(--serif);font-size:32px;font-weight:400;color:var(--cream);letter-spacing:-0.01em}
+  .big .c{font-size:18px;color:var(--cream-soft);vertical-align:5px}
+  .save-amt{color:#9FD9B4;font-weight:700}
+  .pill-amber{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 10px;
+    border-radius:999px;color:var(--peach);background:rgba(150,195,244,0.12);border:1px solid rgba(150,195,244,0.28)}
+  .flag{display:flex;align-items:center;gap:11px;font-size:12.5px;color:rgba(224,233,246,0.84)}
+  .flag .fi{width:27px;height:27px;border-radius:9px;background:rgba(150,195,244,0.12);
+    border:1px solid rgba(150,195,244,0.25);display:grid;place-items:center;flex-shrink:0;color:var(--peach)}
+
+  /* section heads */
+  section{position:relative}
+  .twoup{padding:150px 0 120px;position:relative}
+  .twoup::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;
+    background:var(--frame);transform:translateX(-0.5px)}
+  .twoup .grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .twoup .col{padding:0 56px;text-align:center}
+  .twoup h2{font-size:clamp(30px,3.4vw,46px);color:var(--cream);line-height:1.05}
+  .twoup p{font-size:16.5px;color:var(--cream-soft);max-width:380px;margin:18px auto 0;line-height:1.55}
+  .vis{margin-top:54px;min-height:300px;display:flex;align-items:center;justify-content:center}
+
+  /* orbit diagram */
+  .orbit{position:relative;width:280px;height:280px}
+  .orbit .ring{position:absolute;border:1px solid var(--line);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+  .orbit .r1{width:130px;height:130px}.orbit .r2{width:230px;height:230px}
+  .orbit .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:56px;height:56px;
+    border-radius:18px;background:var(--cream);color:var(--ink);display:grid;place-items:center}
+  .orbit .node{position:absolute;width:42px;height:42px;border-radius:13px;background:var(--bg2);
+    border:1px solid var(--line);display:grid;place-items:center;color:var(--cream-soft);font-size:15px}
+  .orbit .n1{top:-4px;left:50%;transform:translateX(-50%)}
+  .orbit .n2{top:50%;right:-6px;transform:translateY(-50%)}
+  .orbit .n3{bottom:-4px;left:50%;transform:translateX(-50%)}
+  .orbit .n4{top:50%;left:-6px;transform:translateY(-50%)}
+  .orbit .n5{top:16%;right:14%}
+
+  /* flagged-fee mock */
+  .feecard{width:330px;text-align:left}
+  .tag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--rose);font-weight:700;margin-bottom:14px}
+  .feebox{background:rgba(224,233,246,0.05);border:1px solid var(--line);border-radius:18px;padding:18px}
+  .reply{margin-top:16px;align-self:flex-start;max-width:90%;padding:12px 16px;border-radius:20px 20px 20px 6px;
+    background:linear-gradient(135deg,#5E8FE0,#A6CBF2);color:#0E1A2E;font-size:14px;display:inline-block}
+
+  /* full-bleed warm section */
+  .bleed{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;border-top:1px solid var(--frame);border-bottom:1px solid var(--frame)}
+  .bleed .copy{display:flex;flex-direction:column;justify-content:center;padding:120px 64px;border-right:1px solid var(--frame)}
+  .bleed h2{font-size:clamp(32px,3.6vw,50px);color:var(--cream);line-height:1.05}
+  .bleed p{font-size:17px;color:var(--cream-soft);max-width:420px;margin-top:20px;line-height:1.6}
+  .bleed .stage{position:relative;min-height:620px;display:grid;place-items:center;overflow:hidden;
+    background:
+      radial-gradient(80% 50% at 50% 16%, rgba(182,202,222,0.55), transparent 60%),
+      radial-gradient(70% 46% at 30% 40%, rgba(120,162,222,0.5), transparent 60%),
+      radial-gradient(90% 60% at 60% 78%, rgba(64,126,214,0.7), transparent 62%),
+      radial-gradient(70% 50% at 78% 92%, rgba(86,108,182,0.6), transparent 60%),
+      linear-gradient(165deg,#3a4458 0%,#3f4f7c 42%,#45608e 64%,#41486e 100%)}
+  .bleed .stage::after{content:'';position:absolute;inset:0;background-image:var(--grain);
+    background-size:170px 170px;mix-blend-mode:overlay;opacity:.5;pointer-events:none}
+  .bleed .glass{position:relative;z-index:2}
+  /* glassy floating UI */
+  .glass{width:300px;border-radius:30px;padding:18px;backdrop-filter:blur(20px);
+    background:rgba(14,18,26,0.46);border:1px solid rgba(224,233,246,0.18);
+    box-shadow:0 40px 80px -30px rgba(0,0,0,0.6);color:var(--cream)}
+  .glass .gh{display:flex;flex-direction:column;align-items:center;gap:3px;padding-bottom:14px;border-bottom:1px solid rgba(224,233,246,0.14)}
+  .glass .gh .t{font-size:15px;font-weight:600}.glass .gh .s{font-size:12px;color:var(--cream-soft)}
+  .glass .grow{display:flex;align-items:center;gap:11px;font-size:13px;padding:11px 0;border-bottom:1px solid rgba(224,233,246,0.08)}
+  .glass .grow .amt{margin-left:auto;color:#9FD9B4;font-weight:700}
+  .glass .gi{width:30px;height:30px;border-radius:10px;background:rgba(224,233,246,0.1);display:grid;place-items:center;flex-shrink:0}
+
+  /* control / gallery */
+  .control{padding:140px 0 110px;text-align:center}
+  .control h2{font-size:clamp(34px,4.4vw,58px);color:var(--cream);line-height:1.04}
+  .control p{font-size:17px;color:var(--cream-soft);max-width:540px;margin:22px auto 0;line-height:1.55}
+  .gallery{margin-top:60px;display:flex;align-items:center;justify-content:center;gap:28px}
+  .gallery .phone{width:230px;opacity:.4;transform:scale(.9)}
+  .gallery .phone.mid{width:300px;opacity:1;transform:none;z-index:2}
+
+  /* testimonials */
+  .quotes{padding:40px 0 130px;text-align:center}
+  .quotes h2{font-size:clamp(28px,3.4vw,44px);color:var(--cream)}
+  .quotes .lead{color:var(--cream-soft);font-size:17px;margin-top:14px}
+  .qgrid{margin-top:54px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;text-align:left}
+  .qcard{background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:26px}
+  .qstars{color:var(--gold);letter-spacing:3px;font-size:14px;margin-bottom:14px}
+  .qcard .qt{font-family:var(--serif);font-size:20px;color:var(--cream);margin-bottom:10px}
+  .qcard .qb{font-size:14.5px;color:var(--cream-soft);line-height:1.6}
+  .qcard .qa{margin-top:18px;font-size:13.5px;color:var(--cream)}
+  .qcard .qa span{color:var(--cream-faint)}
+
+  /* final + sunset footer */
+  .final{text-align:center;padding:120px 0 150px;position:relative;z-index:2}
+  .final h2{font-size:clamp(40px,6vw,80px);color:var(--cream);line-height:1.0}
+  .final p{font-size:18px;color:var(--cream-soft);margin:24px auto 0;max-width:480px}
+  .final .cta{margin-top:36px;display:flex;justify-content:center}
+
+  .sunset{position:relative;background:var(--cream);padding-top:330px;overflow:hidden}
+  .sunset::before{content:'';position:absolute;top:0;left:0;right:0;height:500px;pointer-events:none;
+    background:
+      radial-gradient(54% 60% at 30% 60%, rgba(118,172,255,0.60), transparent 62%),
+      radial-gradient(60% 62% at 76% 52%, rgba(96,118,178,0.52), transparent 62%),
+      radial-gradient(40% 50% at 52% 70%, rgba(90,150,232,0.5), transparent 60%),
+      linear-gradient(180deg, var(--bg) 0%, #1c2030 16%, #2e3852 36%, #46608c 56%, #5e8ccf 72%, #94bdf1 86%, var(--cream) 98%)}
+  .sunset::after{content:'';position:absolute;top:0;left:0;right:0;height:500px;pointer-events:none;
+    background-image:var(--grain);background-size:180px 180px;mix-blend-mode:overlay;opacity:.45}
+  .dunes{position:absolute;top:296px;left:0;width:100%;height:150px;z-index:1;display:block;pointer-events:none}
+  footer{position:relative;z-index:2;color:var(--ink)}
+  .fcols{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;gap:30px;padding-bottom:40px}
+  .fbrand .brand{color:var(--ink)} .fbrand .mark{color:var(--ink)}
+  .fcol h4{font-size:13px;font-weight:700;color:rgba(15,18,24,0.5);margin-bottom:18px}
+  .fcol a{display:block;color:var(--ink);font-size:15px;padding:6px 0;font-weight:500}
+  .fcol a:hover{opacity:.6}
+  .fcopy{color:rgba(15,18,24,0.5);font-size:14px;padding:30px 0 10px}
+  .bigmark{font-family:var(--sans);font-weight:800;color:var(--ink);letter-spacing:-0.04em;
+    font-size:clamp(120px,30vw,460px);line-height:0.8;margin:30px 0 -8vw -1vw;white-space:nowrap}
+
+  .reveal{opacity:0;transform:translateY(18px);animation:rise .8s cubic-bezier(.2,.8,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.reveal{animation:none;opacity:1;transform:none}}
+
+  @media (max-width:900px){
+    .wrap{padding:0 22px}
+    .hero{padding-top:64px}
+    .twoup{padding:90px 0 70px}
+    .twoup .grid{grid-template-columns:1fr;gap:80px}
+    .twoup::before{display:none}
+    .bleed{grid-template-columns:1fr}
+    .bleed .copy{padding:80px 28px 20px;text-align:center;align-items:center;border-right:none}
+    .bleed p{margin-left:auto;margin-right:auto}
+    .bleed .stage{min-height:520px;padding:40px 0}
+    .gallery .phone:not(.mid){display:none}
+    .qgrid{grid-template-columns:1fr}
+    .fcols{grid-template-columns:1fr 1fr;gap:28px}
+    .fbrand{grid-column:1/-1}
+    .control{padding:90px 0 70px}
+  }
+  @media (max-width:600px){
+    .nav{height:62px}
+    .nav-right{gap:12px}
+    .nav-right a.lnk{display:none}
+    .nav-right .btn{padding:11px 16px;white-space:nowrap}
+    .brand{font-size:19px}
+  }
+  @media (max-width:460px){
+    .phone{width:290px}
+    .twoup .col{padding:0 8px}
+    .fcols{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- icon defs -->
+<svg width="0" height="0" style="position:absolute"><defs>
+  <symbol id="burst" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1.6l2.1 4.9 4.9-2.1-2.1 4.9 4.9 2.1-4.9 2.1 2.1 4.9-4.9-2.1L12 22.4l-2.1-4.9-4.9 2.1 2.1-4.9-4.9-2.1 4.9-2.1L4.9 4.4l4.9 2.1z"/><circle cx="12" cy="12" r="3.4" fill="#0F1218"/></symbol>
+</defs></svg>
+
+<div class="shell">
+<header>
+  <div class="wrap nav">
+    <a href="#" class="brand"><svg class="mark"><use href="#burst"/></svg> PaySwitch</a>
+    <div class="nav-right">
+      <a href="#pricing" class="lnk">Pricing</a>
+      <a href="#" class="btn btn-ghost">Get my review</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <h1 class="serif reveal">Never overpay on payments again</h1>
+    <p class="sub reveal" style="animation-delay:.08s">PaySwitch reads your merchant statements and shows you exactly where you're losing money on card fees — even when you're busy running the business.</p>
+    <div class="cta reveal" style="animation-delay:.16s">
+      <a href="#" class="btn btn-cream btn-lg">Get my free review
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </div>
+  <div class="hero-stage">
+    <div class="glow"></div>
+    <div class="phone reveal" style="animation-delay:.24s">
+      <div class="screen">
+        <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
+        <div class="chead">
+          <svg class="av" viewBox="0 0 24 24"><use href="#burst"/></svg>
+          <span class="nm">PaySwitch</span>
+        </div>
+        <div class="chat">
+          <div class="msg-you">Am I overpaying on card fees?</div>
+          <div class="msg-them">Let's find out — send over your latest merchant statement.</div>
+          <div class="msg-you">Done. Westpac, about $1.8M a month.</div>
+          <div class="msg-them">You're at <b>0.72%</b> all-in. I found <span class="save">~$112K a year</span> in avoidable fees. Want the breakdown?</div>
+        </div>
+        <div class="cinput">Message PaySwitch…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TWO-UP -->
+<section class="twoup">
+  <div class="wrap grid">
+    <div class="col">
+      <h2 class="serif">Read any statement</h2>
+      <p>PaySwitch pulls every fee, rate and hidden line item from any provider's statement — automatically, no spreadsheets.</p>
+      <div class="vis">
+        <div class="orbit">
+          <div class="ring r1"></div><div class="ring r2"></div>
+          <div class="core"><svg width="26" height="26" viewBox="0 0 24 24"><use href="#burst"/></svg></div>
+          <div class="node n1">▦</div><div class="node n2">%</div>
+          <div class="node n3">▤</div><div class="node n4">$</div><div class="node n5">◷</div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <h2 class="serif">Catch every overcharge</h2>
+      <p>It benchmarks your rates against the market and flags every basis point you shouldn't be paying.</p>
+      <div class="vis">
+        <div class="feecard">
+          <div class="tag">Fee flagged</div>
+          <div class="feebox">
+            <div class="arow"><span class="l">Scheme fees</span><span class="v">$3,060.80</span></div>
+            <div class="arow"><span class="l">Market benchmark</span><span class="v" style="color:#9FD9B4">$1,940.00</span></div>
+            <div class="bar"><i style="width:64%"></i></div>
+          </div>
+          <div class="reply">That's about $1,120/mo over market. Worth a renegotiation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FULL-BLEED WARM -->
+<section class="bleed">
+  <div class="copy">
+    <h2 class="serif">Know exactly<br>what to do</h2>
+    <p>Tell PaySwitch about your business once, and every review adapts to you — the right pricing model, the right providers, and exactly what to say to get a better rate.</p>
+  </div>
+  <div class="stage">
+    <div class="glass">
+      <div class="gh"><div class="t">Payments review</div><div class="s">Northpoint Retail · 00:04</div></div>
+      <div style="padding:14px 0;border-bottom:1px solid rgba(224,233,246,0.08)">
+        <div class="akick" style="color:rgba(224,233,246,0.6)">Estimated annual saving</div>
+        <div class="big" style="margin-top:4px"><span class="c">$</span>112,400</div>
+      </div>
+      <div class="grow"><span class="gi">↘</span> Move to interchange-plus <span class="amt">+$48K</span></div>
+      <div class="grow"><span class="gi">⚡</span> Enable least-cost routing <span class="amt">+$39K</span></div>
+      <div class="grow" style="border-bottom:none"><span class="gi">↻</span> Renegotiate scheme fees <span class="amt">+$25K</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTROL + GALLERY -->
+<section class="control" id="pricing">
+  <div class="wrap">
+    <h2 class="serif">You stay in control</h2>
+    <p>PaySwitch hands you a plain-English review and a real payments specialist to walk you through it. You decide what to change — and when.</p>
+  </div>
+  <div class="gallery">
+    <div class="phone">
+      <div class="screen">
+        <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
+        <div class="abody">
+          <div class="akick">Next steps</div>
+          <div class="acard"><div class="arow"><span class="l">Switch pricing model</span><span class="v">Ready</span></div></div>
+          <div class="acard"><div class="arow"><span class="l">Enable routing</span><span class="v">Ready</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="phone mid">
+      <div class="screen">
+        <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
+        <div class="chead"><svg class="av" viewBox="0 0 24 24"><use href="#burst"/></svg><span class="nm">PaySwitch</span></div>
+        <div class="chat">
+          <div class="msg-them">Your report's ready. Two fees are worth renegotiating — want me to draft what to say?</div>
+          <div class="msg-you">Yes please.</div>
+          <div class="msg-them">Done. I've drafted both, and booked a 15-min call with a specialist to review it with you.</div>
+        </div>
+        <div class="cinput">Message PaySwitch…</div>
+      </div>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
+        <div class="abody">
+          <div class="akick">Key insights</div>
+          <div class="flag"><span class="fi">↗</span> Effective rate 0.72%</div>
+          <div class="flag"><span class="fi">$</span> Routing not enabled</div>
+          <div class="flag"><span class="fi">⚑</span> Amex priced high</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="quotes">
+  <div class="wrap">
+    <h2 class="serif">Merchants stop guessing</h2>
+    <p class="lead">What owners say after their first review.</p>
+    <div class="qgrid">
+      <div class="qcard">
+        <div class="qstars">★★★★★</div>
+        <div class="qt serif">Found money we'd written off</div>
+        <div class="qb">We assumed our rate was "just what it costs." PaySwitch found $40k a year we didn't need to pay — and the report did the arguing for us.</div>
+        <div class="qa">Priya N. <span>· Hospitality, 11 venues</span></div>
+      </div>
+      <div class="qcard">
+        <div class="qstars">★★★★★</div>
+        <div class="qt serif">Finally understood my statement</div>
+        <div class="qb">First time anyone explained interchange versus scheme fees without trying to sell me something. Plain English, real numbers.</div>
+        <div class="qa">Marcus T. <span>· Retail, 6 stores</span></div>
+      </div>
+      <div class="qcard">
+        <div class="qstars">★★★★★</div>
+        <div class="qt serif">Worth it in one call</div>
+        <div class="qb">The specialist named the two providers who'd beat our rate and what to ask for. We renegotiated the next week.</div>
+        <div class="qa">Dana R. <span>· eCommerce &amp; in-store</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <div class="wrap">
+    <h2 class="serif">Know what you're<br>paying. To the cent.</h2>
+    <p>Upload one statement and get a consulting-grade payments review — free.</p>
+    <div class="cta">
+      <a href="#" class="btn btn-cream btn-lg">Get my free review
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- SUNSET FOOTER -->
+<div class="sunset">
+  <svg class="dunes" viewBox="0 0 1440 150" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,86 C220,34 430,118 680,92 C930,66 1130,128 1440,70 L1440,150 L0,150 Z" fill="#E6EBF6"/>
+  </svg>
+  <footer class="wrap">
+    <div class="fcols">
+      <div class="fbrand">
+        <a href="#" class="brand"><svg class="mark"><use href="#burst"/></svg> PaySwitch</a>
+      </div>
+      <div class="fcol">
+        <h4>Product</h4>
+        <a href="#">How it works</a><a href="#">Results</a><a href="#pricing">Pricing</a><a href="#">FAQ</a>
+      </div>
+      <div class="fcol">
+        <h4>Company</h4>
+        <a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a>
+      </div>
+      <div class="fcol">
+        <h4>Resources</h4>
+        <a href="#">Guides</a><a href="#">Privacy</a><a href="#">Terms</a>
+      </div>
+      <div class="fcol">
+        <h4>Connect</h4>
+        <a href="#">X (Twitter)</a><a href="#">LinkedIn</a><a href="#">Support</a>
+      </div>
+    </div>
+    <div class="fcopy">© 2026 PaySwitch. All rights reserved.</div>
+    <div class="bigmark">PaySwitch</div>
+  </footer>
+</div>
+</div>
+
+</body>
+</html>
