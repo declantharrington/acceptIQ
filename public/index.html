@@ -35,7 +35,7 @@
   ::selection{background:var(--rose);color:var(--ink)}
 
   /* serif display */
-  .serif{ font-family:var(--serif); font-weight:500; letter-spacing:-0.02em; }
+  .serif{ font-family:var(--serif); font-weight:400; letter-spacing:-0.02em; }
 
   /* buttons */
   .btn{ display:inline-flex;align-items:center;gap:12px;cursor:pointer;font-family:var(--sans);
@@ -131,10 +131,15 @@
   .twoup::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;
     background:var(--frame);transform:translateX(-0.5px)}
   .twoup .grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-  .twoup .col{padding:0 56px;text-align:center}
+  .twoup .col{padding:0 56px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center}
+  .twoup .col h2,.twoup .col p,.twoup .col .vis{width:100%;text-align:center}
+  .twoup .col p{margin-left:auto;margin-right:auto}
+  .vis{margin-top:54px;min-height:300px;display:flex;align-items:center;justify-content:center;width:100%}
   .twoup h2{font-size:clamp(30px,3.4vw,46px);color:var(--cream);line-height:1.05}
   .twoup p{font-size:16.5px;color:var(--cream-soft);max-width:380px;margin:18px auto 0;line-height:1.55}
-  .vis{margin-top:54px;min-height:300px;display:flex;align-items:center;justify-content:center}
+  .vis{margin-top:54px;min-height:300px;display:flex;align-items:center;justify-content:center;width:100%}
+  .orbit{margin:0 auto}
+  .feecard{margin:0 auto;text-align:left}
 
   /* orbit diagram */
   .orbit{position:relative;width:280px;height:280px}
@@ -159,9 +164,9 @@
 
   /* full-bleed warm section */
   .bleed{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;border-top:1px solid var(--frame);border-bottom:1px solid var(--frame)}
-  .bleed .copy{display:flex;flex-direction:column;justify-content:center;padding:120px 64px;border-right:1px solid var(--frame)}
+  .bleed .copy{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 64px;border-right:1px solid var(--frame)}
   .bleed h2{font-size:clamp(32px,3.6vw,50px);color:var(--cream);line-height:1.05}
-  .bleed p{font-size:17px;color:var(--cream-soft);max-width:420px;margin-top:20px;line-height:1.6}
+  .bleed p{font-size:17px;color:var(--cream-soft);max-width:420px;margin-top:20px;line-height:1.6;text-align:center}
   .bleed .stage{position:relative;min-height:620px;display:grid;place-items:center;overflow:hidden;
     background:
       radial-gradient(80% 50% at 50% 16%, rgba(182,202,222,0.55), transparent 60%),
