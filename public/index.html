@@ -64,22 +64,26 @@
   .hero .sub{font-family:var(--sans);font-size:clamp(14px,1.2vw,17px);color:var(--cream-soft);
     max-width:400px;margin:22px auto 0;line-height:1.5}
   .hero .cta{margin-top:34px;display:flex;justify-content:center}
-  .hero-stage{position:relative;margin-top:60px;min-height:560px}
+  .hero-stage{position:relative;margin-top:60px;min-height:800px}
   /* the warm cinematic band behind the phone */
-  .glow{position:absolute;left:50%;bottom:-60px;transform:translateX(-50%);
-    width:min(1600px,150vw);height:880px;z-index:0;pointer-events:none;
+  /* full-bleed gradient band — breaks out of shell frame to viewport edges */
+  .hero-band{
+    position:absolute;top:0;
+    left:calc(-1*(clamp(14px,4.5vw,132px) + 1px));
+    right:calc(-1*(clamp(14px,4.5vw,132px) + 1px));
+    height:425px;z-index:0;pointer-events:none;
     background:
-      radial-gradient(44% 42% at 28% 80%, rgba(120,162,232,0.78), transparent 60%),
-      radial-gradient(46% 46% at 74% 78%, rgba(150,196,244,0.72), transparent 60%),
-      radial-gradient(50% 44% at 50% 98%, rgba(64,124,224,0.82), transparent 58%),
-      radial-gradient(40% 50% at 36% 62%, rgba(92,108,188,0.55), transparent 60%),
-      radial-gradient(46% 40% at 70% 56%, rgba(76,96,168,0.42), transparent 64%),
-      linear-gradient(180deg, transparent 26%, rgba(76,96,160,0.30) 50%, rgba(84,148,224,0.40) 72%, rgba(176,210,247,0.42) 90%);
-    -webkit-mask-image:linear-gradient(180deg,transparent,#000 20%,#000 88%,transparent);
-            mask-image:linear-gradient(180deg,transparent,#000 20%,#000 88%,transparent)}
-  .glow::after{content:'';position:absolute;inset:0;background-image:var(--grain);
-    background-size:160px 160px;mix-blend-mode:overlay;opacity:.5}
-  .hero .phone{position:relative;z-index:2;margin:0 auto;
+      radial-gradient(44% 48% at 22% 90%, rgba(120,162,232,0.82), transparent 58%),
+      radial-gradient(46% 52% at 78% 86%, rgba(150,196,244,0.76), transparent 58%),
+      radial-gradient(52% 48% at 52% 100%, rgba(64,124,224,0.88), transparent 56%),
+      radial-gradient(42% 52% at 34% 68%, rgba(92,108,188,0.60), transparent 58%),
+      radial-gradient(48% 44% at 68% 60%, rgba(76,96,168,0.48), transparent 62%),
+      linear-gradient(180deg,#0F1218 0%,rgba(30,48,100,0.5) 40%,rgba(84,148,224,0.52) 75%,rgba(176,210,247,0.48) 100%);
+    -webkit-mask-image:linear-gradient(180deg,#000 60%,transparent 100%);
+            mask-image:linear-gradient(180deg,#000 60%,transparent 100%)}
+  .hero-band::after{content:'';position:absolute;inset:0;background-image:var(--grain);
+    background-size:160px 160px;mix-blend-mode:overlay;opacity:.5;pointer-events:none}
+  .hero .phone{position:relative;z-index:2;margin:90px auto 0;
     background:rgba(180,210,255,0.06);
     padding:0;
     border:1px solid rgba(180,210,255,0.18);
@@ -116,7 +120,8 @@
 
   /* generic dark app body */
   .abody{flex:1;padding:18px 16px;display:flex;flex-direction:column;gap:13px}
-  .akick{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-faint);font-weight:600}
+  .abody .bar{height:6px;border-radius:4px;background:rgba(224,233,246,0.08);overflow:hidden;margin:4px 0 10px}
+  .abody .bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#3F77D6,#7FA6E6)}
   .acard{background:rgba(224,233,246,0.05);border:1px solid var(--line);border-radius:16px;padding:14px}
   .arow{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .arow+.arow{margin-top:11px}
@@ -148,7 +153,19 @@
   .orbit{margin:0 auto}
   .feecard{margin:0 auto;text-align:left}
 
-  /* orbit diagram */
+  /* fee breakdown (replaces orbit in left two-up) */
+  .feebreakdown{width:100%;max-width:340px;text-align:left}
+  .fb-kicker{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--cream-faint);margin-bottom:18px}
+  .fb-row{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+  .fb-lbl{font-size:12px;color:var(--cream-soft);width:120px;flex-shrink:0}
+  .fb-bar{flex:1;height:5px;border-radius:4px;background:rgba(224,233,246,0.08);overflow:hidden}
+  .fb-bar i{display:block;height:100%;border-radius:4px;
+    background:linear-gradient(90deg,#3F77D6,#7FA6E6)}
+  .fb-val{font-size:12.5px;font-weight:700;color:var(--cream);width:48px;
+    text-align:right;flex-shrink:0}
+  .fb-total{margin-top:6px;padding-top:13px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--cream-soft)}
   .orbit{position:relative;width:280px;height:280px}
   .orbit .ring{position:absolute;border:1px solid var(--line);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
   .orbit .r1{width:130px;height:130px}.orbit .r2{width:230px;height:230px}
@@ -294,7 +311,7 @@
     </div>
   </div>
   <div class="hero-stage">
-    <div class="glow"></div>
+    <div class="hero-band"></div>
     <div class="phone reveal" style="animation-delay:.24s">
       <div class="screen">
         <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
@@ -303,10 +320,10 @@
           <span class="nm">PaySwitch</span>
         </div>
         <div class="chat">
-          <div class="msg-you">Am I overpaying on card fees?</div>
-          <div class="msg-them">Let's find out — send over your latest merchant statement.</div>
-          <div class="msg-you">Done. Westpac, about $1.8M a month.</div>
-          <div class="msg-them">You're at <b>0.72%</b> all-in. I found <span class="save">~$112K a year</span> in avoidable fees. Want the breakdown?</div>
+          <div class="msg-you">Are our card fees competitive?</div>
+          <div class="msg-them">Drop your latest statement and I'll benchmark you against the market.</div>
+          <div class="msg-you">Here — ANZ, about $1.9M a month. Mostly retail.</div>
+          <div class="msg-them">Your blended rate is <b>1.68%</b>. Best-in-class retail is <b>1.10%</b> — that's <span class="save">$112K a year</span> you shouldn't be paying.</div>
         </div>
         <div class="cinput">Message PaySwitch…</div>
       </div>
@@ -320,11 +337,12 @@
       <h2 class="serif">Read any statement</h2>
       <p>PaySwitch pulls every fee, rate and hidden line item from any provider's statement — automatically, no spreadsheets.</p>
       <div class="vis">
-        <div class="orbit">
-          <div class="ring r1"></div><div class="ring r2"></div>
-          <div class="core"><svg width="26" height="26" viewBox="0 0 24 24"><use href="#burst"/></svg></div>
-          <div class="node n1">▦</div><div class="node n2">%</div>
-          <div class="node n3">▤</div><div class="node n4">$</div><div class="node n5">◷</div>
+        <div class="feebreakdown">
+          <div class="fb-kicker">Monthly fee breakdown</div>
+          <div class="fb-row"><span class="fb-lbl">Interchange</span><div class="fb-bar"><i style="width:68%"></i></div><span class="fb-val">$8,960</span></div>
+          <div class="fb-row"><span class="fb-lbl">Scheme fees</span><div class="fb-bar"><i style="width:37%"></i></div><span class="fb-val">$4,890</span></div>
+          <div class="fb-row"><span class="fb-lbl">Acquirer margin</span><div class="fb-bar"><i style="width:22%"></i></div><span class="fb-val">$2,980</span></div>
+          <div class="fb-total">$16,830 / month · 1.68% blended</div>
         </div>
       </div>
     </div>
@@ -333,13 +351,13 @@
       <p>It benchmarks your rates against the market and flags every basis point you shouldn't be paying.</p>
       <div class="vis">
         <div class="feecard">
-          <div class="tag">Fee flagged</div>
+          <div class="tag">Rate flagged · Amex</div>
           <div class="feebox">
-            <div class="arow"><span class="l">Scheme fees</span><span class="v">$3,060.80</span></div>
-            <div class="arow"><span class="l">Market benchmark</span><span class="v" style="color:#9FD9B4">$1,940.00</span></div>
-            <div class="bar"><i style="width:64%"></i></div>
+            <div class="arow"><span class="l">Your Amex rate</span><span class="v" style="color:#F4A860">2.10%</span></div>
+            <div class="arow"><span class="l">Market benchmark</span><span class="v" style="color:#9FD9B4">1.45%</span></div>
+            <div class="bar"><i style="width:72%"></i></div>
           </div>
-          <div class="reply">That's about $1,120/mo over market. Worth a renegotiation.</div>
+          <div class="reply">0.65% above market on every Amex transaction. I've drafted a renegotiation brief.</div>
         </div>
       </div>
     </div>
@@ -354,14 +372,14 @@
   <div class="stage">
     <canvas class="mg" id="bleed-mg"></canvas>
     <div class="glass">
-      <div class="gh"><div class="t">Payments review</div><div class="s">Northpoint Retail · 00:04</div></div>
+      <div class="gh"><div class="t">Payments assessment</div><div class="s">Riverside Hospitality · June 2026</div></div>
       <div style="padding:14px 0;border-bottom:1px solid rgba(224,233,246,0.08)">
         <div class="akick" style="color:rgba(224,233,246,0.6)">Estimated annual saving</div>
         <div class="big" style="margin-top:4px"><span class="c">$</span>112,400</div>
       </div>
-      <div class="grow"><span class="gi">↘</span> Move to interchange-plus <span class="amt">+$48K</span></div>
-      <div class="grow"><span class="gi">⚡</span> Enable least-cost routing <span class="amt">+$39K</span></div>
-      <div class="grow" style="border-bottom:none"><span class="gi">↻</span> Renegotiate scheme fees <span class="amt">+$25K</span></div>
+      <div class="grow"><span class="gi">↘</span> Switch to IC+ pricing model <span class="amt">+$48K</span></div>
+      <div class="grow"><span class="gi">⚡</span> Activate least-cost routing <span class="amt">+$39K</span></div>
+      <div class="grow" style="border-bottom:none"><span class="gi">A</span> Renegotiate Amex acceptance <span class="amt">+$25K</span></div>
     </div>
   </div>
 </section>
@@ -377,9 +395,13 @@
       <div class="screen">
         <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
         <div class="abody">
-          <div class="akick">Next steps</div>
-          <div class="acard"><div class="arow"><span class="l">Switch pricing model</span><span class="v">Ready</span></div></div>
-          <div class="acard"><div class="arow"><span class="l">Enable routing</span><span class="v">Ready</span></div></div>
+          <div class="akick">Rate benchmark</div>
+          <div class="arow"><span class="l">Your rate</span><span class="v" style="color:#F4A860">1.68%</span></div>
+          <div class="bar"><i style="width:90%"></i></div>
+          <div class="arow"><span class="l">IC+ modelled</span><span class="v">1.27%</span></div>
+          <div class="bar"><i style="width:66%"></i></div>
+          <div class="arow"><span class="l">Best-in-class</span><span class="v" style="color:#9FD9B4">1.10%</span></div>
+          <div class="bar"><i style="width:54%"></i></div>
         </div>
       </div>
     </div>
@@ -388,9 +410,9 @@
         <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
         <div class="chead"><svg class="av" viewBox="0 0 24 24"><use href="#burst"/></svg><span class="nm">PaySwitch</span></div>
         <div class="chat">
-          <div class="msg-them">Your report's ready. Two fees are worth renegotiating — want me to draft what to say?</div>
-          <div class="msg-you">Yes please.</div>
-          <div class="msg-them">Done. I've drafted both, and booked a 15-min call with a specialist to review it with you.</div>
+          <div class="msg-them">Report done. Your Amex rate and scheme fees are both above market — want me to draft the negotiation brief?</div>
+          <div class="msg-you">Yes — start with Amex.</div>
+          <div class="msg-them">Brief sent. A payments specialist has reviewed it and is free Thursday at 2pm to walk you through the call.</div>
         </div>
         <div class="cinput">Message PaySwitch…</div>
       </div>
@@ -399,10 +421,10 @@
       <div class="screen">
         <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
         <div class="abody">
-          <div class="akick">Key insights</div>
-          <div class="flag"><span class="fi">↗</span> Effective rate 0.72%</div>
-          <div class="flag"><span class="fi">$</span> Routing not enabled</div>
-          <div class="flag"><span class="fi">⚑</span> Amex priced high</div>
+          <div class="akick">Key findings</div>
+          <div class="flag"><span class="fi">↗</span> Blended rate 1.68% · 0.58pp above IC+</div>
+          <div class="flag"><span class="fi">⚡</span> LCR inactive · $39K/yr untapped</div>
+          <div class="flag"><span class="fi">A</span> Amex 2.10% · market avg 1.45%</div>
         </div>
       </div>
     </div>
