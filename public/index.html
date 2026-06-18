@@ -7,8 +7,8 @@
 <title>PaySwitch — never overpay on payments again (blue)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
 :root{
   --bg:#0F1218;
   --bg2:#171C26;
@@ -66,8 +66,11 @@ body{
   color:var(--ink);
 }
   /* serif display */
-  .serif{ font-family:var(--serif); font-weight:400; letter-spacing:-0.02em; }
-
+.serif{
+  font-family:var(--serif);
+  font-weight:300;
+  letter-spacing:-0.045em;
+}
   /* buttons */
 .btn{
   display:inline-flex;
@@ -178,12 +181,12 @@ header{
 
   /* hero */
   .hero{position:relative;text-align:center;padding:72px 0 0;overflow:hidden}
-  .hero h1{
-  font-size:clamp(36px,4.4vw,64px);
-  line-height:1.08;
-  font-weight:400;
-  letter-spacing:-0.045em;
-  color:rgba(230,235,246,0.94);
+.hero h1{
+  font-size:clamp(34px,4.1vw,58px);
+  line-height:1.06;
+  font-weight:300;
+  letter-spacing:-0.055em;
+  color:rgba(230,235,246,0.90);
 }
   .hero .sub{font-family:var(--sans);font-size:clamp(14px,1.2vw,17px);color:var(--cream-soft);
     max-width:520px;margin:22px auto 0;line-height:1.5}
