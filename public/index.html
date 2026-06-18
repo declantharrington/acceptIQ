@@ -1,139 +1,4 @@
 
-c40a3181-14af-47a0-ac89-11b620dd89c0.png
-
-Pasted text(33).txt
-Document
-Here is the code of my website. I need some assistance with the scroll effect that is on the phone image in the hero section. When i scroll down, the phone moves across to the right for no reason and is no longer centred. You can see where it ends up in the image I have added. How can I get the phone to stay centred on the horizontal axis
-
-I can see exactly what's happening.
-
-The phone itself isn't actually drifting. The issue is that your JavaScript is switching the phone between:
-
-position: fixed
-
-position: absolute
-
-while continuously recalculating its position. When it becomes absolute, it's being positioned relative to .hero-stage, whose width and coordinate system is different to the viewport because of the .shell margins.
-
-Because you're mixing viewport coordinates (left:50% while fixed) with parent coordinates (left:50% while absolute), you get the horizontal shift you're seeing. 
-
-
-The easiest fix
-In your toPinned() function you currently have:
-
-phone.style.position = 'absolute';
-phone.style.top = Math.round(finalTop) + 'px';
-phone.style.left = '50%';
-phone.style.transform = 'translateX(-50%)';
-Instead, calculate the phone's actual horizontal position from the viewport and keep that exact value.
-
-Replace it with:
-
-const stageRect = hStage.getBoundingClientRect();
-const phoneWidth = phone.offsetWidth;
-
-phone.style.position = 'absolute';
-phone.style.top = Math.round(finalTop) + 'px';
-phone.style.left = ((window.innerWidth / 2) - stageRect.left - phoneWidth / 2) + 'px';
-phone.style.transform = 'none';
-That converts the viewport centre into the hero-stage's coordinate system.
-
-Even better solution
-There is actually a much cleaner approach.
-
-Instead of moving the phone between:
-
-normal
-↓
-fixed
-↓
-absolute
-leave it fixed the entire time while it is in the hero.
-
-When the hero is finished, simply fade it out or scale it down.
-
-Something like:
-
-Hero
-------------------
-
-scroll
-
-Phone stays perfectly centred
-↓
-Phone scales down
-↓
-Phone fades away
-↓
-Next section appears
-That means you never change:
-
-position
-left
-transform
-at all.
-
-The phone is always
-
-position: fixed;
-left: 50%;
-transform: translateX(-50%);
-which completely eliminates these bugs.
-
-I also spotted another issue
-Your resize handler is:
-
-window.addEventListener('resize', () => {
-    mode = '';
-    update();
-});
-Because you clear mode, your state machine can briefly get into an inconsistent state and cause another jump.
-
-I'd instead do:
-
-window.addEventListener('resize', () => {
-    toNormal();
-    update();
-});
-or even
-
-mode = 'normal';
-rather than an empty string.
-
-What I'd recommend
-Since I know the effect you're trying to achieve (very Apple/Fable-style premium scrolling), I actually wouldn't use this state-machine approach at all.
-
-I'd replace this entire script with one that:
-
-✅ keeps the phone perfectly centred horizontally at all times
-
-✅ pins it in place without switching positioning modes
-
-✅ scales it down as the user scrolls
-
-✅ fades it out smoothly
-
-✅ brings the next section up underneath it
-
-✅ uses transform only (GPU accelerated), making it much smoother than the current implementation
-
-I think the result will look significantly more polished and eliminate the positioning bug entirely.
-
-
-I want the phone to become sticky once it sits in the middle of the screen and then stays there until the bottom of the phone hits the line below. Here is ths prompt I wanted:
-
-Can we try and add a stickiness effect to the iphone in the hero section. As the user scrolls down, the iphone should stick to the middle of the screen until it touches the top of the line between 'read any statement' and 'catch every overcharge'. Once the bottom of the phone image touches the top of that line, the scroll of the page should continue as normal and the phone should no longer be sticky
-
-I believe everything is ok apart from the phone move across to the right. Provide me with the entire code including your solution to the movement of the phone
-
-Thought for 32s
-Done — I fixed the horizontal drift and kept your intended sticky behaviour. The issue was in the final sticky-phone script from your uploaded code. 
-
-
-Download the full updated HTML here:
-
-Download fixed HTML
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -939,6 +804,7 @@ initMG('bleed-mg');
 initMG('hero-mg');
 </script>
 <script>
+<script>
 (function stickyHeroPhone() {
   const phone  = document.querySelector('.hero .phone');
   const hStage = document.querySelector('.hero-stage');
@@ -947,14 +813,13 @@ initMG('hero-mg');
 
   const originalMarginTop = getComputedStyle(phone).marginTop;
 
-  /* Ghost keeps the original layout space once the phone becomes fixed/absolute. */
   const ghost = document.createElement('div');
   ghost.setAttribute('aria-hidden', 'true');
   ghost.style.visibility = 'hidden';
   ghost.style.display = 'none';
   hStage.insertBefore(ghost, phone);
 
-  let mode = 'normal'; // normal | fixed | pinned
+  let mode = 'normal';
 
   function syncGhost() {
     ghost.style.display = 'block';
@@ -965,14 +830,22 @@ initMG('hero-mg');
     ghost.style.marginRight = 'auto';
   }
 
+  function getStageCenterX() {
+    const stageRect = hStage.getBoundingClientRect();
+    return stageRect.left + stageRect.width / 2;
+  }
+
   function toNormal() {
+    if (mode === 'normal') return;
     mode = 'normal';
+
     phone.style.position = '';
     phone.style.top = '';
     phone.style.left = '';
     phone.style.transform = '';
     phone.style.margin = '';
     phone.style.zIndex = '';
+
     ghost.style.display = 'none';
   }
 
@@ -982,7 +855,10 @@ initMG('hero-mg');
 
     phone.style.position = 'fixed';
     phone.style.top = Math.round(top) + 'px';
-    phone.style.left = '50%';
+
+    /* Use hero-stage centre, not viewport centre */
+    phone.style.left = Math.round(getStageCenterX()) + 'px';
+
     phone.style.transform = 'translateX(-50%)';
     phone.style.margin = '0';
     phone.style.zIndex = '40';
@@ -993,24 +869,17 @@ initMG('hero-mg');
     syncGhost();
 
     const twoupTopDoc = twoup.getBoundingClientRect().top + window.scrollY;
-    const stageRect = hStage.getBoundingClientRect();
-    const stageTopDoc = stageRect.top + window.scrollY;
+    const stageTopDoc = hStage.getBoundingClientRect().top + window.scrollY;
 
-    /* Vertical stop point: bottom of phone touches the top line of the two-up section. */
     const finalTop = twoupTopDoc - stageTopDoc - phone.offsetHeight;
-
-    /*
-      Important fix:
-      Once the phone becomes absolute, left:50% is relative to .hero-stage,
-      not the viewport. This converts the viewport centre into .hero-stage coordinates,
-      so the phone stays horizontally centred instead of drifting right.
-    */
-    const finalLeft = (window.innerWidth / 2) - stageRect.left - (phone.offsetWidth / 2);
 
     phone.style.position = 'absolute';
     phone.style.top = Math.round(finalTop) + 'px';
-    phone.style.left = Math.round(finalLeft) + 'px';
-    phone.style.transform = 'none';
+
+    /* Absolute position is relative to hero-stage */
+    phone.style.left = '50%';
+
+    phone.style.transform = 'translateX(-50%)';
     phone.style.margin = '0';
     phone.style.zIndex = '40';
   }
@@ -1028,19 +897,19 @@ initMG('hero-mg');
 
     if (naturalTop > centeredTop) {
       toNormal();
-      return;
-    }
-
-    if (fixedBottom <= twoupTop) {
+    } else if (fixedBottom <= twoupTop) {
       toFixed(centeredTop);
-      return;
+    } else {
+      toPinned();
     }
-
-    toPinned();
   }
 
   window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update);
+  window.addEventListener('resize', () => {
+    toNormal();
+    requestAnimationFrame(update);
+  });
+
   requestAnimationFrame(update);
 })();
 </script>
