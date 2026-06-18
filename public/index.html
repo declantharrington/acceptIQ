@@ -62,28 +62,21 @@
   .hero{position:relative;text-align:center;padding:96px 0 0;overflow:hidden}
   .hero h1{font-size:clamp(28px,3.7vw,54px);line-height:1.06;color:var(--cream);text-wrap:balance}
   .hero .sub{font-family:var(--sans);font-size:clamp(14px,1.2vw,17px);color:var(--cream-soft);
-    max-width:400px;margin:22px auto 0;line-height:1.5}
+    max-width:520px;margin:22px auto 0;line-height:1.5}
   .hero .cta{margin-top:34px;display:flex;justify-content:center}
   .hero-stage{position:relative;margin-top:60px;min-height:800px}
   /* the warm cinematic band behind the phone */
   /* full-bleed gradient band — breaks out of shell frame to viewport edges */
   .hero-band{
-    position:absolute;top:0;
+    position:absolute;top:60px;
     left:calc(-1*(clamp(14px,4.5vw,132px) + 1px));
     right:calc(-1*(clamp(14px,4.5vw,132px) + 1px));
     height:425px;z-index:0;pointer-events:none;
-    background:
-      radial-gradient(44% 48% at 22% 90%, rgba(120,162,232,0.82), transparent 58%),
-      radial-gradient(46% 52% at 78% 86%, rgba(150,196,244,0.76), transparent 58%),
-      radial-gradient(52% 48% at 52% 100%, rgba(64,124,224,0.88), transparent 56%),
-      radial-gradient(42% 52% at 34% 68%, rgba(92,108,188,0.60), transparent 58%),
-      radial-gradient(48% 44% at 68% 60%, rgba(76,96,168,0.48), transparent 62%),
-      linear-gradient(180deg,#0F1218 0%,rgba(30,48,100,0.5) 40%,rgba(84,148,224,0.52) 75%,rgba(176,210,247,0.48) 100%);
-    -webkit-mask-image:linear-gradient(180deg,#000 60%,transparent 100%);
-            mask-image:linear-gradient(180deg,#000 60%,transparent 100%)}
+    background:#0f1624;}
+  #hero-mg{position:absolute;inset:0;display:block;width:100%;height:100%}
   .hero-band::after{content:'';position:absolute;inset:0;background-image:var(--grain);
     background-size:160px 160px;mix-blend-mode:overlay;opacity:.5;pointer-events:none}
-  .hero .phone{position:relative;z-index:2;margin:90px auto 0;
+  .hero .phone{position:relative;z-index:2;margin:36px auto 0;
     background:rgba(180,210,255,0.06);
     padding:0;
     border:1px solid rgba(180,210,255,0.18);
@@ -208,7 +201,7 @@
   .glass .gi{width:30px;height:30px;border-radius:10px;background:rgba(224,233,246,0.1);display:grid;place-items:center;flex-shrink:0}
 
   /* control / gallery */
-  .control{padding:140px 0 110px;text-align:center}
+  .control{padding:120px 0 0;text-align:center}
   .control h2{font-size:clamp(34px,4.4vw,58px);color:var(--cream);line-height:1.04}
   .control p{font-size:17px;color:var(--cream-soft);max-width:540px;margin:22px auto 0;line-height:1.55}
   .gallery{margin-top:60px;display:flex;align-items:center;justify-content:center;gap:28px}
@@ -263,6 +256,10 @@
     .bleed p{margin-left:auto;margin-right:auto}
     .bleed .stage{min-height:520px;padding:40px 0}
     .gallery .phone:not(.mid){display:none}
+    .laptop.lside{display:none}
+    .laptop.lmain{width:min(560px,96vw)}
+    .roverlay{overflow-x:auto;padding:0 20px;scrollbar-width:none}
+    .rcard{flex:0 0 240px}
     .qgrid{grid-template-columns:1fr}
     .fcols{grid-template-columns:1fr 1fr;gap:28px}
     .fbrand{grid-column:1/-1}
@@ -280,6 +277,31 @@
     .twoup .col{padding:0 8px}
     .fcols{grid-template-columns:1fr}
   }
+
+  /* ── Laptop gallery ─────────────────────────────────────────── */
+  .lgallery{display:flex;align-items:flex-end;justify-content:center;
+    gap:18px;margin-top:56px;position:relative}
+  .laptop{position:relative;display:flex;flex-direction:column;flex-shrink:0}
+  .laptop.lside{width:300px;opacity:0.32;transform:scale(0.9);transform-origin:bottom center}
+  .laptop.lmain{width:580px;z-index:2}
+  .lbwrap{background:#1C2233;border-radius:10px 10px 0 0;padding:7px 7px 0;
+    border:1.5px solid rgba(255,255,255,0.09);border-bottom:none}
+  .lscreen{background:#0B1120;overflow:hidden;aspect-ratio:16/10;
+    display:flex;flex-direction:column}
+  .lbase{background:linear-gradient(180deg,#252B3B 0%,#1A2030 100%);height:18px;
+    border-radius:0 0 8px 8px;border:1.5px solid rgba(255,255,255,0.07);border-top:none;
+    display:flex;justify-content:center;align-items:flex-end;padding-bottom:3px}
+  .lnotch{width:54px;height:5px;background:rgba(255,255,255,0.07);border-radius:0 0 4px 4px}
+  /* ── Review overlay ─────────────────────────────────────────── */
+  .roverlay{display:flex;gap:14px;margin-top:-68px;position:relative;z-index:4;
+    padding:0 clamp(14px,3vw,48px)}
+  .rcard{flex:1;min-width:0;background:var(--bg2);border:1px solid var(--line);
+    border-radius:16px;padding:18px 20px}
+  .rcard .rt{font-weight:700;font-size:14px;color:var(--cream);margin-bottom:6px}
+  .rcard .rmeta{color:var(--gold);font-size:13px;letter-spacing:2px;margin-bottom:4px}
+  .rcard .rby{font-size:11.5px;color:var(--cream-faint);margin-bottom:10px}
+  .rcard .rb{font-size:12.5px;color:var(--cream-soft);line-height:1.55}
+
 </style>
 </head>
 <body>
@@ -304,14 +326,14 @@
 <section class="hero">
   <div class="wrap">
     <h1 class="serif reveal">Never overpay on payments again</h1>
-    <p class="sub reveal" style="animation-delay:.08s">PaySwitch reads your merchant statements and shows you exactly where you're losing money on card fees — even when you're busy running the business.</p>
+    <p class="sub reveal" style="animation-delay:.08s">PaySwitch reads your merchant statements and shows exactly where you're losing money on card fees.</p>
     <div class="cta reveal" style="animation-delay:.16s">
       <a href="#" class="btn btn-cream btn-lg">Get my free review
         <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
   </div>
   <div class="hero-stage">
-    <div class="hero-band"></div>
+    <div class="hero-band"><canvas id="hero-mg"></canvas></div>
     <div class="phone reveal" style="animation-delay:.24s">
       <div class="screen">
         <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
@@ -384,79 +406,176 @@
   </div>
 </section>
 
-<!-- CONTROL + GALLERY -->
+<!-- CONTROL + LAPTOPS + TESTIMONIALS (Mitra layout) -->
 <section class="control" id="pricing">
   <div class="wrap">
     <h2 class="serif">You stay in control</h2>
     <p>PaySwitch hands you a plain-English review and a real payments specialist to walk you through it. You decide what to change — and when.</p>
   </div>
-  <div class="gallery">
-    <div class="phone">
-      <div class="screen">
-        <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
-        <div class="abody">
-          <div class="akick">Rate benchmark</div>
-          <div class="arow"><span class="l">Your rate</span><span class="v" style="color:#F4A860">1.68%</span></div>
-          <div class="bar"><i style="width:90%"></i></div>
-          <div class="arow"><span class="l">IC+ modelled</span><span class="v">1.27%</span></div>
-          <div class="bar"><i style="width:66%"></i></div>
-          <div class="arow"><span class="l">Best-in-class</span><span class="v" style="color:#9FD9B4">1.10%</span></div>
-          <div class="bar"><i style="width:54%"></i></div>
-        </div>
-      </div>
-    </div>
-    <div class="phone mid">
-      <div class="screen">
-        <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
-        <div class="chead"><svg class="av" viewBox="0 0 24 24"><use href="#burst"/></svg><span class="nm">PaySwitch</span></div>
-        <div class="chat">
-          <div class="msg-them">Report done. Your Amex rate and scheme fees are both above market — want me to draft the negotiation brief?</div>
-          <div class="msg-you">Yes — start with Amex.</div>
-          <div class="msg-them">Brief sent. A payments specialist has reviewed it and is free Thursday at 2pm to walk you through the call.</div>
-        </div>
-        <div class="cinput">Message PaySwitch…</div>
-      </div>
-    </div>
-    <div class="phone">
-      <div class="screen">
-        <div class="sbar"><span>00:00</span><span class="r">●●●</span></div>
-        <div class="abody">
-          <div class="akick">Key findings</div>
-          <div class="flag"><span class="fi">↗</span> Blended rate 1.68% · 0.58pp above IC+</div>
-          <div class="flag"><span class="fi">⚡</span> LCR inactive · $39K/yr untapped</div>
-          <div class="flag"><span class="fi">A</span> Amex 2.10% · market avg 1.45%</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- TESTIMONIALS -->
-<section class="quotes">
-  <div class="wrap">
-    <h2 class="serif">Merchants stop guessing</h2>
-    <p class="lead">What owners say after their first review.</p>
-    <div class="qgrid">
-      <div class="qcard">
-        <div class="qstars">★★★★★</div>
-        <div class="qt serif">Found money we'd written off</div>
-        <div class="qb">We assumed our rate was "just what it costs." PaySwitch found $40k a year we didn't need to pay — and the report did the arguing for us.</div>
-        <div class="qa">Priya N. <span>· Hospitality, 11 venues</span></div>
-      </div>
-      <div class="qcard">
-        <div class="qstars">★★★★★</div>
-        <div class="qt serif">Finally understood my statement</div>
-        <div class="qb">First time anyone explained interchange versus scheme fees without trying to sell me something. Plain English, real numbers.</div>
-        <div class="qa">Marcus T. <span>· Retail, 6 stores</span></div>
-      </div>
-      <div class="qcard">
-        <div class="qstars">★★★★★</div>
-        <div class="qt serif">Worth it in one call</div>
-        <div class="qb">The specialist named the two providers who'd beat our rate and what to ask for. We renegotiated the next week.</div>
-        <div class="qa">Dana R. <span>· eCommerce &amp; in-store</span></div>
-      </div>
+  <div class="lgallery">
+
+    <!-- LEFT laptop (dimmed) — Provider benchmark -->
+    <div class="laptop lside">
+      <div class="lbwrap"><div class="lscreen" style="padding:12px;font-family:Inter,sans-serif">
+        <div style="font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:rgba(224,233,246,0.35);margin-bottom:11px">Provider Benchmark</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
+          <span style="font-size:7.5px;color:rgba(224,233,246,0.6);width:68px">You (blended)</span>
+          <div style="flex:1;height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden"><div style="width:88%;height:100%;background:linear-gradient(90deg,#3F77D6,#7FA6E6);border-radius:3px"></div></div>
+          <span style="font-size:7.5px;font-weight:700;color:#F4A860;width:30px;text-align:right">1.68%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
+          <span style="font-size:7.5px;color:rgba(224,233,246,0.6);width:68px">IC+ modelled</span>
+          <div style="flex:1;height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden"><div style="width:65%;height:100%;background:linear-gradient(90deg,#3F77D6,#7FA6E6);border-radius:3px"></div></div>
+          <span style="font-size:7.5px;font-weight:700;color:rgba(224,233,246,0.75);width:30px;text-align:right">1.27%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
+          <span style="font-size:7.5px;color:rgba(224,233,246,0.6);width:68px">Best-in-class</span>
+          <div style="flex:1;height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden"><div style="width:52%;height:100%;background:linear-gradient(90deg,#3F77D6,#7FA6E6);border-radius:3px"></div></div>
+          <span style="font-size:7.5px;font-weight:700;color:#9FD9B4;width:30px;text-align:right">1.10%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:14px">
+          <span style="font-size:7.5px;color:rgba(224,233,246,0.6);width:68px">Market median</span>
+          <div style="flex:1;height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden"><div style="width:60%;height:100%;background:rgba(255,255,255,0.2);border-radius:3px"></div></div>
+          <span style="font-size:7.5px;font-weight:700;color:rgba(224,233,246,0.4);width:30px;text-align:right">1.22%</span>
+        </div>
+        <div style="background:rgba(63,119,214,0.1);border:1px solid rgba(63,119,214,0.22);border-radius:7px;padding:9px 11px">
+          <div style="font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:rgba(224,233,246,0.35);margin-bottom:3px">Saving Potential</div>
+          <div style="font-size:20px;font-weight:700;color:#9FD9B4;line-height:1">$112,400<span style="font-size:9px;font-weight:400;color:rgba(224,233,246,0.35)">/yr</span></div>
+        </div>
+      </div></div>
+      <div class="lbase"><div class="lnotch"></div></div>
     </div>
-  </div>
+
+    <!-- CENTRE laptop (main) — Executive Summary report -->
+    <div class="laptop lmain">
+      <div class="lbwrap"><div class="lscreen" style="padding:14px 16px;font-family:Inter,sans-serif;display:flex;flex-direction:column;gap:10px">
+        <!-- report header -->
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,0.06)">
+          <div style="display:flex;align-items:center;gap:7px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="rgba(224,233,246,0.8)"><use href="#burst"/></svg>
+            <span style="font-size:9px;font-weight:700;color:rgba(224,233,246,0.85);letter-spacing:.06em">PAYSWITCH</span>
+          </div>
+          <span style="font-size:8px;color:rgba(224,233,246,0.3)">PAYMENTS ASSESSMENT — EXECUTIVE SUMMARY</span>
+          <span style="font-size:7px;padding:2px 7px;border:1px solid rgba(224,233,246,0.14);border-radius:3px;color:rgba(224,233,246,0.3)">CONFIDENTIAL</span>
+        </div>
+        <!-- client row -->
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font-size:10px;font-weight:600;color:rgba(224,233,246,0.7)">Riverside Hospitality Group</span>
+          <span style="font-size:7.5px;color:rgba(224,233,246,0.3)">Prepared by PaySwitch AI · June 2026</span>
+        </div>
+        <!-- key metrics -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div style="background:rgba(159,217,180,0.07);border:1px solid rgba(159,217,180,0.16);border-radius:6px;padding:8px 10px">
+            <div style="font-size:7px;letter-spacing:.09em;text-transform:uppercase;color:rgba(224,233,246,0.32);margin-bottom:3px">Estimated Annual Saving</div>
+            <div style="font-size:21px;font-weight:700;color:#9FD9B4;line-height:1.1">$112,400</div>
+            <div style="font-size:7px;color:rgba(224,233,246,0.3);margin-top:2px">across pricing, routing &amp; acceptance</div>
+          </div>
+          <div style="background:rgba(244,168,96,0.07);border:1px solid rgba(244,168,96,0.16);border-radius:6px;padding:8px 10px">
+            <div style="font-size:7px;letter-spacing:.09em;text-transform:uppercase;color:rgba(224,233,246,0.32);margin-bottom:3px">Effective Rate</div>
+            <div style="font-size:21px;font-weight:700;color:#F4A860;line-height:1.1">1.68%</div>
+            <div style="font-size:7px;color:rgba(224,233,246,0.3);margin-top:2px">+0.58pp above IC+ modelled</div>
+          </div>
+          <div style="background:rgba(224,233,246,0.04);border:1px solid rgba(224,233,246,0.08);border-radius:6px;padding:8px 10px">
+            <div style="font-size:7px;letter-spacing:.09em;text-transform:uppercase;color:rgba(224,233,246,0.32);margin-bottom:3px">Optimisation Score</div>
+            <div style="font-size:21px;font-weight:700;color:rgba(224,233,246,0.82);line-height:1.1">58<span style="font-size:10px;font-weight:400;color:rgba(224,233,246,0.28)">/100</span></div>
+            <div style="font-size:7px;color:#F4A860;margin-top:2px">Room to improve</div>
+          </div>
+        </div>
+        <!-- benchmark + actions -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1">
+          <div>
+            <div style="font-size:7px;letter-spacing:.09em;text-transform:uppercase;color:rgba(224,233,246,0.28);margin-bottom:7px">Provider Benchmark</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+              <span style="font-size:7px;color:rgba(224,233,246,0.5);width:72px">You (blended)</span>
+              <div style="flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="width:88%;height:100%;background:linear-gradient(90deg,#3F77D6,#7FA6E6)"></div></div>
+              <span style="font-size:7.5px;font-weight:600;color:#F4A860;width:30px;text-align:right">1.68%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+              <span style="font-size:7px;color:rgba(224,233,246,0.5);width:72px">IC+ modelled</span>
+              <div style="flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="width:65%;height:100%;background:linear-gradient(90deg,#3F77D6,#7FA6E6)"></div></div>
+              <span style="font-size:7.5px;font-weight:600;color:rgba(224,233,246,0.7);width:30px;text-align:right">1.27%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+              <span style="font-size:7px;color:rgba(224,233,246,0.5);width:72px">Best-in-class</span>
+              <div style="flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="width:52%;height:100%;background:linear-gradient(90deg,#3F77D6,#7FA6E6)"></div></div>
+              <span style="font-size:7.5px;font-weight:600;color:#9FD9B4;width:30px;text-align:right">1.10%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:7px;color:rgba(224,233,246,0.5);width:72px">Market median</span>
+              <div style="flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="width:60%;height:100%;background:rgba(255,255,255,0.18)"></div></div>
+              <span style="font-size:7.5px;font-weight:600;color:rgba(224,233,246,0.35);width:30px;text-align:right">1.22%</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:7px;letter-spacing:.09em;text-transform:uppercase;color:rgba(224,233,246,0.28);margin-bottom:7px">Recommended Priority Actions</div>
+            <div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,0.04)">
+              <span style="font-size:8px;font-weight:700;color:rgba(224,233,246,0.28);margin-top:1px;flex-shrink:0">1</span>
+              <div style="flex:1">
+                <div style="font-size:8px;color:rgba(224,233,246,0.78);margin-bottom:2px">Activate least-cost routing</div>
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:7px;color:rgba(224,233,246,0.38)">Est. saving $39K/yr</span>
+                  <span style="font-size:6.5px;padding:1px 5px;background:rgba(159,217,180,0.12);color:#9FD9B4;border-radius:3px">HIGH</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,0.04)">
+              <span style="font-size:8px;font-weight:700;color:rgba(224,233,246,0.28);margin-top:1px;flex-shrink:0">2</span>
+              <div style="flex:1">
+                <div style="font-size:8px;color:rgba(224,233,246,0.78);margin-bottom:2px">Switch to interchange-plus pricing</div>
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:7px;color:rgba(224,233,246,0.38)">Est. saving $48K/yr</span>
+                  <span style="font-size:6.5px;padding:1px 5px;background:rgba(159,217,180,0.12);color:#9FD9B4;border-radius:3px">HIGH</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:7px">
+              <span style="font-size:8px;font-weight:700;color:rgba(224,233,246,0.28);margin-top:1px;flex-shrink:0">3</span>
+              <div style="flex:1">
+                <div style="font-size:8px;color:rgba(224,233,246,0.78);margin-bottom:2px">Renegotiate Amex acceptance rate</div>
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:7px;color:rgba(224,233,246,0.38)">Est. saving $25K/yr</span>
+                  <span style="font-size:6.5px;padding:1px 5px;background:rgba(244,168,96,0.12);color:#F4A860;border-radius:3px">MED</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+      <div class="lbase"><div class="lnotch"></div></div>
+    </div>
+
+    <!-- RIGHT laptop (dimmed) — Key findings -->
+    <div class="laptop lside">
+      <div class="lbwrap"><div class="lscreen" style="padding:12px;font-family:Inter,sans-serif">
+        <div style="font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:rgba(224,233,246,0.35);margin-bottom:12px">Key Findings · 3 Flagged</div>
+        <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.05)">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+            <span style="font-size:10px">↗</span>
+            <span style="font-size:8.5px;font-weight:600;color:rgba(224,233,246,0.82)">Blended rate 1.68%</span>
+          </div>
+          <div style="font-size:7.5px;color:rgba(224,233,246,0.38);margin-left:16px">0.58pp above IC+ modelled</div>
+        </div>
+        <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.05)">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+            <span style="font-size:10px">⚡</span>
+            <span style="font-size:8.5px;font-weight:600;color:rgba(224,233,246,0.82)">LCR not activated</span>
+          </div>
+          <div style="font-size:7.5px;color:rgba(224,233,246,0.38);margin-left:16px">$39K/yr eftpos opportunity</div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+            <span style="font-size:10px;font-weight:700;color:rgba(224,233,246,0.6)">A</span>
+            <span style="font-size:8.5px;font-weight:600;color:rgba(224,233,246,0.82)">Amex rate 2.10%</span>
+          </div>
+          <div style="font-size:7.5px;color:rgba(224,233,246,0.38);margin-left:16px">Market avg: 1.45% · negotiable</div>
+        </div>
+      </div></div>
+      <div class="lbase"><div class="lnotch"></div></div>
+    </div>
+
+  </div><!-- /lgallery -->
+
 </section>
 
 <!-- FINAL CTA -->
@@ -581,8 +700,8 @@ window.addEventListener('DOMContentLoaded', () => {
 /* Mesh gradient for bleed stage — approximates @paper-design/shaders MeshGradient
    colors: hsl(216,90%,27%) hsl(243,68%,36%) hsl(205,91%,64%) hsl(211,61%,57%)
    distortion:0.8  swirl:0.1  speed:1 */
-(function(){
-  const canvas = document.getElementById('bleed-mg');
+function initMG(id){
+  const canvas = document.getElementById(id);
   if(!canvas) return;
   const gl = canvas.getContext('webgl');
   if(!gl) return;
@@ -679,6 +798,98 @@ window.addEventListener('DOMContentLoaded', () => {
     gl.uniform1f(uT,(performance.now()-t0)/1e3);
     gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
   })();
+}
+initMG('bleed-mg');
+initMG('hero-mg');
+</script>
+<script>
+(function stickyHeroPhone() {
+  const phone  = document.querySelector('.hero .phone');
+  const hStage = document.querySelector('.hero-stage');
+  const twoup  = document.querySelector('.twoup');
+  if (!phone || !hStage || !twoup) return;
+
+  /* Capture original margin before any JS changes */
+  const origMarginTop = getComputedStyle(phone).marginTop;
+
+  /* Ghost keeps layout space when phone leaves normal flow */
+  const ghost = document.createElement('div');
+  ghost.setAttribute('aria-hidden', 'true');
+  ghost.style.visibility = 'hidden';
+  ghost.style.display    = 'none';
+  hStage.insertBefore(ghost, phone);
+
+  let mode = 'normal'; /* normal | fixed | pinned */
+
+  function syncGhost() {
+    ghost.style.display     = 'block';
+    ghost.style.width       = phone.offsetWidth  + 'px';
+    ghost.style.height      = phone.offsetHeight + 'px';
+    ghost.style.marginTop   = origMarginTop;
+    ghost.style.marginLeft  = 'auto';
+    ghost.style.marginRight = 'auto';
+  }
+
+  function toNormal() {
+    if (mode === 'normal') return;
+    mode = 'normal';
+    phone.style.cssText = '';   /* restore all CSS class rules */
+    ghost.style.display = 'none';
+  }
+
+  function toFixed(top) {
+    if (mode !== 'fixed') {
+      mode = 'fixed';
+      syncGhost();
+      phone.style.position  = 'fixed';
+      phone.style.left      = '50%';
+      phone.style.transform = 'translateX(-50%)';
+      phone.style.margin    = '0';
+      phone.style.zIndex    = '40';
+    }
+    phone.style.top = Math.round(top) + 'px';
+  }
+
+  function toPinned() {
+    if (mode === 'pinned') return;
+    mode = 'pinned';
+    syncGhost();
+    /* Place phone absolutely in hero-stage so its bottom sits at the twoup border */
+    const twoupTopDoc = twoup.getBoundingClientRect().top  + window.scrollY;
+    const stageTopDoc = hStage.getBoundingClientRect().top + window.scrollY;
+    const finalTop    = twoupTopDoc - stageTopDoc - phone.offsetHeight;
+    phone.style.position  = 'absolute';
+    phone.style.top       = Math.round(finalTop) + 'px';
+    phone.style.left      = '50%';
+    phone.style.transform = 'translateX(-50%)';
+    phone.style.margin    = '0';
+    phone.style.zIndex    = '40';
+  }
+
+  function update() {
+    const pH      = phone.offsetHeight;
+    const center  = (window.innerHeight - pH) / 2;   /* top when centred */
+
+    /* Natural viewport-top of phone: use ghost when phone is out of flow */
+    const naturalTop  = (mode === 'normal')
+      ? phone.getBoundingClientRect().top
+      : ghost.getBoundingClientRect().top;
+
+    const twoupTop    = twoup.getBoundingClientRect().top;
+    const fixedBottom = center + pH;   /* phone bottom when centred */
+
+    if (naturalTop > center) {
+      toNormal();
+    } else if (fixedBottom <= twoupTop) {
+      toFixed(center);
+    } else {
+      toPinned();
+    }
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', () => { mode = ''; update(); });
+  requestAnimationFrame(update);
 })();
 </script>
 </body>
