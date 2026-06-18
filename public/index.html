@@ -161,19 +161,157 @@
   .orbit{margin:0 auto}
   .feecard{margin:0 auto;text-align:left}
 
-  /* fee breakdown (replaces orbit in left two-up) */
-  .feebreakdown{width:100%;max-width:340px;text-align:left}
-  .fb-kicker{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--cream-faint);margin-bottom:18px}
-  .fb-row{display:flex;align-items:center;gap:10px;margin-bottom:13px}
-  .fb-lbl{font-size:12px;color:var(--cream-soft);width:120px;flex-shrink:0}
-  .fb-bar{flex:1;height:5px;border-radius:4px;background:rgba(224,233,246,0.08);overflow:hidden}
-  .fb-bar i{display:block;height:100%;border-radius:4px;
-    background:linear-gradient(90deg,#3F77D6,#7FA6E6)}
-  .fb-val{font-size:12.5px;font-weight:700;color:var(--cream);width:48px;
-    text-align:right;flex-shrink:0}
-  .fb-total{margin-top:6px;padding-top:13px;border-top:1px solid var(--line);
-    font-size:12px;color:var(--cream-soft)}
+/* statement analyser */
+.statement-analyser{
+  width:100%;
+  max-width:340px;
+  margin:0 auto;
+  text-align:left;
+}
+
+.statement-doc{
+  position:relative;
+  overflow:hidden;
+  padding:20px;
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(127,166,230,.14), transparent 42%),
+    rgba(224,233,246,.045);
+  border:1px solid rgba(224,233,246,.12);
+  box-shadow:0 34px 80px -52px rgba(0,0,0,.85);
+}
+
+.doc-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  font-size:12px;
+  color:rgba(224,233,246,.82);
+  margin-bottom:22px;
+}
+
+.doc-status{
+  font-size:10px;
+  font-weight:700;
+  color:#0E1A2E;
+  padding:4px 9px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#5E8FE0,#A6CBF2);
+}
+
+.doc-lines{
+  display:flex;
+  flex-direction:column;
+  gap:11px;
+  padding:4px 0 24px;
+}
+
+.doc-lines i{
+  display:block;
+  height:7px;
+  border-radius:999px;
+  background:rgba(224,233,246,.10);
+}
+
+.scan-line{
+  position:absolute;
+  left:18px;
+  right:18px;
+  top:64px;
+  height:2px;
+  border-radius:999px;
+  background:linear-gradient(90deg,transparent,#A9CCF2,transparent);
+  box-shadow:0 0 22px rgba(127,166,230,.75);
+  animation:scanDown 3.2s ease-in-out infinite;
+}
+
+.analysis-steps{
+  display:grid;
+  gap:10px;
+  padding-top:18px;
+  border-top:1px solid rgba(224,233,246,.10);
+  font-size:12px;
+  color:rgba(224,233,246,.62);
+}
+
+.analysis-steps div::before{
+  content:"✓";
+  color:#9FD9B4;
+  margin-right:8px;
+}
+
+.analysis-steps .active{
+  color:rgba(224,233,246,.86);
+}
+
+.analysis-steps .active::before{
+  content:"○";
+  color:#A9CCF2;
+}
+
+.analysis-progress{
+  margin-top:18px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.progress-track{
+  flex:1;
+  height:6px;
+  overflow:hidden;
+  border-radius:999px;
+  background:rgba(224,233,246,.09);
+}
+
+.progress-track i{
+  display:block;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#3F77D6,#A9CCF2);
+  animation:progressFill 3.2s linear infinite;
+}
+
+.progress-count{
+  width:40px;
+  text-align:right;
+  font-size:12px;
+  font-weight:700;
+  color:rgba(224,233,246,.82);
+}
+
+.progress-count::before{
+  content:"0%";
+  animation:progressCount 3.2s linear infinite;
+}
+
+@keyframes scanDown{
+  0%{transform:translateY(0);opacity:0;}
+  8%{opacity:1;}
+  85%{opacity:1;}
+  100%{transform:translateY(132px);opacity:0;}
+}
+
+@keyframes progressFill{
+  from{width:0%;}
+  to{width:100%;}
+}
+
+@keyframes progressCount{
+  0%{content:"0%";}
+  10%{content:"12%";}
+  20%{content:"24%";}
+  30%{content:"39%";}
+  40%{content:"51%";}
+  50%{content:"63%";}
+  60%{content:"74%";}
+  70%{content:"83%";}
+  80%{content:"91%";}
+  90%{content:"98%";}
+  100%{content:"100%";}
+}
   .orbit{position:relative;width:280px;height:280px}
   .orbit .ring{position:absolute;border:1px solid var(--line);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
   .orbit .r1{width:130px;height:130px}.orbit .r2{width:230px;height:230px}
@@ -374,15 +512,38 @@
       <h2 class="serif">Read any statement</h2>
       <p>PaySwitch pulls every fee, rate and hidden line item from any provider's statement — automatically, no spreadsheets.</p>
       <div class="vis">
-        <div class="feebreakdown">
-          <div class="fb-kicker">Monthly fee breakdown</div>
-          <div class="fb-row"><span class="fb-lbl">Interchange</span><div class="fb-bar"><i style="width:68%"></i></div><span class="fb-val">$8,960</span></div>
-          <div class="fb-row"><span class="fb-lbl">Scheme fees</span><div class="fb-bar"><i style="width:37%"></i></div><span class="fb-val">$4,890</span></div>
-          <div class="fb-row"><span class="fb-lbl">Acquirer margin</span><div class="fb-bar"><i style="width:22%"></i></div><span class="fb-val">$2,980</span></div>
-          <div class="fb-total">$16,830 / month · 1.68% blended</div>
-        </div>
-      </div>
+<div class="statement-analyser">
+  <div class="statement-doc">
+    <div class="doc-header">
+      <span>Merchant Statement.pdf</span>
+      <span class="doc-status">Analysing</span>
     </div>
+
+    <div class="doc-lines">
+      <i style="width:86%"></i>
+      <i style="width:72%"></i>
+      <i style="width:92%"></i>
+      <i style="width:58%"></i>
+      <i style="width:80%"></i>
+    </div>
+
+    <div class="scan-line"></div>
+
+    <div class="analysis-steps">
+      <div>Merchant detected</div>
+      <div>Provider identified</div>
+      <div>Fees extracted</div>
+      <div class="active">Benchmarking rates</div>
+    </div>
+
+    <div class="analysis-progress">
+      <div class="progress-track">
+        <i></i>
+      </div>
+      <span class="progress-count"></span>
+    </div>
+  </div>
+</div>
     <div class="col">
       <h2 class="serif">Catch every overcharge</h2>
       <p>It benchmarks your rates against the market and flags every basis point you shouldn't be paying.</p>
