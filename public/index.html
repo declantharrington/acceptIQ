@@ -332,8 +332,12 @@
 
 .orbit-ring{
   position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
   border:1px solid rgba(224,233,246,.12);
   border-radius:50%;
+  pointer-events:none;
 }
 
 .ring-one{
@@ -687,19 +691,23 @@
     <div class="vis">
 <div class="provider-orbit">
 
+  <div class="orbit-ring ring-one"></div>
+  <div class="orbit-ring ring-two"></div>
+
   <div class="orbit-spinner">
-
-    <div class="orbit-ring ring-one"></div>
-    <div class="orbit-ring ring-two"></div>
-
     <div class="provider-logo p1">Stripe</div>
     <div class="provider-logo p2">Adyen</div>
     <div class="provider-logo p3">FZ</div>
     <div class="provider-logo p4">CBA</div>
     <div class="provider-logo p5">NAB</div>
     <div class="provider-logo p6">Tyro</div>
-
   </div>
+
+  <div class="provider-core">
+    <strong>PaySwitch<br>Logo</strong>
+  </div>
+
+</div>
 
   <div class="provider-core">
     <strong>PaySwitch Logo</strong>
