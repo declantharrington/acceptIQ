@@ -54,16 +54,37 @@
   .serif{ font-family:var(--serif); font-weight:400; letter-spacing:-0.02em; }
 
   /* buttons */
-  .btn{ display:inline-flex;align-items:center;gap:12px;cursor:pointer;font-family:var(--sans);
-    font-size:15px;font-weight:600;letter-spacing:-0.01em;padding:14px 22px;border-radius:9px;
-    border:1px solid transparent;transition:transform .2s ease,background .2s ease,opacity .2s ease; }
-  .btn-cream{ background:var(--btn);color:var(--ink); }
-  .btn-cream:hover{ transform:translateY(-2px);opacity:.92 }
-  .btn-ghost{ background:transparent;color:var(--cream);border-color:var(--line) }
-  .btn-ghost:hover{ background:rgba(224,233,246,0.06);border-color:rgba(224,233,246,0.24) }
-  .btn .arr{width:17px;height:17px}
-  .btn-lg{padding:16px 26px;font-size:16px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:32px;
+  min-width:210px;
+  cursor:pointer;
+  font-family:var(--sans);
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  padding:18px 24px;
+  border-radius:0;
+  border:1px solid transparent;
+  transition:transform .2s ease, opacity .2s ease;
+}
 
+.btn-cream{
+  background:#F5E3D9;
+  color:#111318;
+}
+
+.btn-cream:hover{
+  transform:translateY(-2px);
+  opacity:.92;
+}
+
+.btn .arr{
+  width:22px;
+  height:22px;
+}
   /* nav */
   header{position:sticky;top:0;z-index:60;background:rgba(15,18,24,0.72);
     backdrop-filter:saturate(160%) blur(12px);border-bottom:1px solid var(--line)}
@@ -866,7 +887,7 @@ section{position:relative}
     <h1 class="serif reveal">Never overpay on payments again</h1>
     <p class="sub reveal" style="animation-delay:.08s">PaySwitch reads your merchant statements and shows exactly where you're losing money on card fees.</p>
     <div class="cta reveal" style="animation-delay:.16s">
-      <a href="#" class="btn btn-cream btn-lg">Get my free review
+      <a href="#" class="btn btn-cream btn-lg">Free review
         <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
   </div>
