@@ -79,7 +79,15 @@
             mask-image:linear-gradient(180deg,transparent,#000 20%,#000 88%,transparent)}
   .glow::after{content:'';position:absolute;inset:0;background-image:var(--grain);
     background-size:160px 160px;mix-blend-mode:overlay;opacity:.5}
-  .hero .phone{position:relative;z-index:2;margin:0 auto}
+  .hero .phone{position:relative;z-index:2;margin:0 auto;
+    background:rgba(180,210,255,0.06);
+    padding:0;
+    border:1px solid rgba(180,210,255,0.18);
+    box-shadow:0 30px 80px -20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+    opacity:0.82;
+    backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+  .hero .phone::after{display:none}
+  .hero .screen{border-radius:47px;background:rgba(12,16,28,0.55)}
 
   /* phone */
   .phone{width:316px;border-radius:48px;background:#080A0E;padding:11px;
@@ -167,14 +175,10 @@
   .bleed h2{font-size:clamp(32px,3.6vw,50px);color:var(--cream);line-height:1.05}
   .bleed p{font-size:17px;color:var(--cream-soft);max-width:420px;margin-top:20px;line-height:1.6;text-align:center}
   .bleed .stage{position:relative;min-height:620px;display:grid;place-items:center;overflow:hidden;
-    background:
-      radial-gradient(80% 50% at 50% 16%, rgba(182,202,222,0.55), transparent 60%),
-      radial-gradient(70% 46% at 30% 40%, rgba(120,162,222,0.5), transparent 60%),
-      radial-gradient(90% 60% at 60% 78%, rgba(64,126,214,0.7), transparent 62%),
-      radial-gradient(70% 50% at 78% 92%, rgba(86,108,182,0.6), transparent 60%),
-      linear-gradient(165deg,#3a4458 0%,#3f4f7c 42%,#45608e 64%,#41486e 100%)}
+    background:#0f1624}
   .bleed .stage::after{content:'';position:absolute;inset:0;background-image:var(--grain);
-    background-size:170px 170px;mix-blend-mode:overlay;opacity:.5;pointer-events:none}
+    background-size:170px 170px;mix-blend-mode:overlay;opacity:.4;pointer-events:none;z-index:1}
+  .mg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
   .bleed .glass{position:relative;z-index:2}
   /* glassy floating UI */
   .glass{width:300px;border-radius:30px;padding:18px;backdrop-filter:blur(20px);
@@ -348,6 +352,7 @@
     <p>Tell PaySwitch about your business once, and every review adapts to you — the right pricing model, the right providers, and exactly what to say to get a better rate.</p>
   </div>
   <div class="stage">
+    <canvas class="mg" id="bleed-mg"></canvas>
     <div class="glass">
       <div class="gh"><div class="t">Payments review</div><div class="s">Northpoint Retail · 00:04</div></div>
       <div style="padding:14px 0;border-bottom:1px solid rgba(224,233,246,0.08)">
@@ -549,6 +554,110 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   ro.observe(section);
 });
+</script>
+<script>
+/* Mesh gradient for bleed stage — approximates @paper-design/shaders MeshGradient
+   colors: hsl(216,90%,27%) hsl(243,68%,36%) hsl(205,91%,64%) hsl(211,61%,57%)
+   distortion:0.8  swirl:0.1  speed:1 */
+(function(){
+  const canvas = document.getElementById('bleed-mg');
+  if(!canvas) return;
+  const gl = canvas.getContext('webgl');
+  if(!gl) return;
+
+  const VS = `attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}`;
+
+  const FS = `
+  precision highp float;
+  uniform float u_t;
+  uniform vec2  u_r;
+
+  vec3 hsl2rgb(float h,float s,float l){
+    vec3 rgb=clamp(abs(mod(h*6.+vec3(0.,4.,2.),6.)-3.)-1.,0.,1.);
+    return l+s*(rgb-.5)*(1.-abs(2.*l-1.));
+  }
+
+  vec2 gh(vec2 p){
+    p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));
+    return fract(sin(p)*43758.5453)*2.-1.;
+  }
+  float gn(vec2 p){
+    vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);
+    return mix(
+      mix(dot(gh(i),f),          dot(gh(i+vec2(1,0)),f-vec2(1,0)),u.x),
+      mix(dot(gh(i+vec2(0,1)),f-vec2(0,1)),dot(gh(i+vec2(1)),f-vec2(1)),u.x),u.y);
+  }
+
+  void main(){
+    vec2 uv=gl_FragCoord.xy/u_r; uv.y=1.-uv.y;
+    float t=u_t*1.5;
+
+    /* distortion = 0.8 */
+    vec2 d=vec2(gn(uv*2.3+vec2(t*.2,0.))*.15,
+                gn(uv*2.3+vec2(0.,t*.2)+5.7)*.15);
+    vec2 q=uv+d;
+
+    /* swirl = 0.1 */
+    vec2 cen=q-.5;
+    float ang=length(cen)*3.*.1+t*.15;
+    float cs=cos(ang),sn=sin(ang);
+    vec2 sw=vec2(cs*cen.x-sn*cen.y, sn*cen.x+cs*cen.y)+.5;
+
+    /* 4 colours — pastel shift toward site's #7FA6E6 / #A9CCF2 range */
+    vec3 c0=hsl2rgb(220./360.,.20,.10);  /* dark navy base (contrast anchor) */
+    vec3 c1=hsl2rgb(220./360.,.55,.40);  /* medium blue                       */
+    vec3 c2=hsl2rgb(215./360.,.65,.65);  /* soft blue (≈ --rose #7FA6E6)      */
+    vec3 c3=hsl2rgb(213./360.,.72,.80);  /* light pastel (≈ --peach #A9CCF2)  */
+
+    float n1=gn(sw*2.5+t*.10      )*.5+.5;
+    float n2=gn(sw*1.8-t*.12+3.1  )*.5+.5;
+    float n3=gn(sw*3.2+t*.08+7.4  )*.5+.5;
+    /* push noise toward extremes for sharper light/dark contrast */
+    n1=smoothstep(.15,.85,n1);
+    n2=smoothstep(.15,.85,n2);
+    n3=smoothstep(.15,.85,n3);
+
+    gl_FragColor=vec4(mix(mix(c0,c1,n1),mix(c2,c3,n2),n3),1.);
+  }`;
+
+  function mk(type,src){
+    const s=gl.createShader(type);
+    gl.shaderSource(s,src); gl.compileShader(s); return s;
+  }
+  const prog=gl.createProgram();
+  gl.attachShader(prog,mk(gl.VERTEX_SHADER,VS));
+  gl.attachShader(prog,mk(gl.FRAGMENT_SHADER,FS));
+  gl.linkProgram(prog); gl.useProgram(prog);
+
+  const buf=gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const a=gl.getAttribLocation(prog,'p');
+  gl.enableVertexAttribArray(a);
+  gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+
+  const uT=gl.getUniformLocation(prog,'u_t');
+  const uR=gl.getUniformLocation(prog,'u_r');
+
+  function resize(){
+    const w=canvas.clientWidth|0, h=canvas.clientHeight|0;
+    if(canvas.width!==w||canvas.height!==h){
+      canvas.width=w; canvas.height=h;
+      gl.viewport(0,0,w,h);
+    }
+    gl.uniform2f(uR,w,h);
+  }
+  resize();
+  new ResizeObserver(resize).observe(canvas);
+
+  const t0=performance.now();
+  (function frame(){
+    requestAnimationFrame(frame);
+    resize();
+    gl.uniform1f(uT,(performance.now()-t0)/1e3);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  })();
+})();
 </script>
 </body>
 </html>
