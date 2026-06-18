@@ -829,13 +829,16 @@ initMG('hero-mg');
     ghost.style.marginRight = 'auto';
   }
 
-  function getStageCenterX() {
+  function fixedLeft() {
     const stageRect = hStage.getBoundingClientRect();
-    return stageRect.left + stageRect.width / 2;
+    return stageRect.left + (stageRect.width - phone.offsetWidth) / 2;
+  }
+
+  function absoluteLeft() {
+    return (hStage.offsetWidth - phone.offsetWidth) / 2;
   }
 
   function toNormal() {
-    if (mode === 'normal') return;
     mode = 'normal';
 
     phone.style.position = '';
@@ -854,11 +857,8 @@ initMG('hero-mg');
 
     phone.style.position = 'fixed';
     phone.style.top = Math.round(top) + 'px';
-
-    /* Use hero-stage centre, not viewport centre */
-    phone.style.left = Math.round(getStageCenterX()) + 'px';
-
-    phone.style.transform = 'translateX(-50%)';
+    phone.style.left = Math.round(fixedLeft()) + 'px';
+    phone.style.transform = 'none';
     phone.style.margin = '0';
     phone.style.zIndex = '40';
   }
@@ -874,11 +874,8 @@ initMG('hero-mg');
 
     phone.style.position = 'absolute';
     phone.style.top = Math.round(finalTop) + 'px';
-
-    /* Absolute position is relative to hero-stage */
-    phone.style.left = '50%';
-
-    phone.style.transform = 'translateX(-50%)';
+    phone.style.left = Math.round(absoluteLeft()) + 'px';
+    phone.style.transform = 'none';
     phone.style.margin = '0';
     phone.style.zIndex = '40';
   }
@@ -904,6 +901,7 @@ initMG('hero-mg');
   }
 
   window.addEventListener('scroll', update, { passive: true });
+
   window.addEventListener('resize', () => {
     toNormal();
     requestAnimationFrame(update);
