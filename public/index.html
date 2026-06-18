@@ -1584,29 +1584,5 @@ initMG('hero-mg');
   requestAnimationFrame(update);
 })();
 </script>
-<script>
-(function advisorStack(){
-  const stack = document.querySelector('.advisor-stack');
-  if(!stack) return;
-
-  const cards = stack.querySelectorAll('.advisor-card');
-
-  function setActive(index){
-    stack.setAttribute('data-active', index);
-  }
-
-  cards.forEach(card => {
-    card.addEventListener('mouseenter', () => {
-      setActive(card.dataset.card);
-    });
-
-    card.addEventListener('click', () => {
-      setActive(card.dataset.card);
-    });
-  });
-
-  setActive(0);
-})();
-</script>
 </body>
 </html>
