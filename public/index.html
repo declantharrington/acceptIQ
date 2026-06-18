@@ -1631,38 +1631,26 @@ initMG('hero-mg');
   requestAnimationFrame(update);
 })();
 </script>
-  <script>
+<script>
 (function advisorStack(){
   const stack = document.querySelector('.advisor-stack');
   if(!stack) return;
 
   const cards = stack.querySelectorAll('.advisor-card');
-  let active = 0;
 
   function setActive(index){
-    active = index;
-    stack.setAttribute('data-active', active);
+    stack.setAttribute('data-active', index);
   }
 
   cards.forEach(card => {
     card.addEventListener('mouseenter', () => {
-      setActive(Number(card.dataset.card));
+      setActive(card.dataset.card);
     });
 
     card.addEventListener('click', () => {
-      setActive(Number(card.dataset.card));
+      setActive(card.dataset.card);
     });
   });
-
-  stack.addEventListener('wheel', (e) => {
-    e.preventDefault();
-
-    if(e.deltaY > 0){
-      setActive((active + 1) % cards.length);
-    } else {
-      setActive((active + cards.length - 1) % cards.length);
-    }
-  }, { passive:false });
 
   setActive(0);
 })();
