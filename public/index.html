@@ -206,31 +206,27 @@
   .qcard .qa{margin-top:18px;font-size:13.5px;color:var(--cream)}
   .qcard .qa span{color:var(--cream-faint)}
 
-  /* final + sunset footer */
+  /* dotted surface footer */
+  .footer-section{position:relative;background:var(--bg);border-top:1px solid var(--frame);overflow:hidden}
+  #dots-stage{position:absolute;inset:0;z-index:0;pointer-events:none}
+  #dots-stage canvas{display:block}
+  footer{position:relative;z-index:2;color:var(--cream)}
+  .fcols{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;gap:30px;padding:48px 0 40px}
+  .fbrand .brand{color:var(--cream)} .fbrand .mark{color:var(--cream)}
+  .fbrand p{color:var(--cream-soft);font-size:14px;margin-top:14px;line-height:1.6;max-width:260px}
+  .fcol h4{font-size:13px;font-weight:700;color:var(--cream-soft);margin-bottom:18px;letter-spacing:.02em}
+  .fcol a{display:block;color:var(--cream-soft);font-size:15px;padding:6px 0;font-weight:400}
+  .fcol a:hover{color:var(--cream)}
+  .fcopy{color:var(--cream-faint);font-size:14px;padding:24px 0 10px;border-top:1px solid var(--line)}
+  .bigmark{font-family:var(--sans);font-weight:800;color:var(--cream);letter-spacing:-0.04em;
+    font-size:clamp(120px,30vw,460px);line-height:0.8;margin:20px 0 -8vw -1vw;white-space:nowrap;
+    opacity:0.07}
   .final{text-align:center;padding:120px 0 150px;position:relative;z-index:2}
   .final h2{font-size:clamp(40px,6vw,80px);color:var(--cream);line-height:1.0}
   .final p{font-size:18px;color:var(--cream-soft);margin:24px auto 0;max-width:480px}
   .final .cta{margin-top:36px;display:flex;justify-content:center}
 
-  .sunset{position:relative;background:var(--cream);padding-top:330px;overflow:hidden}
-  .sunset::before{content:'';position:absolute;top:0;left:0;right:0;height:500px;pointer-events:none;
-    background:
-      radial-gradient(54% 60% at 30% 60%, rgba(118,172,255,0.60), transparent 62%),
-      radial-gradient(60% 62% at 76% 52%, rgba(96,118,178,0.52), transparent 62%),
-      radial-gradient(40% 50% at 52% 70%, rgba(90,150,232,0.5), transparent 60%),
-      linear-gradient(180deg, var(--bg) 0%, #1c2030 16%, #2e3852 36%, #46608c 56%, #5e8ccf 72%, #94bdf1 86%, var(--cream) 98%)}
-  .sunset::after{content:'';position:absolute;top:0;left:0;right:0;height:500px;pointer-events:none;
-    background-image:var(--grain);background-size:180px 180px;mix-blend-mode:overlay;opacity:.45}
-  .dunes{position:absolute;top:296px;left:0;width:100%;height:150px;z-index:1;display:block;pointer-events:none}
-  footer{position:relative;z-index:2;color:var(--ink)}
-  .fcols{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;gap:30px;padding-bottom:40px}
-  .fbrand .brand{color:var(--ink)} .fbrand .mark{color:var(--ink)}
-  .fcol h4{font-size:13px;font-weight:700;color:rgba(15,18,24,0.5);margin-bottom:18px}
-  .fcol a{display:block;color:var(--ink);font-size:15px;padding:6px 0;font-weight:500}
-  .fcol a:hover{opacity:.6}
-  .fcopy{color:rgba(15,18,24,0.5);font-size:14px;padding:30px 0 10px}
-  .bigmark{font-family:var(--sans);font-weight:800;color:var(--ink);letter-spacing:-0.04em;
-    font-size:clamp(120px,30vw,460px);line-height:0.8;margin:30px 0 -8vw -1vw;white-space:nowrap}
+  
 
   .reveal{opacity:0;transform:translateY(18px);animation:rise .8s cubic-bezier(.2,.8,.2,1) forwards}
   @keyframes rise{to{opacity:1;transform:none}}
@@ -449,10 +445,8 @@
 </section>
 
 <!-- SUNSET FOOTER -->
-<div class="sunset">
-  <svg class="dunes" viewBox="0 0 1440 150" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0,86 C220,34 430,118 680,92 C930,66 1130,128 1440,70 L1440,150 L0,150 Z" fill="#E6EBF6"/>
-  </svg>
+<div class="footer-section">
+  <div id="dots-stage"></div>
   <footer class="wrap">
     <div class="fcols">
       <div class="fbrand">
@@ -476,10 +470,85 @@
       </div>
     </div>
     <div class="fcopy">© 2026 PaySwitch. All rights reserved.</div>
-    <div class="bigmark">PaySwitch</div>
   </footer>
 </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById('dots-stage');
+  if (!container || typeof THREE === 'undefined') return;
+
+  const SEPARATION = 150, AMOUNTX = 40, AMOUNTY = 60;
+  const section = container.parentElement;
+  const W = section.offsetWidth;
+  const H = section.offsetHeight;
+
+  const scene = new THREE.Scene();
+
+  const camera = new THREE.PerspectiveCamera(60, W / H, 1, 10000);
+  camera.position.set(0, 250, 900);
+  camera.lookAt(0, 0, 0);
+
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+
+  /* build the dot grid */
+  const geometry = new THREE.BufferGeometry();
+  const positions = [], colors = [];
+
+  for (let ix = 0; ix < AMOUNTX; ix++) {
+    for (let iy = 0; iy < AMOUNTY; iy++) {
+      positions.push(
+        ix * SEPARATION - (AMOUNTX * SEPARATION) / 2,
+        0,
+        iy * SEPARATION - (AMOUNTY * SEPARATION) / 2
+      );
+      colors.push(0.76, 0.86, 0.98);
+    }
+  }
+
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute('color',    new THREE.Float32BufferAttribute(colors,    3));
+
+  const material = new THREE.PointsMaterial({
+    size: 8, vertexColors: true, transparent: true, opacity: 0.55, sizeAttenuation: true,
+  });
+
+  const points = new THREE.Points(geometry, material);
+  scene.add(points);
+
+  let count = 0;
+  const pos = geometry.attributes.position;
+
+  const animate = () => {
+    requestAnimationFrame(animate);
+    let i = 0;
+    for (let ix = 0; ix < AMOUNTX; ix++) {
+      for (let iy = 0; iy < AMOUNTY; iy++) {
+        pos.setY(i, Math.sin((ix + count) * 0.3) * 50 + Math.sin((iy + count) * 0.5) * 50);
+        i++;
+      }
+    }
+    pos.needsUpdate = true;
+    renderer.render(scene, camera);
+    count += 0.1;
+  };
+
+  animate();
+
+  const ro = new ResizeObserver(() => {
+    const w = section.offsetWidth, h = section.offsetHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+  ro.observe(section);
+});
+</script>
 </body>
 </html>
