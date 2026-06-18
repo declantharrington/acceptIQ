@@ -312,18 +312,6 @@
   90%{content:"98%";}
   100%{content:"100%";}
 }
-  .orbit{position:relative;width:280px;height:280px}
-  .orbit .ring{position:absolute;border:1px solid var(--line);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-  .orbit .r1{width:130px;height:130px}.orbit .r2{width:230px;height:230px}
-  .orbit .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:56px;height:56px;
-    border-radius:18px;background:var(--cream);color:var(--ink);display:grid;place-items:center}
-  .orbit .node{position:absolute;width:42px;height:42px;border-radius:13px;background:var(--bg2);
-    border:1px solid var(--line);display:grid;place-items:center;color:var(--cream-soft);font-size:15px}
-  .orbit .n1{top:-4px;left:50%;transform:translateX(-50%)}
-  .orbit .n2{top:50%;right:-6px;transform:translateY(-50%)}
-  .orbit .n3{bottom:-4px;left:50%;transform:translateX(-50%)}
-  .orbit .n4{top:50%;left:-6px;transform:translateY(-50%)}
-  .orbit .n5{top:16%;right:14%}
 
   /* flagged-fee mock */
   .feecard{width:330px;text-align:left}
@@ -358,6 +346,12 @@
   height:295px;
   opacity:.7;
 }
+
+.orbit-spinner{
+    position:absolute;
+    inset:0;
+    animation:orbitRotate 28s linear infinite;
+}  
 
 .provider-core{
   position:relative;
@@ -414,7 +408,7 @@
   border:1px solid rgba(224,233,246,.12);
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
-  animation:floatLogo 4.8s ease-in-out infinite;
+  animation:keepUpright 28s linear infinite;
 }
 
 .p1{top:18px;left:50%;transform:translateX(-50%);animation-delay:0s}
@@ -452,9 +446,22 @@
   color:rgba(224,233,246,.82);
 }
 
-@keyframes floatLogo{
-  0%,100%{margin-top:0;opacity:.65}
-  50%{margin-top:-8px;opacity:1}
+@keyframes orbitRotate{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+@keyframes keepUpright{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+        transform:rotate(-360deg);
+    }
 }
 
   /* full-bleed warm section */
@@ -679,21 +686,25 @@
 
     <div class="vis">
 <div class="provider-orbit">
-  <div class="orbit-ring ring-one"></div>
-  <div class="orbit-ring ring-two"></div>
+
+  <div class="orbit-spinner">
+
+    <div class="orbit-ring ring-one"></div>
+    <div class="orbit-ring ring-two"></div>
+
+    <div class="provider-logo p1">Stripe</div>
+    <div class="provider-logo p2">Adyen</div>
+    <div class="provider-logo p3">FZ</div>
+    <div class="provider-logo p4">CBA</div>
+    <div class="provider-logo p5">NAB</div>
+    <div class="provider-logo p6">Tyro</div>
+
+  </div>
 
   <div class="provider-core">
     <strong>PaySwitch Logo</strong>
   </div>
 
-  <div class="provider-logo p1">Stripe</div>
-  <div class="provider-logo p2">Adyen</div>
-  <div class="provider-logo p3">FZ</div>
-  <div class="provider-logo p4">CBA</div>
-  <div class="provider-logo p5">NAB</div>
-  <div class="provider-logo p6">Tyro</div>
-
-  </div>
 </div>
 </section>
 <!-- FULL-BLEED WARM -->
