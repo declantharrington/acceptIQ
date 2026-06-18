@@ -146,20 +146,92 @@
   .flag .fi{width:27px;height:27px;border-radius:9px;background:rgba(150,195,244,0.12);
     border:1px solid rgba(150,195,244,0.25);display:grid;place-items:center;flex-shrink:0;color:var(--peach)}
 
-  /* section heads */
-  section{position:relative}
-  .twoup{padding:150px 0 120px;position:relative;display:grid;grid-template-columns:1fr 1fr;gap:0}
-  .twoup::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;
-    background:var(--frame);transform:translateX(-0.5px)}
-  .twoup .col{padding:0 64px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center}
-  .twoup .col h2,.twoup .col p,.twoup .col .vis{width:100%;text-align:center}
-  .twoup .col p{margin-left:auto;margin-right:auto}
-  .vis{margin-top:54px;min-height:300px;display:flex;align-items:center;justify-content:center;width:100%}
-  .twoup h2{font-size:clamp(30px,3.4vw,46px);color:var(--cream);line-height:1.05}
-  .twoup p{font-size:16.5px;color:var(--cream-soft);max-width:380px;margin:18px auto 0;line-height:1.55}
-  .vis{margin-top:54px;min-height:300px;display:flex;align-items:center;justify-content:center;width:100%}
-  .orbit{margin:0 auto}
-  .feecard{margin:0 auto;text-align:left}
+/* section heads */
+section{position:relative}
+
+.twoup{
+  padding:150px 0 120px;
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+}
+
+.twoup::before{
+  content:'';
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:1px;
+  background:var(--frame);
+  transform:translateX(-0.5px);
+}
+
+.twoup .col{
+  padding:0 64px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+.twoup .col h2,
+.twoup .col p,
+.twoup .col .vis{
+  width:100%;
+  text-align:center;
+}
+
+.twoup h2{
+  font-size:clamp(30px,3.4vw,46px);
+  color:var(--cream);
+  line-height:1.05;
+}
+
+.twoup p{
+  font-size:16.5px;
+  color:var(--cream-soft);
+  max-width:380px;
+  margin:18px auto 0;
+  line-height:1.55;
+}
+
+.vis{
+  margin-top:54px;
+  min-height:300px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+}
+
+.orbit{
+  margin:0 auto;
+}
+
+.feecard{
+  margin:0 auto;
+  text-align:left;
+}
+
+/* left-aligned text-only square */
+.twoup .col.text-left{
+  align-items:flex-start;
+  text-align:left;
+}
+
+.twoup .col.text-left h2,
+.twoup .col.text-left p{
+  width:420px;
+  max-width:100%;
+  text-align:left;
+}
+
+.twoup .col.text-left p{
+  margin:22px 0 0;
+}
 
 /* statement analyser */
 .statement-analyser{
@@ -712,23 +784,60 @@
 </section>
 <!-- FULL-BLEED WARM -->
 <section class="bleed">
-  <div class="copy">
-    <h2 class="serif">From data<br>to decisions</h2>
-    <p>Instead of thousands of transactions and multiple fee lines, your statement becomes a complete payments strategy. Ready to implement.</p>
+
+  <div class="copy text-left">
+    <h2 class="serif">Turn complexity<br>into clarity</h2>
+
+    <p>
+      PaySwitch analyses every part of your payments program—from pricing and
+      acceptance to routing, settlement and provider fees—then turns thousands
+      of transactions into a clear action plan your team can actually implement.
+    </p>
   </div>
+
   <div class="stage">
+
     <canvas class="mg" id="bleed-mg"></canvas>
+
     <div class="glass">
-      <div class="gh"><div class="t">Payments assessment</div><div class="s">Riverside Hospitality · June 2026</div></div>
-      <div style="padding:14px 0;border-bottom:1px solid rgba(224,233,246,0.08)">
-        <div class="akick" style="color:rgba(224,233,246,0.6)">Estimated annual saving</div>
-        <div class="big" style="margin-top:4px"><span class="c">$</span>112,400</div>
+
+      <div class="gh">
+        <div class="t">Payments Assessment</div>
+        <div class="s">Riverside Hospitality · June 2026</div>
       </div>
-      <div class="grow"><span class="gi">↘</span> Switch to IC+ pricing model <span class="amt">+$48K</span></div>
-      <div class="grow"><span class="gi">⚡</span> Activate least-cost routing <span class="amt">+$39K</span></div>
-      <div class="grow" style="border-bottom:none"><span class="gi">A</span> Renegotiate Amex acceptance <span class="amt">+$25K</span></div>
+
+      <div style="padding:14px 0;border-bottom:1px solid rgba(224,233,246,0.08)">
+        <div class="akick" style="color:rgba(224,233,246,0.6)">
+          Estimated annual savings
+        </div>
+
+        <div class="big" style="margin-top:4px">
+          <span class="c">$</span>112,400
+        </div>
+      </div>
+
+      <div class="grow">
+        <span class="gi">↘</span>
+        Switch to IC+ pricing
+        <span class="amt">+$48K</span>
+      </div>
+
+      <div class="grow">
+        <span class="gi">⚡</span>
+        Enable Low Cost Routing
+        <span class="amt">+$39K</span>
+      </div>
+
+      <div class="grow" style="border-bottom:none">
+        <span class="gi">A</span>
+        Renegotiate Amex pricing
+        <span class="amt">+$25K</span>
+      </div>
+
     </div>
+
   </div>
+
 </section>
 
 <!-- CONTROL + LAPTOPS + TESTIMONIALS (Mitra layout) -->
