@@ -613,15 +613,115 @@ section{position:relative}
   position:relative;
   z-index:2;
 }
-  /* glassy floating UI */
-  .glass{width:300px;border-radius:30px;padding:18px;backdrop-filter:blur(20px);
-    background:rgba(14,18,26,0.46);border:1px solid rgba(224,233,246,0.18);
-    box-shadow:0 40px 80px -30px rgba(0,0,0,0.6);color:var(--cream)}
-  .glass .gh{display:flex;flex-direction:column;align-items:center;gap:3px;padding-bottom:14px;border-bottom:1px solid rgba(224,233,246,0.14)}
-  .glass .gh .t{font-size:15px;font-weight:600}.glass .gh .s{font-size:12px;color:var(--cream-soft)}
-  .glass .grow{display:flex;align-items:center;gap:11px;font-size:13px;padding:11px 0;border-bottom:1px solid rgba(224,233,246,0.08)}
-  .glass .grow .amt{margin-left:auto;color:#9FD9B4;font-weight:700}
-  .glass .gi{width:30px;height:30px;border-radius:10px;background:rgba(224,233,246,0.1);display:grid;place-items:center;flex-shrink:0}
+/* glassy floating action plan */
+.glass{
+  width:340px;
+  border-radius:30px;
+  padding:22px;
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  background:rgba(14,18,26,0.46);
+  border:1px solid rgba(224,233,246,0.18);
+  box-shadow:0 40px 80px -30px rgba(0,0,0,0.6);
+  color:var(--cream);
+}
+
+.glass .gh{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:4px;
+  padding-bottom:18px;
+  border-bottom:1px solid rgba(224,233,246,0.10);
+}
+
+.glass .gh .t{
+  font-size:16px;
+  font-weight:600;
+  color:var(--cream);
+}
+
+.glass .gh .s{
+  font-size:12px;
+  color:var(--cream-soft);
+}
+
+/* total opportunity */
+
+.plan-total{
+  padding:18px 0 22px;
+  border-bottom:1px solid rgba(224,233,246,0.10);
+}
+
+.plan-total span{
+  display:block;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:rgba(224,233,246,.45);
+  margin-bottom:8px;
+}
+
+.plan-total strong{
+  display:block;
+  font-size:38px;
+  font-weight:500;
+  line-height:1;
+  letter-spacing:-0.04em;
+  color:var(--cream);
+}
+
+.plan-total strong span{
+  display:inline;
+  font-size:20px;
+  color:rgba(224,233,246,.55);
+}
+
+/* action rows */
+
+.plan-row{
+  display:grid;
+  grid-template-columns:34px 1fr auto;
+  gap:14px;
+  padding:18px 0;
+  border-bottom:1px solid rgba(224,233,246,.08);
+}
+
+.plan-row:last-child{
+  border-bottom:none;
+  padding-bottom:4px;
+}
+
+.plan-num{
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  color:rgba(224,233,246,.32);
+  padding-top:2px;
+}
+
+.plan-main strong{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  color:var(--cream);
+  margin-bottom:5px;
+}
+
+.plan-main span{
+  display:block;
+  font-size:12px;
+  line-height:1.5;
+  color:rgba(224,233,246,.52);
+}
+
+.plan-saving{
+  align-self:flex-start;
+  font-size:14px;
+  font-weight:700;
+  color:#9FD9B4;
+  white-space:nowrap;
+}
 
   /* control / gallery */
   .control{padding:120px 0 0;text-align:center}
@@ -861,44 +961,46 @@ section{position:relative}
 
     <canvas class="mg" id="bleed-mg"></canvas>
 
-    <div class="glass">
+<div class="glass action-plan">
 
-      <div class="gh">
-        <div class="t">Payments Assessment</div>
-        <div class="s">Riverside Hospitality · June 2026</div>
-      </div>
-
-      <div style="padding:14px 0;border-bottom:1px solid rgba(224,233,246,0.08)">
-        <div class="akick" style="color:rgba(224,233,246,0.6)">
-          Estimated annual savings
-        </div>
-
-        <div class="big" style="margin-top:4px">
-          <span class="c">$</span>112,400
-        </div>
-      </div>
-
-      <div class="grow">
-        <span class="gi">↘</span>
-        Switch to IC+ pricing
-        <span class="amt">+$48K</span>
-      </div>
-
-      <div class="grow">
-        <span class="gi">⚡</span>
-        Enable Low Cost Routing
-        <span class="amt">+$39K</span>
-      </div>
-
-      <div class="grow" style="border-bottom:none">
-        <span class="gi">A</span>
-        Renegotiate Amex pricing
-        <span class="amt">+$25K</span>
-      </div>
-
-    </div>
-
+  <div class="gh">
+    <div class="t">Action plan</div>
+    <div class="s">Riverside Hospitality · June 2026</div>
   </div>
+
+  <div class="plan-total">
+    <span>Total annual opportunity</span>
+    <strong><span>$</span>112,400</strong>
+  </div>
+
+  <div class="plan-row">
+    <div class="plan-num">01</div>
+    <div class="plan-main">
+      <strong>Enable Low Cost Routing</strong>
+      <span>Route eligible debit transactions through the lowest-cost network.</span>
+    </div>
+    <div class="plan-saving">$39K</div>
+  </div>
+
+  <div class="plan-row">
+    <div class="plan-num">02</div>
+    <div class="plan-main">
+      <strong>Move to IC+ pricing</strong>
+      <span>Shift from blended pricing to a transparent interchange-plus model.</span>
+    </div>
+    <div class="plan-saving">$48K</div>
+  </div>
+
+  <div class="plan-row">
+    <div class="plan-num">03</div>
+    <div class="plan-main">
+      <strong>Renegotiate Amex</strong>
+      <span>Reduce premium card acceptance costs against market benchmarks.</span>
+    </div>
+    <div class="plan-saving">$25K</div>
+  </div>
+
+</div>
 
 </section>
 
