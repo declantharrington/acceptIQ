@@ -332,6 +332,131 @@
   .reply{margin-top:16px;align-self:flex-start;max-width:90%;padding:12px 16px;border-radius:20px 20px 20px 6px;
     background:linear-gradient(135deg,#5E8FE0,#A6CBF2);color:#0E1A2E;font-size:14px;display:inline-block}
 
+  /* provider orbit */
+.provider-orbit{
+  position:relative;
+  width:330px;
+  height:330px;
+  margin:0 auto;
+  display:grid;
+  place-items:center;
+}
+
+.orbit-ring{
+  position:absolute;
+  border:1px solid rgba(224,233,246,.12);
+  border-radius:50%;
+}
+
+.ring-one{
+  width:210px;
+  height:210px;
+}
+
+.ring-two{
+  width:295px;
+  height:295px;
+  opacity:.7;
+}
+
+.provider-core{
+  position:relative;
+  z-index:3;
+  width:145px;
+  height:145px;
+  border-radius:50%;
+  background:rgba(224,233,246,.045);
+  border:1px solid rgba(224,233,246,.14);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  box-shadow:0 30px 70px -45px rgba(0,0,0,.8);
+}
+
+.core-label{
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:rgba(224,233,246,.38);
+  margin-bottom:6px;
+}
+
+.provider-core strong{
+  font-size:21px;
+  font-weight:500;
+  color:rgba(230,235,246,.94);
+  line-height:1;
+}
+
+.provider-core small{
+  max-width:100px;
+  margin-top:8px;
+  font-size:10.5px;
+  line-height:1.35;
+  color:rgba(224,233,246,.48);
+}
+
+.provider-logo{
+  position:absolute;
+  z-index:2;
+  min-width:54px;
+  height:32px;
+  padding:0 10px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  font-size:11px;
+  font-weight:600;
+  color:rgba(224,233,246,.72);
+  background:rgba(224,233,246,.055);
+  border:1px solid rgba(224,233,246,.12);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  animation:floatLogo 4.8s ease-in-out infinite;
+}
+
+.p1{top:18px;left:50%;transform:translateX(-50%);animation-delay:0s}
+.p2{top:82px;right:12px;animation-delay:.4s}
+.p3{bottom:82px;right:20px;animation-delay:.8s}
+.p4{bottom:18px;left:50%;transform:translateX(-50%);animation-delay:1.2s}
+.p5{bottom:82px;left:18px;animation-delay:1.6s}
+.p6{top:82px;left:14px;animation-delay:2s}
+
+.orbit-result{
+  position:absolute;
+  bottom:-4px;
+  left:50%;
+  transform:translateX(-50%);
+  width:230px;
+  padding:12px 16px;
+  border-radius:16px;
+  background:rgba(224,233,246,.045);
+  border:1px solid rgba(224,233,246,.11);
+  text-align:center;
+}
+
+.orbit-result span{
+  display:block;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:rgba(224,233,246,.35);
+  margin-bottom:4px;
+}
+
+.orbit-result strong{
+  font-size:13px;
+  font-weight:600;
+  color:rgba(224,233,246,.82);
+}
+
+@keyframes floatLogo{
+  0%,100%{margin-top:0;opacity:.65}
+  50%{margin-top:-8px;opacity:1}
+}
+
   /* full-bleed warm section */
   .bleed{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;border-top:1px solid var(--frame);border-bottom:1px solid var(--frame)}
   .bleed .copy{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 64px;border-right:1px solid var(--frame)}
@@ -553,17 +678,28 @@
     <p>It benchmarks your rates against the market and flags every basis point you shouldn't be paying.</p>
 
     <div class="vis">
-      <div class="feecard">
-        <div class="tag">Rate flagged · Amex</div>
-        <div class="feebox">
-          <div class="arow"><span class="l">Your Amex rate</span><span class="v" style="color:#F4A860">2.10%</span></div>
-          <div class="arow"><span class="l">Market benchmark</span><span class="v" style="color:#9FD9B4">1.45%</span></div>
-          <div class="bar"><i style="width:72%"></i></div>
-        </div>
-        <div class="reply">0.65% above market on every Amex transaction. I've drafted a renegotiation brief.</div>
-      </div>
-    </div>
+<div class="provider-orbit">
+  <div class="orbit-ring ring-one"></div>
+  <div class="orbit-ring ring-two"></div>
+
+  <div class="provider-core">
+    <span class="core-label">Assessing</span>
+    <strong>Best fit</strong>
+    <small>Pricing · LCR · Settlement</small>
   </div>
+
+  <div class="provider-logo p1">Stripe</div>
+  <div class="provider-logo p2">Adyen</div>
+  <div class="provider-logo p3">FZ</div>
+  <div class="provider-logo p4">CBA</div>
+  <div class="provider-logo p5">NAB</div>
+  <div class="provider-logo p6">Tyro</div>
+
+  <div class="orbit-result">
+    <span>Recommended plan</span>
+    <strong>3 providers shortlisted</strong>
+  </div>
+</div>
 </section>
 <!-- FULL-BLEED WARM -->
 <section class="bleed">
