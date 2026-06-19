@@ -346,8 +346,11 @@ ${adminNotes}` : ''}`;
     }
 
     // ── 8. Merchant identity (from program context) ───────────────
-    const merchantName  = programContext.match(/Name: (.+)/)?.[1]?.trim() || '—';
-    const merchantEmail = programContext.match(/Email: (.+)/)?.[1]?.trim() || '—';
+    // This is a B2B product — the report is prepared FOR THE COMPANY, with the
+    // individual who submitted it recorded as the contact, not the addressee.
+    const companyName  = programContext.match(/Company:\s*(.+)/)?.[1]?.trim() || '—';
+    const contactName  = programContext.match(/Name:\s*(.+)/)?.[1]?.trim() || '—';
+    const merchantEmail = programContext.match(/Email:\s*(.+)/)?.[1]?.trim() || '—';
 
     // ── 9. Build full replacement map ─────────────────────────────
     const replacements = {
@@ -357,7 +360,8 @@ ${adminNotes}` : ''}`;
       '{{provider_rate}}':          report.providerRate || '—',
       '{{total_fees}}':             fmtD(report.totalFees),
       '{{volume}}':                 fmtD(report.volume),
-      '{{merchant_name}}':          merchantName,
+      '{{merchant_name}}':          companyName,
+      '{{contact_name}}':           contactName,
       '{{merchant_email}}':         merchantEmail,
       '{{report_date}}':            today,
       '{{transactions}}':           report.transactions ? Number(report.transactions).toLocaleString('en-AU') : '—',
@@ -387,7 +391,7 @@ ${adminNotes}` : ''}`;
 
     // ── 10. Store completed HTML in Supabase Storage ──────────────
     const timestamp    = Date.now();
-    const safeName     = merchantName.replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 30);
+    const safeName     = companyName.replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 30);
     const safeProvider = (report.provider || 'Unknown').replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 20);
     const htmlPath     = `reports/${safeName}_${safeProvider}_${timestamp}.html`;
 
@@ -917,6 +921,7 @@ body {
     <div class="cover-divider"></div>
     <div class="cover-meta">
       <div><div class="cover-meta-label">Prepared for</div><div class="cover-meta-value">{{merchant_name}}</div></div>
+      <div><div class="cover-meta-label">Contact</div><div class="cover-meta-value">{{contact_name}}</div></div>
       <div><div class="cover-meta-label">Report date</div><div class="cover-meta-value">{{report_date}}</div></div>
       <div><div class="cover-meta-label">Prepared by</div><div class="cover-meta-value">acceptorIQ Advisory</div></div>
       <div><div class="cover-meta-label">Classification</div><div class="cover-meta-value">Confidential</div></div>
@@ -1164,6 +1169,7 @@ body {
     <div class="cta-divider"></div>
     <div class="cta-prepared">
       Prepared for <strong style="color:rgba(224,233,246,0.55)">{{merchant_name}}</strong>
+      &nbsp;&middot;&nbsp; Attn: {{contact_name}}
       &nbsp;&middot;&nbsp; {{merchant_email}} &nbsp;&middot;&nbsp; {{report_date}}
     </div>
     <div class="cta-confidential">Confidential &middot; acceptorIQ Advisory &middot; Not for distribution</div>
