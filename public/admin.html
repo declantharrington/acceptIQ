@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>acceptorIQ — Submissions Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; min-height: 100vh; }
+
+/* ── NAV ── */
+.nav {
+  height: 56px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; background: rgba(224,233,246,0.03);
+  border-bottom: 1px solid rgba(224,233,246,0.08); position: sticky; top: 0; z-index: 100;
+}
+.nav-title { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.nav-acceptor-mark { position: relative; width: 18px; height: 16px; display: inline-block; flex-shrink: 0; }
+.nav-acceptor-mark span { position: absolute; bottom: 0; width: 6px; height: 16px; border-radius: 2px; background: #E6EBF6; }
+.nav-acceptor-mark span:first-child { left: 3px; transform: skewX(-30deg); }
+.nav-acceptor-mark span:last-child  { right: 3px; height: 11px; transform: skewX(30deg); }
+.nav-word { font-weight: 300; letter-spacing: -0.055em; color: rgba(230,235,246,.92); }
+.nav-word span { font-weight: 500; letter-spacing: -0.04em; color: #A9CCF2; }
+.nav-divider { color: rgba(224,233,246,0.3); font-weight: 400; margin: 0 4px; }
+.nav-sub { color: rgba(224,233,246,0.5); font-weight: 500; }
+.nav-badge {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  background: rgba(63,119,214,0.15); color: #A9CCF2; padding: 4px 10px; border-radius: 100px;
+}
+
+/* ── MAIN ── */
+.main { max-width: 1180px; margin: 0 auto; padding: 32px 24px; }
+.page-header { margin-bottom: 28px; }
+.page-title { font-size: 26px; font-weight: 300; letter-spacing: -0.045em; margin-bottom: 6px; color: rgba(230,235,246,.92); }
+.page-sub { font-size: 14px; color: rgba(224,233,246,0.4); }
+
+/* ── STATS ROW ── */
+.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 28px; }
+.stat-card {
+  background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.08);
+  border-radius: 0; padding: 18px 20px;
+}
+.stat-card-val { font-size: 26px; font-weight: 500; letter-spacing: -0.04em; margin-bottom: 4px; }
+.stat-card-lbl { font-size: 12px; color: rgba(224,233,246,0.35); font-weight: 500; }
+
+/* ── FILTERS ── */
+.filters { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-btn {
+  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+  padding: 7px 14px; border-radius: 100px; border: 1px solid rgba(224,233,246,0.1);
+  background: none; color: rgba(224,233,246,0.45); cursor: pointer; transition: all 0.15s;
+}
+.filter-btn.active { background: rgba(63,119,214,0.15); border-color: rgba(63,119,214,0.4); color: #A9CCF2; }
+.filter-btn:hover:not(.active) { border-color: rgba(224,233,246,0.2); color: rgba(224,233,246,0.7); }
+
+/* ── TABLE ── */
+.table-wrap {
+  background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08);
+  border-radius: 0; overflow: hidden;
+}
+.table-header, .table-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1.2fr 0.85fr 0.7fr 0.85fr 1fr 1fr;
+  align-items: center;
+}
+.table-header {
+  padding: 12px 20px; border-bottom: 1px solid rgba(224,233,246,0.06);
+  font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(224,233,246,0.28);
+}
+.table-row {
+  padding: 16px 20px; border-bottom: 1px solid rgba(224,233,246,0.05);
+  transition: background 0.15s; cursor: pointer;
+}
+.table-row:last-child { border-bottom: none; }
+.table-row:hover { background: rgba(224,233,246,0.03); }
+.table-cell { font-size: 13px; color: rgba(224,233,246,0.75); min-width: 0; }
+.table-cell.primary { font-weight: 600; color: #E6EBF6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.table-cell.muted { color: rgba(224,233,246,0.35); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cell-actions { display: flex; gap: 6px; justify-content: flex-end; }
+
+.status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 100px;
+}
+.status-badge.pending { background: rgba(231,178,122,0.15); color: #E7B27A; }
+.status-badge.reviewed { background: rgba(159,217,180,0.15); color: #9FD9B4; }
+.status-badge.sent { background: rgba(63,119,214,0.15); color: #A9CCF2; }
+.status-badge.approved { background: rgba(159,217,180,0.15); color: #9FD9B4; }
+
+.report-dot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: #9FD9B4; margin-left: 6px; vertical-align: middle;
+  box-shadow: 0 0 8px rgba(159,217,180,0.5);
+}
+
+.rate-pill {
+  display: inline-block; font-size: 12px; font-weight: 600;
+  padding: 3px 9px; border-radius: 100px;
+}
+.rate-pill.high { background: rgba(232,138,138,0.15); color: #E88A8A; }
+.rate-pill.mid  { background: rgba(231,178,122,0.15); color: #E7B27A; }
+.rate-pill.low  { background: rgba(159,217,180,0.15); color: #9FD9B4; }
+
+.view-btn {
+  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+  padding: 6px 12px; background: rgba(224,233,246,0.06); color: rgba(224,233,246,0.6);
+  border: none; border-radius: 0; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.view-btn:hover { background: rgba(224,233,246,0.1); color: #E6EBF6; }
+.view-btn.report { background: rgba(63,119,214,0.15); color: #A9CCF2; }
+.view-btn.report:hover { background: rgba(63,119,214,0.25); color: #E6EBF6; }
+
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  color: rgba(224,233,246,0.25); font-size: 14px;
+}
+.empty-state h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: rgba(224,233,246,0.4); }
+
+/* ── MODAL ── */
+.modal-bg {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+  display: none; align-items: flex-start; justify-content: center;
+  padding: 40px 20px; overflow-y: auto;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: #13161e; border: 1px solid rgba(224,233,246,0.09);
+  border-radius: 0; width: 100%; max-width: 720px;
+  position: relative; margin: auto;
+}
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(224,233,246,0.08); border: none; cursor: pointer;
+  color: rgba(224,233,246,0.5); display: flex; align-items: center; justify-content: center;
+  font-size: 16px; transition: background 0.15s;
+}
+.modal-close:hover { background: rgba(224,233,246,0.14); }
+.modal-header {
+  background: linear-gradient(135deg,#0F1218 0%,#171c26 100%);
+  padding: 28px 32px; border-radius: 0;
+}
+.modal-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(224,233,246,0.28); margin-bottom: 8px; }
+.modal-title { font-size: 20px; font-weight: 300; letter-spacing: -0.04em; color: #E6EBF6; margin-bottom: 4px; }
+.modal-meta { font-size: 12px; color: rgba(224,233,246,0.3); }
+.modal-contact { font-size: 12.5px; color: rgba(224,233,246,0.55); margin-top: 8px; line-height: 1.6; }
+.modal-contact a { color: #A9CCF2; text-decoration: none; }
+.modal-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; margin-top: 18px; background: rgba(224,233,246,0.07); border-radius: 0; overflow: hidden; }
+.modal-stat { padding: 12px; background: rgba(224,233,246,0.04); text-align: center; }
+.modal-stat-val { font-size: 16px; font-weight: 600; color: #E6EBF6; display: block; margin-bottom: 3px; }
+.modal-stat-lbl { font-size: 10px; color: rgba(224,233,246,0.28); text-transform: uppercase; letter-spacing: 0.09em; }
+.modal-body { padding: 24px 32px 32px; }
+.modal-section { padding: 18px 0; border-bottom: 1px solid rgba(224,233,246,0.06); }
+.modal-section:last-child { border-bottom: none; }
+.modal-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(224,233,246,0.28); margin-bottom: 10px; }
+.modal-section-text { font-size: 13px; line-height: 1.72; color: rgba(224,233,246,0.55); white-space: pre-line; }
+.modal-table { width: 100%; border-collapse: collapse; }
+.modal-table td { padding: 9px 0; border-bottom: 1px solid rgba(224,233,246,0.06); font-size: 13px; }
+.modal-table td:first-child { color: rgba(224,233,246,0.4); }
+.modal-table td:last-child { text-align: right; font-weight: 500; color: rgba(224,233,246,0.8); }
+.modal-table tr:last-child td { border-bottom: none; }
+.obs-list { margin: 0; padding-left: 18px; }
+.obs-list li { font-size: 13px; color: rgba(224,233,246,0.55); line-height: 1.7; margin-bottom: 4px; }
+.modal-alert { border-radius: 0; padding: 12px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
+.modal-alert.warn { background: rgba(231,178,122,0.1); border-left: 3px solid #E7B27A; color: rgba(224,233,246,0.65); }
+.modal-alert.good { background: rgba(159,217,180,0.1); border-left: 3px solid #9FD9B4; color: rgba(224,233,246,0.65); }
+.modal-alert.info { background: rgba(63,119,214,0.1); border-left: 3px solid #3F77D6; color: rgba(224,233,246,0.65); }
+.modal-alert strong { font-weight: 600; display: block; margin-bottom: 3px; color: rgba(224,233,246,0.85); }
+.report-ready-banner {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: rgba(159,217,180,0.1); border: 1px solid rgba(159,217,180,0.25);
+  border-radius: 0; padding: 14px 16px;
+}
+.report-ready-banner .rb-text { font-size: 13px; color: #9FD9B4; font-weight: 500; }
+.program-box { background: rgba(224,233,246,0.04); border-radius: 0; padding: 14px; font-size: 13px; line-height: 1.7; color: rgba(224,233,246,0.5); }
+.loading-spinner { text-align: center; padding: 60px 20px; color: rgba(224,233,246,0.3); font-size: 14px; }
+
+/* ── ACTION BUTTONS ── */
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.btn-mark-reviewed {
+  background: rgba(159,217,180,0.15); color: #9FD9B4; border: 1px solid rgba(159,217,180,0.3);
+  border-radius: 0; padding: 10px 18px; font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s;
+}
+.btn-mark-reviewed:hover { background: rgba(159,217,180,0.25); }
+.btn-approve {
+  background: rgba(63,119,214,0.15); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.3);
+  border-radius: 0; padding: 10px 18px; font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s;
+  display: flex; align-items: center; gap: 7px;
+}
+.btn-approve:hover { background: rgba(63,119,214,0.25); }
+.btn-approve:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-mark-sent {
+  background: rgba(63,119,214,0.15); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.3);
+  border-radius: 0; padding: 10px 18px; font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s;
+}
+.btn-mark-sent:hover { background: rgba(63,119,214,0.25); }
+.btn-open-report {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(63,119,214,0.15); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.3);
+  border-radius: 0; padding: 10px 18px; font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s;
+}
+.btn-open-report:hover { background: rgba(63,119,214,0.25); color: #E6EBF6; }
+
+/* ── EDIT PANEL ── */
+.edit-panel-toggle {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  background: rgba(231,178,122,0.06); border: 1px solid rgba(231,178,122,0.18);
+  border-radius: 0; padding: 11px 16px; cursor: pointer;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+  color: rgba(231,178,122,0.85); transition: background 0.15s; margin-bottom: 0;
+}
+.edit-panel-toggle:hover { background: rgba(231,178,122,0.1); }
+.edit-panel-toggle .toggle-icon {
+  margin-left: auto; font-size: 11px; transition: transform 0.2s;
+  color: rgba(231,178,122,0.5);
+}
+.edit-panel-toggle.open .toggle-icon { transform: rotate(180deg); }
+
+.edit-panel {
+  display: none; margin-top: 12px;
+  background: rgba(224,233,246,0.02); border: 1px solid rgba(224,233,246,0.07);
+  border-radius: 0; padding: 20px; gap: 16px; flex-direction: column;
+}
+.edit-panel.open { display: flex; }
+
+.edit-field { display: flex; flex-direction: column; gap: 6px; }
+.edit-field-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(224,233,246,0.3);
+}
+.edit-field-hint {
+  font-size: 11px; color: rgba(224,233,246,0.2); margin-top: -3px; line-height: 1.5;
+}
+.edit-textarea {
+  font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.65;
+  background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.09);
+  border-radius: 0; color: rgba(224,233,246,0.75); padding: 10px 12px;
+  resize: vertical; min-height: 72px; transition: border-color 0.15s;
+}
+.edit-textarea:focus {
+  outline: none; border-color: rgba(63,119,214,0.4);
+  background: rgba(63,119,214,0.04);
+}
+.edit-input, .edit-select {
+  font-family: 'Inter', sans-serif; font-size: 13px;
+  background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.09);
+  border-radius: 0; color: rgba(224,233,246,0.75); padding: 9px 12px;
+  transition: border-color 0.15s; width: 100%;
+}
+.edit-input:focus, .edit-select:focus { outline: none; border-color: rgba(63,119,214,0.4); background: rgba(63,119,214,0.04); }
+.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.edit-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+.edit-panel-note {
+  font-size: 11px; color: rgba(224,233,246,0.2); line-height: 1.6;
+  padding: 10px 12px; background: rgba(224,233,246,0.02);
+  border-radius: 0; border: 1px solid rgba(224,233,246,0.05);
+}
+
+@media (max-width: 900px) {
+  .table-header, .table-row { grid-template-columns: 1.6fr 1fr 1fr; }
+  .table-header > *:nth-child(2),
+  .table-header > *:nth-child(3),
+  .table-header > *:nth-child(4),
+  .table-header > *:nth-child(5),
+  .table-row > *:nth-child(2),
+  .table-row > *:nth-child(3),
+  .table-row > *:nth-child(4),
+  .table-row > *:nth-child(5) { display: none; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .edit-grid, .edit-grid-3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-title">
+    <span class="nav-acceptor-mark"><span></span><span></span></span>
+    <span class="nav-word">acceptor<span>IQ</span></span>
+    <span class="nav-divider">·</span>
+    <span class="nav-sub">Submissions</span>
+  </div>
+  <div class="nav-badge" id="nav-count">Loading...</div>
+</nav>
+
+<div class="main">
+  <div class="page-header">
+    <div class="page-title">Submission Dashboard</div>
+    <div class="page-sub">Review and correct the extracted data, then generate and send each merchant's report.</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-card-val" id="stat-total">—</div>
+      <div class="stat-card-lbl">Total submissions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-val" style="color:#E7B27A" id="stat-pending">—</div>
+      <div class="stat-card-lbl">Pending review</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-val" style="color:#9FD9B4" id="stat-approved">—</div>
+      <div class="stat-card-lbl">Reports generated</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-val" style="color:#A9CCF2" id="stat-sent">—</div>
+      <div class="stat-card-lbl">Sent to client</div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="filterSubmissions('all',this)">All</button>
+    <button class="filter-btn" onclick="filterSubmissions('pending_review',this)">Pending review</button>
+    <button class="filter-btn" onclick="filterSubmissions('reviewed',this)">Reviewed</button>
+    <button class="filter-btn" onclick="filterSubmissions('approved',this)">Reports generated</button>
+    <button class="filter-btn" onclick="filterSubmissions('sent',this)">Sent to client</button>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header">
+      <div>Merchant</div>
+      <div>Provider / Period</div>
+      <div>Volume</div>
+      <div>Eff. Rate</div>
+      <div>Fees</div>
+      <div>Status</div>
+      <div></div>
+    </div>
+    <div id="submissions-list">
+      <div class="loading-spinner">Loading submissions...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://lnelbjisofzeufihtzlp.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuZWxiamlzb2Z6ZXVmaWh0emxwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MDIxNzMsImV4cCI6MjA5NjM3ODE3M30.BekqvtOv4S--6J-LyD9Pe4JgRBYUQImuuj5egyoKhhw';
+
+let allSubmissions = [];
+let currentFilter = 'all';
+
+const fmtD = n => n != null && n !== '' ? '$'+Number(n).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
+const fmtP = n => n != null && n !== '' ? Number(n).toFixed(2)+'%' : '—';
+const esc  = v => (v == null ? '' : String(v)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const escAttr = v => esc(v).replace(/"/g,'&quot;');
+
+// Merchant identity lives in program_context as "Name: ...", "Email: ...", etc.
+function parseMerchant(ctx) {
+  ctx = ctx || '';
+  const grab = re => (ctx.match(re) || [])[1] ? ctx.match(re)[1].trim() : '';
+  const email = grab(/Email:\s*(.+)/).replace(/\s*\(.*\)\s*$/, ''); // strip "(verified)"/"(skipped)"
+  return {
+    name:     grab(/Name:\s*(.+)/),
+    email,
+    phone:    grab(/Phone:\s*(.+)/),
+    industry: grab(/Industry:\s*(.+)/),
+  };
+}
+
+function parseJSON(str, fallback) { try { return str ? JSON.parse(str) : fallback; } catch { return fallback; } }
+function facts(s)    { return parseJSON(s.report_json, {}) || {}; }
+function narrative(s){ return parseJSON(s.report_narrative, null); }
+function hasReport(s){ return !!s.report_html_path; }
+
+function cardMixStr(cm) {
+  if (!cm || typeof cm !== 'object') return '—';
+  const parts = Object.entries(cm).filter(([,v]) => v != null && v !== '').map(([k,v]) => `${k} ${v}%`);
+  return parts.length ? parts.join(' · ') : '—';
+}
+// Light preview render: drop markdown bold markers, keep paragraph breaks.
+function previewText(t) { return esc(t).replace(/\*\*(.+?)\*\*/g, '$1'); }
+
+async function loadSubmissions() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/submissions?order=submitted_at.desc&limit=100`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    allSubmissions = await res.json();
+    updateStats();
+    renderTable(currentFilter === 'all' ? allSubmissions : allSubmissions.filter(s => s.status === currentFilter));
+  } catch(err) {
+    document.getElementById('submissions-list').innerHTML =
+      '<div class="empty-state"><h3>Could not load submissions</h3><p>'+esc(err.message)+'</p></div>';
+  }
+}
+
+function updateStats() {
+  const total    = allSubmissions.length;
+  const pending  = allSubmissions.filter(s => s.status === 'pending_review').length;
+  const approved = allSubmissions.filter(s => s.status === 'approved').length;
+  const sent     = allSubmissions.filter(s => s.status === 'sent').length;
+  document.getElementById('stat-total').textContent    = total;
+  document.getElementById('stat-pending').textContent  = pending;
+  document.getElementById('stat-approved').textContent = approved;
+  document.getElementById('stat-sent').textContent     = sent;
+  document.getElementById('nav-count').textContent     = pending + ' pending';
+}
+
+function filterSubmissions(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable(filter === 'all' ? allSubmissions : allSubmissions.filter(s => s.status === filter));
+}
+
+function ratePillClass(rate) {
+  if (!rate) return '';
+  if (rate > 1.7) return 'high';
+  if (rate > 1.3) return 'mid';
+  return 'low';
+}
+
+function renderTable(submissions) {
+  if (!submissions.length) {
+    document.getElementById('submissions-list').innerHTML =
+      '<div class="empty-state"><h3>No submissions yet</h3><p>They\'ll appear here as merchants submit their statements.</p></div>';
+    return;
+  }
+  document.getElementById('submissions-list').innerHTML = submissions.map(s => {
+    const m = parseMerchant(s.program_context);
+    const date = new Date(s.submitted_at).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
+    const rateClass = ratePillClass(s.effective_rate);
+    const statusMap = { pending_review:'pending', reviewed:'reviewed', sent:'sent', approved:'approved' };
+    const statusLabel = { pending_review:'Pending review', reviewed:'Reviewed', sent:'Sent to client', approved:'Report ready' };
+    const periodLine = [s.period || '—', 'submitted ' + date].join(' · ');
+    const openBtn = hasReport(s)
+      ? `<button class="view-btn report" onclick="event.stopPropagation();openReport('${escAttr(s.report_html_path)}')">Report ↗</button>`
+      : '';
+    return `<div class="table-row" onclick="openSubmission('${s.id}')">
+      <div class="table-cell primary">${esc(m.name) || 'Unknown merchant'}<div class="table-cell muted" style="margin-top:2px">${esc(m.email) || '—'}</div></div>
+      <div class="table-cell">${esc(s.provider)||'Unknown'}<div class="table-cell muted" style="margin-top:2px">${esc(periodLine)}</div></div>
+      <div class="table-cell">${fmtD(s.volume)}</div>
+      <div class="table-cell">${s.effective_rate ? `<span class="rate-pill ${rateClass}">${fmtP(s.effective_rate)}</span>` : '—'}</div>
+      <div class="table-cell">${fmtD(s.total_fees)}</div>
+      <div class="table-cell"><span class="status-badge ${statusMap[s.status]||'pending'}">${statusLabel[s.status]||'Pending'}</span>${hasReport(s)?'<span class="report-dot" title="Report generated"></span>':''}</div>
+      <div class="table-cell cell-actions">${openBtn}<button class="view-btn" onclick="event.stopPropagation();openSubmission('${s.id}')">View →</button></div>
+    </div>`;
+  }).join('');
+}
+
+// ── EDIT PANEL (facts review/correct) ───────────────────────────────────────
+
+function toggleEditPanel(id) {
+  document.getElementById('edit-toggle-' + id).classList.toggle('open');
+  document.getElementById('edit-panel-' + id).classList.toggle('open');
+}
+
+const PRICING_OPTS = ['', 'Single-rate', 'Blended', 'Interchange-plus', 'Interchange-plus-plus', 'Subscription', 'Unknown'];
+const LCR_OPTS = ['', 'On', 'Off', 'Partial', 'Unknown'];
+
+function selectHtml(field, value, opts) {
+  return `<select class="edit-select" data-field="${field}">` +
+    opts.map(o => `<option value="${escAttr(o)}" ${String(value||'')===o?'selected':''}>${esc(o)||'—'}</option>`).join('') +
+    `</select>`;
+}
+
+function buildEditPanel(id, f) {
+  const num = v => (v == null || v === '') ? '' : v;
+  const obs = Array.isArray(f.observations) ? f.observations.join('\n') : '';
+  return `
+  <div class="modal-section" style="padding-top:20px">
+    <button class="edit-panel-toggle" id="edit-toggle-${id}" onclick="toggleEditPanel('${id}')">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Review &amp; correct the extracted data before generating
+      <span class="toggle-icon">▼</span>
+    </button>
+
+    <div class="edit-panel" id="edit-panel-${id}">
+
+      <div class="edit-grid">
+        <div class="edit-field">
+          <div class="edit-field-label">Provider</div>
+          <input class="edit-input" type="text" data-field="provider" value="${escAttr(f.provider)}" />
+        </div>
+        <div class="edit-field">
+          <div class="edit-field-label">Period</div>
+          <input class="edit-input" type="text" data-field="period" value="${escAttr(f.period)}" />
+        </div>
+      </div>
+
+      <div class="edit-grid">
+        <div class="edit-field">
+          <div class="edit-field-label">Card volume (AUD)</div>
+          <input class="edit-input" type="number" step="any" data-field="volume" value="${num(f.volume)}" />
+        </div>
+        <div class="edit-field">
+          <div class="edit-field-label">Total fees (AUD, GST incl.)</div>
+          <div class="edit-field-hint">Effective rate is recalculated from volume &amp; total fees.</div>
+          <input class="edit-input" type="number" step="any" data-field="totalFees" value="${num(f.totalFees)}" />
+        </div>
+      </div>
+
+      <div class="edit-grid-3">
+        <div class="edit-field">
+          <div class="edit-field-label">Transactions</div>
+          <input class="edit-input" type="number" step="1" data-field="transactions" value="${num(f.transactions)}" />
+        </div>
+        <div class="edit-field">
+          <div class="edit-field-label">Monthly fee (AUD)</div>
+          <input class="edit-input" type="number" step="any" data-field="monthlyFee" value="${num(f.monthlyFee)}" />
+        </div>
+        <div class="edit-field">
+          <div class="edit-field-label">Terminal fees (AUD)</div>
+          <input class="edit-input" type="number" step="any" data-field="terminalFees" value="${num(f.terminalFees)}" />
+        </div>
+      </div>
+
+      <div class="edit-grid-3">
+        <div class="edit-field">
+          <div class="edit-field-label">Provider rate / margin</div>
+          <input class="edit-input" type="text" data-field="providerRate" value="${escAttr(f.providerRate)}" placeholder="e.g. 0.12%" />
+        </div>
+        <div class="edit-field">
+          <div class="edit-field-label">Pricing model</div>
+          ${selectHtml('pricingModel', f.pricingModel, PRICING_OPTS)}
+        </div>
+        <div class="edit-field">
+          <div class="edit-field-label">LCR status</div>
+          ${selectHtml('lcrStatus', f.lcrStatus, LCR_OPTS)}
+        </div>
+      </div>
+
+      <div class="edit-field">
+        <div class="edit-field-label">Factual observations</div>
+        <div class="edit-field-hint">One per line. These factual notes guide the report's findings.</div>
+        <textarea class="edit-textarea" data-field="observations">${esc(obs)}</textarea>
+      </div>
+
+      <div class="edit-field">
+        <div class="edit-field-label">Admin notes (internal only)</div>
+        <div class="edit-field-hint">Passed to Claude as extra context when generating — will NOT appear in the report.</div>
+        <textarea class="edit-textarea" data-field="adminNotes" placeholder="e.g. Online merchant — likely a separate gateway fee not on this statement. Focus on debit routing."></textarea>
+      </div>
+
+      <div class="edit-panel-note">
+        ✦ Corrections here are applied to the facts before the report is written, and saved back to the submission. Fields left unchanged are used as-is.
+      </div>
+    </div>
+  </div>`;
+}
+
+function readEditOverrides(id) {
+  const panel = document.getElementById('edit-panel-' + id);
+  if (!panel) return {};
+  const get = sel => { const el = panel.querySelector(sel); return el ? el.value.trim() : ''; };
+  const ov = {};
+  ['provider','period','providerRate','pricingModel','lcrStatus'].forEach(k => {
+    const v = get(`[data-field="${k}"]`); if (v) ov[k] = v;
+  });
+  ['volume','totalFees','transactions','monthlyFee','terminalFees'].forEach(k => {
+    const v = get(`[data-field="${k}"]`); if (v !== '') ov[k] = Number(v);
+  });
+  const obs = get('[data-field="observations"]');
+  if (obs) ov.observations = obs.split('\n').map(l => l.trim()).filter(Boolean);
+  const notes = get('[data-field="adminNotes"]');
+  if (notes) ov.adminNotes = notes;
+  return ov;
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────────────
+
+function openSubmission(id) {
+  const s = allSubmissions.find(x => x.id == id);
+  if (!s) return;
+  const f = facts(s);
+  const n = narrative(s);
+  const m = parseMerchant(s.program_context);
+  const date = new Date(s.submitted_at).toLocaleString('en-AU',{dateStyle:'long',timeStyle:'short'});
+  const statusLabel = { pending_review:'Pending review', reviewed:'Reviewed', sent:'Sent to client', approved:'Report generated' }[s.status] || s.status || 'pending_review';
+
+  const contactBits = [
+    m.email ? `<a href="mailto:${escAttr(m.email)}">${esc(m.email)}</a>` : '',
+    m.phone ? esc(m.phone) : '',
+    m.industry ? esc(m.industry) : ''
+  ].filter(Boolean).join('&nbsp;·&nbsp;');
+
+  // Observations (factual, pre-generation)
+  const obsHtml = Array.isArray(f.observations) && f.observations.length
+    ? `<ul class="obs-list">${f.observations.map(o => `<li>${esc(o)}</li>`).join('')}</ul>`
+    : '<div class="modal-section-text">No observations recorded.</div>';
+
+  // Current setup (factual components)
+  const setupHtml = Array.isArray(f.setup) && f.setup.length
+    ? `<table class="modal-table"><tbody>${f.setup.map(x => `<tr><td>${esc(x.label)}</td><td>${esc(x.value)}</td></tr>`).join('')}</tbody></table>`
+    : '';
+
+  // Generated narrative preview (post-generation)
+  let narrativeHtml = '';
+  if (n) {
+    const alertsHtml = Array.isArray(n.alerts) && n.alerts.length
+      ? n.alerts.map(a => `<div class="modal-alert ${esc(a.type)||'info'}"><strong>${esc(a.heading)}</strong>${esc(a.body)}</div>`).join('')
+      : '';
+    const sec = (label, text) => text ? `<div class="modal-section"><div class="modal-section-label">${label}</div><div class="modal-section-text">${previewText(text)}</div></div>` : '';
+    narrativeHtml = `
+      ${alertsHtml ? `<div class="modal-section"><div class="modal-section-label">Key Findings (generated)</div>${alertsHtml}</div>` : ''}
+      ${sec('Executive Summary', n.executiveSummary)}
+      ${sec('Savings Opportunity', n.savingsOpportunity)}
+      ${sec('Pricing Model Analysis', n.pricingModelAnalysis)}
+      ${sec('LCR Analysis', n.lcrAnalysis)}
+      ${sec('Market Benchmark', n.benchmarkComment)}
+      ${n.keyRecommendation ? `<div class="modal-section"><div class="modal-section-label">Priority Area</div><div class="modal-section-text">${previewText(n.keyRecommendation)}</div></div>` : ''}`;
+  }
+
+  const reportReadyBanner = hasReport(s)
+    ? `<div class="modal-section"><div class="report-ready-banner">
+         <span class="rb-text">✓ Report generated</span>
+         <button class="btn-open-report" onclick="openReport('${escAttr(s.report_html_path)}')">
+           <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+           Open report
+         </button>
+       </div></div>`
+    : '';
+
+  const approveLabel = hasReport(s) ? 'Regenerate report' : 'Approve &amp; generate report';
+
+  const html = `
+    <div class="modal-header">
+      <div class="modal-eyebrow">Submission #${esc(s.id)} · ${esc(date)} · ${esc(statusLabel)}</div>
+      <div class="modal-title">${esc(m.name) || esc(s.provider) || 'Submission'}</div>
+      <div class="modal-meta">${esc(s.provider)||'Unknown provider'} — ${esc(s.period)||'Review'}</div>
+      ${contactBits ? `<div class="modal-contact">${contactBits}</div>` : ''}
+      <div class="modal-stats">
+        <div class="modal-stat"><span class="modal-stat-val">${fmtP(f.effectiveRate ?? s.effective_rate)}</span><span class="modal-stat-lbl">Eff. rate</span></div>
+        <div class="modal-stat"><span class="modal-stat-val">${fmtD(f.totalFees ?? s.total_fees)}</span><span class="modal-stat-lbl">Total fees</span></div>
+        <div class="modal-stat"><span class="modal-stat-val">${esc(f.providerRate) || '—'}</span><span class="modal-stat-lbl">Provider rate</span></div>
+      </div>
+    </div>
+    <div class="modal-body">
+
+      ${reportReadyBanner}
+
+      <div class="modal-section">
+        <div class="modal-section-label">Statement Data (extracted)</div>
+        <table class="modal-table">
+          <tr><td>Card volume</td><td>${fmtD(f.volume ?? s.volume)}</td></tr>
+          <tr><td>Total fees (GST incl.)</td><td>${fmtD(f.totalFees ?? s.total_fees)}</td></tr>
+          <tr><td>Effective rate</td><td>${fmtP(f.effectiveRate ?? s.effective_rate)}</td></tr>
+          <tr><td>Provider rate / margin</td><td>${esc(f.providerRate) || '—'}</td></tr>
+          <tr><td>Transactions</td><td>${f.transactions != null ? Number(f.transactions).toLocaleString('en-AU') : '—'}</td></tr>
+          <tr><td>Avg transaction value</td><td>${fmtD(f.averageTransactionValue)}</td></tr>
+          <tr><td>Monthly fee</td><td>${fmtD(f.monthlyFee)}</td></tr>
+          <tr><td>Terminal fees</td><td>${fmtD(f.terminalFees)}</td></tr>
+          <tr><td>Pricing model</td><td>${esc(f.pricingModel ?? s.pricing_model) || '—'}</td></tr>
+          <tr><td>LCR status</td><td>${esc(f.lcrStatus ?? s.lcr_status) || '—'}</td></tr>
+          <tr><td>Card mix</td><td>${esc(cardMixStr(f.cardMix))}</td></tr>
+        </table>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-label">Factual Observations</div>
+        ${obsHtml}
+      </div>
+
+      ${setupHtml ? `<div class="modal-section"><div class="modal-section-label">Current Setup</div>${setupHtml}</div>` : ''}
+
+      ${s.program_context ? `<div class="modal-section"><div class="modal-section-label">Merchant Profile</div><div class="program-box">${esc(s.program_context).replace(/\n/g,'<br>')}</div></div>` : ''}
+
+      ${narrativeHtml}
+
+      ${buildEditPanel(s.id, f)}
+
+      <div class="modal-section">
+        <div class="modal-section-label">Actions</div>
+        <div class="modal-actions">
+          <button class="btn-mark-reviewed" onclick="updateStatus('${s.id}','reviewed')">✓ Mark as reviewed</button>
+          <button class="btn-approve" id="btn-approve-${s.id}" onclick="approveAndGenerate('${s.id}')">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            ${approveLabel}
+          </button>
+          <button class="btn-mark-sent" onclick="updateStatus('${s.id}','sent')">→ Mark as sent to client</button>
+        </div>
+        <div id="report-status-${s.id}" style="margin-top:10px;font-size:12px;color:rgba(224,233,246,0.4)"></div>
+      </div>
+    </div>`;
+
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-bg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+async function updateStatus(id, status) {
+  await fetch(`${SUPABASE_URL}/rest/v1/submissions?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`
+    },
+    body: JSON.stringify({ status })
+  });
+  const s = allSubmissions.find(x => x.id == id);
+  if (s) s.status = status;
+  updateStats();
+  renderTable(currentFilter === 'all' ? allSubmissions : allSubmissions.filter(x => x.status === currentFilter));
+  closeModalBtn();
+}
+
+async function openReport(htmlPath) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/storage/v1/object/public/statements/${htmlPath}`, {
+      headers: { apikey: SUPABASE_KEY }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const html = await res.text();
+    const blob = new Blob([html], { type: 'text/html' });
+    const url  = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  } catch(err) {
+    alert('Could not open report: ' + err.message);
+  }
+}
+
+async function approveAndGenerate(id) {
+  const btn      = document.getElementById('btn-approve-' + id);
+  const statusEl = document.getElementById('report-status-' + id);
+
+  const overrides = readEditOverrides(id);
+
+  if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Generating report...'; }
+  if (statusEl) statusEl.textContent = 'Claude is writing the personalised report…';
+
+  try {
+    const res = await fetch('/api/generate-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ submissionId: id, overrides })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Generation failed');
+
+    const s = allSubmissions.find(x => x.id == id);
+    if (s) { s.status = 'approved'; s.report_html_path = data.htmlPath; }
+
+    if (statusEl) {
+      statusEl.innerHTML =
+        `<span style="color:#9FD9B4;font-weight:600">✓ Report generated.</span> ` +
+        `<button class="btn-open-report" style="padding:6px 14px;margin-left:8px" onclick="openReport('${escAttr(data.htmlPath)}')">
+           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+           Open report
+         </button>`;
+    }
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Regenerate report'; }
+
+    // Refresh from server so corrected facts + status flow into the list/modal.
+    await loadSubmissions();
+
+  } catch (err) {
+    if (statusEl) statusEl.innerHTML = `<span style="color:#E88A8A">Error: ${esc(err.message)}</span>`;
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Approve &amp; generate report'; }
+  }
+}
+
+function closeModal(e) { if (e.target === document.getElementById('modal-bg')) closeModalBtn(); }
+function closeModalBtn() {
+  document.getElementById('modal-bg').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
+
+loadSubmissions();
+setInterval(loadSubmissions, 60000);
+</script>
+</body>
+</html>
