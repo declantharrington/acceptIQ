@@ -62,7 +62,7 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; mi
 }
 .table-header, .table-row {
   display: grid;
-  grid-template-columns: 1.5fr 1.2fr 0.85fr 0.7fr 0.85fr 1fr 1fr;
+  grid-template-columns: 1.4fr 1fr 1fr 0.8fr 0.7fr 0.85fr 1fr 1fr;
   align-items: center;
 }
 .table-header {
@@ -266,15 +266,15 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; mi
 }
 
 @media (max-width: 900px) {
-  .table-header, .table-row { grid-template-columns: 1.6fr 1fr 1fr; }
-  .table-header > *:nth-child(2),
+  .table-header, .table-row { grid-template-columns: 1.3fr 0.9fr 1fr 1fr; }
   .table-header > *:nth-child(3),
   .table-header > *:nth-child(4),
   .table-header > *:nth-child(5),
-  .table-row > *:nth-child(2),
+  .table-header > *:nth-child(6),
   .table-row > *:nth-child(3),
   .table-row > *:nth-child(4),
-  .table-row > *:nth-child(5) { display: none; }
+  .table-row > *:nth-child(5),
+  .table-row > *:nth-child(6) { display: none; }
   .stats-row { grid-template-columns: 1fr 1fr; }
   .edit-grid, .edit-grid-3 { grid-template-columns: 1fr; }
 }
@@ -327,8 +327,9 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; mi
 
   <div class="table-wrap">
     <div class="table-header">
-      <div>Merchant</div>
-      <div>Provider / Period</div>
+      <div>Company</div>
+      <div>Submitted</div>
+      <div>Provider</div>
       <div>Volume</div>
       <div>Eff. Rate</div>
       <div>Fees</div>
@@ -361,12 +362,13 @@ const fmtP = n => n != null && n !== '' ? Number(n).toFixed(2)+'%' : '—';
 const esc  = v => (v == null ? '' : String(v)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const escAttr = v => esc(v).replace(/"/g,'&quot;');
 
-// Merchant identity lives in program_context as "Name: ...", "Email: ...", etc.
+// Merchant identity lives in program_context as "Name: ...", "Company: ...", "Email: ...", etc.
 function parseMerchant(ctx) {
   ctx = ctx || '';
   const grab = re => (ctx.match(re) || [])[1] ? ctx.match(re)[1].trim() : '';
   const email = grab(/Email:\s*(.+)/).replace(/\s*\(.*\)\s*$/, ''); // strip "(verified)"/"(skipped)"
   return {
+    company:  grab(/Company:\s*(.+)/),
     name:     grab(/Name:\s*(.+)/),
     email,
     phone:    grab(/Phone:\s*(.+)/),
@@ -435,17 +437,18 @@ function renderTable(submissions) {
   }
   document.getElementById('submissions-list').innerHTML = submissions.map(s => {
     const m = parseMerchant(s.program_context);
-    const date = new Date(s.submitted_at).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
+    const dateShort = new Date(s.submitted_at).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
+    const timeShort = new Date(s.submitted_at).toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'});
     const rateClass = ratePillClass(s.effective_rate);
     const statusMap = { pending_review:'pending', reviewed:'reviewed', sent:'sent', approved:'approved' };
     const statusLabel = { pending_review:'Pending review', reviewed:'Reviewed', sent:'Sent to client', approved:'Report ready' };
-    const periodLine = [s.period || '—', 'submitted ' + date].join(' · ');
     const openBtn = hasReport(s)
       ? `<button class="view-btn report" onclick="event.stopPropagation();openReport('${escAttr(s.report_html_path)}')">Report ↗</button>`
       : '';
     return `<div class="table-row" onclick="openSubmission('${s.id}')">
-      <div class="table-cell primary">${esc(m.name) || 'Unknown merchant'}<div class="table-cell muted" style="margin-top:2px">${esc(m.email) || '—'}</div></div>
-      <div class="table-cell">${esc(s.provider)||'Unknown'}<div class="table-cell muted" style="margin-top:2px">${esc(periodLine)}</div></div>
+      <div class="table-cell primary">${esc(m.company) || 'Unknown company'}<div class="table-cell muted" style="margin-top:2px">${esc(m.name) || '—'}</div></div>
+      <div class="table-cell">${esc(dateShort)}<div class="table-cell muted" style="margin-top:2px">${esc(timeShort)}</div></div>
+      <div class="table-cell">${esc(s.provider)||'Unknown'}<div class="table-cell muted" style="margin-top:2px">${esc(s.period)||'—'}</div></div>
       <div class="table-cell">${fmtD(s.volume)}</div>
       <div class="table-cell">${s.effective_rate ? `<span class="rate-pill ${rateClass}">${fmtP(s.effective_rate)}</span>` : '—'}</div>
       <div class="table-cell">${fmtD(s.total_fees)}</div>
@@ -586,6 +589,7 @@ function openSubmission(id) {
   const statusLabel = { pending_review:'Pending review', reviewed:'Reviewed', sent:'Sent to client', approved:'Report generated' }[s.status] || s.status || 'pending_review';
 
   const contactBits = [
+    m.name  ? esc(m.name) : '',
     m.email ? `<a href="mailto:${escAttr(m.email)}">${esc(m.email)}</a>` : '',
     m.phone ? esc(m.phone) : '',
     m.industry ? esc(m.industry) : ''
@@ -633,7 +637,7 @@ function openSubmission(id) {
   const html = `
     <div class="modal-header">
       <div class="modal-eyebrow">Submission #${esc(s.id)} · ${esc(date)} · ${esc(statusLabel)}</div>
-      <div class="modal-title">${esc(m.name) || esc(s.provider) || 'Submission'}</div>
+      <div class="modal-title">${esc(m.company) || 'Unknown company'}</div>
       <div class="modal-meta">${esc(s.provider)||'Unknown provider'} — ${esc(s.period)||'Review'}</div>
       ${contactBits ? `<div class="modal-contact">${contactBits}</div>` : ''}
       <div class="modal-stats">
