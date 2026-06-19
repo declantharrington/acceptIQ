@@ -1157,27 +1157,28 @@ section{position:relative}
   z-index:1;
 }
 
-/* bring hovered card forward */
+/* Premium hover effect */
+.advisor-card{
+  transition:
+    opacity .30s ease,
+    border-color .30s ease,
+    box-shadow .30s ease,
+    filter .30s ease;
+}
+
 .advisor-card:hover{
-  transform:translateX(-50%) scale(1.03);
   opacity:1;
-  z-index:10;
-  top:0;
-  border-color:rgba(169,204,242,.36);
+  z-index:20;
+
+  border-color:rgba(169,204,242,.32);
+
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.10),
-    0 0 90px rgba(63,119,214,.18),
-    0 50px 120px rgba(0,0,0,.50);
-}
+    0 0 90px rgba(63,119,214,.16),
+    0 45px 110px rgba(0,0,0,.55);
 
-.advisor-card[data-card="0"]:hover{
-  transform:translateX(calc(-50% - 90px)) scale(1.03);
+  filter:none;
 }
-
-.advisor-card[data-card="2"]:hover{
-  transform:translateX(calc(-50% + 90px)) scale(1.03);
-}
-
 .card-icon{
   width:78px;
   height:78px;
