@@ -1131,9 +1131,28 @@ section{position:relative}
 }
 
 .advisor-card.is-back{
-  opacity:.30;
+  opacity:.38;
   z-index:1;
+  border-color:rgba(255,255,255,.10);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 40px 90px rgba(0,0,0,.42);
 }
+
+/* Card 1 when pushed back */
+.advisor-card[data-card="0"].is-back{
+  transform:translateX(calc(-50% - 245px)) scale(.88);
+}
+
+/* Card 2 when pushed back */
+.advisor-card[data-card="1"].is-back{
+  transform:translateX(-50%) scale(.88);
+}
+
+/* Card 3 when pushed back */
+.advisor-card[data-card="2"].is-back{
+  transform:translateX(calc(-50% + 245px)) scale(.88);
+}    
 
 .advisor-card[data-card="0"].is-active{
   transform:translateX(calc(-50% - 245px)) scale(.94);
