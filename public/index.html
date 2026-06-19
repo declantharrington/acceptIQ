@@ -1207,6 +1207,31 @@ section{position:relative}
   color:var(--cream-soft);
 }
 
+/* ---------------------------------- */
+/* Card-specific heading alignment */
+/* ---------------------------------- */
+
+/* Card 2 - centred */
+.advisor-card[data-card="1"] .card-icon{
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.advisor-card[data-card="1"] .step,
+.advisor-card[data-card="1"] h3{
+  text-align:center;
+}
+
+/* Card 3 - right aligned */
+.advisor-card[data-card="2"] .card-icon{
+  margin-left:auto;
+}
+
+.advisor-card[data-card="2"] .step,
+.advisor-card[data-card="2"] h3{
+  text-align:right;
+}    
+
 @media(max-width:760px){
   .advisor-stack{
     height:auto;
