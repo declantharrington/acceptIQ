@@ -45,8 +45,65 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; mi
 .stat-card-val { font-size: 26px; font-weight: 500; letter-spacing: -0.04em; margin-bottom: 4px; }
 .stat-card-lbl { font-size: 12px; color: rgba(224,233,246,0.35); font-weight: 500; }
 
-/* ── FILTERS ── */
-.filters { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+/* ── TOOLBAR ── */
+.toolbar { margin-bottom: 14px; }
+.toolbar-row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.search-wrap { position: relative; flex: 1 1 240px; min-width: 200px; }
+.search-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 15px; height: 15px; color: rgba(224,233,246,0.3); pointer-events: none;
+}
+.search-input {
+  width: 100%; font-family: 'Inter', sans-serif; font-size: 13px;
+  padding: 9px 12px 9px 36px; border-radius: 0;
+  background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.1);
+  color: #E6EBF6; transition: border-color 0.15s;
+}
+.search-input::placeholder { color: rgba(224,233,246,0.3); }
+.search-input:focus { outline: none; border-color: rgba(63,119,214,0.4); background: rgba(63,119,214,0.04); }
+
+.toolbar-select {
+  font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500;
+  padding: 9px 30px 9px 12px; border-radius: 0;
+  background: rgba(224,233,246,0.04) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A9CCF2' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+  border: 1px solid rgba(224,233,246,0.1);
+  color: rgba(224,233,246,0.75); cursor: pointer; transition: border-color 0.15s;
+  appearance: none; -webkit-appearance: none;
+}
+.toolbar-select:focus { outline: none; border-color: rgba(63,119,214,0.4); }
+.toolbar-select:hover { border-color: rgba(224,233,246,0.2); }
+
+.date-range {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.1);
+  padding: 0 10px;
+}
+.toolbar-date {
+  font-family: 'Inter', sans-serif; font-size: 12.5px;
+  padding: 8px 2px; border: none; background: transparent;
+  color: rgba(224,233,246,0.75); color-scheme: dark; cursor: pointer;
+}
+.toolbar-date:focus { outline: none; }
+.date-sep { color: rgba(224,233,246,0.25); font-size: 12px; }
+
+.clear-filters-btn {
+  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+  padding: 9px 14px; border-radius: 0; border: 1px solid rgba(232,138,138,0.25);
+  background: rgba(232,138,138,0.08); color: #E88A8A; cursor: pointer; transition: background 0.15s;
+  white-space: nowrap;
+}
+.clear-filters-btn:hover { background: rgba(232,138,138,0.16); }
+
+.results-count {
+  font-size: 12px; color: rgba(224,233,246,0.35); margin-bottom: 10px;
+}
+
+/* ── FILTERS (status pills) ── */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
 .filter-btn {
   font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
   padding: 7px 14px; border-radius: 100px; border: 1px solid rgba(224,233,246,0.1);
@@ -70,6 +127,19 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; mi
   font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
   color: rgba(224,233,246,0.28);
 }
+.th-sort {
+  display: flex; align-items: center; gap: 5px;
+  cursor: pointer; user-select: none; transition: color 0.15s;
+}
+.th-sort:hover { color: rgba(224,233,246,0.55); }
+.th-sort.active { color: #A9CCF2; }
+.sort-arrow {
+  width: 9px; height: 9px; display: inline-block; flex-shrink: 0;
+  opacity: 0; transition: opacity 0.15s, transform 0.15s;
+  border-left: 3px solid transparent; border-right: 3px solid transparent; border-bottom: 4px solid currentColor;
+}
+.th-sort.active .sort-arrow { opacity: 1; }
+.th-sort.active.desc .sort-arrow { transform: rotate(180deg); }
 .table-row {
   padding: 16px 20px; border-bottom: 1px solid rgba(224,233,246,0.05);
   transition: background 0.15s; cursor: pointer;
@@ -277,6 +347,9 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; mi
   .table-row > *:nth-child(6) { display: none; }
   .stats-row { grid-template-columns: 1fr 1fr; }
   .edit-grid, .edit-grid-3 { grid-template-columns: 1fr; }
+  .toolbar-row { flex-direction: column; align-items: stretch; }
+  .search-wrap { flex: 1 1 auto; }
+  .date-range { justify-content: space-between; }
 }
 </style>
 </head>
@@ -317,23 +390,42 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; mi
     </div>
   </div>
 
-  <div class="filters">
-    <button class="filter-btn active" onclick="filterSubmissions('all',this)">All</button>
-    <button class="filter-btn" onclick="filterSubmissions('pending_review',this)">Pending review</button>
-    <button class="filter-btn" onclick="filterSubmissions('reviewed',this)">Reviewed</button>
-    <button class="filter-btn" onclick="filterSubmissions('approved',this)">Reports generated</button>
-    <button class="filter-btn" onclick="filterSubmissions('sent',this)">Sent to client</button>
+  <div class="toolbar">
+    <div class="toolbar-row">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="search-input" class="search-input" placeholder="Search company, provider, contact or email…" oninput="onSearchInput()">
+      </div>
+      <select id="provider-filter" class="toolbar-select" onchange="onProviderFilterChange()">
+        <option value="all">All providers</option>
+      </select>
+      <div class="date-range">
+        <input type="date" id="date-from" class="toolbar-date" onchange="onDateRangeChange()" aria-label="Submitted from date">
+        <span class="date-sep">→</span>
+        <input type="date" id="date-to" class="toolbar-date" onchange="onDateRangeChange()" aria-label="Submitted to date">
+      </div>
+      <button class="clear-filters-btn" id="clear-filters-btn" onclick="clearAllFilters()" style="display:none">Clear filters</button>
+    </div>
+    <div class="filters">
+      <button class="filter-btn active" data-status="all" onclick="filterSubmissions('all',this)">All</button>
+      <button class="filter-btn" data-status="pending_review" onclick="filterSubmissions('pending_review',this)">Pending review</button>
+      <button class="filter-btn" data-status="reviewed" onclick="filterSubmissions('reviewed',this)">Reviewed</button>
+      <button class="filter-btn" data-status="approved" onclick="filterSubmissions('approved',this)">Reports generated</button>
+      <button class="filter-btn" data-status="sent" onclick="filterSubmissions('sent',this)">Sent to client</button>
+    </div>
   </div>
+
+  <div class="results-count" id="results-count"></div>
 
   <div class="table-wrap">
     <div class="table-header">
-      <div>Company</div>
-      <div>Submitted</div>
-      <div>Provider</div>
-      <div>Volume</div>
-      <div>Eff. Rate</div>
-      <div>Fees</div>
-      <div>Status</div>
+      <div class="th-sort" data-sort="company" onclick="onSortClick('company')">Company<span class="sort-arrow"></span></div>
+      <div class="th-sort" data-sort="submitted_at" onclick="onSortClick('submitted_at')">Submitted<span class="sort-arrow"></span></div>
+      <div class="th-sort" data-sort="provider" onclick="onSortClick('provider')">Provider<span class="sort-arrow"></span></div>
+      <div class="th-sort" data-sort="volume" onclick="onSortClick('volume')">Volume<span class="sort-arrow"></span></div>
+      <div class="th-sort" data-sort="effective_rate" onclick="onSortClick('effective_rate')">Eff. Rate<span class="sort-arrow"></span></div>
+      <div class="th-sort" data-sort="total_fees" onclick="onSortClick('total_fees')">Fees<span class="sort-arrow"></span></div>
+      <div class="th-sort" data-sort="status" onclick="onSortClick('status')">Status<span class="sort-arrow"></span></div>
       <div></div>
     </div>
     <div id="submissions-list">
@@ -356,6 +448,12 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 let allSubmissions = [];
 let currentFilter = 'all';
+let currentSearch = '';
+let currentProvider = 'all';
+let currentDateFrom = '';
+let currentDateTo = '';
+let sortField = 'submitted_at';
+let sortDir = 'desc'; // 'asc' | 'desc'
 
 const fmtD = n => n != null && n !== '' ? '$'+Number(n).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
 const fmtP = n => n != null && n !== '' ? Number(n).toFixed(2)+'%' : '—';
@@ -396,7 +494,8 @@ async function loadSubmissions() {
     });
     allSubmissions = await res.json();
     updateStats();
-    renderTable(currentFilter === 'all' ? allSubmissions : allSubmissions.filter(s => s.status === currentFilter));
+    populateProviderFilter();
+    applyView();
   } catch(err) {
     document.getElementById('submissions-list').innerHTML =
       '<div class="empty-state"><h3>Could not load submissions</h3><p>'+esc(err.message)+'</p></div>';
@@ -415,11 +514,20 @@ function updateStats() {
   document.getElementById('nav-count').textContent     = pending + ' pending';
 }
 
-function filterSubmissions(filter, btn) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderTable(filter === 'all' ? allSubmissions : allSubmissions.filter(s => s.status === filter));
+// Build the provider dropdown's options from whatever providers actually
+// appear in the loaded submissions, so it never shows stale/irrelevant options.
+function populateProviderFilter() {
+  const sel = document.getElementById('provider-filter');
+  const providers = Array.from(new Set(
+    allSubmissions.map(s => (s.provider || '').trim()).filter(Boolean)
+  )).sort((a, b) => a.localeCompare(b));
+
+  const prevValue = sel.value || 'all';
+  sel.innerHTML = '<option value="all">All providers</option>' +
+    providers.map(p => `<option value="${escAttr(p)}">${esc(p)}</option>`).join('');
+  // Preserve the current selection if it's still a valid option.
+  sel.value = providers.includes(prevValue) ? prevValue : 'all';
+  currentProvider = sel.value;
 }
 
 function ratePillClass(rate) {
@@ -429,10 +537,160 @@ function ratePillClass(rate) {
   return 'low';
 }
 
+// ── Filter handlers ─────────────────────────────────────────────────────
+
+function filterSubmissions(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyView();
+}
+
+let searchDebounceTimer;
+function onSearchInput() {
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(() => {
+    currentSearch = document.getElementById('search-input').value.trim().toLowerCase();
+    applyView();
+  }, 180); // light debounce so typing fast doesn't re-render on every keystroke
+}
+
+function onProviderFilterChange() {
+  currentProvider = document.getElementById('provider-filter').value;
+  applyView();
+}
+
+function onDateRangeChange() {
+  currentDateFrom = document.getElementById('date-from').value; // 'YYYY-MM-DD' or ''
+  currentDateTo   = document.getElementById('date-to').value;
+  applyView();
+}
+
+function clearAllFilters() {
+  currentFilter = 'all';
+  currentSearch = '';
+  currentProvider = 'all';
+  currentDateFrom = '';
+  currentDateTo = '';
+
+  document.getElementById('search-input').value = '';
+  document.getElementById('provider-filter').value = 'all';
+  document.getElementById('date-from').value = '';
+  document.getElementById('date-to').value = '';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.filter-btn[data-status="all"]').classList.add('active');
+
+  applyView();
+}
+
+function anyFilterActive() {
+  return currentFilter !== 'all' || currentSearch !== '' || currentProvider !== 'all' || currentDateFrom !== '' || currentDateTo !== '';
+}
+
+// ── Sorting ──────────────────────────────────────────────────────────────
+
+// Maps a sortable column id to the value used for comparison. Company and
+// provider sort alphabetically; dollar/percent fields sort numerically with
+// nulls always sorted to the end regardless of direction (so "no data" never
+// jumps to the top just because descending sort was picked); status sorts by
+// a fixed pipeline order (pending → reviewed → approved → sent) rather than
+// alphabetically, since that's the order the work actually happens in.
+const STATUS_ORDER = { pending_review: 0, reviewed: 1, approved: 2, sent: 3 };
+
+function sortValue(s, field) {
+  if (field === 'company') return (parseMerchant(s.program_context).company || '').toLowerCase();
+  if (field === 'provider') return (s.provider || '').toLowerCase();
+  if (field === 'status') return STATUS_ORDER[s.status] ?? 99;
+  if (field === 'submitted_at') return new Date(s.submitted_at).getTime();
+  return s[field]; // volume, effective_rate, total_fees — already numeric or null
+}
+
+function onSortClick(field) {
+  if (sortField === field) {
+    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortField = field;
+    // Dollar/rate/date fields default to descending (biggest/most-recent
+    // first); text fields (company/provider/status) default to ascending.
+    sortDir = ['company', 'provider', 'status'].includes(field) ? 'asc' : 'desc';
+  }
+  updateSortHeaderUI();
+  applyView();
+}
+
+function updateSortHeaderUI() {
+  document.querySelectorAll('.th-sort').forEach(el => {
+    const isActive = el.getAttribute('data-sort') === sortField;
+    el.classList.toggle('active', isActive);
+    el.classList.toggle('desc', isActive && sortDir === 'desc');
+  });
+}
+
+function sortSubmissions(list) {
+  const sorted = list.slice().sort((a, b) => {
+    let va = sortValue(a, sortField);
+    let vb = sortValue(b, sortField);
+    const aNull = va == null || va === '';
+    const bNull = vb == null || vb === '';
+    if (aNull && bNull) return 0;
+    if (aNull) return 1;  // nulls always last, regardless of direction
+    if (bNull) return -1;
+    let cmp;
+    if (typeof va === 'string') cmp = va.localeCompare(vb);
+    else cmp = va < vb ? -1 : va > vb ? 1 : 0;
+    return sortDir === 'asc' ? cmp : -cmp;
+  });
+  return sorted;
+}
+
+// ── The single pipeline: status → search → provider → date range → sort ──
+
+function applyView() {
+  let list = allSubmissions;
+
+  if (currentFilter !== 'all') {
+    list = list.filter(s => s.status === currentFilter);
+  }
+
+  if (currentProvider !== 'all') {
+    list = list.filter(s => (s.provider || '') === currentProvider);
+  }
+
+  if (currentDateFrom) {
+    const from = new Date(currentDateFrom + 'T00:00:00');
+    list = list.filter(s => new Date(s.submitted_at) >= from);
+  }
+  if (currentDateTo) {
+    const to = new Date(currentDateTo + 'T23:59:59');
+    list = list.filter(s => new Date(s.submitted_at) <= to);
+  }
+
+  if (currentSearch) {
+    list = list.filter(s => {
+      const m = parseMerchant(s.program_context);
+      const haystack = [m.company, m.name, m.email, s.provider, s.period]
+        .filter(Boolean).join(' ').toLowerCase();
+      return haystack.includes(currentSearch);
+    });
+  }
+
+  list = sortSubmissions(list);
+
+  document.getElementById('clear-filters-btn').style.display = anyFilterActive() ? 'inline-block' : 'none';
+  const countEl = document.getElementById('results-count');
+  countEl.textContent = anyFilterActive()
+    ? `Showing ${list.length} of ${allSubmissions.length} submissions`
+    : `${allSubmissions.length} submission${allSubmissions.length === 1 ? '' : 's'}`;
+
+  renderTable(list);
+}
+
 function renderTable(submissions) {
   if (!submissions.length) {
     document.getElementById('submissions-list').innerHTML =
-      '<div class="empty-state"><h3>No submissions yet</h3><p>They\'ll appear here as merchants submit their statements.</p></div>';
+      allSubmissions.length
+        ? '<div class="empty-state"><h3>No matching submissions</h3><p>Try adjusting your search or filters.</p></div>'
+        : '<div class="empty-state"><h3>No submissions yet</h3><p>They\'ll appear here as merchants submit their statements.</p></div>';
     return;
   }
   document.getElementById('submissions-list').innerHTML = submissions.map(s => {
@@ -712,7 +970,7 @@ async function updateStatus(id, status) {
   const s = allSubmissions.find(x => x.id == id);
   if (s) s.status = status;
   updateStats();
-  renderTable(currentFilter === 'all' ? allSubmissions : allSubmissions.filter(x => x.status === currentFilter));
+  applyView();
   closeModalBtn();
 }
 
@@ -778,6 +1036,7 @@ function closeModalBtn() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
 
+updateSortHeaderUI();
 loadSubmissions();
 setInterval(loadSubmissions, 60000);
 </script>
