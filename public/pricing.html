@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>acceptorIQ — Pricing</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0F1218;
+  --cream:#E6EBF6;
+  --cream-soft:rgba(224,233,246,0.60);
+  --cream-faint:rgba(224,233,246,0.38);
+  --line:rgba(224,233,246,0.12);
+  --frame:rgba(224,233,246,0.15);
+  --btn:#E4EAF6;
+  --ink:#0F1218;
+  --site-frame:clamp(24px,5vw,140px);
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--cream);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+
+a{text-decoration:none;color:inherit}
+
+.shell{
+  min-height:100vh;
+  width:min(calc(100vw - (var(--site-frame) * 2)), 1440px);
+  margin:0 auto;
+  border-left:1px solid var(--frame);
+  border-right:1px solid var(--frame);
+}
+
+/* nav */
+header{
+  position:sticky;
+  top:0;
+  z-index:60;
+  height:72px;
+  border-bottom:1px solid var(--line);
+  background:rgba(15,18,24,.72);
+  backdrop-filter:saturate(160%) blur(12px);
+  -webkit-backdrop-filter:saturate(160%) blur(12px);
+}
+
+.nav{
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 26px;
+}
+
+.acceptor-logo{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.acceptor-mark{
+  position:relative;
+  width:38px;
+  height:34px;
+  display:inline-block;
+}
+
+.acceptor-mark span{
+  position:absolute;
+  bottom:0;
+  width:12px;
+  height:34px;
+  border-radius:3px;
+  background:var(--cream);
+}
+
+.acceptor-mark span:first-child{
+  left:7px;
+  transform:skewX(-30deg);
+}
+
+.acceptor-mark span:last-child{
+  right:7px;
+  height:24px;
+  transform:skewX(30deg);
+}
+
+.acceptor-word{
+  font-size:24px;
+  font-weight:300;
+  letter-spacing:-0.055em;
+  color:rgba(230,235,246,.92);
+}
+
+.acceptor-word span{
+  font-weight:500;
+}
+
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:22px;
+}
+
+.nav-right a{
+  font-size:14px;
+  color:var(--cream-soft);
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:space-between;
+  min-width:180px;
+  height:46px;
+  padding:0 18px;
+  background:var(--btn);
+  color:var(--ink);
+  font-size:14px;
+  font-weight:600;
+  border:1px solid transparent;
+}
+
+.btn.dark{
+  background:rgba(224,233,246,.06);
+  color:var(--cream);
+  border:1px solid rgba(224,233,246,.10);
+}
+
+.arr{
+  width:18px;
+  height:18px;
+}
+
+/* pricing */
+.pricing{
+  padding:96px 26px 110px;
+}
+
+.pricing-head{
+  text-align:center;
+  max-width:680px;
+  margin:0 auto 82px;
+}
+
+.pricing-head h1{
+  font-size:clamp(42px,5vw,72px);
+  font-weight:300;
+  letter-spacing:-0.055em;
+  line-height:1.02;
+  color:rgba(230,235,246,.90);
+}
+
+.pricing-head p{
+  margin-top:22px;
+  font-size:17px;
+  line-height:1.55;
+  color:var(--cream-soft);
+}
+
+.pricing-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:44px;
+  max-width:1220px;
+  margin:0 auto;
+}
+
+.price-card{
+  min-height:520px;
+  display:flex;
+  flex-direction:column;
+  padding:0 0 28px;
+}
+
+.price-card h2{
+  font-size:23px;
+  font-weight:300;
+  letter-spacing:-0.035em;
+  color:rgba(230,235,246,.92);
+}
+
+.price{
+  margin-top:22px;
+  padding-bottom:28px;
+  border-bottom:1px solid rgba(224,233,246,.08);
+}
+
+.price strong{
+  font-size:58px;
+  font-weight:300;
+  letter-spacing:-0.055em;
+  color:rgba(230,235,246,.96);
+}
+
+.price span{
+  font-size:15px;
+  color:var(--cream-soft);
+  margin-left:8px;
+}
+
+.details{
+  margin-top:34px;
+}
+
+.kicker{
+  font-size:13px;
+  color:var(--cream-faint);
+  margin-bottom:16px;
+}
+
+.features{
+  display:grid;
+  gap:15px;
+}
+
+.features li{
+  list-style:none;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  font-size:14px;
+  line-height:1.45;
+  color:rgba(230,235,246,.82);
+}
+
+.features li::before{
+  content:"✓";
+  color:var(--cream);
+  flex-shrink:0;
+}
+
+.price-card .btn{
+  margin-top:auto;
+  width:100%;
+}
+
+.featured{
+  position:relative;
+}
+
+.featured::before{
+  content:"Most popular";
+  position:absolute;
+  top:-34px;
+  left:0;
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:rgba(169,204,242,.75);
+}
+
+@media(max-width:900px){
+  .pricing-grid{
+    grid-template-columns:1fr;
+    gap:54px;
+  }
+
+  .price-card{
+    min-height:auto;
+  }
+
+  .featured::before{
+    position:static;
+    display:block;
+    margin-bottom:14px;
+  }
+}
+
+@media(max-width:600px){
+  .shell{
+    width:100%;
+  }
+
+  .nav-right a:first-child{
+    display:none;
+  }
+
+  .pricing{
+    padding:72px 22px 90px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="shell">
+
+<header>
+  <div class="nav">
+    <a href="/" class="acceptor-logo">
+      <span class="acceptor-mark"><span></span><span></span></span>
+      <span class="acceptor-word">acceptor<span>IQ</span></span>
+    </a>
+
+    <div class="nav-right">
+      <a href="/">Home</a>
+      <a href="#" class="btn">Get started
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="pricing">
+  <div class="pricing-head">
+    <h1>Pricing</h1>
+    <p>Start with a free AI payments analysis. Upgrade when you want expert support to act on the recommendations.</p>
+  </div>
+
+  <div class="pricing-grid">
+
+    <div class="price-card">
+      <h2>Free payments analysis</h2>
+      <div class="price">
+        <strong>$0</strong><span>/ once-off</span>
+      </div>
+
+      <div class="details">
+        <div class="kicker">Includes:</div>
+        <ul class="features">
+          <li>AI analysis of your latest merchant statement</li>
+          <li>Fee, rate and hidden cost extraction</li>
+          <li>Market benchmarking against payment providers</li>
+          <li>Savings opportunities identified</li>
+          <li>Consultation with a payments advisor</li>
+        </ul>
+      </div>
+
+      <a href="#" class="btn dark">Get free analysis
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="price-card featured">
+      <h2>Advisor implementation</h2>
+      <div class="price">
+        <strong>$499</strong><span>/ once-off</span>
+      </div>
+
+      <div class="details">
+        <div class="kicker">Everything in Free, plus:</div>
+        <ul class="features">
+          <li>Advisor-led review of the recommended actions</li>
+          <li>Prioritised implementation roadmap</li>
+          <li>Provider negotiation support</li>
+          <li>Pricing model review and guidance</li>
+          <li>Support implementing cost-saving changes</li>
+        </ul>
+      </div>
+
+      <a href="#" class="btn">Hire advisor
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="price-card">
+      <h2>Payments optimisation</h2>
+      <div class="price">
+        <strong>$2,499</strong><span>/ review</span>
+      </div>
+
+      <div class="details">
+        <div class="kicker">Everything in Advisor Implementation, plus:</div>
+        <ul class="features">
+          <li>Full payments program review</li>
+          <li>Provider, acquirer and gateway assessment</li>
+          <li>Routing, acceptance and settlement review</li>
+          <li>Commercial optimisation recommendations</li>
+          <li>Executive-ready optimisation report</li>
+        </ul>
+      </div>
+
+      <a href="#" class="btn">Optimise payments
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+  </div>
+</main>
+
+</div>
+</body>
+</html>
