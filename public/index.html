@@ -1972,6 +1972,499 @@ initMG('hero-mg');
   stack.addEventListener('mouseleave', reset);
 })();
 </script>
+<!--
+  Abi — acceptorIQ chat widget
+  ============================
+  Drop this snippet before </body> on any page (homepage, pricing, analyser).
+  Self-contained: scoped styles, no external dependencies beyond the page's
+  existing Inter font load. Talks to POST /api/abi.
+
+  Usage: paste the entire block below as-is. No configuration needed.
+-->
+
+<!-- Abi launcher + panel -->
+<div id="abi-root">
+  <button id="abi-launcher" aria-label="Chat with Abi" aria-expanded="false">
+    <svg id="abi-icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    <svg id="abi-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
+  <div id="abi-panel" role="dialog" aria-label="Chat with Abi" aria-hidden="true">
+    <div id="abi-header">
+      <div id="abi-header-info">
+        <span id="abi-avatar">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.6l2.1 4.9 4.9-2.1-2.1 4.9 4.9 2.1-4.9 2.1 2.1 4.9-4.9-2.1L12 22.4l-2.1-4.9-4.9 2.1 2.1-4.9-4.9-2.1 4.9-2.1L4.9 4.4l4.9 2.1z"/><circle cx="12" cy="12" r="3.4" fill="#0F1218"/></svg>
+        </span>
+        <div>
+          <div id="abi-name">Abi</div>
+          <div id="abi-status"><span id="abi-status-dot"></span>acceptorIQ guide</div>
+        </div>
+      </div>
+      <button id="abi-minimize" aria-label="Minimize chat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="18" y2="12"/></svg>
+      </button>
+    </div>
+
+    <div id="abi-messages"></div>
+
+    <div id="abi-quick-actions">
+      <button class="abi-qa-btn" data-abi-cta="consult">Book a consultation</button>
+      <button class="abi-qa-btn" data-abi-cta="upload">Upload my statement</button>
+    </div>
+
+    <div id="abi-input-row">
+      <textarea id="abi-input" rows="1" placeholder="Ask Abi about payments…" aria-label="Message Abi"></textarea>
+      <button id="abi-send" aria-label="Send message">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <div id="abi-disclaimer">Abi shares general payments info — for advice on your own setup, book a consult or upload a statement.</div>
+  </div>
+</div>
+
+<style>
+#abi-root, #abi-root * { box-sizing: border-box; }
+
+#abi-root {
+  --abi-bg: #0F1218;
+  --abi-bg2: #171C26;
+  --abi-cream: #E6EBF6;
+  --abi-cream-soft: rgba(224,233,246,0.60);
+  --abi-cream-faint: rgba(224,233,246,0.38);
+  --abi-line: rgba(224,233,246,0.12);
+  --abi-frame: rgba(224,233,246,0.15);
+  --abi-btn: #E4EAF6;
+  --abi-ink: #0F1218;
+  --abi-orange: #3F77D6;
+  --abi-peach: #A9CCF2;
+  --abi-green: #9FD9B4;
+  --abi-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-family: var(--abi-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Launcher ── */
+#abi-launcher {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 9998;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 1px solid var(--abi-frame);
+  background: var(--abi-btn);
+  color: var(--abi-ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 14px 36px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.02);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+#abi-launcher:hover { transform: translateY(-2px); opacity: 0.92; }
+#abi-launcher svg { width: 24px; height: 24px; }
+#abi-icon-close { display: none; }
+#abi-root.abi-open #abi-icon-chat { display: none; }
+#abi-root.abi-open #abi-icon-close { display: block; }
+
+/* ── Panel ── */
+#abi-panel {
+  position: fixed;
+  right: 28px;
+  bottom: 100px;
+  z-index: 9999;
+  width: 380px;
+  max-width: calc(100vw - 40px);
+  height: 560px;
+  max-height: calc(100vh - 150px);
+  background: var(--abi-bg);
+  border: 1px solid var(--abi-frame);
+  border-radius: 20px;
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
+  pointer-events: none;
+  transition: opacity 0.22s cubic-bezier(.2,.8,.2,1), transform 0.22s cubic-bezier(.2,.8,.2,1);
+}
+#abi-root.abi-open #abi-panel {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+/* ── Header ── */
+#abi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--abi-line);
+  background: rgba(224,233,246,0.03);
+  flex-shrink: 0;
+}
+#abi-header-info { display: flex; align-items: center; gap: 12px; }
+#abi-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(63,119,214,0.14);
+  border: 1px solid rgba(63,119,214,0.28);
+  display: grid; place-items: center;
+  color: var(--abi-peach);
+  flex-shrink: 0;
+}
+#abi-avatar svg { width: 18px; height: 18px; }
+#abi-name { font-size: 14px; font-weight: 600; color: var(--abi-cream); letter-spacing: -0.01em; }
+#abi-status { font-size: 11.5px; color: var(--abi-cream-faint); display: flex; align-items: center; gap: 5px; margin-top: 1px; }
+#abi-status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--abi-green);
+  box-shadow: 0 0 6px rgba(159,217,180,0.6);
+  flex-shrink: 0;
+}
+#abi-minimize {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--abi-line);
+  background: transparent;
+  color: var(--abi-cream-faint);
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+#abi-minimize:hover { border-color: var(--abi-frame); color: var(--abi-cream); }
+#abi-minimize svg { width: 14px; height: 14px; }
+
+/* ── Messages ── */
+#abi-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--abi-line) transparent;
+}
+#abi-messages::-webkit-scrollbar { width: 5px; }
+#abi-messages::-webkit-scrollbar-thumb { background: var(--abi-line); border-radius: 3px; }
+
+.abi-msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 86%;
+  animation: abiRise 0.3s cubic-bezier(.2,.8,.2,1) forwards;
+}
+@keyframes abiRise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.abi-msg.user { align-self: flex-end; align-items: flex-end; }
+.abi-msg.assistant { align-self: flex-start; align-items: flex-start; }
+
+.abi-bubble {
+  padding: 11px 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.abi-msg.user .abi-bubble {
+  background: linear-gradient(135deg,#5E8FE0,#A6CBF2);
+  color: #0E1A2E;
+  border-radius: 16px 16px 4px 16px;
+}
+.abi-msg.assistant .abi-bubble {
+  background: rgba(224,233,246,0.05);
+  border: 1px solid var(--abi-line);
+  color: rgba(224,233,246,0.88);
+  border-radius: 4px 16px 16px 16px;
+}
+
+.abi-msg.system .abi-bubble {
+  background: transparent;
+  border: none;
+  color: var(--abi-cream-faint);
+  font-size: 12.5px;
+  text-align: center;
+  align-self: center;
+  padding: 4px 0;
+}
+.abi-msg.system { align-self: center; max-width: 100%; }
+
+/* typing indicator */
+.abi-typing { display: flex; gap: 4px; padding: 13px 14px; }
+.abi-typing span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--abi-cream-faint);
+  animation: abiBlink 1.2s infinite ease-in-out;
+}
+.abi-typing span:nth-child(2) { animation-delay: 0.15s; }
+.abi-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes abiBlink { 0%,80%,100%{opacity:0.25} 40%{opacity:1} }
+
+/* ── Quick actions ── */
+#abi-quick-actions {
+  display: flex;
+  gap: 8px;
+  padding: 0 18px 12px;
+  flex-shrink: 0;
+}
+.abi-qa-btn {
+  flex: 1;
+  font-family: var(--abi-sans);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 9px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(63,119,214,0.28);
+  background: rgba(63,119,214,0.08);
+  color: var(--abi-peach);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  text-align: center;
+}
+.abi-qa-btn:hover { background: rgba(63,119,214,0.16); border-color: rgba(63,119,214,0.4); }
+
+/* ── Input ── */
+#abi-input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--abi-line);
+  flex-shrink: 0;
+}
+#abi-input {
+  flex: 1;
+  resize: none;
+  background: rgba(224,233,246,0.04);
+  border: 1px solid var(--abi-line);
+  border-radius: 12px;
+  color: var(--abi-cream);
+  font-family: var(--abi-sans);
+  font-size: 13.5px;
+  line-height: 1.4;
+  padding: 10px 12px;
+  max-height: 90px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+#abi-input:focus { border-color: rgba(127,166,230,0.4); }
+#abi-input::placeholder { color: var(--abi-cream-faint); }
+
+#abi-send {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  border: none;
+  background: var(--abi-btn);
+  color: var(--abi-ink);
+  display: grid; place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+#abi-send:hover { transform: translateY(-1px); opacity: 0.9; }
+#abi-send:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+#abi-send svg { width: 17px; height: 17px; }
+
+#abi-disclaimer {
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--abi-cream-faint);
+  padding: 0 16px 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  #abi-launcher { right: 16px; bottom: 16px; width: 52px; height: 52px; }
+  #abi-panel {
+    right: 10px;
+    bottom: 82px;
+    width: calc(100vw - 20px);
+    height: calc(100vh - 120px);
+    max-height: none;
+  }
+}
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  const root      = document.getElementById('abi-root');
+  const launcher  = document.getElementById('abi-launcher');
+  const panel     = document.getElementById('abi-panel');
+  const minimize  = document.getElementById('abi-minimize');
+  const messagesEl= document.getElementById('abi-messages');
+  const input     = document.getElementById('abi-input');
+  const sendBtn   = document.getElementById('abi-send');
+  const qaButtons = document.querySelectorAll('[data-abi-cta]');
+
+  // Conversation history sent to the API (role/content pairs only).
+  let history = [];
+  let isSending = false;
+  let hasOpenedOnce = false;
+
+  // ---- CTA destinations -----------------------------------------------
+  // Adjust these to your actual booking + analyser URLs.
+  const ABI_CTA_LINKS = {
+    consult: '/book.html',      // booking/consultation page
+    upload:  '/analyser.html',  // statement analyser
+  };
+
+  function scrollToBottom() {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function addMessage(role, text) {
+    const wrap = document.createElement('div');
+    wrap.className = 'abi-msg ' + role;
+    const bubble = document.createElement('div');
+    bubble.className = 'abi-bubble';
+    bubble.textContent = text;
+    wrap.appendChild(bubble);
+    messagesEl.appendChild(wrap);
+    scrollToBottom();
+    return wrap;
+  }
+
+  function addSystemNote(text) {
+    const wrap = document.createElement('div');
+    wrap.className = 'abi-msg system';
+    const bubble = document.createElement('div');
+    bubble.className = 'abi-bubble';
+    bubble.textContent = text;
+    wrap.appendChild(bubble);
+    messagesEl.appendChild(wrap);
+    scrollToBottom();
+  }
+
+  function showTyping() {
+    const wrap = document.createElement('div');
+    wrap.className = 'abi-msg assistant';
+    wrap.id = 'abi-typing-indicator';
+    wrap.innerHTML = '<div class="abi-bubble abi-typing"><span></span><span></span><span></span></div>';
+    messagesEl.appendChild(wrap);
+    scrollToBottom();
+  }
+
+  function hideTyping() {
+    const el = document.getElementById('abi-typing-indicator');
+    if (el) el.remove();
+  }
+
+  function greet() {
+    if (messagesEl.children.length) return; // already greeted
+    addMessage('assistant',
+      "Hi, I'm Abi 👋 I can help explain how merchant fees, interchange and routing actually work in Australia. " +
+      "If you want to know what's happening in your own setup, the best move is uploading a statement or booking a quick chat with an advisor — but ask away in the meantime."
+    );
+  }
+
+  function openPanel() {
+    root.classList.add('abi-open');
+    launcher.setAttribute('aria-expanded', 'true');
+    panel.setAttribute('aria-hidden', 'false');
+    if (!hasOpenedOnce) {
+      hasOpenedOnce = true;
+      greet();
+    }
+    setTimeout(() => input.focus(), 220);
+  }
+
+  function closePanel() {
+    root.classList.remove('abi-open');
+    launcher.setAttribute('aria-expanded', 'false');
+    panel.setAttribute('aria-hidden', 'true');
+  }
+
+  function togglePanel() {
+    root.classList.contains('abi-open') ? closePanel() : openPanel();
+  }
+
+  launcher.addEventListener('click', togglePanel);
+  minimize.addEventListener('click', closePanel);
+
+  // Auto-resize the textarea up to its max-height.
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 90) + 'px';
+    sendBtn.disabled = !input.value.trim();
+  });
+  sendBtn.disabled = true;
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+  sendBtn.addEventListener('click', sendMessage);
+
+  qaButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cta = btn.getAttribute('data-abi-cta');
+      const url = ABI_CTA_LINKS[cta];
+      if (url) window.location.href = url;
+    });
+  });
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text || isSending) return;
+
+    addMessage('user', text);
+    history.push({ role: 'user', content: text });
+
+    input.value = '';
+    input.style.height = 'auto';
+    sendBtn.disabled = true;
+    isSending = true;
+    showTyping();
+
+    try {
+      const res = await fetch('/api/abi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history })
+      });
+
+      hideTyping();
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Something went wrong');
+      }
+
+      const data = await res.json();
+      const reply = data.reply || "Sorry, I didn't quite catch that — could you try rephrasing?";
+
+      addMessage('assistant', reply);
+      history.push({ role: 'assistant', content: reply });
+
+    } catch (err) {
+      hideTyping();
+      addSystemNote("Abi's having trouble connecting right now. Please try again, or book a consultation / upload your statement directly.");
+      console.error('Abi error:', err.message);
+    } finally {
+      isSending = false;
+      sendBtn.disabled = !input.value.trim();
+      input.focus();
+    }
+  }
+
+  // Close on Escape.
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && root.classList.contains('abi-open')) closePanel();
+  });
+})();
+</script>
+
   
 </body>
 </html>
