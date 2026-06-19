@@ -468,16 +468,25 @@ body {
   print-color-adjust: exact;
 }
 
-/* ── PAGE LAYOUT ── */
+/* ── PAGE LAYOUT ──
+   IMPORTANT: `.page` uses min-height (a floor), not height (a ceiling) — by
+   design, since narrative length varies per report and we cannot pre-measure
+   it. If a page's content is too long for 297mm, the element grows taller
+   and pushes the next page's content down the document; the browser/PDF
+   engine then paginates the WHOLE flowing document using the page-break
+   rules below, rather than us trying to hard-clip content (which silently
+   eats text) or hard-fix one page's height (which breaks for shorter
+   reports). `overflow` is intentionally not `hidden` here so a long page
+   reflows instead of clipping its own text. */
 .page {
   width: 210mm;
   min-height: 297mm;
   margin: 0 auto;
   position: relative;
-  overflow: hidden;
   page-break-after: always;
+  break-after: page;
 }
-.page:last-child { page-break-after: avoid; }
+.page:last-child { page-break-after: avoid; break-after: avoid; }
 
 /* ── COVER PAGE ── */
 .cover {
@@ -485,7 +494,8 @@ body {
   min-height: 297mm;
   display: flex;
   flex-direction: column;
-  padding: 14mm 16mm;
+  padding: 16mm 18mm;
+  box-sizing: border-box;
 }
 .cover-logo-row {
   display: flex;
@@ -539,11 +549,11 @@ body {
 }
 
 .cover-title {
-  font-size: 42px;
+  font-size: 40px;
   font-weight: 300;
   color: #E6EBF6;
   letter-spacing: -0.05em;
-  line-height: 1.05;
+  line-height: 1.08;
   margin-bottom: 8px;
 }
 .cover-title span { font-weight: 500; color: #A9CCF2; }
@@ -552,7 +562,7 @@ body {
   font-size: 16px;
   font-weight: 300;
   color: rgba(224,233,246,0.55);
-  margin-bottom: 40px;
+  margin-bottom: 36px;
 }
 
 .cover-stats {
@@ -562,16 +572,17 @@ body {
   background: rgba(224,233,246,0.08);
   border-radius: 0;
   overflow: hidden;
-  margin-bottom: 40px;
+  margin-bottom: 36px;
 }
-.cover-stat { background: rgba(224,233,246,0.04); padding: 18px 20px; }
+.cover-stat { background: rgba(224,233,246,0.04); padding: 16px 18px; }
 .cover-stat-val {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 500;
   color: #E6EBF6;
   letter-spacing: -0.04em;
   display: block;
   margin-bottom: 4px;
+  word-break: break-word;
 }
 .cover-stat-lbl {
   font-size: 10px;
@@ -581,9 +592,11 @@ body {
   color: rgba(224,233,246,0.35);
 }
 
-.cover-divider { height: 1px; background: rgba(224,233,246,0.08); margin-bottom: 28px; }
+.cover-divider { height: 1px; background: rgba(224,233,246,0.08); margin-bottom: 24px; }
 
-.cover-meta { display: flex; gap: 40px; margin-bottom: 28px; }
+.cover-meta { display: flex; flex-wrap: wrap; margin-bottom: 24px; }
+.cover-meta > div { margin-right: 40px; margin-bottom: 12px; }
+.cover-meta > div:last-child { margin-right: 0; }
 .cover-meta-label {
   font-size: 9px;
   font-weight: 700;
@@ -592,7 +605,7 @@ body {
   color: rgba(224,233,246,0.28);
   margin-bottom: 4px;
 }
-.cover-meta-value { font-size: 13px; color: rgba(224,233,246,0.65); font-weight: 400; }
+.cover-meta-value { font-size: 13px; color: rgba(224,233,246,0.65); font-weight: 400; word-break: break-word; }
 
 .cover-confidential {
   font-size: 9px;
@@ -601,13 +614,18 @@ body {
   text-transform: uppercase;
   border-top: 1px solid rgba(224,233,246,0.06);
   padding-top: 14px;
+  line-height: 1.6;
 }
 
-/* ── CONTENT PAGES ── */
+/* ── CONTENT PAGES ──
+   box-sizing:border-box so the 14mm/16mm padding is INSIDE the 297mm height
+   budget rather than added on top of it (the latter was silently pushing
+   real content past the page boundary on every single content page). */
 .content-page {
   background: #fff;
-  padding: 14mm 16mm 12mm;
+  padding: 16mm 18mm 16mm;
   min-height: 297mm;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
@@ -616,9 +634,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   padding-bottom: 10px;
   border-bottom: 2px solid #f0f2f7;
-  margin-bottom: 28px;
+  margin-bottom: 26px;
+  flex-shrink: 0;
 }
 .page-header-logo {
   display: flex;
@@ -628,6 +648,7 @@ body {
   font-weight: 300;
   color: #0F1218;
   letter-spacing: -0.05em;
+  flex-shrink: 0;
 }
 .page-header-logo span { font-weight: 500; color: #3F77D6; }
 .page-header-mark {
@@ -667,8 +688,12 @@ body {
 }
 .page-footer-right { font-size: 9px; color: #aab0c4; }
 
-/* ── SECTIONS ── */
-.section { margin-bottom: 28px; }
+/* ── SECTIONS ──
+   page-break-inside:avoid keeps each section as one block where possible —
+   without this, a section starting near the bottom of a page can have its
+   heading on one page and its body on the next. Standard property +
+   break-inside (the modern equivalent) for cross-engine support. */
+.section { margin-bottom: 28px; page-break-inside: avoid; break-inside: avoid; }
 .section:last-child { margin-bottom: 0; }
 
 .section-label {
@@ -694,6 +719,8 @@ body {
 }
 
 .section-body { font-size: 13px; color: #3d4663; line-height: 1.75; }
+.section-body p { margin-bottom: 12px; page-break-inside: avoid; break-inside: avoid; }
+.section-body p:last-child { margin-bottom: 0; }
 
 .lead-in {
   font-size: 14px;
@@ -709,8 +736,10 @@ body {
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin-bottom: 24px;
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
-.stat-card { background: #f7f9fc; border: 1px solid #e4e8f0; border-radius: 0; padding: 16px 18px; }
+.stat-card { background: #f7f9fc; border: 1px solid #e4e8f0; border-radius: 0; padding: 16px 18px; box-sizing: border-box; }
 .stat-card.dark { background: #0F1218; border-color: #0F1218; }
 .stat-card.accent { background: #eef3ff; border-color: #c5d4f8; }
 .stat-val {
@@ -720,6 +749,7 @@ body {
   letter-spacing: -0.04em;
   display: block;
   margin-bottom: 3px;
+  word-break: break-word;
 }
 .stat-card.dark .stat-val { color: #E6EBF6; }
 .stat-val.high { color: #c0392b; }
@@ -736,6 +766,8 @@ body {
 
 /* ── DATA TABLE ── */
 .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
+.data-table thead { display: table-header-group; } /* repeat header if a table spans a break */
+.data-table tr { page-break-inside: avoid; break-inside: avoid; }
 .data-table th {
   padding: 8px 12px;
   text-align: left;
@@ -747,7 +779,7 @@ body {
   border-bottom: 2px solid #e4e8f0;
   background: #f7f9fc;
 }
-.data-table td { padding: 10px 12px; border-bottom: 1px solid #f0f2f7; vertical-align: top; color: #3d4663; }
+.data-table td { padding: 10px 12px; border-bottom: 1px solid #f0f2f7; vertical-align: top; color: #3d4663; word-break: break-word; }
 .data-table tr:last-child td { border-bottom: none; }
 .data-table .td-label { color: #7c8db0; font-weight: 500; width: 42%; }
 .data-table .td-value { font-weight: 600; color: #0F1218; }
@@ -757,7 +789,7 @@ body {
 
 /* ── ALERT BOXES ── */
 .alerts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-.alert { padding: 12px 14px; border-radius: 0; border-left: 4px solid; font-size: 12px; }
+.alert { padding: 12px 14px; border-radius: 0; border-left: 4px solid; font-size: 12px; box-sizing: border-box; page-break-inside: avoid; break-inside: avoid; }
 .alert-warn { background: #fdf6e3; border-color: #c8960c; }
 .alert-good { background: #e8f5e9; border-color: #0a7a52; }
 .alert-info { background: #eef3ff; border-color: #3F77D6; }
@@ -769,7 +801,7 @@ body {
 
 /* ── OPPORTUNITIES ── */
 .rec-list { display: flex; flex-direction: column; gap: 14px; }
-.rec-item { display: flex; gap: 14px; align-items: flex-start; }
+.rec-item { display: flex; gap: 14px; align-items: flex-start; page-break-inside: avoid; break-inside: avoid; }
 .rec-num {
   width: 26px;
   height: 26px;
@@ -787,7 +819,15 @@ body {
 .rec-body { flex: 1; font-size: 13px; color: #3d4663; line-height: 1.65; }
 .rec-body strong { color: #0F1218; font-weight: 600; display: block; margin-bottom: 2px; }
 
-.key-rec-box { background: #0F1218; border-radius: 0; padding: 20px 22px; margin-top: 20px; }
+.key-rec-box {
+  background: #0F1218;
+  border-radius: 0;
+  padding: 20px 22px;
+  margin-top: 20px;
+  box-sizing: border-box;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
 .key-rec-label {
   font-size: 9px;
   font-weight: 700;
@@ -802,9 +842,10 @@ body {
 .cta-page {
   background: #0F1218;
   min-height: 297mm;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 14mm 16mm;
+  padding: 16mm 18mm;
 }
 .cta-page-logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: auto; }
 .cta-body { margin-top: auto; }
@@ -819,7 +860,9 @@ body {
 .cta-title { font-size: 36px; font-weight: 300; color: #E6EBF6; letter-spacing: -0.05em; line-height: 1.08; margin-bottom: 16px; max-width: 480px; }
 .cta-sub { font-size: 14px; font-weight: 300; color: rgba(224,233,246,0.55); line-height: 1.7; max-width: 440px; margin-bottom: 36px; }
 .cta-divider { height: 1px; background: rgba(224,233,246,0.08); margin-bottom: 28px; }
-.cta-contacts { display: flex; gap: 40px; margin-bottom: 28px; }
+.cta-contacts { display: flex; flex-wrap: wrap; margin-bottom: 28px; }
+.cta-contacts > div { margin-right: 40px; }
+.cta-contacts > div:last-child { margin-right: 0; }
 .cta-contact-label {
   font-size: 9px;
   font-weight: 700;
@@ -832,12 +875,17 @@ body {
 .cta-prepared { font-size: 11px; color: rgba(224,233,246,0.3); border-top: 1px solid rgba(224,233,246,0.06); padding-top: 16px; }
 .cta-confidential { font-size: 9px; color: rgba(224,233,246,0.15); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 10px; }
 
-/* ── PRINT ── */
+/* ── PRINT ──
+   Explicitly zero out the screen-preview body padding/background here too —
+   relying on @media screen alone to "not apply" during print is what was
+   producing the stray blank trailing page (that grey 20px top/bottom
+   padding was bleeding into the print layout and overflowing onto its own
+   page after the last real content page). */
 @media print {
   @page { size: A4; margin: 0; }
-  body { margin: 0; }
-  .page { page-break-after: always; width: 210mm; }
-  .page:last-child { page-break-after: avoid; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  .page { page-break-after: always; break-after: page; width: 210mm; box-shadow: none; margin: 0; }
+  .page:last-child { page-break-after: avoid; break-after: avoid; }
 }
 
 /* ── SCREEN PREVIEW ── */
