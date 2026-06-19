@@ -2306,6 +2306,9 @@ initMG('hero-mg');
   const qaButtons = document.querySelectorAll('[data-abi-cta]');
 
   // Conversation history sent to the API (role/content pairs only).
+  // Persisted to sessionStorage so the conversation survives navigating
+  // between pages in the same tab, and clears when the tab is closed.
+  const ABI_STORAGE_KEY = 'abi_conversation_v1';
   let history = [];
   let isSending = false;
   let hasOpenedOnce = false;
@@ -2317,11 +2320,35 @@ initMG('hero-mg');
     upload:  '/analyser.html',  // statement analyser
   };
 
+  function saveSession() {
+    try {
+      sessionStorage.setItem(ABI_STORAGE_KEY, JSON.stringify({
+        history,
+        wasOpen: root.classList.contains('abi-open'),
+      }));
+    } catch (e) {
+      // sessionStorage can fail in private browsing / storage-full edge cases —
+      // chat still works for the current page, it just won't persist.
+      console.warn('Abi: could not save session', e.message);
+    }
+  }
+
+  function loadSession() {
+    try {
+      const raw = sessionStorage.getItem(ABI_STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  }
+
   function scrollToBottom() {
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
-  function addMessage(role, text) {
+  function addMessage(role, text, opts) {
+    opts = opts || {};
     const wrap = document.createElement('div');
     wrap.className = 'abi-msg ' + role;
     const bubble = document.createElement('div');
@@ -2330,6 +2357,7 @@ initMG('hero-mg');
     wrap.appendChild(bubble);
     messagesEl.appendChild(wrap);
     scrollToBottom();
+    if (!opts.silent) saveSession();
     return wrap;
   }
 
@@ -2361,8 +2389,18 @@ initMG('hero-mg');
   function greet() {
     if (messagesEl.children.length) return; // already greeted
     addMessage('assistant',
-      "Hey, I'm Abi 👋 Ask me anything about merchant fees — or skip ahead and upload your statement to see your actual numbers."
+      "Hey, I'm Abi 👋 Ask me anything about merchant fees — or skip ahead and upload your statement to see your actual numbers.",
+      { silent: true } // greeting isn't part of the API history, don't re-save it as such
     );
+  }
+
+  // Rebuild the visible message list from saved history (used on page load
+  // when a prior session exists). The greeting is skipped since it isn't
+  // part of `history` (it's never sent to the API).
+  function restoreMessagesFromHistory() {
+    history.forEach(msg => {
+      addMessage(msg.role === 'user' ? 'user' : 'assistant', msg.content, { silent: true });
+    });
   }
 
   function openPanel() {
@@ -2371,16 +2409,19 @@ initMG('hero-mg');
     panel.setAttribute('aria-hidden', 'false');
     if (!hasOpenedOnce) {
       hasOpenedOnce = true;
-      greet();
+      if (!history.length) greet();
     }
     setTimeout(() => input.focus(), 220);
+    saveSession();
   }
 
   function closePanel() {
     root.classList.remove('abi-open');
     launcher.setAttribute('aria-expanded', 'false');
     panel.setAttribute('aria-hidden', 'true');
+    saveSession();
   }
+
 
   function togglePanel() {
     root.classList.contains('abi-open') ? closePanel() : openPanel();
@@ -2417,8 +2458,9 @@ initMG('hero-mg');
     const text = input.value.trim();
     if (!text || isSending) return;
 
-    addMessage('user', text);
     history.push({ role: 'user', content: text });
+    addMessage('user', text, { silent: true });
+    saveSession();
 
     input.value = '';
     input.style.height = 'auto';
@@ -2443,8 +2485,9 @@ initMG('hero-mg');
       const data = await res.json();
       const reply = data.reply || "Sorry, I didn't quite catch that — could you try rephrasing?";
 
-      addMessage('assistant', reply);
       history.push({ role: 'assistant', content: reply });
+      addMessage('assistant', reply, { silent: true });
+      saveSession();
 
     } catch (err) {
       hideTyping();
@@ -2454,6 +2497,21 @@ initMG('hero-mg');
       isSending = false;
       sendBtn.disabled = !input.value.trim();
       input.focus();
+    }
+  }
+
+  // ---- Restore prior session on page load (same tab, e.g. navigated from
+  // homepage to pricing) ------------------------------------------------
+  const savedSession = loadSession();
+  if (savedSession && Array.isArray(savedSession.history) && savedSession.history.length) {
+    history = savedSession.history;
+    hasOpenedOnce = true;
+    restoreMessagesFromHistory();
+    if (savedSession.wasOpen) {
+      // Re-open without re-triggering the greeting or a redundant save.
+      root.classList.add('abi-open');
+      launcher.setAttribute('aria-expanded', 'true');
+      panel.setAttribute('aria-hidden', 'false');
     }
   }
 
