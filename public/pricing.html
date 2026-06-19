@@ -115,12 +115,19 @@ header{
 .pricing-head p{margin:22px auto 0;max-width:610px;font-size:17px;line-height:1.55;color:var(--cream-soft)}
 .pricing-grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:110px;
-  max-width:1380px;
+  grid-template-columns:repeat(3, minmax(0, 300px));
+  justify-content:center;
+  gap:96px;
+  max-width:1180px;
   margin:0 auto;
 }
-.price-col{min-height:540px;display:flex;flex-direction:column;position:relative;padding-top:8px}
+.price-col{
+  min-height:500px;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  padding-top:8px;
+}
 .price-col.featured::before{
   content:'Most businesses start here';
   position:absolute;
@@ -139,13 +146,23 @@ header{
   line-height:1.12;
   color:rgba(230,235,246,.92);
 }
-.price-intro{margin-top:14px;min-height:72px;font-size:14.5px;line-height:1.6;color:var(--cream-soft)}
+.price-intro{
+  margin-top:14px;
+  min-height:92px;
+  font-size:14.5px;
+  line-height:1.6;
+  color:var(--cream-soft);
+}
 .price{margin-top:40px;padding-bottom:28px;border-bottom:1px solid rgba(224,233,246,.10)}
 .price strong{font-size:58px;font-weight:300;letter-spacing:-0.06em;line-height:1;color:rgba(230,235,246,.96)}
 .price span{font-size:15px;color:var(--cream-soft);margin-left:8px}
 .details{margin-top:46px}
 .kicker{font-size:13px;color:var(--cream-faint);margin-bottom:16px}
-.features{display:grid;gap:15px}
+.features{
+  display:grid;
+  gap:14px;
+  margin-bottom:44px;
+}
 .features li{
   list-style:none;
   display:flex;
