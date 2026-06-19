@@ -209,6 +209,12 @@ export default async function handler(req, res) {
     const fmtD = n => n != null ? '$' + Number(n).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—';
     const fmtP = n => n != null ? Number(n).toFixed(2) + '%' : '—';
 
+    // This is a B2B product — the report and triage email are organised around
+    // the COMPANY, not the individual submitting. Company name lives inside the
+    // free-text programContext blob (set by the front end as "Company: ..."),
+    // so pull it out here for use as the lead identity in the admin email.
+    const companyName = (programContext || '').match(/Company:\s*(.+)/)?.[1]?.trim() || '';
+
     // ── Fee reconciliation guard ──────────────────────────────────
     // totalFees should be the statement's stated (GST-inclusive) total. When a
     // feeBreakdown is present, its components should sum to ~totalFees. A
@@ -314,8 +320,8 @@ tr:last-child td{border-bottom:none}
     <span class="hdr-word">acceptor<b>IQ</b></span>
   </div>
   <div class="hdr-label">New Submission · acceptorIQ AI · #${submissionId ?? '—'}</div>
-  <div class="hdr-title">${report.provider || 'Unknown Provider'} — ${report.period || 'Review'}</div>
-  <div class="hdr-meta">Submitted ${new Date().toLocaleString('en-AU', { dateStyle: 'long', timeStyle: 'short' })}</div>
+  <div class="hdr-title">${companyName || 'Unknown company'}</div>
+  <div class="hdr-meta">${report.provider || 'Unknown provider'} — ${report.period || 'Review'} · Submitted ${new Date().toLocaleString('en-AU', { dateStyle: 'long', timeStyle: 'short' })}</div>
   <div class="stats">
     <div class="stat"><span class="stat-val">${fmtP(report.effectiveRate)}</span><span class="stat-lbl">Eff. rate</span></div>
     <div class="stat"><span class="stat-val">${fmtD(report.totalFees)}</span><span class="stat-lbl">Total fees</span></div>
@@ -364,7 +370,7 @@ tr:last-child td{border-bottom:none}
           body: JSON.stringify({
             from:    fromEmail,
             to:      [adminEmail],
-            subject: `New submission — ${report.provider || 'Unknown'} · ${fmtP(report.effectiveRate)} · ${uploadedFiles.length} file(s)`,
+            subject: `New submission — ${companyName || 'Unknown company'} · ${fmtP(report.effectiveRate)} · ${uploadedFiles.length} file(s)`,
             html:    emailHtml,
           }),
         });
