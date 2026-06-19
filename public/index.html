@@ -601,154 +601,143 @@ section{position:relative}
   .reply{margin-top:16px;align-self:flex-start;max-width:90%;padding:12px 16px;border-radius:20px 20px 20px 6px;
     background:linear-gradient(135deg,#5E8FE0,#A6CBF2);color:#0E1A2E;font-size:14px;display:inline-block}
 
-  /* provider orbit */
-.provider-orbit{
+.payment-web{
   position:relative;
-  width:330px;
-  height:330px;
+  width:500px;
+  height:500px;
   margin:0 auto;
-  display:grid;
-  place-items:center;
 }
 
-.orbit-ring{
+.web-lines{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+
+.web-lines circle,
+.web-lines line,
+.web-lines path{
+  fill:none;
+  stroke:rgba(169,204,242,.22);
+  stroke-width:1;
+}
+
+.web-lines line{
+  stroke:rgba(169,204,242,.28);
+}
+
+.web-core{
   position:absolute;
   left:50%;
   top:50%;
-  transform:translate(-50%,-50%);
-  border:1px solid rgba(224,233,246,.12);
-  border-radius:50%;
-  pointer-events:none;
-}
-
-.ring-one{
-  width:210px;
-  height:210px;
-}
-
-.ring-two{
-  width:295px;
-  height:295px;
-  opacity:.7;
-}
-
-.orbit-spinner{
-    position:absolute;
-    inset:0;
-    animation:orbitRotate 28s linear infinite;
-}  
-
-.provider-core{
-  position:relative;
   z-index:3;
-  width:145px;
-  height:145px;
+  width:150px;
+  height:150px;
+  transform:translate(-50%,-50%);
   border-radius:50%;
-  background:rgba(224,233,246,.045);
-  border:1px solid rgba(224,233,246,.14);
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  text-align:center;
-  box-shadow:0 30px 70px -45px rgba(0,0,0,.8);
+  gap:10px;
+  background:rgba(224,233,246,.045);
+  border:1px solid rgba(169,204,242,.28);
+  box-shadow:0 0 70px rgba(63,119,214,.20);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
 }
 
-.core-label{
-  font-size:10px;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  color:rgba(224,233,246,.38);
-  margin-bottom:6px;
+.web-core strong{
+  font-size:18px;
+  font-weight:300;
+  letter-spacing:-.04em;
+  color:rgba(230,235,246,.92);
 }
 
-.provider-core strong{
-  font-size:21px;
-  font-weight:500;
-  color:rgba(230,235,246,.94);
-  line-height:1;
-}
-
-.provider-core small{
-  max-width:100px;
-  margin-top:8px;
-  font-size:10.5px;
-  line-height:1.35;
-  color:rgba(224,233,246,.48);
-}
-
-.provider-logo{
+.web-node{
   position:absolute;
   z-index:2;
-  min-width:54px;
-  height:32px;
-  padding:0 10px;
+  min-width:76px;
+  height:34px;
+  padding:0 12px;
   border-radius:999px;
   display:grid;
   place-items:center;
   font-size:11px;
-  font-weight:600;
-  color:rgba(224,233,246,.72);
-  background:rgba(224,233,246,.055);
-  border:1px solid rgba(224,233,246,.12);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  animation:keepUpright 28s linear infinite;
-}
-
-.p1{top:18px;left:50%;transform:translateX(-50%);animation-delay:0s}
-.p2{top:82px;right:12px;animation-delay:.4s}
-.p3{bottom:82px;right:20px;animation-delay:.8s}
-.p4{bottom:18px;left:50%;transform:translateX(-50%);animation-delay:1.2s}
-.p5{bottom:82px;left:18px;animation-delay:1.6s}
-.p6{top:82px;left:14px;animation-delay:2s}
-
-.orbit-result{
-  position:absolute;
-  bottom:-4px;
-  left:50%;
-  transform:translateX(-50%);
-  width:230px;
-  padding:12px 16px;
-  border-radius:16px;
+  font-weight:500;
+  color:rgba(230,235,246,.78);
   background:rgba(224,233,246,.045);
-  border:1px solid rgba(224,233,246,.11);
-  text-align:center;
+  border:1px solid rgba(224,233,246,.12);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 22px 60px rgba(0,0,0,.35);
 }
 
-.orbit-result span{
-  display:block;
-  font-size:10px;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  color:rgba(224,233,246,.35);
-  margin-bottom:4px;
+.web-node::after{
+  content:"";
+  position:absolute;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#A9CCF2;
+  box-shadow:0 0 18px rgba(169,204,242,.75);
 }
 
-.orbit-result strong{
-  font-size:13px;
-  font-weight:600;
-  color:rgba(224,233,246,.82);
-}
+/* outer ring positions */
+.n1{left:50%;top:30px;transform:translateX(-50%)}
+.n2{left:66%;top:48px}
+.n3{right:30px;top:105px}
+.n4{right:12px;top:205px}
+.n5{right:36px;bottom:135px}
+.n6{right:100px;bottom:58px}
+.n7{left:50%;bottom:28px;transform:translateX(-50%)}
+.n8{left:100px;bottom:58px}
+.n9{left:36px;bottom:135px}
+.n10{left:12px;top:205px}
+.n11{left:30px;top:105px}
+.n12{left:66px;top:48px}
 
-@keyframes orbitRotate{
-    from{
-        transform:rotate(0deg);
-    }
-    to{
-        transform:rotate(360deg);
-    }
-}
+/* inner extra nodes */
+.n13{left:50%;top:122px;transform:translateX(-50%)}
+.n14{right:105px;top:245px}
+.n15{left:105px;top:245px}
 
-@keyframes keepUpright{
-    from{
-        transform:rotate(0deg);
-    }
-    to{
-        transform:rotate(-360deg);
-    }
-}
+@media(max-width:700px){
+  .payment-web{
+    width:340px;
+    height:340px;
+  }
 
+  .web-core{
+    width:115px;
+    height:115px;
+  }
+
+  .web-node{
+    min-width:58px;
+    height:28px;
+    font-size:9px;
+    padding:0 8px;
+  }
+
+  .n1{top:12px}
+  .n2{left:64%;top:26px}
+  .n3{right:4px;top:72px}
+  .n4{right:-4px;top:145px}
+  .n5{right:10px;bottom:92px}
+  .n6{right:58px;bottom:32px}
+  .n7{bottom:8px}
+  .n8{left:58px;bottom:32px}
+  .n9{left:10px;bottom:92px}
+  .n10{left:-4px;top:145px}
+  .n11{left:4px;top:72px}
+  .n12{left:38px;top:26px}
+  .n13{top:84px}
+  .n14{right:62px;top:165px}
+  .n15{left:62px;top:165px}
+}
 /* full-bleed warm section */
 .bleed{
   display:grid;
@@ -1367,34 +1356,59 @@ section{position:relative}
   </div>
 
   <div class="col">
-    <h2 class="serif">Find the best fit</h2>
-    <p>Compare against major payment providers. Identify the right pricing, routing and acceptance.</p>
+  <h2 class="serif">Map the market</h2>
+  <p>See how every provider, network and payment partner connects — and where the best opportunities sit.</p>
 
-    <div class="vis">
-      <div class="provider-orbit">
-        <div class="orbit-ring ring-one"></div>
-        <div class="orbit-ring ring-two"></div>
-
-        <div class="orbit-spinner">
-          <div class="provider-logo p1">Stripe</div>
-          <div class="provider-logo p2">Adyen</div>
-          <div class="provider-logo p3">FZ</div>
-          <div class="provider-logo p4">CBA</div>
-          <div class="provider-logo p5">NAB</div>
-          <div class="provider-logo p6">Tyro</div>
-        </div>
-
-<div class="provider-core">
-    <span class="acceptor-mark small">
-        <span></span>
-        <span></span>
-    </span>
-</div>
+  <div class="vis">
+    <div class="payment-web">
+      <div class="web-core">
+        <span class="acceptor-mark small">
+          <span></span>
+          <span></span>
+        </span>
+        <strong>acceptorIQ</strong>
       </div>
+
+      <svg class="web-lines" viewBox="0 0 500 500" aria-hidden="true">
+        <circle cx="250" cy="250" r="95"></circle>
+        <circle cx="250" cy="250" r="170"></circle>
+
+        <line x1="250" y1="250" x2="250" y2="55"></line>
+        <line x1="250" y1="250" x2="332" y2="74"></line>
+        <line x1="250" y1="250" x2="397" y2="120"></line>
+        <line x1="250" y1="250" x2="435" y2="205"></line>
+        <line x1="250" y1="250" x2="421" y2="303"></line>
+        <line x1="250" y1="250" x2="365" y2="385"></line>
+        <line x1="250" y1="250" x2="250" y2="435"></line>
+        <line x1="250" y1="250" x2="135" y2="385"></line>
+        <line x1="250" y1="250" x2="79" y2="303"></line>
+        <line x1="250" y1="250" x2="65" y2="205"></line>
+        <line x1="250" y1="250" x2="103" y2="120"></line>
+        <line x1="250" y1="250" x2="168" y2="74"></line>
+
+        <path d="M250 55 L332 74 L397 120 L435 205 L421 303 L365 385 L250 435 L135 385 L79 303 L65 205 L103 120 L168 74 Z"></path>
+        <path d="M250 155 L311 161 L342 196 L345 260 L326 319 L250 345 L174 319 L155 260 L158 196 L189 161 Z"></path>
+      </svg>
+
+      <div class="web-node n1">Stripe</div>
+      <div class="web-node n2">Adyen</div>
+      <div class="web-node n3">Worldpay</div>
+      <div class="web-node n4">Fiserv</div>
+      <div class="web-node n5">PayPal</div>
+      <div class="web-node n6">Square</div>
+      <div class="web-node n7">Tyro</div>
+      <div class="web-node n8">Zeller</div>
+      <div class="web-node n9">CBA</div>
+      <div class="web-node n10">NAB</div>
+      <div class="web-node n11">ANZ</div>
+      <div class="web-node n12">Westpac</div>
+      <div class="web-node n13">Visa</div>
+      <div class="web-node n14">Mastercard</div>
+      <div class="web-node n15">eftpos</div>
     </div>
   </div>
+</div>
 </section>
-
 <!-- FULL-BLEED WARM -->
 <section class="bleed">
   <div class="copy text-left">
