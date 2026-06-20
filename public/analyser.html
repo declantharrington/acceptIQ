@@ -1,536 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="acceptorIQ — get an AI-reviewed, human-verified analysis of your payments setup and fees.">
-<title>acceptorIQ — Payments Review</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="shared.css">
-<style>
-/* ── acceptorIQ design tokens ── */
-:root {
-  --bg:          #0F1218;
-  --bg2:         #171C26;
-  --cream:       #E6EBF6;
-  --cream-soft:  rgba(224,233,246,0.60);
-  --cream-faint: rgba(224,233,246,0.38);
-  --line:        rgba(224,233,246,0.12);
-  --frame:       rgba(224,233,246,0.15);
-  --btn:         #E4EAF6;
-  --ink:         #0F1218;
-  --rose:        #7FA6E6;
-  --peach:       #A9CCF2;
-  --orange:      #3F77D6;
-  --green:       #9FD9B4;
-  --gold:        #E7B27A;
-  --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+/* MOBILE OPTIMISATION — compact analyser flow */
+@media (max-width:760px){
 
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; }
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--cream);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  cursor: default;
-}
-
-/* Subtle ambient glow — blue tones to match the site */
-.ambient {
-  position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
-  background: radial-gradient(circle, rgba(63,119,214,0.07) 0%, transparent 70%);
-}
-.ambient-1 { width: 700px; height: 700px; top: -200px; right: -200px; }
-.ambient-2 { width: 500px; height: 500px; bottom: -150px; left: -100px; opacity: 0.5; }
-
-
-/* ── Nav / Chrome ── */
-.chrome {
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:500;
-  height:72px;
-  background:rgba(15,18,24,0.72);
-  backdrop-filter:saturate(160%) blur(12px);
-  -webkit-backdrop-filter:saturate(160%) blur(12px);
-}
-
-.chrome-inner {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  width:calc(100vw - (var(--site-frame) * 2));
-  max-width:var(--shell-width);
-  height:72px;
-  margin:0 auto;
-  padding:0 26px;
-  border-bottom:1px solid var(--line);
-}
-
-/* Brand — acceptorIQ mark + wordmark, matches the main site exactly */
-.acceptor-logo{
-  display:flex;
-  align-items:center;
-  gap:16px;
-  text-decoration:none;
-}
-
-.acceptor-mark{
-  position:relative;
-  width:38px;
-  height:34px;
-  display:inline-block;
-  flex-shrink:0;
-}
-
-.acceptor-mark span{
-  position:absolute;
-  bottom:0;
-  width:12px;
-  height:34px;
-  border-radius:3px;
-  background:var(--cream);
-  transform-origin:bottom center;
-}
-
-.acceptor-mark span:first-child{
-  left:7px;
-  transform:skewX(-30deg);
-}
-
-.acceptor-mark span:last-child{
-  right:7px;
-  height:24px;
-  transform:skewX(30deg);
-}
-
-.acceptor-word{
-  font-size:24px;
-  font-weight:300;
-  letter-spacing:-0.055em;
-  color:rgba(230,235,246,.92);
-}
-
-.acceptor-word span{
-  font-weight:500;
-  letter-spacing:-0.04em;
-}
-
-/* Progress bar — site's cream/blue palette */
-.progress-wrap { display: flex; align-items: center; gap: 12px; min-width: 200px; }
-.progress-label {
-  font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
-  color: var(--cream-soft); white-space: nowrap; font-variant-numeric: tabular-nums;
-}
-.progress-bar {
-  flex: 1; height: 2px; border-radius: 0;
-  background: var(--line); overflow: hidden;
-}
-.progress-fill {
-  height: 100%; width: 0%;
-  background: linear-gradient(90deg, var(--orange), var(--peach));
-  border-radius: 0;
-  transition: width 0.45s cubic-bezier(0.22,1,0.36,1);
-}
-
-/* ── Stage ── */
-.stage {
-  position: fixed; inset: 0; z-index: 1;
-  display: flex; align-items: center; justify-content: center;
-  padding-top: calc(80px + env(safe-area-inset-top));
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
-  padding-left: max(40px, env(safe-area-inset-left));
-  padding-right: max(40px, env(safe-area-inset-right));
-}
-
-.screen {
-  position: absolute; width: 100%; max-width: 620px;
-  padding-right: 2px;
-  opacity: 0; pointer-events: none;
-  transform: translateX(48px) scale(var(--fit, 1));
-  transform-origin: center center;
-  will-change: transform;
-  transition: opacity 0.45s cubic-bezier(0.22,1,0.36,1),
-              transform 0.45s cubic-bezier(0.22,1,0.36,1);
-  scrollbar-width: thin;
-  scrollbar-color: var(--line) transparent;
-}
-.screen::-webkit-scrollbar { width: 4px; }
-.screen::-webkit-scrollbar-thumb { background: var(--line); border-radius: 0; }
-.screen.active    { opacity: 1; pointer-events: all; transform: translateX(0) scale(var(--fit, 1)); }
-.screen.exit      { opacity: 0; transform: translateX(-48px) scale(var(--fit, 1)); pointer-events: none; }
-.screen.exit-back { opacity: 0; transform: translateX(48px)  scale(var(--fit, 1)); pointer-events: none; }
-.screen.enter-back{ transform: translateX(-48px) scale(var(--fit, 1)); }
-
-/* ── Question text ── */
-.q-text {
-  font-size: clamp(32px, 4.5vw, 52px);
-  font-weight: 300;
-  line-height: 1.06;
-  letter-spacing: -0.055em;
-  color: rgba(230,235,246,0.90);
-  margin-bottom: 10px;
-}
-
-.q-sub {
-  font-size: 15px; color: var(--cream-soft); line-height: 1.65;
-  margin-bottom: 36px; max-width: 480px; font-weight: 400;
-}
-.q-sub b { font-weight: 600; color: var(--cream); }
-
-/* ── Text inputs — underline style ── */
-.q-input-wrap { position: relative; margin-bottom: 24px; }
-.q-label {
-  display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
-  text-transform: uppercase; color: var(--cream-faint); margin-bottom: 4px;
-}
-.q-input {
-  width: 100%; background: transparent; border: none;
-  border-bottom: 1px solid var(--frame);
-  font-family: var(--sans); font-size: clamp(24px, 3vw, 36px);
-  color: var(--cream); padding: 12px 0; outline: none;
-  transition: border-color 0.2s;
-  caret-color: var(--peach);
-}
-.q-input:focus { border-bottom-color: var(--peach); }
-.q-input::placeholder { color: var(--cream-faint); }
-
-/* ── OTP digits ── */
-.otp-digits { display: flex; gap: 10px; margin-bottom: 8px; }
-.otp-digit {
-  width: 52px; height: 64px;
-  background: rgba(224,233,246,0.03);
-  border: 1px solid var(--line); border-radius: 0;
-  font-family: var(--sans); font-size: 28px; font-weight: 400;
-  color: var(--cream); text-align: center; outline: none;
-  transition: border-color 0.2s, background 0.2s;
-  caret-color: transparent;
-}
-.otp-digit:focus { border-color: var(--peach); background: rgba(63,119,214,0.06); }
-.otp-digit.filled { border-color: rgba(169,204,242,0.35); }
-
-/* ── Choice cards ── */
-.choice-grid { display: grid; gap: 6px; margin-bottom: 28px; }
-.choice-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-.choice-grid.cols-1 { grid-template-columns: 1fr; }
-
-.choice {
-  display: flex; align-items: center; gap: 14px;
-  background: rgba(224,233,246,0.03);
-  border: 1px solid var(--line);
-  border-radius: 0;
-  padding: 14px 18px; cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  font-family: var(--sans); text-align: left;
-  position: relative; overflow: hidden;
-}
-.choice:hover {
-  border-color: var(--frame);
-  background: rgba(63,119,214,0.06);
-}
-.choice:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; }
-.choice.selected {
-  background: rgba(63,119,214,0.09);
-  border-color: rgba(127,166,230,0.4);
-}
-
-/* Left accent line on selected */
-.choice.selected::before {
-  content: '';
-  position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
-  background: linear-gradient(180deg, var(--orange), var(--peach));
-}
-
-.choice-icon {
-  width: 38px; height: 38px; flex-shrink: 0;
-  background: rgba(63,119,214,0.08);
-  border: 1px solid rgba(63,119,214,0.15);
-  border-radius: 0;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; color: var(--peach);
-}
-.choice.selected .choice-icon {
-  background: rgba(63,119,214,0.15);
-  border-color: rgba(127,166,230,0.3);
-}
-.choice-icon svg { stroke: currentColor; }
-
-.choice-text { flex: 1; }
-.choice-label {
-  font-size: 14px; font-weight: 600; color: var(--cream);
-  margin-bottom: 1px; letter-spacing: -0.01em;
-}
-.choice-sub { font-size: 12px; color: var(--cream-soft); line-height: 1.4; }
-
-.choice-check {
-  width: 18px; height: 18px; border-radius: 0;
-  border: 1px solid var(--line);
-  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-}
-.choice.selected .choice-check {
-  background: var(--orange); border-color: var(--orange);
-}
-.choice.selected .choice-check::after { content: '✓'; font-size: 10px; color: white; font-weight: 700; }
-
-/* ── Upload zone ── */
-.upload-zone {
-  border: 1.5px dashed rgba(224,233,246,0.15);
-  border-radius: 0;
-  padding: 48px 32px; text-align: center; cursor: pointer;
-  transition: all 0.25s; background: rgba(224,233,246,0.02);
-  margin-bottom: 16px; position: relative; overflow: hidden;
-}
-.upload-zone:hover, .upload-zone.drag-over {
-  border-color: rgba(127,166,230,0.4);
-  background: rgba(63,119,214,0.05);
-}
-.upload-zone:focus-visible { outline: 2px solid var(--peach); outline-offset: 3px; }
-.upload-icon {
-  width: 48px; height: 48px; border-radius: 0;
-  margin: 0 auto 16px;
-  background: rgba(63,119,214,0.08);
-  border: 1px solid rgba(63,119,214,0.2);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--peach);
-}
-.upload-icon svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 1.5; fill: none; }
-.upload-title {
-  font-size: 18px; font-weight: 600; letter-spacing: -0.02em;
-  color: var(--cream); margin-bottom: 8px;
-}
-.upload-sub { font-size: 13px; color: var(--cream-soft); line-height: 1.65; }
-.upload-formats { font-size: 11px; color: var(--cream-faint); margin-top: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
-input#fileInput { display: none; }
-
-/* File chips */
-.file-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-.file-chip {
-  display: flex; align-items: center; gap: 8px;
-  background: rgba(159,217,180,0.08); border: 1px solid rgba(159,217,180,0.22);
-  border-radius: 0; padding: 6px 12px 6px 10px;
-  font-family: var(--sans); font-size: 12px; color: var(--green);
-}
-.file-chip.parsed { background: rgba(63,119,214,0.08); border-color: rgba(127,166,230,0.25); color: var(--peach); }
-.file-chip svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; }
-.file-chip-remove {
-  background: none; border: none; cursor: pointer; color: currentColor;
-  opacity: 0.5; padding: 4px; margin: -4px -2px -4px 2px;
-  line-height: 1; font-size: 15px; transition: opacity 0.15s;
-}
-.file-chip-remove:hover { opacity: 1; }
-
-/* ── Primary CTA button — matches site's .btn.btn-cream exactly ── */
-.cta {
-  display: inline-flex; align-items: center; justify-content: space-between;
-  gap: 32px; min-width: 210px; height: 56px;
-  font-family: var(--sans); font-size: 15px; font-weight: 600;
-  letter-spacing: -0.01em; padding: 0 24px;
-  background: var(--btn); color: var(--ink);
-  border: 1px solid transparent; border-radius: 0;
-  cursor: pointer; text-decoration: none;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  position: relative; overflow: hidden;
-}
-.cta:hover { transform: translateY(-2px); opacity: 0.92; }
-.cta:active { transform: translateY(0); }
-.cta:focus-visible { outline: 2px solid var(--peach); outline-offset: 3px; }
-.cta:disabled { opacity: 0.28; cursor: not-allowed; transform: none; }
-.cta svg { width: 20px; height: 20px; stroke: var(--ink); stroke-width: 2.1; fill: none; flex-shrink: 0; }
-
-.cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-
-/* Ghost / text link */
-.skip-link {
-  font-family: var(--sans); font-size: 13px; color: var(--cream-faint);
-  background: none; border: none; cursor: pointer;
-  text-decoration: underline; text-underline-offset: 3px;
-  transition: color 0.15s;
-}
-.skip-link:hover { color: var(--cream-soft); }
-.skip-link:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; border-radius: 0; }
-
-/* Status messages */
-.status-msg { font-family: var(--sans); font-size: 13px; margin-top: 10px; min-height: 20px; line-height: 1.5; }
-.status-msg.error   { color: #E88A8A; }
-.status-msg.success { color: var(--green); display: flex; align-items: center; gap: 6px; }
-.status-msg.info    { color: var(--cream-soft); }
-
-/* ── Loading screen ── */
-.loading-screen { text-align: center; }
-.loading-ring {
-  width: 44px; height: 44px; border-radius: 50%;
-  border: 1.5px solid var(--line); border-top-color: var(--peach);
-  animation: spin 1s linear infinite; margin: 0 auto 28px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-label {
-  font-size: 24px; font-weight: 300; letter-spacing: -0.05em;
-  color: rgba(230,235,246,0.90); margin-bottom: 8px;
-}
-.loading-sub { font-size: 14px; color: var(--cream-soft); }
-.loading-steps {
-  margin-top: 28px; display: flex; flex-direction: column; gap: 4px;
-  max-width: 300px; margin-left: auto; margin-right: auto;
-}
-.loading-step {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 13px; color: var(--cream-faint);
-  padding: 8px 12px; transition: all 0.3s; text-align: left;
-}
-.loading-step.active { color: var(--cream); background: rgba(63,119,214,0.07); font-weight: 500; }
-.loading-step.done   { color: var(--green); }
-.step-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--line); flex-shrink: 0; transition: all 0.3s;
-}
-.loading-step.active .step-dot { background: var(--peach); animation: blink 1s ease infinite; }
-.loading-step.done   .step-dot { background: var(--green); }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
-
-/* ── Review list ── */
-.review-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 28px; }
-.review-row {
-  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
-  padding: 11px 0; border-bottom: 1px solid var(--line);
-}
-.review-key { font-size: 13px; color: var(--cream-soft); flex-shrink: 0; }
-.review-val { font-size: 14px; color: var(--cream); font-weight: 500; text-align: right; }
-.review-edit {
-  font-size: 12px; color: var(--rose); background: none; border: none; cursor: pointer;
-  text-decoration: underline; text-underline-offset: 2px; margin-left: 10px; flex-shrink: 0;
-}
-.review-edit:hover { color: var(--cream); }
-
-/* Info / note box */
-.reg-note {
-  display: flex; gap: 12px; align-items: flex-start;
-  background: rgba(63,119,214,0.06); border: 1px solid rgba(63,119,214,0.18);
-  border-radius: 0; padding: 14px 16px; margin-bottom: 28px;
-}
-.reg-note svg { width: 16px; height: 16px; stroke: var(--peach); stroke-width: 1.8; fill: none; flex-shrink: 0; margin-top: 1px; }
-.reg-note-text { font-size: 12.5px; color: var(--cream-soft); line-height: 1.6; }
-.reg-note-text b { color: var(--cream); font-weight: 600; }
-
-/* ── Floating Back / Keyboard hint ── */
-.back-btn {
-  position: fixed;
-  bottom: calc(36px + env(safe-area-inset-bottom));
-  left: max(40px, env(safe-area-inset-left));
-  z-index: 100;
-  background: rgba(15,18,24,0.7); backdrop-filter: blur(8px);
-  border: 1px solid var(--line); border-radius: 0;
-  padding: 9px 18px; font-family: var(--sans); font-size: 13px;
-  color: var(--cream-soft); cursor: pointer; transition: all 0.2s;
-  display: flex; align-items: center; gap: 6px;
-}
-.back-btn:hover { border-color: var(--frame); color: var(--cream); }
-.back-btn:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; }
-.back-btn svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; }
-
-.key-hint {
-  position: fixed;
-  bottom: calc(36px + env(safe-area-inset-bottom));
-  right: max(40px, env(safe-area-inset-right));
-  z-index: 100;
-  font-family: var(--sans); font-size: 12px; color: var(--cream-faint);
-  display: flex; align-items: center; gap: 6px;
-}
-.key {
-  display: inline-flex; align-items: center; justify-content: center;
-  background: rgba(224,233,246,0.05); border: 1px solid var(--line);
-  border-radius: 0; padding: 2px 7px; font-size: 11px;
-}
-
-/* ── Confirm screen numbered steps ── */
-.confirm-step {
-  display: flex; gap: 16px; align-items: flex-start;
-  padding: 16px 0; border-bottom: 1px solid var(--line);
-}
-.confirm-step:last-child { border-bottom: none; }
-.confirm-num {
-  width: 24px; height: 24px; border-radius: 0;
-  background: rgba(63,119,214,0.10); border: 1px solid rgba(63,119,214,0.22);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600; color: var(--peach);
-  flex-shrink: 0; margin-top: 2px;
-}
-.confirm-title {
-  font-size: 14px; font-weight: 600; color: var(--cream);
-  margin-bottom: 4px; letter-spacing: -0.01em;
-}
-.confirm-body { font-size: 13px; color: var(--cream-soft); line-height: 1.6; }
-.beta-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(231,178,122,0.10); border: 1px solid rgba(231,178,122,0.25);
-  border-radius: 0; padding: 3px 8px; font-size: 11px; font-weight: 600;
-  color: var(--gold); margin-bottom: 6px;
-}
-
-/* ── Responsive ── */
-@media (max-width: 600px) {
-  .chrome {
-    height:62px;
-  }
-  .chrome-inner {
-    width:100%;
-    max-width:none;
-    height:62px;
-    padding-left:max(22px, env(safe-area-inset-left));
-    padding-right:max(22px, env(safe-area-inset-right));
-  }
-  .progress-wrap { min-width: 96px; }
-  .progress-label { display: none; }
-
-  .stage {
-    align-items: flex-start;
-    padding-top: calc(72px + env(safe-area-inset-top));
-    padding-bottom: calc(18px + env(safe-area-inset-bottom));
-    padding-left: 0; padding-right: 0;
-  }
-  .screen {
-    --fit: 1 !important;
-    box-sizing: border-box;
-    padding-left: max(22px, env(safe-area-inset-left));
-    padding-right: max(22px, env(safe-area-inset-right));
-    max-height: calc(100dvh - 86px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    overflow-y: auto; overflow-x: hidden;
-  }
-  .q-text { font-size: 28px; margin-bottom: 6px; }
-  .q-sub  { font-size: 14px; margin-bottom: 16px; }
-  .choice-grid { gap: 6px; margin-bottom: 16px; }
-  .q-text + .choice-grid { margin-top: 24px; }
-  .choice { padding: 11px 14px; gap: 12px; }
-  .choice-icon { width: 34px; height: 34px; }
-  .choice-label { font-size: 14px; }
-  .cta-row { width: 100%; margin-top: 4px; }
-  .cta { width: 100%; justify-content: center; padding: 14px 22px; min-width: 0; }
-  .back-btn { left: max(22px, env(safe-area-inset-left)); bottom: calc(16px + env(safe-area-inset-bottom)); }
-  .key-hint { display: none; }
-  .choice-grid.cols-2 { grid-template-columns: 1fr; }
-  .otp-digit { width: 44px; height: 56px; font-size: 24px; }
-  .upload-zone { padding: 28px 16px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.12s !important; }
-  .loading-ring { animation: spin 1s linear infinite; }
-}
-/* MOBILE OPTIMISATION — analyser page */
-@media (max-width: 760px){
-
-  html,
-  body{
+  html, body{
     height:100%;
     overflow:hidden;
     background:#14161A;
@@ -548,56 +19,47 @@ input#fileInput { display: none; }
     pointer-events:none;
   }
 
-  body::before{
-    left:14px;
-  }
-
-  body::after{
-    right:14px;
-  }
+  body::before{ left:14px; }
+  body::after{ right:14px; }
 
   .chrome{
-    height:82px;
-    background:rgba(15,18,24,.88);
-    border-bottom:none;
+    height:74px;
+    background:rgba(15,18,24,.9);
   }
 
   .chrome-inner{
     width:calc(100% - 28px);
-    height:82px;
-    padding:0 26px;
+    height:74px;
+    padding:0 22px;
     border-left:1px solid rgba(230,235,246,.08);
     border-right:1px solid rgba(230,235,246,.08);
     border-bottom:1px solid rgba(230,235,246,.08);
   }
 
   .acceptor-word{
-    font-size:24px;
+    font-size:23px;
   }
 
   .acceptor-mark{
-    width:30px;
-    height:28px;
+    width:28px;
+    height:26px;
   }
 
   .acceptor-mark span{
     width:9px;
-    height:28px;
+    height:26px;
     border-radius:2.5px;
   }
 
-  .acceptor-mark span:first-child{
-    left:6px;
-  }
-
+  .acceptor-mark span:first-child{ left:5px; }
   .acceptor-mark span:last-child{
-    right:6px;
-    height:20px;
+    right:5px;
+    height:19px;
   }
 
   .progress-wrap{
-    min-width:88px;
-    max-width:96px;
+    min-width:82px;
+    max-width:90px;
   }
 
   .progress-label{
@@ -606,9 +68,8 @@ input#fileInput { display: none; }
 
   .stage{
     align-items:flex-start;
-    justify-content:flex-start;
-    padding-top:calc(128px + env(safe-area-inset-top));
-    padding-bottom:calc(96px + env(safe-area-inset-bottom));
+    padding-top:calc(104px + env(safe-area-inset-top));
+    padding-bottom:calc(70px + env(safe-area-inset-bottom));
     padding-left:0;
     padding-right:0;
   }
@@ -617,37 +78,30 @@ input#fileInput { display: none; }
     --fit:1 !important;
     width:calc(100% - 28px);
     max-width:none;
-    max-height:calc(100dvh - 158px);
+    max-height:calc(100dvh - 128px);
     margin:0 auto;
-    padding:0 34px 40px;
+    padding:0 26px 24px;
     overflow-y:auto;
     overflow-x:hidden;
-    transform:translateX(34px);
-  }
-
-  .screen.active{
-    transform:translateX(0);
   }
 
   .q-text{
-    font-size:clamp(42px,10.8vw,58px);
+    font-size:clamp(32px,8.7vw,42px);
     line-height:1.08;
-    letter-spacing:-0.06em;
-    margin-bottom:22px;
-    color:rgba(230,235,246,.92);
+    letter-spacing:-0.055em;
+    margin-bottom:14px;
   }
 
   .q-sub{
-    font-size:18px;
-    line-height:1.48;
-    color:rgba(224,233,246,.54);
-    margin-bottom:34px;
-    max-width:340px;
+    font-size:15.5px;
+    line-height:1.42;
+    margin-bottom:20px;
+    max-width:330px;
   }
 
   .choice-grid{
-    gap:10px;
-    margin-bottom:28px;
+    gap:7px;
+    margin-bottom:18px;
   }
 
   .choice-grid.cols-2{
@@ -655,112 +109,121 @@ input#fileInput { display: none; }
   }
 
   .choice{
-    min-height:68px;
-    padding:16px 18px;
-    gap:14px;
+    min-height:54px;
+    padding:12px 14px;
+    gap:12px;
     background:rgba(224,233,246,.035);
-    border-color:rgba(224,233,246,.10);
   }
 
   .choice-icon{
-    width:40px;
-    height:40px;
+    width:34px;
+    height:34px;
   }
 
   .choice-label{
-    font-size:15px;
+    font-size:14px;
   }
 
   .choice-sub{
-    font-size:12.5px;
+    font-size:11.5px;
+    line-height:1.35;
   }
 
   .choice-check{
-    width:20px;
-    height:20px;
+    width:18px;
+    height:18px;
   }
 
   .q-input-wrap{
-    margin-top:34px;
-    margin-bottom:30px;
+    margin-top:22px;
+    margin-bottom:22px;
   }
 
   .q-label{
-    font-size:11px;
-    margin-bottom:10px;
+    font-size:10.5px;
+    margin-bottom:8px;
   }
 
   .q-input{
-    font-size:clamp(28px,8vw,38px);
-    padding:14px 0;
+    font-size:clamp(24px,7vw,32px);
+    padding:11px 0;
   }
 
   .cta-row{
     width:100%;
-    margin-top:24px;
-    gap:14px;
+    margin-top:14px;
+    gap:8px;
   }
 
   .cta{
     width:100%;
-    height:58px;
+    height:52px;
     min-width:0;
     justify-content:space-between;
-    padding:0 22px;
-    font-size:15px;
+    padding:0 20px;
+    font-size:14px;
   }
 
   .skip-link{
     width:100%;
     text-align:center;
-    font-size:14px;
-    padding:12px 0;
+    font-size:13px;
+    padding:8px 0;
   }
 
   .upload-zone{
-    padding:44px 22px;
-    margin-top:28px;
-    margin-bottom:22px;
+    padding:30px 18px;
+    margin-top:18px;
+    margin-bottom:16px;
+  }
+
+  .upload-icon{
+    width:42px;
+    height:42px;
+    margin-bottom:12px;
   }
 
   .upload-title{
-    font-size:20px;
+    font-size:18px;
   }
 
   .upload-sub{
-    font-size:14px;
+    font-size:13px;
+  }
+
+  .upload-formats{
+    font-size:10px;
+    margin-top:8px;
   }
 
   .otp-digits{
-    gap:7px;
+    gap:6px;
     justify-content:space-between;
   }
 
   .otp-digit{
-    width:46px;
-    height:60px;
-    font-size:25px;
+    width:42px;
+    height:54px;
+    font-size:23px;
+  }
+
+  .status-msg{
+    font-size:12.5px;
+    margin-top:8px;
   }
 
   .review-row{
-    padding:15px 0;
-  }
-
-  .review-key{
-    font-size:13px;
-  }
-
-  .review-val{
-    font-size:14px;
+    padding:10px 0;
   }
 
   .confirm-step{
-    padding:18px 0;
+    padding:12px 0;
   }
 
   .back-btn{
     left:28px;
-    bottom:calc(24px + env(safe-area-inset-bottom));
+    bottom:calc(20px + env(safe-area-inset-bottom));
+    padding:8px 14px;
     border-radius:999px;
     background:rgba(15,18,24,.82);
   }
@@ -770,1003 +233,33 @@ input#fileInput { display: none; }
   }
 }
 
-@media (max-width: 480px){
-
-  body::before{
-    left:14px;
-  }
-
-  body::after{
-    right:14px;
-  }
-
-  .chrome-inner{
-    width:calc(100% - 28px);
-    padding:0 22px;
-  }
+@media (max-width:480px){
 
   .screen{
-    width:calc(100% - 28px);
-    padding-left:28px;
-    padding-right:28px;
+    padding-left:24px;
+    padding-right:24px;
   }
 
   .q-text{
-    font-size:clamp(39px,11.4vw,52px);
+    font-size:clamp(30px,8.9vw,39px);
   }
 
   .q-sub{
-    font-size:17px;
+    font-size:14.5px;
   }
 
   .choice{
-    padding:15px 16px;
+    min-height:50px;
+    padding:10px 13px;
+  }
+
+  .choice-icon{
+    width:31px;
+    height:31px;
   }
 
   .otp-digit{
-    width:42px;
-    height:56px;
+    width:39px;
+    height:52px;
   }
 }
-  
-</style>
-</head>
-<body>
-
-<div class="ambient ambient-1"></div>
-<div class="ambient ambient-2"></div>
-<div class="shell-frame" aria-hidden="true"></div>
-
-<header class="chrome">
-  <div class="chrome-inner">
-    <a href="/" class="acceptor-logo">
-      <span class="acceptor-mark"><span></span><span></span></span>
-      <span class="acceptor-word">acceptor<span>IQ</span></span>
-    </a>
-    <div class="progress-wrap" aria-hidden="true">
-      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-    </div>
-  </div>
-</header>
-
-<button class="back-btn" id="backBtn" onclick="back()" style="display:none">
-  <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
-  Back
-</button>
-
-<div class="key-hint" id="keyHint" style="display:none">
-  Press <span class="key">Enter ↵</span> to continue
-</div>
-
-<div class="stage">
-
-  <!-- s5: Industry -->
-  <div class="screen active" id="s5">
-    <div class="q-text">What kind of<br>business are you?</div>
-    <div class="choice-grid cols-2">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'industry','retail')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div><div class="choice-text"><div class="choice-label">Retail</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'industry','food')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div><div class="choice-text"><div class="choice-label">Food & Hospitality</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'industry','ecommerce')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div><div class="choice-text"><div class="choice-label">eCommerce</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'industry','health')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="choice-text"><div class="choice-label">Healthcare</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'industry','professional')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div><div class="choice-text"><div class="choice-label">Professional Services</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'industry','trades')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div class="choice-text"><div class="choice-label">Trades & Construction</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'industry','accommodation')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="choice-text"><div class="choice-label">Accommodation</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'industry','other')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="choice-text"><div class="choice-label">Other</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
-
-  <!-- s6: Channels -->
-  <div class="screen" id="s6">
-    <div class="q-text">How do you<br>take payments?</div>
-    <div class="q-sub">Select all that apply.</div>
-    <div class="choice-grid cols-1">
-      <div class="choice multi" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'channels','instore')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><div class="choice-text"><div class="choice-label">In-store</div><div class="choice-sub">Card terminals, tap & pay</div></div><div class="choice-check"></div></div>
-      <div class="choice multi" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'channels','online')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="choice-text"><div class="choice-label">Online</div><div class="choice-sub">Website, eCommerce</div></div><div class="choice-check"></div></div>
-      <div class="choice multi" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'channels','invoice')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div><div class="choice-text"><div class="choice-label">Invoices & payment links</div><div class="choice-sub">Send to customers to pay</div></div><div class="choice-check"></div></div>
-      <div class="choice multi" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'channels','recurring')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div><div class="choice-text"><div class="choice-label">Recurring / subscriptions</div><div class="choice-sub">Automatic billing</div></div><div class="choice-check"></div></div>
-      <div class="choice multi" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'channels','phone')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div class="choice-text"><div class="choice-label">Phone / MOTO</div><div class="choice-sub">Card not present, over the phone</div></div><div class="choice-check"></div></div>
-    </div>
-    <div class="cta-row" style="margin-top:8px">
-      <button class="cta" id="ctaS6" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- s1: Name -->
-  <div class="screen" id="s1">
-    <div class="q-text">What's your name?</div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-name">Full name</label>
-      <input class="q-input" type="text" id="inp-name" placeholder="Jane Smith" autocomplete="name" aria-label="Your full name" oninput="validateName()">
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaS1" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- sCompany: Company name -->
-  <div class="screen" id="sCompany">
-    <div class="q-text">What's your<br>company called?</div>
-    <div class="q-sub">Your report is prepared for the business, not just you — so we'll need its name.</div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-company">Company name</label>
-      <input class="q-input" type="text" id="inp-company" placeholder="Riverside Hospitality Group" autocomplete="organization" aria-label="Your company name" oninput="validateCompany()">
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaCompany" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- s2: Email -->
-  <div class="screen" id="s2">
-    <div class="q-text">Where should we<br>send your report?</div>
-    <div class="q-sub">We'll email your completed review here once it's verified.</div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-email">Email</label>
-      <input class="q-input" type="email" id="inp-email" placeholder="you@company.com" autocomplete="email" aria-label="Your email address" oninput="validateEmail()">
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaS2" onclick="sendOtp()" disabled>
-        Send verification code
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-      <button class="skip-link" onclick="skipEmail()">Skip for now</button>
-    </div>
-    <div class="status-msg" id="statusS2"></div>
-  </div>
-
-  <!-- s3: OTP -->
-  <div class="screen" id="s3">
-    <div class="q-text">Check your<br>inbox.</div>
-    <div class="q-sub" id="otpSub">We sent a 6-digit code to your email.</div>
-    <div class="otp-digits" id="otpDigits">
-      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" autocomplete="one-time-code" aria-label="Verification code digit 1" data-idx="0" onkeydown="otpKey(event,0)" oninput="otpInput(event,0)">
-      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" aria-label="Verification code digit 2" data-idx="1" onkeydown="otpKey(event,1)" oninput="otpInput(event,1)">
-      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" aria-label="Verification code digit 3" data-idx="2" onkeydown="otpKey(event,2)" oninput="otpInput(event,2)">
-      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" aria-label="Verification code digit 4" data-idx="3" onkeydown="otpKey(event,3)" oninput="otpInput(event,3)">
-      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" aria-label="Verification code digit 5" data-idx="4" onkeydown="otpKey(event,4)" oninput="otpInput(event,4)">
-      <input class="otp-digit" type="text" maxlength="1" inputmode="numeric" aria-label="Verification code digit 6" data-idx="5" onkeydown="otpKey(event,5)" oninput="otpInput(event,5)">
-    </div>
-    <div class="status-msg" id="statusS3"></div>
-    <div class="cta-row" style="margin-top:24px">
-      <button class="cta" id="ctaS3" onclick="verifyOtp()" disabled>
-        Verify code
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-      <button class="skip-link" onclick="sendOtp(true)">Resend code</button>
-    </div>
-  </div>
-
-  <!-- s4: Mobile -->
-  <div class="screen" id="s4">
-    <div class="q-text">What's your<br>mobile number?</div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-phone">Mobile</label>
-      <input class="q-input" type="tel" id="inp-phone" placeholder="04XX XXX XXX" autocomplete="tel" aria-label="Your mobile number" oninput="validatePhone()">
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaS4" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- s0: Upload -->
-  <div class="screen" id="s0">
-    <div class="q-text">Upload your<br>merchant statements.</div>
-    <div class="q-sub">The last 3 months gives the clearest picture — upload a PDF statement, or a clear photo of each.</div>
-    <div class="file-chips" id="fileChips"></div>
-    <div class="upload-zone" id="uploadZone" role="button" tabindex="0" aria-label="Upload statements"
-         onclick="document.getElementById('fileInput').click()"
-         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('fileInput').click();}"
-         ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
-      <div class="upload-icon">
-        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      </div>
-      <div class="upload-title">Drop files here</div>
-      <div class="upload-sub">PDF statements or photos · Up to 10 files</div>
-      <div class="upload-formats">PDF · PNG · JPG</div>
-    </div>
-    <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,application/pdf,image/png,image/jpeg,image/webp,image/gif" multiple onchange="onFileSelect(event)">
-    <div class="status-msg" id="statusS0"></div>
-    <div class="cta-row">
-      <button class="cta" id="ctaS0" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-      <button class="skip-link" onclick="skipUpload()">I don't have statements handy</button>
-    </div>
-  </div>
-
-  <!-- sProvider: Current provider(s) -->
-  <div class="screen" id="sProvider">
-    <div class="q-text">Who handles your<br>payments today?</div>
-    <div class="q-sub">Pick any that apply — plenty of businesses run different providers for in-store and online — and add anything not listed.</div>
-    <div class="choice-grid cols-2">
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'tyro')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Tyro</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'square')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Square</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'stripe')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Stripe</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'zeller')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Zeller</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'commbank')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">CBA</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'nab')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">NAB</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'westpac')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Westpac</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'anz')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">ANZ Worldline</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'adyen')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Adyen</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'paypal')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">PayPal / Braintree</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'fatzebra')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Fat Zebra</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'globalpayments')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Global Payments (Worldpay)</div></div><div class="choice-check"></div></div>
-    </div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-provider-other">Other provider(s)</label>
-      <input class="q-input" style="font-size:22px" type="text" id="inp-provider-other" placeholder="Type any not listed…" aria-label="Other providers" oninput="onProviderOther()">
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaProvider" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-      <button class="skip-link" onclick="data.providers=[];data.providerOther='';next()">I'm not sure</button>
-    </div>
-  </div>
-
-  <!-- sPaymentTypes: Payment types -->
-  <div class="screen" id="sPaymentTypes">
-    <div class="q-text">Which payment types<br>do you accept?</div>
-    <div class="q-sub">Select everything customers can currently pay with. This shows where you're covered — and where you might be missing a low-cost or in-demand option.</div>
-    <div class="choice-grid cols-2">
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','visa')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Visa</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','mastercard')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Mastercard</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','eftpos')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">eftpos</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','amex')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">American Express</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','unionpay')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">UnionPay</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','wallets')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Apple Pay / Google Pay</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','bnpl')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Buy Now Pay Later</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','paypal')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">PayPal</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','payto')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">PayTo</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','bpay')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">BPAY</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','dd_bank')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Direct debit — bank account</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','dd_card')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Direct debit — card</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','eft')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">EFT / bank transfer</div></div><div class="choice-check"></div></div>
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaPaymentTypes" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- s6b: eCommerce platform -->
-  <div class="screen" id="s6b">
-    <div class="q-text">Which eCommerce<br>platform do you use?</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'ecomPlatform','shopify')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Shopify</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'ecomPlatform','woocommerce')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">WooCommerce</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'ecomPlatform','magento')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Magento / Adobe Commerce</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'ecomPlatform','bigcommerce')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">BigCommerce</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'ecomPlatform','custom')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Custom built</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'ecomPlatform','other')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Other</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
-
-  <!-- s6c: Terminal setup -->
-  <div class="screen" id="s6c">
-    <div class="q-text">How are your<br>terminals set up?</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'terminalSetup','standalone')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Standalone</div><div class="choice-sub">Terminals run on their own, not linked to a POS</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'terminalSetup','integrated')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Integrated with a POS system</div><div class="choice-sub">Terminals connect directly to point-of-sale software</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
-
-  <!-- s6f: Pricing model -->
-  <div class="screen" id="s6f">
-    <div class="q-text">What pricing model<br>are you on?</div>
-    <div class="q-sub">Your statement will confirm this, but knowing upfront helps us frame the analysis correctly.</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'pricingModel','blended')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Blended</div><div class="choice-sub">One flat rate for all card types</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'pricingModel','ic_plus')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Interchange Plus (IC+)</div><div class="choice-sub">Interchange cost plus a fixed processor margin</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'pricingModel','ic_plusplus')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Interchange++ (IC++)</div><div class="choice-sub">Every component itemised separately</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'pricingModel','unknown')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">I don't know</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
-
-  <!-- s6e: LCR status -->
-  <div class="screen" id="s6e">
-    <div class="q-text">Is Least Cost Routing<br>turned on?</div>
-    <div class="q-sub">LCR sends contactless debit down the cheapest network. Many merchants have it switched off without realising.</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'lcrStatus','on')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Yes, it's on</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'lcrStatus','off')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">No, it's off</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'lcrStatus','unknown')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">I don't know</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
-
-  <!-- s6g: Surcharge -->
-  <div class="screen" id="s6g">
-    <div class="q-text">Do you pass on<br>the card surcharge?</div>
-    <div class="q-sub">Whether you add a card fee at checkout, or absorb the cost yourself.</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'surcharge','yes')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Yes — we pass it on to customers</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'surcharge','no')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">No — we absorb the cost</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'surcharge','partial')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Sometimes / only on some cards</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'surcharge','unsure')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Not sure</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
-
-  <!-- sVolume: Monthly card volume -->
-  <div class="screen" id="sVolume">
-    <div class="q-text">Roughly how much<br>do you process on<br>cards each month?</div>
-    <div class="q-sub">Card turnover — this is what your savings actually scale on. A rough band is fine.</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'monthlyVolume','under10k')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Under $10k / month</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'monthlyVolume','10to50k')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$10k – $50k / month</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'monthlyVolume','50to250k')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$50k – $250k / month</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'monthlyVolume','250kto1m')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$250k – $1M / month</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'monthlyVolume','over1m')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$1M+ / month</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
-
-  <!-- sAtv: Average transaction value -->
-  <div class="screen" id="sAtv">
-    <div class="q-text">What's your average<br>transaction value?</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'atv','under20')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Under $20</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'atv','20to75')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$20 – $75</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'atv','75to250')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$75 – $250</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'atv','250to1000')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$250 – $1,000</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'atv','over1000')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$1,000+</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
-
-  <!-- sMix: Card mix -->
-  <div class="screen" id="sMix">
-    <div class="q-text">What's your<br>card mix?</div>
-    <div class="q-sub">Roughly what your customers pay with. This drives interchange, routing savings and surcharge economics.</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'cardMix','mostly_debit')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Mostly debit</div><div class="choice-sub">Eftpos, Visa/Mastercard debit</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'cardMix','mostly_credit')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Mostly credit</div><div class="choice-sub">Including rewards / premium cards</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'cardMix','even')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Fairly even split</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'cardMix','lots_intl')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">A lot of international / Amex</div><div class="choice-sub">Tourists, overseas customers</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'cardMix','unknown')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Not sure</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
-
-  <!-- sGoal: Goals -->
-  <div class="screen" id="sGoal">
-    <div class="q-text">What would make<br>this a win for you?</div>
-    <div class="q-sub">Pick everything that matters, and tell us what's prompting the switch. This shapes what your report prioritises.</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleGoal(this,'lower_fees')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Lower my fees</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleGoal(this,'better_tech')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Better tech or features</div><div class="choice-sub">Faster settlement, integrations, reporting</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleGoal(this,'consolidate')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Consolidate providers</div><div class="choice-sub">One setup across all channels</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleGoal(this,'leave_provider')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Leave a provider I'm unhappy with</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleGoal(this,'benchmark')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Just want an honest benchmark</div></div><div class="choice-check"></div></div>
-    </div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-pain">Anything else frustrating you? (optional)</label>
-      <textarea class="q-input" id="inp-pain" aria-label="Anything else frustrating you" placeholder="e.g. fees feel too high, chargebacks I can't explain, clunky hardware…" rows="2" style="resize:none;font-size:18px;line-height:1.55;padding-top:8px" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';data.pain=this.value.trim();updateGoalCta();refit()"></textarea>
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaGoal" onclick="next()" disabled>
-        Review my answers
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- sReview: Summary -->
-  <div class="screen" id="sReview">
-    <div class="q-text" style="font-size:clamp(28px,3.6vw,44px)">One last look<br>before we run it.</div>
-    <div class="q-sub">Check anything looks right. Tap edit to fix a detail.</div>
-    <div class="review-list" id="reviewList"></div>
-    <div class="cta-row">
-      <button class="cta" id="ctaReview" onclick="submitAll()">
-        Submit for review
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Loading -->
-  <div class="screen" id="sLoading">
-    <div class="loading-screen">
-      <div class="loading-ring"></div>
-      <div class="loading-label">Analysing your payments</div>
-      <div class="loading-sub">This usually takes under a minute</div>
-      <div class="loading-steps">
-        <div class="loading-step active" id="ls0"><div class="step-dot"></div>Reading your statements</div>
-        <div class="loading-step" id="ls1"><div class="step-dot"></div>Extracting fee structure</div>
-        <div class="loading-step" id="ls2"><div class="step-dot"></div>Benchmarking against market rates</div>
-        <div class="loading-step" id="ls3"><div class="step-dot"></div>Writing your report</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Confirm -->
-  <div class="screen" id="sConfirm">
-    <div class="q-text" style="font-size:clamp(28px,3.5vw,42px);margin-bottom:12px">Your report is<br>being prepared.</div>
-    <div class="q-sub" style="margin-bottom:32px">Here's exactly what happens between now and when you hear from us.</div>
-    <div style="display:flex;flex-direction:column;gap:0;max-width:520px">
-      <div class="confirm-step">
-        <div class="confirm-num">1</div>
-        <div>
-          <div class="confirm-title">AI analysis complete</div>
-          <div class="confirm-body">Our payments AI has reviewed your statement and merchant profile, benchmarked your rates against current market data, and produced a report specific to your setup.</div>
-        </div>
-      </div>
-      <div class="confirm-step">
-        <div class="confirm-num">2</div>
-        <div>
-          <div class="confirm-title">Human review in progress. <div class="beta-badge">⊕ Beta review</div></div>
-          <div class="confirm-body">While we're in beta, a payments specialist checks the AI report for accuracy before it reaches you. So what you receive is verified, not just generated.</div>
-        </div>
-      </div>
-      <div class="confirm-step">
-        <div class="confirm-num">3</div>
-        <div>
-          <div class="confirm-title">Report delivered within 24 hours</div>
-          <div class="confirm-body">Once reviewed, it lands in your inbox. Simple.</div>
-        </div>
-      </div>
-    </div>
-    <div class="cta-row" style="margin-top:32px">
-      <a class="cta" href="/">
-        Back to homepage
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </a>
-    </div>
-  </div>
-
-</div><!-- /stage -->
-
-<!-- All JS is identical to the original — zero logic changes -->
-<script>
-const data = {
-  files: [], parsedTabular: [], skippedUpload: false,
-  name: '', companyName: '', email: '', emailVerified: false, skippedEmail: false,
-  phone: '', industry: '', channels: [],
-  ecomPlatform: '', terminalSetup: '',
-  providers: [], providerOther: '', paymentTypes: [],
-  monthlyVolume: '', atv: '', cardMix: '',
-  lcrStatus: '', pricingModel: '', surcharge: '', goals: [], pain: ''
-};
-let otp = { sent: false };
-
-let currentId = 's5';
-let history = [];
-let busy = false;
-
-function computePath() {
-  const p = ['s5','s6','s1','sCompany','s2'];
-  if (!data.skippedEmail) p.push('s3');
-  p.push('s4','s0','sProvider','sPaymentTypes');
-  if (data.channels.includes('online'))  p.push('s6b');
-  if (data.channels.includes('instore')) p.push('s6c');
-  p.push('s6f');
-  if (data.channels.includes('instore')) p.push('s6e');
-  p.push('s6g','sVolume','sAtv','sMix','sGoal','sReview');
-  return p;
-}
-
-function renderProgress() {
-  const path = computePath();
-  const idx = Math.max(0, path.indexOf(currentId));
-  const pct = path.length > 1 ? (idx / (path.length - 1)) * 100 : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
-}
-
-const KEYHINT_SCREENS = ['s1','sCompany','s2','s3','s4'];
-function updateChrome() {
-  document.getElementById('backBtn').style.display = history.length ? 'flex' : 'none';
-  document.getElementById('keyHint').style.display = KEYHINT_SCREENS.includes(currentId) ? 'flex' : 'none';
-}
-
-const FIT_FLOOR = 0.62;
-function stageAvailable() {
-  const stage = document.querySelector('.stage');
-  const cs = getComputedStyle(stage);
-  return stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-}
-function applyFit(screen) {
-  if (!screen) return;
-  if (window.innerWidth <= 600) { screen.style.removeProperty('--fit'); return; }
-  screen.style.setProperty('--fit', '1');
-  screen.style.maxHeight = 'none';
-  screen.style.overflowY = 'visible';
-  const avail = stageAvailable();
-  const natural = screen.scrollHeight;
-  let scale = natural > 0 ? Math.min(1, avail / natural) : 1;
-  if (scale < FIT_FLOOR) {
-    scale = FIT_FLOOR;
-    screen.style.maxHeight = (avail / scale) + 'px';
-    screen.style.overflowY = 'auto';
-  }
-  screen.style.setProperty('--fit', scale.toFixed(4));
-}
-function refit() { applyFit(document.getElementById(currentId)); }
-
-let resizeTimer;
-window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(refit, 120); });
-
-function show(id, reverse) {
-  if (busy || id === currentId) return;
-  const from = document.getElementById(currentId);
-  const to   = document.getElementById(id);
-  if (!to) return;
-  busy = true;
-  if (id === 'sReview') renderReview();
-  to.scrollTop = 0;
-  to.classList.remove('active','exit','exit-back','enter-back');
-  applyFit(to);
-  if (reverse) to.classList.add('enter-back');
-  void to.offsetWidth;
-  from.classList.remove('active');
-  from.classList.add(reverse ? 'exit-back' : 'exit');
-  to.classList.remove('enter-back');
-  to.classList.add('active');
-  currentId = id;
-  renderProgress();
-  updateChrome();
-  setTimeout(() => {
-    from.classList.remove('exit','exit-back');
-    busy = false;
-    const inp = to.querySelector('.q-input, .otp-digit');
-    if (inp) inp.focus();
-  }, 480);
-}
-
-function next() {
-  if (busy) return;
-  const path = computePath();
-  const idx = path.indexOf(currentId);
-  if (idx === -1 || idx >= path.length - 1) return;
-  history.push(currentId);
-  show(path[idx + 1]);
-}
-function back() {
-  if (busy || !history.length) return;
-  show(history.pop(), true);
-}
-function goEdit(id) {
-  if (busy) return;
-  history.push(currentId);
-  show(id);
-}
-
-document.addEventListener('keydown', e => {
-  if (e.key !== 'Enter') return;
-  if (e.target.tagName === 'TEXTAREA') return;
-  if (!KEYHINT_SCREENS.includes(currentId) && currentId !== 'sReview') return;
-  const btn = document.querySelector('#' + currentId + ' .cta:not(:disabled)');
-  if (btn) btn.click();
-});
-
-function selectSingle(el, key, val) {
-  el.closest('.choice-grid').querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  data[key] = val;
-}
-function pick(el, key, val) {
-  selectSingle(el, key, val);
-  setTimeout(next, 300);
-}
-function toggle(el, key, val) {
-  el.classList.toggle('selected');
-  const on = el.classList.contains('selected');
-  el.setAttribute('aria-checked', on ? 'true' : 'false');
-  if (on) { if (!data[key].includes(val)) data[key].push(val); }
-  else    { data[key] = data[key].filter(v => v !== val); }
-  const cta = el.closest('.screen').querySelector('.cta');
-  if (cta) cta.disabled = data[key].length === 0;
-}
-function kbd(e) {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); }
-}
-
-function toggleProvider(el, val) {
-  el.classList.toggle('selected');
-  const on = el.classList.contains('selected');
-  el.setAttribute('aria-checked', on ? 'true' : 'false');
-  if (on) { if (!data.providers.includes(val)) data.providers.push(val); }
-  else    { data.providers = data.providers.filter(v => v !== val); }
-  updateProviderCta();
-}
-function onProviderOther() {
-  data.providerOther = document.getElementById('inp-provider-other').value.trim();
-  updateProviderCta();
-}
-function updateProviderCta() {
-  document.getElementById('ctaProvider').disabled = !(data.providers.length || data.providerOther);
-}
-
-function toggleGoal(el, val) {
-  el.classList.toggle('selected');
-  const on = el.classList.contains('selected');
-  el.setAttribute('aria-checked', on ? 'true' : 'false');
-  if (on) { if (!data.goals.includes(val)) data.goals.push(val); }
-  else    { data.goals = data.goals.filter(v => v !== val); }
-  updateGoalCta();
-}
-function updateGoalCta() {
-  document.getElementById('ctaGoal').disabled = !(data.goals.length || data.pain);
-}
-
-function validateName()  { data.name  = document.getElementById('inp-name').value.trim();  document.getElementById('ctaS1').disabled = data.name.length < 2; }
-function validateCompany() { data.companyName = document.getElementById('inp-company').value.trim(); document.getElementById('ctaCompany').disabled = data.companyName.length < 2; }
-function validateEmail() { data.email = document.getElementById('inp-email').value.trim(); document.getElementById('ctaS2').disabled = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email); }
-function validatePhone() { data.phone = document.getElementById('inp-phone').value.trim(); document.getElementById('ctaS4').disabled = data.phone.replace(/\D/g,'').length < 8; }
-function firstName() { return (data.name.split(' ')[0] || data.name); }
-
-function onDragOver(e){ e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
-function onDragLeave(){ document.getElementById('uploadZone').classList.remove('drag-over'); }
-function onDrop(e){ e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag-over'); Array.from(e.dataTransfer.files).forEach(addFile); }
-function onFileSelect(e){ Array.from(e.target.files).forEach(addFile); e.target.value=''; }
-
-function uploadError(msg){ const s=document.getElementById('statusS0'); s.className='status-msg error'; s.textContent=msg; }
-function uploadClear(){ const s=document.getElementById('statusS0'); s.className='status-msg'; s.textContent=''; }
-
-function addFile(f) {
-  uploadClear();
-  if (data.files.length >= 10) { uploadError('That\'s the 10-file limit — remove one to add another.'); return; }
-  if (data.files.some(x => x.name === f.name)) return;
-  const ext = (f.name.split('.').pop() || '').toLowerCase();
-  if (ext === 'heic' || ext === 'heif' || /heic|heif/.test(f.type)) {
-    uploadError('HEIC images aren\'t supported. On iPhone, take a screenshot of the statement or save it as JPG, or upload the PDF.'); return;
-  }
-  const ALLOWED_EXT = ['pdf', 'png', 'jpg', 'jpeg', 'webp', 'gif'];
-  const isAllowed = ALLOWED_EXT.includes(ext) || f.type === 'application/pdf' || (f.type || '').startsWith('image/');
-  if (!isAllowed) {
-    uploadError('Please upload your card processing statement as a PDF or image (PNG/JPG). Spreadsheets and other files aren\'t supported.'); return;
-  }
-  data.files.push(f);
-  renderChips();
-  document.getElementById('ctaS0').disabled = false;
-}
-function removeFile(i) {
-  const removed = data.files.splice(i, 1)[0];
-  if (removed) data.parsedTabular = data.parsedTabular.filter(t => t.name !== removed.name);
-  renderChips();
-  if (!data.files.length) document.getElementById('ctaS0').disabled = true;
-}
-function renderChips() {
-  document.getElementById('fileChips').innerHTML = data.files.map((f, i) => {
-    const parsed = data.parsedTabular.some(t => t.name === f.name);
-    const label = f.name.length > 28 ? f.name.slice(0,26)+'…' : f.name;
-    return '<div class="file-chip' + (parsed ? ' parsed' : '') + '">' +
-      '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
-      label +
-      '<button class="file-chip-remove" aria-label="Remove file" onclick="removeFile(' + i + ')">×</button></div>';
-  }).join('');
-  refit();
-}
-function skipUpload(){ data.skippedUpload = true; next(); }
-
-function skipEmail() { data.skippedEmail = true; data.emailVerified = false; next(); }
-
-async function sendOtp(isResend) {
-  const btn = document.getElementById('ctaS2');
-  const status = document.getElementById('statusS2');
-  btn.disabled = true; btn.textContent = 'Sending…';
-  status.className = 'status-msg info'; status.textContent = '';
-  try {
-    const res = await fetch('/api/send-otp', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: data.email, firstName: firstName() })
-    });
-    const d = await res.json();
-    if (!res.ok) throw new Error(d.error || 'Failed to send');
-    otp.sent = true;
-    document.getElementById('otpSub').textContent = 'We sent a 6-digit code to ' + data.email + '.';
-    btn.textContent = 'Send verification code'; btn.disabled = false;
-    if (!isResend) next();
-  } catch (err) {
-    status.className = 'status-msg error';
-    status.textContent = 'We couldn\'t send the code: ' + err.message + '. Check the address and try again.';
-    btn.textContent = 'Send verification code'; btn.disabled = false;
-  }
-}
-function otpKey(e, idx) {
-  const digits = document.querySelectorAll('.otp-digit');
-  if (e.key === 'Backspace') { if (!digits[idx].value && idx > 0) { digits[idx-1].value=''; digits[idx-1].classList.remove('filled'); digits[idx-1].focus(); } validateOtp(); }
-  if (e.key === 'ArrowLeft'  && idx > 0) digits[idx-1].focus();
-  if (e.key === 'ArrowRight' && idx < 5) digits[idx+1].focus();
-}
-function otpInput(e, idx) {
-  const digits = document.querySelectorAll('.otp-digit');
-  const val = e.target.value.replace(/[^0-9]/g,'');
-  if (val.length > 1) {
-    val.split('').slice(0,6).forEach((c,i)=>{ if (digits[i]){ digits[i].value=c; digits[i].classList.add('filled'); } });
-    digits[Math.min(5, val.length-1)].focus();
-  } else {
-    e.target.value = val.slice(-1);
-    if (val && idx < 5) digits[idx+1].focus();
-  }
-  digits[idx].classList.toggle('filled', !!digits[idx].value);
-  validateOtp();
-}
-function validateOtp() {
-  const code = Array.from(document.querySelectorAll('.otp-digit')).map(d=>d.value).join('');
-  document.getElementById('ctaS3').disabled = code.length < 6;
-}
-async function verifyOtp() {
-  const code = Array.from(document.querySelectorAll('.otp-digit')).map(d=>d.value).join('');
-  const btn = document.getElementById('ctaS3');
-  const status = document.getElementById('statusS3');
-  btn.disabled = true; btn.textContent = 'Verifying…'; status.textContent = '';
-  try {
-    const res = await fetch('/api/send-otp', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: data.email, verify: code })
-    });
-    const d = await res.json();
-    if (!res.ok || !d.valid) {
-      status.className = 'status-msg error'; status.textContent = 'That code didn\'t match. Check it and try again.';
-      btn.disabled = false; btn.textContent = 'Verify code'; return;
-    }
-    data.emailVerified = true;
-    status.className = 'status-msg success';
-    status.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Email verified';
-    setTimeout(next, 600);
-  } catch (err) {
-    status.className = 'status-msg error'; status.textContent = 'Verification failed. Please try again.';
-    btn.disabled = false; btn.textContent = 'Verify code';
-  }
-}
-
-const LABELS = {
-  industry:{retail:'Retail',food:'Food & Hospitality',ecommerce:'eCommerce',health:'Healthcare',professional:'Professional Services',trades:'Trades & Construction',accommodation:'Accommodation',other:'Other'},
-  provider:{tyro:'Tyro',square:'Square',stripe:'Stripe',zeller:'Zeller',commbank:'CBA',nab:'NAB',westpac:'Westpac',anz:'ANZ Worldline',adyen:'Adyen',paypal:'PayPal / Braintree',fatzebra:'Fat Zebra',globalpayments:'Global Payments (Worldpay)'},
-  paymentTypes:{visa:'Visa',mastercard:'Mastercard',eftpos:'eftpos',amex:'American Express',unionpay:'UnionPay',wallets:'Apple/Google Pay',bnpl:'Buy Now Pay Later',paypal:'PayPal',payto:'PayTo',bpay:'BPAY',dd_bank:'Direct debit (bank)',dd_card:'Direct debit (card)',eft:'EFT / bank transfer'},
-  monthlyVolume:{under10k:'Under $10k/mo','10to50k':'$10k–$50k/mo','50to250k':'$50k–$250k/mo','250kto1m':'$250k–$1M/mo',over1m:'$1M+/mo'},
-  atv:{under20:'Under $20','20to75':'$20–$75','75to250':'$75–$250','250to1000':'$250–$1,000',over1000:'$1,000+'},
-  cardMix:{mostly_debit:'Mostly debit',mostly_credit:'Mostly credit',even:'Even split',lots_intl:'Lots of intl/Amex',unknown:'Not sure'},
-  pricingModel:{blended:'Blended',ic_plus:'Interchange Plus',ic_plusplus:'Interchange++',unknown:'Not sure'},
-  lcrStatus:{on:'On',off:'Off',unknown:'Not sure'},
-  surcharge:{yes:'Passes it on',no:'Absorbs it',partial:'Sometimes',unsure:'Not sure'},
-  goal:{lower_fees:'Lower fees',better_tech:'Better tech',consolidate:'Consolidate',leave_provider:'Leave provider',benchmark:'Honest benchmark'}
-};
-function lbl(key, val){ return (LABELS[key] && LABELS[key][val]) || val; }
-function providerSummary() {
-  const names = data.providers.map(p => lbl('provider', p));
-  if (data.providerOther) names.push(data.providerOther);
-  return names.join(', ');
-}
-function goalSummary() { return data.goals.map(g => lbl('goal', g)).join(', '); }
-
-function renderReview() {
-  const channelNames = {instore:'In-store',online:'Online',invoice:'Invoices',recurring:'Recurring',phone:'Phone/MOTO'};
-  const rows = [];
-  const add = (label, value, editId) => { if (value) rows.push({label, value, editId}); };
-  add('Statements', data.skippedUpload ? 'None uploaded' : (data.files.length + ' file' + (data.files.length===1?'':'s')), 's0');
-  add('Name', data.name, 's1');
-  add('Company', data.companyName, 'sCompany');
-  add('Email', data.email + (data.emailVerified ? ' ✓' : ''), 's2');
-  add('Industry', lbl('industry', data.industry), 's5');
-  add('Channels', data.channels.map(c=>channelNames[c]).join(', '), 's6');
-  add('Current provider(s)', providerSummary(), 'sProvider');
-  add('Accepts', data.paymentTypes.map(t=>lbl('paymentTypes',t)).join(', '), 'sPaymentTypes');
-  add('Pricing model', lbl('pricingModel', data.pricingModel), 's6f');
-  if (data.lcrStatus) add('LCR', lbl('lcrStatus', data.lcrStatus), 's6e');
-  add('Surcharging', lbl('surcharge', data.surcharge), 's6g');
-  add('Monthly card volume', lbl('monthlyVolume', data.monthlyVolume), 'sVolume');
-  add('Avg transaction', lbl('atv', data.atv), 'sAtv');
-  add('Card mix', lbl('cardMix', data.cardMix), 'sMix');
-  add('Goal', goalSummary(), 'sGoal');
-  document.getElementById('reviewList').innerHTML = rows.map(r =>
-    '<div class="review-row"><span class="review-key">' + r.label + '</span>' +
-    '<span style="display:flex;align-items:baseline"><span class="review-val">' + r.value + '</span>' +
-    '<button class="review-edit" onclick="goEdit(\'' + r.editId + '\')">edit</button></span></div>'
-  ).join('');
-}
-
-function fetchWithTimeout(url, opts, ms) {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), ms);
-  return fetch(url, Object.assign({}, opts, { signal: ctrl.signal })).finally(() => clearTimeout(t));
-}
-
-function stripTrailingCommas(s) { return s.replace(/,(\s*[}\]])/g, '$1'); }
-
-function balancedSlice(t, start) {
-  const stack = []; let inStr = false, esc = false;
-  for (let i = start; i < t.length; i++) {
-    const c = t[i];
-    if (inStr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') inStr = false; continue; }
-    if (c === '"') inStr = true;
-    else if (c === '{' || c === '[') stack.push(c);
-    else if (c === '}' || c === ']') { stack.pop(); if (!stack.length) return t.slice(start, i + 1); }
-  }
-  return null;
-}
-
-function balanceAndClose(s) {
-  const stack = []; let inStr = false, esc = false;
-  for (let i = 0; i < s.length; i++) {
-    const c = s[i];
-    if (inStr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') inStr = false; continue; }
-    if (c === '"') inStr = true;
-    else if (c === '{' || c === '[') stack.push(c);
-    else if (c === '}' || c === ']') stack.pop();
-  }
-  if (inStr) return null;
-  let out = s.replace(/[\s,:]+$/, '');
-  for (let i = stack.length - 1; i >= 0; i--) out += (stack[i] === '{' ? '}' : ']');
-  return out;
-}
-
-function parseModelJson(raw) {
-  let t = String(raw || '').trim();
-  t = t.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '');
-  const start = t.indexOf('{');
-  if (start === -1) throw new Error('No JSON object found in the response.');
-  const sliced = balancedSlice(t, start) || t.slice(start);
-  try { return JSON.parse(stripTrailingCommas(sliced)); } catch (e) { /* fall through */ }
-  const limit = Math.max(1, sliced.length - 6000);
-  for (let cut = sliced.length; cut > limit; cut--) {
-    const candidate = balanceAndClose(sliced.slice(0, cut));
-    if (candidate == null) continue;
-    try { return JSON.parse(stripTrailingCommas(candidate)); } catch (e) { /* keep trimming */ }
-  }
-  throw new Error('The report was cut off by the server and couldn\'t be recovered.');
-}
-
-async function submitAll() {
-  const loading = document.getElementById('sLoading');
-  document.getElementById('sReview').classList.remove('active');
-  loading.classList.add('active');
-  applyFit(loading);
-  document.getElementById('backBtn').style.display = 'none';
-  document.getElementById('keyHint').style.display = 'none';
-  document.getElementById('progressFill').style.width = '100%';
-
-  const steps = ['ls0','ls1','ls2','ls3'];
-  let si = 0;
-  document.getElementById(steps[0]).className = 'loading-step active';
-  const iv = setInterval(() => {
-    if (si < 3) {
-      document.getElementById(steps[si]).className = 'loading-step done';
-      si++;
-      document.getElementById(steps[si]).className = 'loading-step active';
-      if (si === 3) clearInterval(iv);
-    }
-  }, 4000);
-
-  const providerStr = providerSummary();
-  const goalStr = goalSummary();
-  const paymentTypeStr = data.paymentTypes.map(t => LABELS.paymentTypes[t] || t).join(', ');
-
-  const programContext = [
-    'Name: ' + data.name,
-    'Company: ' + data.companyName,
-    'Email: ' + data.email + (data.emailVerified ? ' (verified)' : data.skippedEmail ? ' (skipped)' : ''),
-    'Phone: ' + data.phone,
-    data.industry        ? 'Industry: ' + data.industry : '',
-    data.channels.length ? 'Payment channels: ' + data.channels.join(', ') : '',
-    data.ecomPlatform    ? 'eCommerce platform: ' + data.ecomPlatform : '',
-    data.terminalSetup   ? 'Terminal setup: ' + data.terminalSetup : '',
-    providerStr          ? 'Current provider(s): ' + providerStr : '',
-    paymentTypeStr       ? 'Accepted payment types: ' + paymentTypeStr : '',
-    data.monthlyVolume   ? 'Monthly card volume: ' + (LABELS.monthlyVolume[data.monthlyVolume]||data.monthlyVolume) : '',
-    data.atv             ? 'Average transaction value: ' + (LABELS.atv[data.atv]||data.atv) : '',
-    data.cardMix         ? 'Card mix: ' + (LABELS.cardMix[data.cardMix]||data.cardMix) : '',
-    data.lcrStatus       ? 'LCR status: ' + data.lcrStatus : '',
-    data.pricingModel    ? 'Current pricing model: ' + data.pricingModel : '',
-    data.surcharge       ? 'Surcharges customers: ' + (LABELS.surcharge[data.surcharge]||data.surcharge) : '',
-    goalStr              ? 'Primary goal(s): ' + goalStr : '',
-    data.pain            ? 'Biggest frustration: ' + data.pain : '',
-    data.skippedUpload   ? 'Statements: not uploaded' : 'Statements uploaded: ' + data.files.length + ' file(s)'
-  ].filter(Boolean).join('\n');
-
-  const system = `You are a payments statement analyser for acceptorIQ. Read the merchant's payment statement(s) and extract or compute ONLY factual information from them.
-
-Do NOT write narrative, opinions, recommendations, benchmarks, marketing language or advice — interpretation happens in a later step. Be precise, terse and strictly grounded in what the statements actually show. A merchant profile may also be provided for context, but your job is to extract the statement facts. If a value is not present in the statements, use null — never guess or estimate.
-
-Return ONLY valid JSON. No markdown, no backticks, no preamble. Use this EXACT structure:
-{"provider":null,"period":null,"volume":null,"totalFees":null,"effectiveRate":null,"transactions":null,"averageTransactionValue":null,"monthlyFee":null,"terminalFees":null,"perTransactionFee":null,"pricingModel":null,"providerRate":null,"lcrStatus":null,"cardMix":{"debit":null,"credit":null,"amex":null,"foreign":null},"feeBreakdown":[{"label":"string","amount":0}],"setup":[{"label":"string","value":"string"}],"observations":["string"]}
-
-RULES:
-- MULTIPLE STATEMENTS: if more than one statement or month is provided, CONSOLIDATE them into ONE combined result.
-- Numeric fields contain numbers only — no currency symbols, no percent signs, no commas.
-- All fee figures are GST-INCLUSIVE.
-- totalFees: use the statement's stated total if available.
-- volume and totalFees are in AUD. effectiveRate = totalFees / volume * 100. averageTransactionValue = volume / transactions.
-- perTransactionFee is in CENTS.
-- pricingModel: one of "Single-rate", "Blended", "Interchange-plus", "Interchange-plus-plus", "Subscription", "Unknown".
-- lcrStatus: one of "On", "Off", "Partial", "Unknown".
-- feeBreakdown: GST-inclusive fee components.
-- setup: factual stack components only.
-- observations: SHORT, purely factual, data-grounded notes only.`;
-
-  try {
-    let content = [];
-    const suffix = '\n\nMERCHANT PROFILE:\n' + programContext;
-    if (data.files.length > 0) {
-      for (const file of data.files) {
-        const mt = file.type || '';
-        if (mt === 'application/pdf' || /\.pdf$/i.test(file.name)) {
-          const b64 = await fileToB64(file);
-          content.push({ type:'document', source:{ type:'base64', media_type:'application/pdf', data:b64 } });
-        } else if (mt.startsWith('image/')) {
-          const b64 = await fileToB64(file);
-          content.push({ type:'image', source:{ type:'base64', media_type:mt, data:b64 } });
-        }
-      }
-      content.push({ type:'text', text:'Analyse these merchant statements.' + suffix });
-    } else {
-      content = [{ type:'text', text:'No statements uploaded. Analyse based on the merchant profile only.' + suffix }];
-    }
-
-    const res = await fetchWithTimeout('/api/analyse', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ system, messages: [{ role: 'user', content }] })
-    }, 90000);
-    if (!res.ok) {
-      const e = await res.json().catch(() => ({}));
-      const msg = e.detail || (e.error && e.error.message) || e.error || ('API error ' + res.status);
-      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
-    }
-    const apiData = await res.json();
-    const rawText = (apiData.content.find(b => b.type === 'text')?.text || '');
-    const report = parseModelJson(rawText);
-    const filesPayload = await Promise.all(data.files.map(async f => ({
-      name: f.name, type: f.type, size: f.size, data: await fileToB64(f)
-    })));
-    await fetchWithTimeout('/api/submit', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        report, programContext, files: filesPayload,
-        submission: { name: data.name, companyName: data.companyName, email: data.email, phone: data.phone, submittedAt: new Date().toISOString() }
-      })
-    }, 30000).catch(() => null);
-    clearInterval(iv);
-    steps.forEach(id => document.getElementById(id).className = 'loading-step done');
-    setTimeout(() => {
-      loading.classList.remove('active');
-      const c = document.getElementById('sConfirm');
-      c.classList.add('active');
-      applyFit(c);
-    }, 500);
-  } catch (err) {
-    clearInterval(iv);
-    loading.classList.remove('active');
-    document.getElementById('sReview').classList.add('active');
-    const msg = err && err.name === 'AbortError'
-      ? 'The server didn\'t respond in time. Your answers are saved — please try submitting again.'
-      : 'Something went wrong: ' + (err && err.message ? err.message : err) + '\n\nYour answers are saved — please try submitting again.';
-    alert(msg);
-  }
-}
-
-function fileToB64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-}
-
-renderProgress();
-updateChrome();
-refit();
-window.addEventListener('load', refit);
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(refit);
-
-window.previewSuccess = function () {
-  const cur = document.getElementById(currentId);
-  if (cur) cur.classList.remove('active');
-  const c = document.getElementById('sConfirm');
-  c.classList.add('active'); currentId = 'sConfirm'; applyFit(c);
-};
-</script>
-</body>
-</html>
