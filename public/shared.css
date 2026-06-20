@@ -1,0 +1,48 @@
+:root{
+  --site-frame:clamp(24px,5vw,140px);
+  --shell-width:1440px;
+  --frame:rgba(224,233,246,0.15);
+}
+
+.shell{
+  position:relative;
+  width:calc(100vw - (var(--site-frame) * 2));
+  max-width:var(--shell-width);
+  margin:0 auto;
+  border-left:1px solid var(--frame);
+  border-right:1px solid var(--frame);
+}
+
+.shell-frame{
+  position:fixed;
+  inset:0;
+  z-index:600;
+  pointer-events:none;
+  width:calc(100vw - (var(--site-frame) * 2));
+  max-width:var(--shell-width);
+  margin:0 auto;
+  border-left:1px solid var(--frame);
+  border-right:1px solid var(--frame);
+}
+
+.shell-inner{
+  width:calc(100vw - (var(--site-frame) * 2));
+  max-width:var(--shell-width);
+  margin:0 auto;
+}
+
+@media(max-width:600px){
+  .shell{
+    width:100%;
+    border-left:none;
+    border-right:none;
+  }
+
+  .shell-frame{
+    display:none;
+  }
+
+  .shell-inner{
+    width:100%;
+  }
+}
