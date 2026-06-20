@@ -336,47 +336,115 @@
     border-top:1px solid rgba(230,235,246,.08);
   }
 
-  /* ----------------------------- */
-  /* Footer cleanup                */
-  /* ----------------------------- */
+/* ---------- Mobile Footer ---------- */
 
-  .footer-section{
-    border-top:1px solid rgba(230,235,246,.08);
-  }
+.fcols{
 
-  #dots-stage{
-    display:none;
-  }
+    display:grid !important;
+    grid-template-columns:1fr 1fr;
+    gap:10px 28px;
 
-  .fcols{
-    display:block;
-    padding:42px 28px 30px;
-  }
+    padding:38px 26px 22px;
 
-  .fbrand{
-    margin-bottom:34px;
-  }
+}
 
-  .fcol{
-    padding:22px 0;
-    border-top:1px solid rgba(230,235,246,.08);
-  }
+.fbrand{
 
-  .fcol h4{
+    grid-column:1 / -1;
+
+    display:flex;
+    justify-content:center;
     margin-bottom:12px;
-    font-size:12px;
-  }
 
-  .fcol a{
+}
+
+.fcol{
+
+    border:none !important;
+    padding:0;
+}
+
+.fcol h4{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    height:42px;
+
+    margin:0;
+
+    cursor:pointer;
+
     font-size:15px;
-    padding:7px 0;
-  }
 
-  .fcopy{
-    margin:0 28px;
-    padding:22px 0 28px;
-  }
+    font-weight:500;
 
+    color:rgba(230,235,246,.88);
+
+}
+
+.fcol h4::after{
+
+    content:"⌄";
+
+    font-size:16px;
+
+    color:rgba(230,235,246,.42);
+
+    transition:.25s;
+
+}
+
+.fcol.is-open h4::after{
+
+    transform:rotate(180deg);
+
+}
+
+.fcol a{
+
+    display:block;
+
+    max-height:0;
+
+    overflow:hidden;
+
+    opacity:0;
+
+    padding:0;
+
+    font-size:13px;
+
+    color:rgba(230,235,246,.55);
+
+    transition:.25s;
+
+}
+
+.fcol.is-open a{
+
+    max-height:34px;
+
+    opacity:1;
+
+    padding:6px 0;
+
+}
+
+.fcopy{
+
+    text-align:center;
+
+    margin-top:20px;
+
+    border:none;
+
+    font-size:12px;
+
+    color:rgba(230,235,246,.35);
+
+}
   /* ----------------------------- */
   /* Abi chat mobile positioning   */
   /* ----------------------------- */
