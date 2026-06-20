@@ -2952,6 +2952,21 @@ document.addEventListener("DOMContentLoaded", () => {
       section.classList.toggle("is-open");
     });
   });
+
+  // Desktop keeps the <br> for its two-line title treatment; on mobile
+  // the collapsed accordion row needs the title on one line, so swap
+  // the <br> for a real space instead of just hiding it (hiding it
+  // alone removes the only thing separating the words, with nothing
+  // left to take its place — that's what caused "Understandthe report").
+  document.querySelectorAll(".advisor-card h3 br").forEach(br => {
+    br.replaceWith(" ");
+  });
+
+  document.querySelectorAll(".advisor-card").forEach(card => {
+    card.addEventListener("click", () => {
+      card.classList.toggle("is-open");
+    });
+  });
 });
 </script>  
 </body>
