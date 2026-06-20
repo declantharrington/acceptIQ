@@ -340,11 +340,12 @@ right:calc((100vw - 100%) / -2);
   padding:11px 15px;
   border-radius:20px 20px 6px 20px;
 
+  text-align:left;
   font-size:13.5px;
   line-height:1.42;
   color:#0E1A2E;
 
-  background:linear-gradient(135deg,#5E8FE0,#A6CBF2);
+  background:linear-gradient(135deg,rgba(94,143,224,.86),rgba(166,203,242,.86));
 }
 
 /* Abi messages */
@@ -354,29 +355,28 @@ right:calc((100vw - 100%) / -2);
   padding:11px 15px;
   border-radius:20px 20px 20px 6px;
 
+  text-align:left;
   font-size:13.5px;
   line-height:1.46;
+  color:rgba(230,235,246,.86);
 
-  color:rgba(18,25,36,.92);
+  background:rgba(230,235,246,.105);
+  border:1px solid rgba(230,235,246,.16);
 
-  background:rgba(244,247,252,.58);
-
-  border:1px solid rgba(255,255,255,.26);
-
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(14px) saturate(145%);
+  -webkit-backdrop-filter:blur(14px) saturate(145%);
 
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.45),
-    0 8px 20px rgba(0,0,0,.08);
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 8px 18px rgba(0,0,0,.10);
 }
 
 .msg-them b{
-  color:#101722;
+  color:rgba(230,235,246,.94);
 }
 
 .msg-them .save{
-  color:#2E8A5A;
+  color:#9FD9B4;
   font-weight:600;
 }
 
