@@ -125,4 +125,4 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     delete otpStore[email.toLowerCase()];
     return res.status(500).json({ error: err.message });
   }
-};
+}
