@@ -1377,6 +1377,303 @@ section{position:relative}
     z-index:1;
   }
 }
+/* MOBILE OPTIMISATION — desktop unchanged */
+@media (max-width: 760px){
+
+  body{
+    background:#14161A;
+  }
+
+  .shell{
+    position:relative;
+    width:calc(100% - 38px);
+    margin:0 auto;
+    border-left:1px solid rgba(230,235,246,.08);
+    border-right:1px solid rgba(230,235,246,.08);
+    overflow:hidden;
+  }
+
+  .wrap{
+    padding:0 34px;
+  }
+
+  header{
+    position:sticky;
+    top:0;
+    background:rgba(15,18,24,.88);
+    border-bottom:1px solid rgba(230,235,246,.08);
+  }
+
+  .nav-wrap{
+    padding:0 28px;
+  }
+
+  .nav{
+    height:82px;
+  }
+
+  .acceptor-word{
+    font-size:26px;
+  }
+
+  .acceptor-mark{
+    width:30px;
+    height:28px;
+  }
+
+  .acceptor-mark span{
+    width:9px;
+    height:28px;
+  }
+
+  .acceptor-mark span:last-child{
+    height:20px;
+  }
+
+  .nav-right{
+    gap:18px;
+  }
+
+  .nav-right .lnk{
+    display:block;
+    font-size:15px;
+  }
+
+  .nav-cta{
+    height:46px;
+    min-width:auto;
+    padding:0 18px;
+    font-size:14px;
+  }
+
+  .hero{
+    padding:92px 0 0;
+  }
+
+  .hero h1,
+  .twoup h2,
+  .bleed h2,
+  .control h2,
+  .final h2{
+    font-size:clamp(44px,10.8vw,62px);
+    line-height:1.08;
+    letter-spacing:-0.06em;
+  }
+
+  .hero .sub,
+  .twoup p,
+  .bleed p,
+  .control p,
+  .advisor-section .sub,
+  .final p{
+    font-size:20px;
+    line-height:1.45;
+    color:rgba(224,233,246,.54);
+  }
+
+  .hero .sub{
+    max-width:330px;
+    margin-top:24px;
+  }
+
+  .hero .cta{
+    margin-top:34px;
+  }
+
+  .btn-lg{
+    min-width:210px;
+    height:58px;
+    padding:0 24px;
+    font-size:15px;
+  }
+
+  .hero-stage{
+    min-height:640px;
+    margin-top:38px;
+  }
+
+  .hero-band{
+    top:150px;
+    height:360px;
+  }
+
+  .hero .phone{
+    width:265px;
+    margin-top:78px;
+  }
+
+  .twoup{
+    display:block;
+    padding:0;
+    border-top:1px solid rgba(230,235,246,.08);
+  }
+
+  .twoup .col{
+    min-height:760px;
+    padding:92px 34px 80px;
+    border-bottom:1px solid rgba(230,235,246,.08);
+  }
+
+  .twoup .col h2,
+  .twoup .col p{
+    text-align:center;
+  }
+
+  .twoup p{
+    max-width:360px;
+    margin-top:24px;
+  }
+
+  .vis{
+    margin-top:72px;
+  }
+
+  .payment-web{
+    transform:scale(.88);
+    transform-origin:center;
+  }
+
+  .bleed{
+    display:block;
+    border-top:none;
+  }
+
+  .bleed .copy{
+    min-height:620px;
+    padding:96px 34px 70px;
+    text-align:center;
+    border-right:none;
+    border-bottom:1px solid rgba(230,235,246,.08);
+  }
+
+  .bleed .copy h2,
+  .bleed .copy p{
+    width:100%;
+    text-align:center;
+  }
+
+  .bleed .stage{
+    min-height:640px;
+  }
+
+  .glass{
+    width:calc(100% - 54px);
+    max-width:340px;
+  }
+
+  .advisor-section{
+    padding:96px 0 100px;
+  }
+
+  .advisor-stack{
+    width:100%;
+    margin-top:64px;
+    padding:0 34px;
+  }
+
+  .advisor-card{
+    border-radius:26px;
+    padding:30px;
+  }
+
+  .advisor-card h3{
+    font-size:34px;
+  }
+
+  .advisor-card p{
+    font-size:16px;
+  }
+
+  .final{
+    padding:100px 0 110px;
+    border-top:1px solid rgba(230,235,246,.08);
+  }
+
+  .footer-section{
+    border-top:1px solid rgba(230,235,246,.08);
+  }
+
+  .fcols{
+    padding:46px 34px 36px;
+  }
+
+  .fcopy{
+    margin:0 34px;
+  }
+
+  #abi-launcher{
+    right:26px;
+    bottom:26px;
+  }
+}
+
+@media (max-width:480px){
+
+  .shell{
+    width:calc(100% - 28px);
+  }
+
+  .wrap{
+    padding:0 28px;
+  }
+
+  .nav-wrap{
+    padding:0 22px;
+  }
+
+  .nav{
+    height:78px;
+  }
+
+  .acceptor-word{
+    font-size:24px;
+  }
+
+  .nav-right .lnk{
+    font-size:14px;
+  }
+
+  .nav-cta{
+    height:42px;
+    padding:0 15px;
+  }
+
+  .hero h1,
+  .twoup h2,
+  .bleed h2,
+  .control h2,
+  .final h2{
+    font-size:clamp(40px,11.5vw,54px);
+  }
+
+  .hero .sub,
+  .twoup p,
+  .bleed p,
+  .control p,
+  .advisor-section .sub,
+  .final p{
+    font-size:18px;
+  }
+
+  .twoup .col{
+    padding-left:28px;
+    padding-right:28px;
+  }
+
+  .payment-web{
+    transform:scale(.76);
+    margin-left:-8px;
+  }
+
+  .statement-analyser{
+    max-width:300px;
+  }
+
+  .glass{
+    width:calc(100% - 44px);
+  }
+}
+    
 </style>  
 </head>
 <body>
