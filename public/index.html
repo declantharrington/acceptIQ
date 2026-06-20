@@ -2924,8 +2924,27 @@ initMG('hero-mg');
 document.addEventListener("DOMContentLoaded", () => {
   if (window.innerWidth > 760) return;
 
+  const body = document.body;
+  let scrollLockY = 0;
+
+  function openMenu(){
+    scrollLockY = window.scrollY;
+    body.style.top = `-${scrollLockY}px`;
+    body.classList.add("mobile-menu-open");
+  }
+
+  function closeMenu(){
+    body.classList.remove("mobile-menu-open");
+    body.style.top = "";
+    window.scrollTo(0, scrollLockY);
+  }
+
   document.querySelector(".mobile-menu-btn")?.addEventListener("click", () => {
-    document.body.classList.toggle("mobile-menu-open");
+    body.classList.contains("mobile-menu-open") ? closeMenu() : openMenu();
+  });
+
+  document.querySelectorAll(".mobile-menu a").forEach(link => {
+    link.addEventListener("click", closeMenu);
   });
 
   document.querySelectorAll(".fcol").forEach(section => {
