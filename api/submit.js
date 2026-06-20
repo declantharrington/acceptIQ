@@ -65,6 +65,36 @@ function consolidateStatements(raw) {
     cardMix[type] = (any && wt > 0) ? Math.round((ws / wt) * 100) / 100 : null;
   }
 
+  // Chargebacks are sparse — most statements won't carry this data at all, so
+  // only sum fields that are ACTUALLY present on at least one statement
+  // (mirrors `sum()`'s "any" pattern) rather than defaulting absent data to
+  // zero, which would misrepresent "not shown" as "none occurred".
+  const cbCount = (() => {
+    let t = 0, any = false;
+    for (const s of list) { const v = n(s.chargebacks && s.chargebacks.count); if (v != null) { t += v; any = true; } }
+    return any ? t : null;
+  })();
+  const cbAmount = (() => {
+    let t = 0, any = false;
+    for (const s of list) { const v = n(s.chargebacks && s.chargebacks.amount); if (v != null) { t += v; any = true; } }
+    return any ? Math.round(t * 100) / 100 : null;
+  })();
+  const cbFees = (() => {
+    let t = 0, any = false;
+    for (const s of list) { const v = n(s.chargebacks && s.chargebacks.fees); if (v != null) { t += v; any = true; } }
+    return any ? Math.round(t * 100) / 100 : null;
+  })();
+  // Ratio is recomputed from the COMBINED totals (not summed/averaged per-
+  // statement ratios), same principle as effectiveRate above.
+  const chargebacks = (cbCount != null || cbAmount != null || cbFees != null)
+    ? {
+        count: cbCount,
+        amount: cbAmount,
+        fees: cbFees,
+        ratio: (cbCount != null && hasTxn && transactions) ? Math.round((cbCount / transactions * 100) * 1000) / 1000 : null,
+      }
+    : null;
+
   const labels = list.map(s => s.period || s.month).filter(Boolean);
   const period = labels.length ? (labels.length > 1 ? `${labels[labels.length - 1]} - ${labels[0]}` : labels[0]) : firstNonNull('period');
 
@@ -88,6 +118,7 @@ function consolidateStatements(raw) {
     lcrStatus: firstNonNull('lcrStatus'),
     cardMix,
     feeBreakdown,
+    chargebacks,
     setup: firstNonNull('setup') || [],
     observations,
   };
@@ -179,18 +210,19 @@ export default async function handler(req, res) {
         'Prefer':        'return=representation',
       },
       body: JSON.stringify({
-        submitted_at:    new Date().toISOString(),
-        provider:        report.provider      || null,
-        period:          report.period        || null,
-        volume:          report.volume        || null,
-        total_fees:      report.totalFees     || null,
-        effective_rate:  report.effectiveRate || null,
-        pricing_model:   report.pricingModel  || null,
-        lcr_status:      report.lcrStatus     || null,
-        program_context: programContext       || null,
-        report_json:     JSON.stringify(report),
-        files_uploaded:  JSON.stringify(uploadedFiles),
-        status:          'pending_review',
+        submitted_at:     new Date().toISOString(),
+        provider:         report.provider      || null,
+        period:           report.period        || null,
+        volume:           report.volume        || null,
+        total_fees:       report.totalFees     || null,
+        effective_rate:   report.effectiveRate || null,
+        pricing_model:    report.pricingModel  || null,
+        lcr_status:       report.lcrStatus     || null,
+        chargeback_ratio: (report.chargebacks && report.chargebacks.ratio) || null,
+        program_context:  programContext       || null,
+        report_json:      JSON.stringify(report),
+        files_uploaded:   JSON.stringify(uploadedFiles),
+        status:           'pending_review',
       }),
     });
 
@@ -256,6 +288,23 @@ export default async function handler(req, res) {
     const cardMixHtml = Object.entries(cardMix).filter(([, v]) => v != null).length
       ? `<table><tbody>${Object.entries(cardMix).filter(([, v]) => v != null).map(([k, v]) =>
           `<tr><td style="color:#666;text-transform:capitalize">${k}</td><td>${v}%</td></tr>`).join('')}</tbody></table>`
+      : '';
+
+    // Chargebacks are sparse data — only render the section if the analyser
+    // actually found something on the statement (null, not zero, means "not
+    // shown here"; see analyse-prompt.js). A ratio approaching/over the
+    // commonly-cited 0.65%-1% scheme monitoring range is flagged visually so
+    // the admin notices it before approving, same spirit as the fee
+    // reconciliation warning above.
+    const cb = report.chargebacks || null;
+    const cbElevated = cb && cb.ratio != null && cb.ratio >= 0.65;
+    const chargebacksHtml = cb
+      ? `<table><tbody>
+          ${cb.count  != null ? `<tr><td>Chargeback count</td><td>${cb.count}</td></tr>` : ''}
+          ${cb.ratio  != null ? `<tr><td>Chargeback ratio</td><td style="${cbElevated ? 'color:#a3271b;font-weight:700' : ''}">${cb.ratio.toFixed(2)}%${cbElevated ? ' ⚠' : ''}</td></tr>` : ''}
+          ${cb.amount != null ? `<tr><td>Disputed amount</td><td>${fmtD(cb.amount)}</td></tr>` : ''}
+          ${cb.fees   != null ? `<tr><td>Chargeback fees</td><td>${fmtD(cb.fees)}</td></tr>` : ''}
+        </tbody></table>${cbElevated ? '<p style="font-size:12px;color:#a3271b;margin-top:8px">⚠ Ratio is at or above the commonly-cited scheme monitoring range — worth confirming before approving.</p>' : ''}`
       : '';
 
     // ── Files section for email ───────────────────────────────────
@@ -346,6 +395,7 @@ tr:last-child td{border-bottom:none}
     </table>
   </div>
   ${cardMixHtml ? `<div class="section"><div class="sec-label">Card Mix</div>${cardMixHtml}</div>` : ''}
+  ${chargebacksHtml ? `<div class="section"><div class="sec-label">Chargebacks</div>${chargebacksHtml}</div>` : ''}
   <div class="section"><div class="sec-label">Factual Observations</div>${observationsHtml}</div>
   <div class="section"><div class="sec-label">Current Setup</div>${setupHtml}</div>
   ${programContext ? `<div class="section"><div class="sec-label">Merchant Profile</div><div class="prog-box">${programContext.replace(/\n/g, '<br>')}</div></div>` : ''}
