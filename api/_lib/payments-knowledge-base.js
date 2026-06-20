@@ -267,7 +267,52 @@ So a merchant could run, for example, a **Fat Zebra gateway connected to Westpac
 
 ---
 
-## 11. Reading a statement — checklist and red flags
+## 11. Chargebacks — the cost and risk dimension beyond fees
+
+A chargeback is a **forced transaction reversal initiated by the cardholder's bank** (the issuer), not a merchant-granted refund. The issuer pulls funds back from the merchant on the cardholder's behalf, the merchant is notified via their acquirer, and the merchant can **represent** (contest) the chargeback with evidence before it's finalised. If the merchant doesn't respond, responds too late, or loses the dispute, the funds are gone permanently — and the merchant is typically also charged a **chargeback fee** by their acquirer on top of the lost sale, separate from the disputed amount itself.
+
+This is a genuinely different cost category from interchange, scheme fees or acquirer margin — it isn't a fixed cost of accepting cards, it's a **risk-based cost** that scales with how the business sells (refund/delivery clarity, subscription billing practices, fraud exposure) rather than purely with volume or card mix.
+
+### Why chargebacks matter beyond the individual loss
+
+The bigger risk is **scheme monitoring**. Visa and Mastercard run formal excessive-chargeback programs (Visa's monitoring programs, Mastercard's Excessive Chargeback Program) that track a merchant's chargeback **ratio** — chargebacks as a percentage of transaction count or volume over a rolling period. Merchants who cross scheme thresholds can face:
+- Escalating monitoring fees levied by the scheme via the acquirer
+- Mandatory remediation requirements
+- In sustained or severe cases, **acquirer-initiated account termination** — the business loses the ability to accept cards at all through that provider
+
+This makes chargeback ratio a **business continuity risk**, not just a line-item cost — which is why it's worth surfacing in a payments review even though it doesn't move the effective-rate needle the way interchange or LCR does.
+
+### The main categories of chargeback (this shapes what "reducing chargebacks" actually means)
+
+1. **True/criminal fraud** — a stolen card or compromised card details used without the genuine cardholder's knowledge. This is the smallest practical lever for most merchants to influence directly; it is primarily addressed by fraud-screening tools (3D Secure/3DS2, AVS/CVV checks, device fingerprinting, velocity checks, real-time fraud scoring), which shift liability and/or block bad transactions before they're charged.
+2. **"Friendly fraud"** — the cardholder did authorise the purchase but disputes it anyway: they don't recognise the charge on their statement, forgot a subscription, a family member used the card, or they're disputing rather than contacting the merchant because it's the path of least resistance. This is widely considered the **largest** chargeback category industry-wide, and it is a process/communication problem more than a security problem.
+3. **Genuine merchant-side error** — item not received, wrong item, not as described, double-billed, or a billing amount error.
+4. **Processing/technical errors** — duplicate charges, incorrect amounts, authorisation/capture mismatches.
+
+### What actually reduces chargebacks (for context — not for the client-facing report to prescribe)
+
+- **Recognisable billing descriptors.** A large share of "friendly fraud" disputes are triggered simply by a statement descriptor the cardholder doesn't recognise as the business they bought from. This is one of the highest-leverage, lowest-cost fixes available.
+- **Pre-dispute alert networks.** Visa (Rapid Dispute Resolution) and Mastercard/Verifi-affiliated networks (Ethoca, Verifi CDRN) let a merchant see a dispute forming *before* it becomes a formal chargeback, so they can proactively refund (cheaper than fighting and losing, and avoids it counting against the chargeback ratio in some program designs) or resolve it directly with the customer.
+- **Fraud-screening and authentication tooling** (3DS2, AVS, CVV, real-time risk scoring) — addresses category 1.
+- **Clear receipts, delivery tracking, accessible support, and transparent subscription/cancellation terms** — addresses categories 2 and 3 by giving the customer an easier path than disputing.
+- **Evidence-based representment** — compiling proof (delivery confirmation, signed terms, communication logs, IP/device data) to contest disputes that are worth fighting. Done well this improves win rates on contestable cases; done poorly (or not at all) it leaves recoverable money on the table.
+
+### How to read chargeback data on a statement or in merchant-reported figures
+
+- Chargeback **count** and chargeback **ratio** (count or value as a % of total transactions/volume) are the two figures to look for. A raw count without a ratio is hard to benchmark — context (transaction volume) matters.
+- **Indicative scheme monitoring thresholds are commonly cited in the 0.65%–1% range** (transaction-count basis, varies by scheme and program design and is subject to change) — treat this as an order-of-magnitude reference only, hedge accordingly, and do not present a specific threshold as a guaranteed trigger point, since scheme program rules and thresholds are revised periodically and are not always published with full transparency.
+- A chargeback ratio elevated relative to typical benchmarks is worth flagging as a finding, but the *cause* (fraud exposure vs delivery/communication issues vs subscription billing clarity) is a diagnostic question for the advisor conversation, not something to guess from a chargeback count alone.
+
+### Guardrails specific to chargebacks (extends §14)
+
+- Do not state a precise scheme monitoring threshold as fact-certain or universally fixed — hedge ("commonly cited around", "in the order of") since thresholds vary by scheme, program and are revised over time.
+- Do not diagnose *why* a merchant's chargeback rate is elevated from a bare count/ratio alone — surface the finding and its risk (cost + potential account risk), not a root-cause guess.
+- Do not recommend specific fraud-tooling vendors, alert-network products, or representment services by name in the client-facing report — same vendor-neutral, non-prescriptive stance as the rest of the report.
+- Chargeback fees (the per-case fee charged by the acquirer) are a **separate line item** from the disputed transaction amount itself — don't conflate "amount charged back" with "chargeback fee."
+
+---
+
+## 12. Reading a statement — checklist and red flags
 
 When analysing, work through:
 1. **Turnover and transaction count** → average transaction value. (Low ATV + per-item fees = debit/LCR sensitivity; high ATV + credit mix = interchange sensitivity.)
@@ -279,6 +324,7 @@ When analysing, work through:
 7. **Surcharging setup** — present? Will be non-compliant from Oct 2026.
 8. **Foreign card share** — tourism/online exposure → April 2027 cap is a big future saving.
 9. **Is the stack complete?** Especially for online merchants — does this statement represent the *whole* cost, or could there be a separate **gateway** provider billing its own monthly and per-transaction fees elsewhere (§10)? If the merchant takes online payments and the statement shows no gateway line, the true cost of acceptance is probably higher than the statement implies. Note the gap rather than guessing the amount.
+10. **Chargeback activity (§11)** — if the statement shows chargeback count, ratio, or fees, compare against typical scheme monitoring ranges and flag if elevated. If chargeback data isn't present on the statement, don't assume it's zero — note that it sits outside this document's visibility, same treatment as gateway costs.
 
 **Common red flags:**
 - Single-rate/flat plan on a debit-heavy, in-store business.
@@ -288,10 +334,11 @@ When analysing, work through:
 - Minimum monthly fees the merchant never reaches.
 - PCI non-compliance fees (avoidable by completing self-assessment).
 - A bundled plan where interchange cuts may not pass through.
+- Chargeback ratio at or approaching typical scheme monitoring thresholds (§11).
 
 ---
 
-## 12. The acceptorIQ savings playbook (lever → when it applies → how to size it)
+## 13. The acceptorIQ savings playbook (lever → when it applies → how to size it)
 
 *Internal analytical reference.* These levers are how acceptorIQ (and the analysis step) identifies and sizes opportunities. In the **client-facing report**, surface the *opportunity and its likely size* but **not the specific lever or method** — per the report philosophy, naming the fix is the consultant's job. E.g. the report says "an area worth reviewing that could be worth ~$X/year," not "enable least-cost routing."
 
@@ -305,12 +352,13 @@ When analysing, work through:
 | **Foreign-card cap (future)** | Tourism, hospitality, cross-border online | Foreign interchange ~1.75% today → capped at 1.00% from 1 Apr 2027; size against foreign turnover |
 | **Ensure pass-through** | Bundled/fixed plans | Interchange cut may be retained by acquirer; switching or renegotiating captures it |
 | **A2A / PayTo for suitable flows** | Recurring, invoicing, B2B, commercial-card-heavy | Avoids card rails entirely on those flows |
+| **Chargeback risk reduction** | Elevated chargeback ratio, subscription/delivery-heavy business model | Avoided chargeback fees + retained sale value + reduced scheme-monitoring/account-risk exposure; size conservatively against current chargeback count/ratio |
 
 **Sizing a saving honestly:** total fees − (turnover × achievable effective rate) = annual saving. Use *conservative* achievable rates (lean toward the higher/benchmark end), state assumptions, and separate "available today" from "available after [reform date]". Over-promising destroys credibility and the reports are client-facing.
 
 ---
 
-## 13. Accuracy guardrails for the AI (read before writing any number)
+## 14. Accuracy guardrails for the AI (read before writing any number)
 
 These prevent the most common and most damaging errors.
 
@@ -325,10 +373,11 @@ These prevent the most common and most damaging errors.
 - **Commercial vs consumer credit.** The 0.30% cut is **consumer** credit only. Commercial/business credit stays at **0.80%**. If the merchant is B2B or takes many corporate cards, their credit saving is smaller — say so.
 - **Don't invent provider pricing.** Use the merchant's actual statement figures. Only use the benchmark ranges in this document for *comparison*, clearly labelled as typical/average.
 - **Hedge unsupported precision.** If a figure isn't on the statement or in this document, use "typically/around/in the order of" rather than a fabricated exact number.
+- **Chargeback thresholds are indicative, not fixed.** Scheme monitoring program thresholds and rules are revised periodically and vary by scheme — never state a chargeback threshold as a guaranteed or universal trigger point (see §11).
 
 ---
 
-## 14. Quick glossary
+## 15. Quick glossary
 
 - **MSF** — Merchant Service Fee: the total cost a merchant pays to accept card payments.
 - **Interchange** — fee the acquirer pays the issuer; the regulated core of the MSF.
@@ -349,10 +398,15 @@ These prevent the most common and most damaging errors.
 - **PSB** — Payments System Board (the RBA body that sets these standards).
 - **AP+** — Australian Payments Plus, operator of eftpos, BPAY and the NPP.
 - **NPP / PayTo** — New Payments Platform and its account-to-account mandate service; non-card rails.
+- **Chargeback** — a forced transaction reversal initiated by the cardholder's issuing bank, distinct from a merchant-granted refund; typically carries a separate chargeback fee.
+- **Chargeback ratio** — chargebacks as a percentage of transaction count or volume over a period; the figure scheme monitoring programs track.
+- **Representment** — the merchant's process of contesting a chargeback with evidence before it is finalised.
+- **Friendly fraud** — a chargeback where the cardholder did authorise the purchase but disputes it anyway; commonly the largest chargeback category by volume.
+- **Excessive Chargeback Program** — Mastercard's formal monitoring program for merchants whose chargeback ratio exceeds scheme thresholds; Visa runs an analogous monitoring program.
 
 ---
 
-## 15. Source note
+## 16. Source note
 
-Regulatory figures and effective dates are drawn from the RBA's *Review of Merchant Card Payment Costs and Surcharging — Conclusions Paper* (31 March 2026) and the RBA's least-cost routing implementation data (December 2025, published March 2026). Cost-of-acceptance averages are the RBA's published figures. Verify against the latest RBA publications before each reporting cycle, as the post-reform monitoring data (pass-through league tables, updated cost-of-acceptance) will be republished quarterly from late 2026.
+Regulatory figures and effective dates are drawn from the RBA's *Review of Merchant Card Payment Costs and Surcharging — Conclusions Paper* (31 March 2026) and the RBA's least-cost routing implementation data (December 2025, published March 2026). Cost-of-acceptance averages are the RBA's published figures. Chargeback monitoring program thresholds are indicative figures commonly cited in industry sources and are subject to revision by the schemes — verify against current Visa and Mastercard program documentation before treating any specific threshold as current. Verify against the latest RBA publications before each reporting cycle, as the post-reform monitoring data (pass-through league tables, updated cost-of-acceptance) will be republished quarterly from late 2026.
 `;
