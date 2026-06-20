@@ -323,16 +323,77 @@ right:calc((100vw - 100%) / -2);
   .chead .nm{font-size:12px;color:var(--cream-soft)}
   .crow{display:flex;justify-content:space-between;padding:6px 18px 0;color:var(--cream-soft)}
 
-  /* chat: user = pink bubble, assistant = plain text */
-  .chat{flex:1;display:flex;flex-direction:column;gap:14px;padding:18px 16px;justify-content:flex-end}
-  .msg-you{align-self:flex-end;max-width:82%;padding:11px 15px;border-radius:20px 20px 6px 20px;
-    font-size:13.5px;line-height:1.42;color:#0E1A2E;
-    background:linear-gradient(135deg,#5E8FE0,#A6CBF2)}
-  .msg-them{align-self:flex-start;max-width:88%;font-size:13.5px;line-height:1.46;color:rgba(224,233,246,0.82)}
-  .msg-them b{color:var(--cream)} .msg-them .save{color:#9FD9B4;font-weight:600}
-  .cinput{margin:8px 14px 16px;height:40px;border-radius:999px;border:1px solid rgba(255,255,255,0.1);
-    display:flex;align-items:center;padding:0 16px;color:var(--cream-faint);font-size:12.5px}
+/* chat */
+.chat{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding:18px 16px;
+  justify-content:flex-end;
+}
 
+/* User messages */
+.msg-you{
+  align-self:flex-end;
+  max-width:82%;
+  padding:11px 15px;
+  border-radius:20px 20px 6px 20px;
+
+  font-size:13.5px;
+  line-height:1.42;
+  color:#0E1A2E;
+
+  background:linear-gradient(135deg,#5E8FE0,#A6CBF2);
+}
+
+/* Abi messages */
+.msg-them{
+  align-self:flex-start;
+  max-width:88%;
+  padding:11px 15px;
+  border-radius:20px 20px 20px 6px;
+
+  font-size:13.5px;
+  line-height:1.46;
+
+  color:rgba(18,25,36,.92);
+
+  background:rgba(244,247,252,.58);
+
+  border:1px solid rgba(255,255,255,.26);
+
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.45),
+    0 8px 20px rgba(0,0,0,.08);
+}
+
+.msg-them b{
+  color:#101722;
+}
+
+.msg-them .save{
+  color:#2E8A5A;
+  font-weight:600;
+}
+
+/* Message input */
+.cinput{
+  margin:8px 14px 16px;
+  height:40px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+
+  color:var(--cream-faint);
+  font-size:12.5px;
+}
   /* generic dark app body */
   .abody{flex:1;padding:18px 16px;display:flex;flex-direction:column;gap:13px}
   .abody .bar{height:6px;border-radius:4px;background:rgba(224,233,246,0.08);overflow:hidden;margin:4px 0 10px}
