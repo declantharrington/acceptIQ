@@ -28,8 +28,7 @@
   --gold:        #E7B27A;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  --site-frame: clamp(24px,5vw,140px);
-  --shell-max: 1440px;
+
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,19 +51,6 @@ body {
 .ambient-1 { width: 700px; height: 700px; top: -200px; right: -200px; }
 .ambient-2 { width: 500px; height: 500px; bottom: -150px; left: -100px; opacity: 0.5; }
 
-/* Shell frame — same vertical rails as the homepage/pricing .shell,
-   reproduced as a fixed overlay since this page is a fixed-viewport
-   flow rather than normal document scroll. */
-.shell-frame {
-  position: fixed; inset: 0; z-index: 600; pointer-events: none;
-  margin: 0 auto;
-  width: min(calc(100vw - (var(--site-frame) * 2)), var(--shell-max));
-  border-left: 1px solid var(--frame);
-  border-right: 1px solid var(--frame);
-}
-@media (max-width: 600px) {
-  .shell-frame { display: none; }
-}
 
 /* ── Nav / Chrome ── */
 .chrome {
