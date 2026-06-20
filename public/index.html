@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="shared.css">
-  <link rel="stylesheet" href="mobile.css" media="(max-width: 760px)">
   <style>
 :root{
   --bg:#0F1218;
@@ -1562,29 +1560,6 @@ section{position:relative}
     max-width:340px;
   }
 
-  .advisor-section{
-    padding:96px 0 100px;
-  }
-
-  .advisor-stack{
-    width:100%;
-    margin-top:64px;
-    padding:0 34px;
-  }
-
-  .advisor-card{
-    border-radius:26px;
-    padding:30px;
-  }
-
-  .advisor-card h3{
-    font-size:34px;
-  }
-
-  .advisor-card p{
-    font-size:16px;
-  }
-
   .final{
     padding:100px 0 110px;
     border-top:1px solid rgba(230,235,246,.08);
@@ -1592,14 +1567,6 @@ section{position:relative}
 
   .footer-section{
     border-top:1px solid rgba(230,235,246,.08);
-  }
-
-  .fcols{
-    padding:46px 34px 36px;
-  }
-
-  .fcopy{
-    margin:0 34px;
   }
 
   #abi-launcher{
@@ -1721,7 +1688,7 @@ section{position:relative}
 
 <div class="mobile-menu">
   <a href="#pricing">Pricing</a>
-  <a href="#">Get my review</a>
+  <a href="#" class="mm-cta">Get my review</a>
   <a href="#">Contact</a>
 </div>
   
@@ -2943,7 +2910,7 @@ initMG('hero-mg');
       // Re-open without re-triggering the greeting or a redundant save.
       root.classList.add('abi-open');
       launcher.setAttribute('aria-expanded', 'true');
-      panel.setAttribute('aria-hidden', 'false');
+      panel.setAttribute('aria-hidden', 'true');
     }
   }
 
@@ -2959,12 +2926,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelector(".mobile-menu-btn")?.addEventListener("click", () => {
     document.body.classList.toggle("mobile-menu-open");
-  });
-
-  document.querySelectorAll(".advisor-card").forEach(card => {
-    card.addEventListener("click", () => {
-      card.classList.toggle("is-open");
-    });
   });
 
   document.querySelectorAll(".fcol").forEach(section => {
