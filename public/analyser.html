@@ -54,21 +54,27 @@ body {
 
 /* ── Nav / Chrome ── */
 .chrome {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-  padding-top: calc(20px + env(safe-area-inset-top));
-  background: rgba(15,18,24,0.72);
-  backdrop-filter: saturate(160%) blur(12px);
-  -webkit-backdrop-filter: saturate(160%) blur(12px);
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:500;
+  height:72px;
+  background:rgba(15,18,24,0.72);
+  backdrop-filter:saturate(160%) blur(12px);
+  -webkit-backdrop-filter:saturate(160%) blur(12px);
 }
+
 .chrome-inner {
-  display: flex; align-items: center; justify-content: space-between;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
   width:calc(100vw - (var(--site-frame) * 2));
   max-width:var(--shell-width);
-  margin: 0 auto;
-  padding-left: max(26px, env(safe-area-inset-left));
-  padding-right: max(26px, env(safe-area-inset-right));
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--line);
+  height:72px;
+  margin:0 auto;
+  padding:0 26px;
+  border-bottom:1px solid var(--line);
 }
 
 /* Brand — acceptorIQ mark + wordmark, matches the main site exactly */
@@ -78,37 +84,43 @@ body {
   gap:16px;
   text-decoration:none;
 }
+
 .acceptor-mark{
   position:relative;
-  width:30px;
-  height:27px;
+  width:38px;
+  height:34px;
   display:inline-block;
   flex-shrink:0;
 }
+
 .acceptor-mark span{
   position:absolute;
   bottom:0;
-  width:10px;
-  height:27px;
+  width:12px;
+  height:34px;
   border-radius:3px;
   background:var(--cream);
   transform-origin:bottom center;
 }
+
 .acceptor-mark span:first-child{
-  left:5px;
+  left:7px;
   transform:skewX(-30deg);
 }
+
 .acceptor-mark span:last-child{
-  right:5px;
-  height:19px;
+  right:7px;
+  height:24px;
   transform:skewX(30deg);
 }
+
 .acceptor-word{
-  font-size:20px;
+  font-size:24px;
   font-weight:300;
   letter-spacing:-0.055em;
   color:rgba(230,235,246,.92);
 }
+
 .acceptor-word span{
   font-weight:500;
   letter-spacing:-0.04em;
@@ -468,13 +480,14 @@ input#fileInput { display: none; }
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .chrome {
-    padding-top: calc(14px + env(safe-area-inset-top));
+    height:62px;
   }
   .chrome-inner {
-    width: 100%;
-    padding-left: max(22px, env(safe-area-inset-left));
-    padding-right: max(22px, env(safe-area-inset-right));
-    padding-bottom: 14px;
+    width:100%;
+    max-width:none;
+    height:62px;
+    padding-left:max(22px, env(safe-area-inset-left));
+    padding-right:max(22px, env(safe-area-inset-right));
   }
   .progress-wrap { min-width: 96px; }
   .progress-label { display: none; }
