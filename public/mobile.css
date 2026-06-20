@@ -1,4 +1,4 @@
-/* acceptorIQ â€” shared mobile.css
+/* acceptorIQ — shared mobile.css
    Load this AFTER the page's main inline <style> block:
    <link rel="stylesheet" href="mobile.css" media="(max-width: 760px)">
 */
@@ -92,6 +92,7 @@
     flex-direction:column;
     gap:6px;
     cursor:pointer;
+    transition:background .2s ease, border-color .2s ease;
   }
 
   .mobile-menu-btn span{
@@ -100,6 +101,11 @@
     background:rgba(230,235,246,.86);
     display:block;
     transition:transform .22s ease;
+  }
+
+  body.mobile-menu-open .mobile-menu-btn{
+    background:rgba(230,235,246,.07);
+    border-color:rgba(230,235,246,.18);
   }
 
   body.mobile-menu-open .mobile-menu-btn span:first-child{
@@ -145,8 +151,26 @@
   }
 
   .mobile-menu a::after{
-    content:"â†’";
+    content:"→";
     color:rgba(230,235,246,.38);
+  }
+
+  /* Optional: give one link in the dropdown a stand-out pill treatment
+     instead of the plain arrow row — add class="mm-cta" to that <a>
+     (e.g. the homepage's "Get my review" link). No-op if unused. */
+  .mobile-menu a.mm-cta{
+    margin-top:12px;
+    min-height:0;
+    padding:15px 18px;
+    border-radius:999px;
+    background:var(--btn);
+    color:var(--ink);
+    font-weight:600;
+    justify-content:center;
+  }
+
+  .mobile-menu a.mm-cta::after{
+    content:none;
   }
 
   .btn,
@@ -365,7 +389,7 @@
   }
 
   .advisor-card::after{
-    content:"âŒ„";
+    content:"⌄";
     position:absolute;
     top:18px;
     right:2px;
@@ -498,7 +522,7 @@
   }
 
   .fcol h4::after{
-    content:"âŒ„";
+    content:"⌄";
     font-size:16px;
     color:rgba(230,235,246,.42);
     transition:transform .22s ease;
@@ -576,6 +600,7 @@
 
 @media (prefers-reduced-motion:reduce){
   .mobile-menu,
+  .mobile-menu-btn,
   .mobile-menu-btn span,
   .advisor-card p,
   .fcol a,
