@@ -62,7 +62,8 @@ body {
 }
 .chrome-inner {
   display: flex; align-items: center; justify-content: space-between;
-  width: min(calc(100vw - (var(--site-frame) * 2)), var(--shell-max));
+  width:calc(100vw - (var(--site-frame) * 2));
+  max-width:var(--shell-width);
   margin: 0 auto;
   padding-left: max(26px, env(safe-area-inset-left));
   padding-right: max(26px, env(safe-area-inset-right));
