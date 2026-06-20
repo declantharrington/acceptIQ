@@ -309,8 +309,24 @@ right:calc((100vw - 100%) / -2);
   .hero .screen{border-radius:47px;background:rgba(12,16,28,0.55)}
 
   /* phone */
-  .phone{width:316px;border-radius:48px;background:#080A0E;padding:11px;
-    box-shadow:0 50px 110px -34px rgba(0,0,0,0.7),0 10px 30px rgba(0,0,0,0.4);position:relative}
+.phone{
+  width:316px;
+  padding:11px;
+  position:relative;
+
+  border-radius:48px;
+  background:#080A0E;
+
+  box-shadow:
+    /* soft blue ambient glow */
+    0 0 0 1px rgba(255,255,255,.04),
+    0 0 35px rgba(96,145,225,.10),
+    0 0 90px rgba(96,145,225,.08),
+
+    /* soft depth */
+    0 28px 70px rgba(0,0,0,.32),
+    0 10px 24px rgba(0,0,0,.20);
+}
   .phone::after{content:'';position:absolute;top:22px;left:50%;transform:translateX(-50%);
     width:108px;height:26px;background:#080A0E;border-radius:0 0 16px 16px;z-index:5}
   .screen{position:relative;border-radius:37px;overflow:hidden;background:#151A22;
