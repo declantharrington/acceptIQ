@@ -1710,7 +1710,16 @@ section{position:relative}
     </div>
   </div>
 </header>
+<div class="mobile-menu">
 
+    <a href="#pricing">Pricing</a>
+
+    <a href="#">Get my review</a>
+
+    <a href="#">Contact</a>
+
+</div>
+  
 <!-- HERO -->
 <section class="hero">
   <div class="wrap">
@@ -2257,6 +2266,9 @@ initMG('hero-mg');
 </script>
 <script>
 (function stickyHeroPhone() {
+    if (window.innerWidth <= 760) {
+        return;
+    }
   const phone  = document.querySelector('.hero .phone');
   const hStage = document.querySelector('.hero-stage');
   const twoup  = document.querySelector('.twoup');
