@@ -526,11 +526,10 @@ input#fileInput { display: none; }
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.12s !important; }
   .loading-ring { animation: spin 1s linear infinite; }
 }
-/* MOBILE OPTIMISATION — analyser page */
-@media (max-width: 760px){
+/* MOBILE OPTIMISATION — compact analyser flow */
+@media (max-width:760px){
 
-  html,
-  body{
+  html, body{
     height:100%;
     overflow:hidden;
     background:#14161A;
@@ -548,56 +547,47 @@ input#fileInput { display: none; }
     pointer-events:none;
   }
 
-  body::before{
-    left:14px;
-  }
-
-  body::after{
-    right:14px;
-  }
+  body::before{ left:14px; }
+  body::after{ right:14px; }
 
   .chrome{
-    height:82px;
-    background:rgba(15,18,24,.88);
-    border-bottom:none;
+    height:74px;
+    background:rgba(15,18,24,.9);
   }
 
   .chrome-inner{
     width:calc(100% - 28px);
-    height:82px;
-    padding:0 26px;
+    height:74px;
+    padding:0 22px;
     border-left:1px solid rgba(230,235,246,.08);
     border-right:1px solid rgba(230,235,246,.08);
     border-bottom:1px solid rgba(230,235,246,.08);
   }
 
   .acceptor-word{
-    font-size:24px;
+    font-size:23px;
   }
 
   .acceptor-mark{
-    width:30px;
-    height:28px;
+    width:28px;
+    height:26px;
   }
 
   .acceptor-mark span{
     width:9px;
-    height:28px;
+    height:26px;
     border-radius:2.5px;
   }
 
-  .acceptor-mark span:first-child{
-    left:6px;
-  }
-
+  .acceptor-mark span:first-child{ left:5px; }
   .acceptor-mark span:last-child{
-    right:6px;
-    height:20px;
+    right:5px;
+    height:19px;
   }
 
   .progress-wrap{
-    min-width:88px;
-    max-width:96px;
+    min-width:82px;
+    max-width:90px;
   }
 
   .progress-label{
@@ -606,9 +596,8 @@ input#fileInput { display: none; }
 
   .stage{
     align-items:flex-start;
-    justify-content:flex-start;
-    padding-top:calc(128px + env(safe-area-inset-top));
-    padding-bottom:calc(96px + env(safe-area-inset-bottom));
+    padding-top:calc(104px + env(safe-area-inset-top));
+    padding-bottom:calc(70px + env(safe-area-inset-bottom));
     padding-left:0;
     padding-right:0;
   }
@@ -617,37 +606,30 @@ input#fileInput { display: none; }
     --fit:1 !important;
     width:calc(100% - 28px);
     max-width:none;
-    max-height:calc(100dvh - 158px);
+    max-height:calc(100dvh - 128px);
     margin:0 auto;
-    padding:0 34px 40px;
+    padding:0 26px 24px;
     overflow-y:auto;
     overflow-x:hidden;
-    transform:translateX(34px);
-  }
-
-  .screen.active{
-    transform:translateX(0);
   }
 
   .q-text{
-    font-size:clamp(42px,10.8vw,58px);
+    font-size:clamp(32px,8.7vw,42px);
     line-height:1.08;
-    letter-spacing:-0.06em;
-    margin-bottom:22px;
-    color:rgba(230,235,246,.92);
+    letter-spacing:-0.055em;
+    margin-bottom:14px;
   }
 
   .q-sub{
-    font-size:18px;
-    line-height:1.48;
-    color:rgba(224,233,246,.54);
-    margin-bottom:34px;
-    max-width:340px;
+    font-size:15.5px;
+    line-height:1.42;
+    margin-bottom:20px;
+    max-width:330px;
   }
 
   .choice-grid{
-    gap:10px;
-    margin-bottom:28px;
+    gap:7px;
+    margin-bottom:18px;
   }
 
   .choice-grid.cols-2{
@@ -655,112 +637,121 @@ input#fileInput { display: none; }
   }
 
   .choice{
-    min-height:68px;
-    padding:16px 18px;
-    gap:14px;
+    min-height:54px;
+    padding:12px 14px;
+    gap:12px;
     background:rgba(224,233,246,.035);
-    border-color:rgba(224,233,246,.10);
   }
 
   .choice-icon{
-    width:40px;
-    height:40px;
+    width:34px;
+    height:34px;
   }
 
   .choice-label{
-    font-size:15px;
+    font-size:14px;
   }
 
   .choice-sub{
-    font-size:12.5px;
+    font-size:11.5px;
+    line-height:1.35;
   }
 
   .choice-check{
-    width:20px;
-    height:20px;
+    width:18px;
+    height:18px;
   }
 
   .q-input-wrap{
-    margin-top:34px;
-    margin-bottom:30px;
+    margin-top:22px;
+    margin-bottom:22px;
   }
 
   .q-label{
-    font-size:11px;
-    margin-bottom:10px;
+    font-size:10.5px;
+    margin-bottom:8px;
   }
 
   .q-input{
-    font-size:clamp(28px,8vw,38px);
-    padding:14px 0;
+    font-size:clamp(24px,7vw,32px);
+    padding:11px 0;
   }
 
   .cta-row{
     width:100%;
-    margin-top:24px;
-    gap:14px;
+    margin-top:14px;
+    gap:8px;
   }
 
   .cta{
     width:100%;
-    height:58px;
+    height:52px;
     min-width:0;
     justify-content:space-between;
-    padding:0 22px;
-    font-size:15px;
+    padding:0 20px;
+    font-size:14px;
   }
 
   .skip-link{
     width:100%;
     text-align:center;
-    font-size:14px;
-    padding:12px 0;
+    font-size:13px;
+    padding:8px 0;
   }
 
   .upload-zone{
-    padding:44px 22px;
-    margin-top:28px;
-    margin-bottom:22px;
+    padding:30px 18px;
+    margin-top:18px;
+    margin-bottom:16px;
+  }
+
+  .upload-icon{
+    width:42px;
+    height:42px;
+    margin-bottom:12px;
   }
 
   .upload-title{
-    font-size:20px;
+    font-size:18px;
   }
 
   .upload-sub{
-    font-size:14px;
+    font-size:13px;
+  }
+
+  .upload-formats{
+    font-size:10px;
+    margin-top:8px;
   }
 
   .otp-digits{
-    gap:7px;
+    gap:6px;
     justify-content:space-between;
   }
 
   .otp-digit{
-    width:46px;
-    height:60px;
-    font-size:25px;
+    width:42px;
+    height:54px;
+    font-size:23px;
+  }
+
+  .status-msg{
+    font-size:12.5px;
+    margin-top:8px;
   }
 
   .review-row{
-    padding:15px 0;
-  }
-
-  .review-key{
-    font-size:13px;
-  }
-
-  .review-val{
-    font-size:14px;
+    padding:10px 0;
   }
 
   .confirm-step{
-    padding:18px 0;
+    padding:12px 0;
   }
 
   .back-btn{
     left:28px;
-    bottom:calc(24px + env(safe-area-inset-bottom));
+    bottom:calc(20px + env(safe-area-inset-bottom));
+    padding:8px 14px;
     border-radius:999px;
     background:rgba(15,18,24,.82);
   }
@@ -770,45 +761,36 @@ input#fileInput { display: none; }
   }
 }
 
-@media (max-width: 480px){
-
-  body::before{
-    left:14px;
-  }
-
-  body::after{
-    right:14px;
-  }
-
-  .chrome-inner{
-    width:calc(100% - 28px);
-    padding:0 22px;
-  }
+@media (max-width:480px){
 
   .screen{
-    width:calc(100% - 28px);
-    padding-left:28px;
-    padding-right:28px;
+    padding-left:24px;
+    padding-right:24px;
   }
 
   .q-text{
-    font-size:clamp(39px,11.4vw,52px);
+    font-size:clamp(30px,8.9vw,39px);
   }
 
   .q-sub{
-    font-size:17px;
+    font-size:14.5px;
   }
 
   .choice{
-    padding:15px 16px;
+    min-height:50px;
+    padding:10px 13px;
+  }
+
+  .choice-icon{
+    width:31px;
+    height:31px;
   }
 
   .otp-digit{
-    width:42px;
-    height:56px;
+    width:39px;
+    height:52px;
   }
 }
-  
 </style>
 </head>
 <body>
