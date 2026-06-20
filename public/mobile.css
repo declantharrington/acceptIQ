@@ -438,3 +438,79 @@
     margin-right:24px;
   }
 }
+
+@media (max-width:760px){
+
+  .nav-right,
+  .nav-right *,
+  .nav-cta{
+    display:none !important;
+  }
+
+  .mobile-menu-btn{
+    display:flex !important;
+  }
+
+  .advisor-stack{
+    display:block !important;
+    height:auto !important;
+    max-width:380px !important;
+    margin:46px auto 0 !important;
+  }
+
+  .advisor-card{
+    position:relative !important;
+    width:100% !important;
+    min-height:0 !important;
+    transform:none !important;
+    opacity:1 !important;
+    border-bottom:1px solid rgba(230,235,246,.10) !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    padding:0 2px !important;
+  }
+
+  .advisor-card .card-icon,
+  .advisor-card .rule{
+    display:none !important;
+  }
+
+  .advisor-card h3{
+    display:inline-block !important;
+    font-size:16px !important;
+    line-height:58px !important;
+  }
+
+  .advisor-card p{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+  }
+
+  .advisor-card.is-open p{
+    max-height:180px;
+    opacity:1;
+    padding-bottom:18px;
+  }
+
+  #dots-stage{
+    display:none !important;
+  }
+
+  .fcols{
+    display:block !important;
+  }
+
+  .fcol a{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    padding:0 !important;
+  }
+
+  .fcol.is-open a{
+    max-height:44px;
+    opacity:1;
+    padding:8px 0 !important;
+  }
+}
