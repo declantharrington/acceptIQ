@@ -4,181 +4,178 @@
 //
 // Report philosophy (keep in sync with the acceptorIQ Knowledge Base):
 //   The client-facing report is a DIAGNOSTIC, not a prescription. It opens the
-//   merchant’s eyes to where money may be leaking and how large the opportunity
+//   merchant's eyes to where money may be leaking and how large the opportunity
 //   could be — WITHOUT naming the specific fix, the provider to move to, or the
-//   exact change to make. That “how” is the paid consulting conversation. The
+//   exact change to make. That "how" is the paid consulting conversation. The
 //   report must also read in plain English for a non-expert business owner, and
 //   open with a general Australian-payments-landscape preamble.
 
-import { PAYMENTS_KB } from ‘./_lib/payments-knowledge-base.js’;
+import { PAYMENTS_KB } from './_lib/payments-knowledge-base.js';
 
 export const config = {
-// Sonnet can take 20-40s+ on a long report; match analyse.js so the function
-// isn’t killed mid-generation by the platform default timeout.
-maxDuration: 120,
+  // Sonnet can take 20-40s+ on a long report; match analyse.js so the function
+  // isn't killed mid-generation by the platform default timeout.
+  maxDuration: 120,
 };
 
 export default async function handler(req, res) {
-try {
-res.setHeader(‘Access-Control-Allow-Origin’, ‘*’);
-res.setHeader(‘Access-Control-Allow-Methods’, ‘POST, OPTIONS’);
-res.setHeader(‘Access-Control-Allow-Headers’, ‘Content-Type’);
-if (req.method === ‘OPTIONS’) return res.status(200).end();
-if (req.method !== ‘POST’) return res.status(405).json({ error: ‘Method not allowed’ });
+  try {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') return res.status(200).end();
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-```
-const { submissionId, overrides = {} } = req.body || {};
-if (!submissionId) return res.status(400).json({ error: 'submissionId required' });
+    const { submissionId, overrides = {} } = req.body || {};
+    if (!submissionId) return res.status(400).json({ error: 'submissionId required' });
 
-const supabaseUrl  = process.env.SUPABASE_URL;
-const supabaseKey  = process.env.SUPABASE_ANON_KEY;
-const anthropicKey = process.env.ANTHROPIC_API_KEY;
+    const supabaseUrl  = process.env.SUPABASE_URL;
+    const supabaseKey  = process.env.SUPABASE_ANON_KEY;
+    const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
-if (!supabaseUrl || !supabaseKey || !anthropicKey) {
-  console.error('generate-report: missing required environment variables');
-  return res.status(500).json({ error: 'Server configuration error' });
-}
+    if (!supabaseUrl || !supabaseKey || !anthropicKey) {
+      console.error('generate-report: missing required environment variables');
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
 
-// Latest Sonnet. (analyse.js intentionally stays on Haiku for cheaper extraction.)
-const MODEL = 'claude-sonnet-4-6';
+    // Latest Sonnet. (analyse.js intentionally stays on Haiku for cheaper extraction.)
+    const MODEL = 'claude-sonnet-4-6';
 
-// ── 1. Fetch submission from Supabase ─────────────────────────
-const fetchRes = await fetch(
-  `${supabaseUrl}/rest/v1/submissions?id=eq.${submissionId}&select=*`,
-  { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
-);
-const rows = await fetchRes.json();
-if (!Array.isArray(rows) || !rows.length) {
-  return res.status(404).json({ error: 'Submission not found' });
-}
+    // ── 1. Fetch submission from Supabase ─────────────────────────
+    const fetchRes = await fetch(
+      `${supabaseUrl}/rest/v1/submissions?id=eq.${submissionId}&select=*`,
+      { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+    );
+    const rows = await fetchRes.json();
+    if (!Array.isArray(rows) || !rows.length) {
+      return res.status(404).json({ error: 'Submission not found' });
+    }
 
-const submission     = rows[0];
-const report         = JSON.parse(submission.report_json || '{}');
-const programContext = submission.program_context || '';
+    const submission     = rows[0];
+    const report         = JSON.parse(submission.report_json || '{}');
+    const programContext = submission.program_context || '';
 
-// ── 1b. Apply admin overrides from the dashboard edit panel ───
-// The admin can correct extracted facts (e.g. a misread total) and add
-// internal notes before generating. Only whitelisted fact fields are merged.
-const adminNotes = (overrides.adminNotes || '').trim();
-const numericFields = ['volume', 'totalFees', 'effectiveRate', 'transactions', 'monthlyFee', 'terminalFees', 'perTransactionFee'];
-const stringFields  = ['provider', 'period', 'providerRate', 'pricingModel', 'lcrStatus'];
-for (const k of numericFields) {
-  if (overrides[k] !== undefined && overrides[k] !== null && overrides[k] !== '') {
-    const n = Number(overrides[k]);
-    if (!Number.isNaN(n)) report[k] = n;
-  }
-}
-for (const k of stringFields) {
-  if (typeof overrides[k] === 'string' && overrides[k].trim()) report[k] = overrides[k].trim();
-}
-if (Array.isArray(overrides.observations) && overrides.observations.length) {
-  report.observations = overrides.observations.map(o => String(o).trim()).filter(Boolean);
-}
-if (overrides.cardMix && typeof overrides.cardMix === 'object') {
-  report.cardMix = { ...(report.cardMix || {}), ...overrides.cardMix };
-}
-// Recompute effective rate from corrected volume/totalFees unless the admin
-// set it explicitly, so a corrected total flows through to the headline rate.
-if ((overrides.effectiveRate === undefined || overrides.effectiveRate === '') &&
-    report.volume && report.totalFees) {
-  report.effectiveRate = (Number(report.totalFees) / Number(report.volume)) * 100;
-}
+    // ── 1b. Apply admin overrides from the dashboard edit panel ───
+    // The admin can correct extracted facts (e.g. a misread total) and add
+    // internal notes before generating. Only whitelisted fact fields are merged.
+    const adminNotes = (overrides.adminNotes || '').trim();
+    const numericFields = ['volume', 'totalFees', 'effectiveRate', 'transactions', 'monthlyFee', 'terminalFees', 'perTransactionFee'];
+    const stringFields  = ['provider', 'period', 'providerRate', 'pricingModel', 'lcrStatus'];
+    for (const k of numericFields) {
+      if (overrides[k] !== undefined && overrides[k] !== null && overrides[k] !== '') {
+        const n = Number(overrides[k]);
+        if (!Number.isNaN(n)) report[k] = n;
+      }
+    }
+    for (const k of stringFields) {
+      if (typeof overrides[k] === 'string' && overrides[k].trim()) report[k] = overrides[k].trim();
+    }
+    if (Array.isArray(overrides.observations) && overrides.observations.length) {
+      report.observations = overrides.observations.map(o => String(o).trim()).filter(Boolean);
+    }
+    if (overrides.cardMix && typeof overrides.cardMix === 'object') {
+      report.cardMix = { ...(report.cardMix || {}), ...overrides.cardMix };
+    }
+    // Recompute effective rate from corrected volume/totalFees unless the admin
+    // set it explicitly, so a corrected total flows through to the headline rate.
+    if ((overrides.effectiveRate === undefined || overrides.effectiveRate === '') &&
+        report.volume && report.totalFees) {
+      report.effectiveRate = (Number(report.totalFees) / Number(report.volume)) * 100;
+    }
 
-// ── 2. Determine revenue band for tone calibration ────────────
-const ctxLower = programContext.toLowerCase();
-const revenueBand = (() => {
-  if (ctxLower.includes('50mplus')) return 'enterprise';
-  if (ctxLower.includes('20to50m') || ctxLower.includes('5to20m')) return 'mid-market';
-  return 'smb';
-})();
+    // ── 2. Determine revenue band for tone calibration ────────────
+    const ctxLower = programContext.toLowerCase();
+    const revenueBand = (() => {
+      if (ctxLower.includes('50mplus')) return 'enterprise';
+      if (ctxLower.includes('20to50m') || ctxLower.includes('5to20m')) return 'mid-market';
+      return 'smb';
+    })();
 
-// Tone calibrates DEPTH and sophistication by audience — but every band must
-// stay plain-English about payments concepts (the reader may know finance,
-// not payments) and must stay non-prescriptive (open eyes, don't instruct).
-const toneGuide = {
-  enterprise:
-    'Reader is a CFO or Head of Finance. They are financially literate but not necessarily payments specialists, so still explain payments-specific terms (interchange, scheme fees, routing) in plain English the first time they appear. Be precise and data-driven; you may use dollar figures and basis points. Stay analytical and calm.',
-  'mid-market':
-    'Reader is a business owner or finance manager. Balance technical accuracy with plain English. Lead with dollar impact, then explain the mechanism simply. Define any payments term on first use.',
-  smb:
-    'Reader is a small business owner with limited payments knowledge. Plain English only — no jargon. Explain every concept in one simple line. Lead with the dollar impact and keep it concise and relatable (e.g. "on every $100 you take by card...").',
-}[revenueBand];
+    // Tone calibrates DEPTH and sophistication by audience — but every band must
+    // stay plain-English about payments concepts (the reader may know finance,
+    // not payments) and must stay non-prescriptive (open eyes, don't instruct).
+    const toneGuide = {
+      enterprise:
+        'Reader is a CFO or Head of Finance. They are financially literate but not necessarily payments specialists, so still explain payments-specific terms (interchange, scheme fees, routing) in plain English the first time they appear. Be precise and data-driven; you may use dollar figures and basis points. Stay analytical and calm.',
+      'mid-market':
+        'Reader is a business owner or finance manager. Balance technical accuracy with plain English. Lead with dollar impact, then explain the mechanism simply. Define any payments term on first use.',
+      smb:
+        'Reader is a small business owner with limited payments knowledge. Plain English only — no jargon. Explain every concept in one simple line. Lead with the dollar impact and keep it concise and relatable (e.g. "on every $100 you take by card...").',
+    }[revenueBand];
 
-const fmtD = n => n != null ? `$${Number(n).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—';
-const fmtP = n => n != null ? `${Number(n).toFixed(2)}%` : '—';
-const today = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+    const fmtD = n => n != null ? `$${Number(n).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—';
+    const fmtP = n => n != null ? `${Number(n).toFixed(2)}%` : '—';
+    const today = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
 
-// Average fee per transaction = average sale value (volume/transactions) × effective rate.
-// This is a DOLLAR value (the average fee on an average sale), NOT a fixed
-// per-transaction interchange fee (those are quoted in cents). See guardrails.
-const avgFeePerTxn = (() => {
-  if (report.volume && report.transactions && report.effectiveRate) {
-    return (report.volume / report.transactions) * (report.effectiveRate / 100);
-  }
-  if (report.perTransactionFee != null) return report.perTransactionFee / 100; // fallback (cents → $)
-  return null;
-})();
+    // Average fee per transaction = average sale value (volume/transactions) × effective rate.
+    // This is a DOLLAR value (the average fee on an average sale), NOT a fixed
+    // per-transaction interchange fee (those are quoted in cents). See guardrails.
+    const avgFeePerTxn = (() => {
+      if (report.volume && report.transactions && report.effectiveRate) {
+        return (report.volume / report.transactions) * (report.effectiveRate / 100);
+      }
+      if (report.perTransactionFee != null) return report.perTransactionFee / 100; // fallback (cents → $)
+      return null;
+    })();
 
-// ── Fee composition bar (visual) ────────────────────────────────
-// Derived deterministically from feeBreakdown, NOT left to the AI to
-// estimate — matches line items by keyword into the three MSF buckets
-// from the Knowledge Base (interchange / scheme fees / acquirer margin).
-// Returns null if the breakdown doesn't clearly separate these, so the
-// visual is only shown when it can be drawn honestly.
-const feeComposition = (() => {
-  const items = Array.isArray(report.feeBreakdown) ? report.feeBreakdown : [];
-  if (!items.length) return null;
-  let interchange = 0, scheme = 0, margin = 0, other = 0;
-  for (const item of items) {
-    const label = (item.label || '').toLowerCase();
-    const amt = Number(item.amount) || 0;
-    if (/interchange/.test(label)) interchange += amt;
-    else if (/scheme/.test(label)) scheme += amt;
-    else if (/margin|merchant service fee|msf|provider/.test(label)) margin += amt;
-    else other += amt;
-  }
-  const total = interchange + scheme + margin + other;
-  if (total <= 0) return null;
-  // Fold "other" proportionally into margin rather than adding a fourth
-  // segment — the chart stays a clean 3-part story (issuer / network /
-  // provider) which matches how the report explains the MSF elsewhere.
-  margin += other;
-  return {
-    interchangePct: Math.round((interchange / total) * 1000) / 10,
-    schemePct:      Math.round((scheme / total) * 1000) / 10,
-    marginPct:      Math.round((margin / total) * 1000) / 10,
-    interchangeAmt: interchange,
-    schemeAmt:      scheme,
-    marginAmt:      margin,
-  };
-})();
+    // ── Fee composition bar (visual) ────────────────────────────────
+    // Derived deterministically from feeBreakdown, NOT left to the AI to
+    // estimate — matches line items by keyword into the three MSF buckets
+    // from the Knowledge Base (interchange / scheme fees / acquirer margin).
+    // Returns null if the breakdown doesn't clearly separate these, so the
+    // visual is only shown when it can be drawn honestly.
+    const feeComposition = (() => {
+      const items = Array.isArray(report.feeBreakdown) ? report.feeBreakdown : [];
+      if (!items.length) return null;
+      let interchange = 0, scheme = 0, margin = 0, other = 0;
+      for (const item of items) {
+        const label = (item.label || '').toLowerCase();
+        const amt = Number(item.amount) || 0;
+        if (/interchange/.test(label)) interchange += amt;
+        else if (/scheme/.test(label)) scheme += amt;
+        else if (/margin|merchant service fee|msf|provider/.test(label)) margin += amt;
+        else other += amt;
+      }
+      const total = interchange + scheme + margin + other;
+      if (total <= 0) return null;
+      // Fold "other" proportionally into margin rather than adding a fourth
+      // segment — the chart stays a clean 3-part story (issuer / network /
+      // provider) which matches how the report explains the MSF elsewhere.
+      margin += other;
+      return {
+        interchangePct: Math.round((interchange / total) * 1000) / 10,
+        schemePct:      Math.round((scheme / total) * 1000) / 10,
+        marginPct:      Math.round((margin / total) * 1000) / 10,
+        interchangeAmt: interchange,
+        schemeAmt:      scheme,
+        marginAmt:      margin,
+      };
+    })();
 
-// ── Benchmark comparison bar (visual) ───────────────────────────
-// Fixed reference points from the Knowledge Base §6 (small-blended 1.4%,
-// small-unblended 0.9%, large/strategic 0.6%), plotted against the
-// merchant's own effective rate on a shared scale. Scale ceiling is
-// padded above the highest of the four values so no bar ever touches 100%.
-const benchmarkBars = (() => {
-  if (report.effectiveRate == null) return null;
-  const you = report.effectiveRate;
-  const refs = { smallBlended: 1.4, smallUnblended: 0.9, large: 0.6 };
-  const ceiling = Math.max(you, refs.smallBlended) * 1.15;
-  const pct = v => Math.max(2, Math.round((v / ceiling) * 1000) / 10); // floor so tiny bars stay visible
-  return {
-    you: { value: you, pct: pct(you) },
-    smallBlended: { value: refs.smallBlended, pct: pct(refs.smallBlended) },
-    smallUnblended: { value: refs.smallUnblended, pct: pct(refs.smallUnblended) },
-    large: { value: refs.large, pct: pct(refs.large) },
-  };
-})();
+    // ── Benchmark comparison bar (visual) ───────────────────────────
+    // Fixed reference points from the Knowledge Base §6 (small-blended 1.4%,
+    // small-unblended 0.9%, large/strategic 0.6%), plotted against the
+    // merchant's own effective rate on a shared scale. Scale ceiling is
+    // padded above the highest of the four values so no bar ever touches 100%.
+    const benchmarkBars = (() => {
+      if (report.effectiveRate == null) return null;
+      const you = report.effectiveRate;
+      const refs = { smallBlended: 1.4, smallUnblended: 0.9, large: 0.6 };
+      const ceiling = Math.max(you, refs.smallBlended) * 1.15;
+      const pct = v => Math.max(2, Math.round((v / ceiling) * 1000) / 10); // floor so tiny bars stay visible
+      return {
+        you: { value: you, pct: pct(you) },
+        smallBlended: { value: refs.smallBlended, pct: pct(refs.smallBlended) },
+        smallUnblended: { value: refs.smallUnblended, pct: pct(refs.smallUnblended) },
+        large: { value: refs.large, pct: pct(refs.large) },
+      };
+    })();
 
-// ── 3. Call Claude to write personalised narrative ────────────
-// The acceptorIQ Knowledge Base is prepended as authoritative reference for
-// all Australian payments facts, benchmarks and the report philosophy. The
-// condensed instructions that follow it are the operative rules for THIS task.
-const systemPrompt = `=== ACCEPTORIQ KNOWLEDGE BASE (authoritative reference) ===
-```
-
+    // ── 3. Call Claude to write personalised narrative ────────────
+    // The acceptorIQ Knowledge Base is prepended as authoritative reference for
+    // all Australian payments facts, benchmarks and the report philosophy. The
+    // condensed instructions that follow it are the operative rules for THIS task.
+    const systemPrompt = `=== ACCEPTORIQ KNOWLEDGE BASE (authoritative reference) ===
 Use the following as the source of truth for Australian payments facts, figures, benchmarks, terminology and the report-writing philosophy. Do not contradict it and do not introduce statistics that are not supported by it.
 
 ${PAYMENTS_KB}
@@ -190,20 +187,18 @@ You are a senior payments consultant at acceptorIQ, an Australian payments advis
 TONE: ${toneGuide}
 
 ═══ CORE PHILOSOPHY — read carefully, this governs everything ═══
-This report is a DIAGNOSTIC that opens the merchant’s eyes to where money may be leaking and how large the opportunity could be. It is NOT a set of instructions.
-
-- SURFACE opportunities and SIZE them; do NOT prescribe the fix. Write “this is an area worth reviewing” — never “switch to X” or “do Y”.
+This report is a DIAGNOSTIC that opens the merchant's eyes to where money may be leaking and how large the opportunity could be. It is NOT a set of instructions.
+- SURFACE opportunities and SIZE them; do NOT prescribe the fix. Write "this is an area worth reviewing" — never "switch to X" or "do Y".
 - Do NOT name any payment providers, banks, gateways, products or plans. Stay vendor-neutral. This extends to fraud-prevention, dispute-alert and chargeback-representment tools and vendors — name no specific product or company.
-- Quantify the potential prize using the merchant’s own numbers, but withhold the method — the specific change, provider and implementation are what an acceptorIQ advisor delivers in person.
-- Frame “next steps” and the priority item as AREAS TO EXPLORE or QUESTIONS TO BRING TO A REVIEW, phrased as observations, naturally pointing toward a conversation with an acceptorIQ advisor. Never as directives.
+- Quantify the potential prize using the merchant's own numbers, but withhold the method — the specific change, provider and implementation are what an acceptorIQ advisor delivers in person.
+- Frame "next steps" and the priority item as AREAS TO EXPLORE or QUESTIONS TO BRING TO A REVIEW, phrased as observations, naturally pointing toward a conversation with an acceptorIQ advisor. Never as directives.
 - Be specific and personal about what you OBSERVE in their data; be open-ended about what to DO about it.
 
 ═══ PLAIN ENGLISH ═══
-Write so a business owner with no payments knowledge understands it. Explain every payments term in a simple line the first time it appears (e.g. “interchange — the wholesale fee your provider passes through to the bank that issued your customer’s card”). Lead with dollar impact, then the mechanism. Short sentences. Calm, trusted-adviser voice — explaining, not selling.
+Write so a business owner with no payments knowledge understands it. Explain every payments term in a simple line the first time it appears (e.g. "interchange — the wholesale fee your provider passes through to the bank that issued your customer's card"). Lead with dollar impact, then the mechanism. Short sentences. Calm, trusted-adviser voice — explaining, not selling.
 
 ═══ APPROVED AUSTRALIAN PAYMENTS FACTS ═══
 Use ONLY these figures for any market/landscape statistic. Do NOT invent or estimate other statistics. Distinguish clearly between what is true TODAY and what changes ON A FUTURE DATE.
-
 - Australians pay an estimated ~$1.8 billion per year in card surcharges (~$1.6 billion of it borne by consumers). About 16% of merchants surcharge.
 - Cash has fallen from ~70% of in-person payments in 2007 to ~15% in 2025.
 - Small merchants typically pay around 1.4% of turnover to accept cards on a single-rate plan vs ~0.9% on an unblended plan; large merchants average ~0.6% — so small businesses often pay roughly double the rate of large ones for the same sale.
@@ -213,119 +208,113 @@ Use ONLY these figures for any market/landscape statistic. Do NOT invent or esti
 - Interchange caps do NOT apply to American Express (a three-party network).
 
 ═══ UNITS — state correctly ═══
-
 - Effective rate is a percentage of turnover.
-- “Average fee per transaction” provided to you is a DOLLAR value (average sale value × effective rate) — the typical fee on a typical sale. It is NOT a fixed per-transaction interchange fee.
+- "Average fee per transaction" provided to you is a DOLLAR value (average sale value × effective rate) — the typical fee on a typical sale. It is NOT a fixed per-transaction interchange fee.
 - Any fixed/interchange per-transaction fee, if you mention one, is quoted in CENTS. Never conflate the two.
-- Interchange, scheme fees and the acquirer’s margin are three different things paid to three different parties — don’t merge them.
+- Interchange, scheme fees and the acquirer's margin are three different things paid to three different parties — don't merge them.
 
 ═══ PROVIDER RATE vs EFFECTIVE RATE ═══
-
-- “Provider rate / margin” is what the merchant’s PROVIDER charges them: on interchange-plus / interchange-plus-plus this is the acquirer’s margin (often the same flat rate on debit and credit); on blended/single-rate it is the blended rate(s). The effective rate is the ALL-IN cost (provider margin + interchange + scheme fees) as a share of turnover.
-- When both are available, help the merchant see the difference plainly: the provider margin is the part their provider sets (and the more negotiable piece), while the effective rate is what they actually pay all-in once wholesale interchange and scheme fees are added. Do not present the provider rate as the total cost, nor the effective rate as the provider’s charge.
+- "Provider rate / margin" is what the merchant's PROVIDER charges them: on interchange-plus / interchange-plus-plus this is the acquirer's margin (often the same flat rate on debit and credit); on blended/single-rate it is the blended rate(s). The effective rate is the ALL-IN cost (provider margin + interchange + scheme fees) as a share of turnover.
+- When both are available, help the merchant see the difference plainly: the provider margin is the part their provider sets (and the more negotiable piece), while the effective rate is what they actually pay all-in once wholesale interchange and scheme fees are added. Do not present the provider rate as the total cost, nor the effective rate as the provider's charge.
 
 ═══ CARD MIX — do not misread ═══
-
-- Rely only on the card mix provided to you. NEVER state or imply the merchant has no debit volume, or that everything is “processed as credit”, based on a summary or deposit column — debit and credit splits come from the interchange/scheme breakdown, and a merchant can be debit-heavy even when a summary lumps volume under “credit”.
+- Rely only on the card mix provided to you. NEVER state or imply the merchant has no debit volume, or that everything is "processed as credit", based on a summary or deposit column — debit and credit splits come from the interchange/scheme breakdown, and a merchant can be debit-heavy even when a summary lumps volume under "credit".
 
 ═══ FORMATTING RULES ═══
-
-- Use “\n\n” between paragraphs (double newline).
-- For multi-point sections, use “**Heading:** Content” with double newlines between each block.
-- Every multi-part section has at least 2 paragraphs separated by \n\n. Never write a wall of text.
+- Use "\\n\\n" between paragraphs (double newline).
+- For multi-point sections, use "**Heading:** Content" with double newlines between each block.
+- Every multi-part section has at least 2 paragraphs separated by \\n\\n. Never write a wall of text.
 - Use the subheadings specified in the JSON structure below.
 
 Return ONLY valid JSON — no markdown fences, no preamble. Use this exact structure:
 {
-“landscapePreamble”: “2-3 short paragraphs separated by \n\n. GENERAL scene-setting about the Australian payments landscape — NOT about this specific merchant yet. Explain that card payments are now how most Australians pay and that the cost of accepting them is a real, often-overlooked expense. Weave in a few of the approved stats. Make the case that payment costs are often set once and never revisited, pricing is complex by design, and the upcoming 2026 reforms make now a valuable moment to understand your stack. Keep it educational and inviting.”,
-“executiveSummary”: “3-4 paragraphs separated by \n\n, specific to this merchant’s numbers but non-prescriptive. First: what we observed. Second: the main theme/issue. Third: where the opportunity appears to lie (sized in dollars where possible). Fourth: what a review with acceptorIQ could help clarify.”,
-“pricingModelAnalysis”: “**Your Current Setup:**\n\n[plain-English explanation of how they appear to be charged]\n\n**Why This Matters:**\n\n[what it means for their costs]\n\n**What’s Worth Understanding:**\n\n[observation about how this compares, no instruction]”,
-“savingsOpportunity”: “**Where The Opportunity Appears:**\n\n[specific maths grounded in their numbers]\n\n**What This Could Be Worth:**\n\n[sized, conservative]\n\n**A Conservative View:**\n\n[hedged lower-bound framing]”,
-“lcrAnalysis”: “**The Current Picture:**\n\n[plain explanation of routing and what their data suggests]\n\n**Why It Matters For You:**\n\n[dollar relevance, no instruction]”,
-“chargebackAnalysis”: “**The Current Picture:**\n\n[plain-English explanation of chargebacks and what their data shows or, if not shown on the statement, says so plainly without implying a clean record]\n\n**Why It Matters For You:**\n\n[risk/cost relevance — scheme monitoring risk if elevated, or general context if not visible — no instruction, no named tools or vendors]”,
-“benchmarkComment”: “**Where You Sit:**\n\n[their effective rate vs the typical range for their size]\n\n**What Strong Looks Like:**\n\n[what better-positioned businesses of their size tend to pay]”,
-“stackAssessment”: “**The Overall Picture:**\n\n[paragraph]\n\n**What Appears To Be Working:**\n\n[paragraph]\n\n**Areas Worth A Closer Look:**\n\n[paragraph]”,
-“nextStep1”: “An area worth reviewing — observational, names no provider or specific action, one or two sentences.”,
-“nextStep2”: “A second area worth reviewing — same framing.”,
-“nextStep3”: “A third area worth reviewing — same framing.”,
-“keyRecommendation”: “The single highest-value area to explore, framed as an observation and an invitation to discuss with an acceptorIQ advisor — not a specific instruction and naming no provider.”,
-“alerts”: [
-{ “type”: “warn | good | info”, “heading”: “Short Key Finding title (a few words)”, “body”: “1-2 plain-English sentences. Factual but interpreted using the benchmarks/context in the Knowledge Base. Non-prescriptive — point out the finding, don’t instruct. Name no provider.” }
-],
-“stackItems”: [
-{ “label”: “Component name (e.g. Pricing structure, Debit routing, Terminal, Monthly fees, Card mix)”, “value”: “Concise factual description of the merchant’s current setup for this component, taken from the facts provided”, “status”: “ok | warn | gap” }
-]
+  "landscapePreamble": "2-3 short paragraphs separated by \\n\\n. GENERAL scene-setting about the Australian payments landscape — NOT about this specific merchant yet. Explain that card payments are now how most Australians pay and that the cost of accepting them is a real, often-overlooked expense. Weave in a few of the approved stats. Make the case that payment costs are often set once and never revisited, pricing is complex by design, and the upcoming 2026 reforms make now a valuable moment to understand your stack. Keep it educational and inviting.",
+  "executiveSummary": "3-4 paragraphs separated by \\n\\n, specific to this merchant's numbers but non-prescriptive. First: what we observed. Second: the main theme/issue. Third: where the opportunity appears to lie (sized in dollars where possible). Fourth: what a review with acceptorIQ could help clarify.",
+  "pricingModelAnalysis": "**Your Current Setup:**\\n\\n[plain-English explanation of how they appear to be charged]\\n\\n**Why This Matters:**\\n\\n[what it means for their costs]\\n\\n**What's Worth Understanding:**\\n\\n[observation about how this compares, no instruction]",
+  "savingsOpportunity": "**Where The Opportunity Appears:**\\n\\n[specific maths grounded in their numbers]\\n\\n**What This Could Be Worth:**\\n\\n[sized, conservative]\\n\\n**A Conservative View:**\\n\\n[hedged lower-bound framing]",
+  "lcrAnalysis": "**The Current Picture:**\\n\\n[plain explanation of routing and what their data suggests]\\n\\n**Why It Matters For You:**\\n\\n[dollar relevance, no instruction]",
+  "chargebackAnalysis": "**The Current Picture:**\\n\\n[plain-English explanation of chargebacks and what their data shows or, if not shown on the statement, says so plainly without implying a clean record]\\n\\n**Why It Matters For You:**\\n\\n[risk/cost relevance — scheme monitoring risk if elevated, or general context if not visible — no instruction, no named tools or vendors]",
+  "benchmarkComment": "**Where You Sit:**\\n\\n[their effective rate vs the typical range for their size]\\n\\n**What Strong Looks Like:**\\n\\n[what better-positioned businesses of their size tend to pay]",
+  "stackAssessment": "**The Overall Picture:**\\n\\n[paragraph]\\n\\n**What Appears To Be Working:**\\n\\n[paragraph]\\n\\n**Areas Worth A Closer Look:**\\n\\n[paragraph]",
+  "nextStep1": "An area worth reviewing — observational, names no provider or specific action, one or two sentences.",
+  "nextStep2": "A second area worth reviewing — same framing.",
+  "nextStep3": "A third area worth reviewing — same framing.",
+  "keyRecommendation": "The single highest-value area to explore, framed as an observation and an invitation to discuss with an acceptorIQ advisor — not a specific instruction and naming no provider.",
+  "alerts": [
+    { "type": "warn | good | info", "heading": "Short Key Finding title (a few words)", "body": "1-2 plain-English sentences. Factual but interpreted using the benchmarks/context in the Knowledge Base. Non-prescriptive — point out the finding, don't instruct. Name no provider." }
+  ],
+  "stackItems": [
+    { "label": "Component name (e.g. Pricing structure, Debit routing, Terminal, Monthly fees, Card mix)", "value": "Concise factual description of the merchant's current setup for this component, taken from the facts provided", "status": "ok | warn | gap" }
+  ]
 }
 
 DERIVING alerts AND stackItems:
-
-- Produce EXACTLY 3 “alerts” — the three most important Key Findings for this merchant, ordered most to least significant. Choose the “type” to reflect the finding (warn = a cost/risk worth attention, good = something working well, info = a neutral but notable observation). These are where your interpretation lives, but stay grounded in the merchant’s actual facts and the Knowledge Base benchmarks; remain non-prescriptive. If chargeback data shows an elevated ratio (commonly-cited scheme monitoring range is roughly 0.65%-1%, hedge this figure per the Knowledge Base), this is a strong candidate for one of the three alerts given the account-risk stakes — but only when the data actually shows it; do not include a chargeback alert just to cover the topic if the statement shows nothing.
-- Produce 3 to 5 “stackItems” describing the merchant’s current setup component-by-component. Assign “status” by comparing each component to the Knowledge Base benchmarks: ok = in line with or better than typical, warn = worth a closer look, gap = a clear shortfall or missed opportunity. The “value” must be factual (from the provided facts); the status is your judgement. Include a chargebacks stackItem only when chargeback data is present on the statement — if absent, do not invent a “no chargebacks” item, simply omit it and let the 3-5 item range be filled by other components.
+- Produce EXACTLY 3 "alerts" — the three most important Key Findings for this merchant, ordered most to least significant. Choose the "type" to reflect the finding (warn = a cost/risk worth attention, good = something working well, info = a neutral but notable observation). These are where your interpretation lives, but stay grounded in the merchant's actual facts and the Knowledge Base benchmarks; remain non-prescriptive. If chargeback data shows an elevated ratio (commonly-cited scheme monitoring range is roughly 0.65%-1%, hedge this figure per the Knowledge Base), this is a strong candidate for one of the three alerts given the account-risk stakes — but only when the data actually shows it; do not include a chargeback alert just to cover the topic if the statement shows nothing.
+- Produce 3 to 5 "stackItems" describing the merchant's current setup component-by-component. Assign "status" by comparing each component to the Knowledge Base benchmarks: ok = in line with or better than typical, warn = worth a closer look, gap = a clear shortfall or missed opportunity. The "value" must be factual (from the provided facts); the status is your judgement. Include a chargebacks stackItem only when chargeback data is present on the statement — if absent, do not invent a "no chargebacks" item, simply omit it and let the 3-5 item range be filled by other components.
 
 DERIVING chargebackAnalysis:
-
 - If chargeback data IS present in the STATEMENT FACTS below: analyse it properly — state the ratio/count plainly, compare to the commonly-cited scheme monitoring range (hedged, not asserted as exact), and explain the dollar and account-risk relevance.
-- If chargeback data is NOT shown (the facts will say so explicitly): write 1-2 short sentences noting that chargeback activity isn’t visible on this statement and that it’s a worthwhile area to understand as part of a fuller payments review — do NOT imply this means zero chargebacks, and do NOT make this section longer than necessary just because there’s nothing to report. A short, honest “not visible here” is correct and sufficient.`;
-  
-  const facts = report; // the analyser now returns facts only
-  
-  // Fee reconciliation (log-only safety net). totalFees should be the
-  // statement’s stated GST-inclusive total; if a feeBreakdown is present it
-  // should sum to ~totalFees. A material gap is logged so a bad extraction is
-  // visible at generation time (submit.js flags it visibly pre-approval).
-  (() => {
-  const total = Number(facts.totalFees);
-  const items = Array.isArray(facts.feeBreakdown) ? facts.feeBreakdown : [];
-  if (!total || !items.length) return;
-  const sum = items.reduce((a, b) => a + (Number(b.amount) || 0), 0);
-  const pct = Math.abs(sum - total) / total * 100;
-  if (pct > 5) console.warn(`generate-report: fee reconciliation mismatch — breakdown ${sum.toFixed(2)} vs totalFees ${total.toFixed(2)} (${pct.toFixed(1)}%).`);
-  })();
-  
-  const cardMix = facts.cardMix || {};
-  const cardMixStr = Object.entries(cardMix)
-  .filter(([, v]) => v != null)
-  .map(([k, v]) => `${k}: ${v}%`)
-  .join(’, ‘) || ‘—’;
-  const feeBreakdownStr = Array.isArray(facts.feeBreakdown) && facts.feeBreakdown.length
-  ? facts.feeBreakdown.map(f => `${f.label}: ${fmtD(f.amount)}`).join(’\n’)
-  : ‘—’;
-  const setupStr = Array.isArray(facts.setup) && facts.setup.length
-  ? facts.setup.map(s => `${s.label}: ${s.value}`).join(’\n’)
-  : ‘—’;
-  const observationsStr = Array.isArray(facts.observations) && facts.observations.length
-  ? facts.observations.map(o => `- ${o}`).join(’\n’)
-  : ‘—’;
-  // Chargebacks are sparse data — most statements won’t show this at all.
-  // Say so explicitly rather than letting the model infer “not shown” as
-  // “zero chargebacks”, which would be a fabricated claim of a clean record.
-  const cb = facts.chargebacks || null;
-  const chargebackStr = cb
-  ? [
-  cb.count  != null ? `Count: ${cb.count}` : null,
-  cb.ratio  != null ? `Ratio: ${cb.ratio.toFixed(2)}% of transactions` : null,
-  cb.amount != null ? `Disputed amount: ${fmtD(cb.amount)}` : null,
-  cb.fees   != null ? `Chargeback fees charged: ${fmtD(cb.fees)}` : null,
-  ].filter(Boolean).join(’\n’) || ‘Not shown on this statement.’
-  : ‘Not shown on this statement — this does NOT mean zero chargebacks occurred, only that this data point is not visible here.’;
-  
-  const userMessage = `Write a personalised payments review for this merchant, using ONLY the facts below plus the Knowledge Base for context, benchmarks and interpretation. The facts come from the merchant’s own statement; everything interpretive (findings, opinions, narrative, framing) is yours to add.
+- If chargeback data is NOT shown (the facts will say so explicitly): write 1-2 short sentences noting that chargeback activity isn't visible on this statement and that it's a worthwhile area to understand as part of a fuller payments review — do NOT imply this means zero chargebacks, and do NOT make this section longer than necessary just because there's nothing to report. A short, honest "not visible here" is correct and sufficient.`;
+
+    const facts = report; // the analyser now returns facts only
+
+    // Fee reconciliation (log-only safety net). totalFees should be the
+    // statement's stated GST-inclusive total; if a feeBreakdown is present it
+    // should sum to ~totalFees. A material gap is logged so a bad extraction is
+    // visible at generation time (submit.js flags it visibly pre-approval).
+    (() => {
+      const total = Number(facts.totalFees);
+      const items = Array.isArray(facts.feeBreakdown) ? facts.feeBreakdown : [];
+      if (!total || !items.length) return;
+      const sum = items.reduce((a, b) => a + (Number(b.amount) || 0), 0);
+      const pct = Math.abs(sum - total) / total * 100;
+      if (pct > 5) console.warn(`generate-report: fee reconciliation mismatch — breakdown ${sum.toFixed(2)} vs totalFees ${total.toFixed(2)} (${pct.toFixed(1)}%).`);
+    })();
+
+    const cardMix = facts.cardMix || {};
+    const cardMixStr = Object.entries(cardMix)
+      .filter(([, v]) => v != null)
+      .map(([k, v]) => `${k}: ${v}%`)
+      .join(', ') || '—';
+    const feeBreakdownStr = Array.isArray(facts.feeBreakdown) && facts.feeBreakdown.length
+      ? facts.feeBreakdown.map(f => `${f.label}: ${fmtD(f.amount)}`).join('\n')
+      : '—';
+    const setupStr = Array.isArray(facts.setup) && facts.setup.length
+      ? facts.setup.map(s => `${s.label}: ${s.value}`).join('\n')
+      : '—';
+    const observationsStr = Array.isArray(facts.observations) && facts.observations.length
+      ? facts.observations.map(o => `- ${o}`).join('\n')
+      : '—';
+    // Chargebacks are sparse data — most statements won't show this at all.
+    // Say so explicitly rather than letting the model infer "not shown" as
+    // "zero chargebacks", which would be a fabricated claim of a clean record.
+    const cb = facts.chargebacks || null;
+    const chargebackStr = cb
+      ? [
+          cb.count  != null ? `Count: ${cb.count}` : null,
+          cb.ratio  != null ? `Ratio: ${cb.ratio.toFixed(2)}% of transactions` : null,
+          cb.amount != null ? `Disputed amount: ${fmtD(cb.amount)}` : null,
+          cb.fees   != null ? `Chargeback fees charged: ${fmtD(cb.fees)}` : null,
+        ].filter(Boolean).join('\n') || 'Not shown on this statement.'
+      : 'Not shown on this statement — this does NOT mean zero chargebacks occurred, only that this data point is not visible here.';
+
+    const userMessage = `Write a personalised payments review for this merchant, using ONLY the facts below plus the Knowledge Base for context, benchmarks and interpretation. The facts come from the merchant's own statement; everything interpretive (findings, opinions, narrative, framing) is yours to add.
 
 STATEMENT FACTS:
-Provider: ${facts.provider || ‘—’}
-Period: ${facts.period || ‘—’}
+Provider: ${facts.provider || '—'}
+Period: ${facts.period || '—'}
 Card volume: ${fmtD(facts.volume)}
 Total fees: ${fmtD(facts.totalFees)}
 Effective rate: ${fmtP(facts.effectiveRate)}
-Transactions: ${facts.transactions || ‘—’}
+Transactions: ${facts.transactions || '—'}
 Average transaction value: ${fmtD(facts.averageTransactionValue)}
 Average fee per transaction (avg sale value × effective rate): ${fmtD(avgFeePerTxn)} — a DOLLAR value, NOT a fixed per-transaction fee
 Monthly fee: ${fmtD(facts.monthlyFee)}
 Terminal fees: ${fmtD(facts.terminalFees)}
-Fixed per-transaction fee (if any): ${facts.perTransactionFee != null ? facts.perTransactionFee + ‘c’ : ‘—’}
-Pricing model (observed): ${facts.pricingModel || ‘—’}
-Provider rate / margin (observed): ${facts.providerRate || ‘—’}
-LCR status (observed): ${facts.lcrStatus || ‘—’}
+Fixed per-transaction fee (if any): ${facts.perTransactionFee != null ? facts.perTransactionFee + 'c' : '—'}
+Pricing model (observed): ${facts.pricingModel || '—'}
+Provider rate / margin (observed): ${facts.providerRate || '—'}
+LCR status (observed): ${facts.lcrStatus || '—'}
 Card mix: ${cardMixStr}
 
 CHARGEBACKS:
@@ -346,237 +335,235 @@ ${programContext}${adminNotes ? `
 ADMIN NOTES (internal context from the acceptorIQ reviewer — use to inform the analysis, but do NOT quote or attribute these in the report):
 ${adminNotes}` : ''}`;
 
-```
-const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'x-api-key': anthropicKey,
-    'anthropic-version': '2023-06-01'
-  },
-  body: JSON.stringify({
-    model: MODEL,
-    max_tokens: 12000, // headroom for the larger JSON (preamble + multi-paragraph fields)
-    system: systemPrompt,
-    messages: [{ role: 'user', content: userMessage }]
-  })
-});
+    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': anthropicKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 12000, // headroom for the larger JSON (preamble + multi-paragraph fields)
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
 
-if (!claudeRes.ok) {
-  const detail = await claudeRes.text();
-  throw new Error(`Claude error: ${claudeRes.status} ${detail}`);
-}
-const claudeData = await claudeRes.json();
+    if (!claudeRes.ok) {
+      const detail = await claudeRes.text();
+      throw new Error(`Claude error: ${claudeRes.status} ${detail}`);
+    }
+    const claudeData = await claudeRes.json();
 
-if (claudeData.stop_reason === 'max_tokens') {
-  console.warn('generate-report: narrative hit max_tokens — JSON may be truncated. Raise max_tokens.');
-}
+    if (claudeData.stop_reason === 'max_tokens') {
+      console.warn('generate-report: narrative hit max_tokens — JSON may be truncated. Raise max_tokens.');
+    }
 
-const rawText = claudeData.content?.find(b => b.type === 'text')?.text || '';
-let narrative;
-try {
-  const jsonStart = rawText.indexOf('{');
-  const jsonEnd   = rawText.lastIndexOf('}');
-  if (jsonStart === -1 || jsonEnd === -1) throw new Error('no JSON object found');
-  narrative = JSON.parse(rawText.slice(jsonStart, jsonEnd + 1));
-} catch (parseErr) {
-  console.error('generate-report: failed to parse narrative JSON:', parseErr.message);
-  console.error('Raw model output (first 500 chars):', rawText.slice(0, 500));
-  throw new Error('Failed to parse narrative from model output');
-}
+    const rawText = claudeData.content?.find(b => b.type === 'text')?.text || '';
+    let narrative;
+    try {
+      const jsonStart = rawText.indexOf('{');
+      const jsonEnd   = rawText.lastIndexOf('}');
+      if (jsonStart === -1 || jsonEnd === -1) throw new Error('no JSON object found');
+      narrative = JSON.parse(rawText.slice(jsonStart, jsonEnd + 1));
+    } catch (parseErr) {
+      console.error('generate-report: failed to parse narrative JSON:', parseErr.message);
+      console.error('Raw model output (first 500 chars):', rawText.slice(0, 500));
+      throw new Error('Failed to parse narrative from model output');
+    }
 
-// ── 4. Load the HTML template ─────────────────────────────────
-let html = buildTemplate();
+    // ── 4. Load the HTML template ─────────────────────────────────
+    let html = buildTemplate();
 
-// ── 5. Helper to convert narrative text to HTML ───────────────
-function renderText(text) {
-  if (!text) return '';
-  return text
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')   // **heading:** → <strong>
-    .split('\n\n')
-    .map(p => p.trim())
-    .filter(p => p.length > 0)
-    .map(p => `<p style="margin-bottom:12px">${p}</p>`)
-    .join('');
-}
+    // ── 5. Helper to convert narrative text to HTML ───────────────
+    function renderText(text) {
+      if (!text) return '';
+      return text
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')   // **heading:** → <strong>
+        .split('\n\n')
+        .map(p => p.trim())
+        .filter(p => p.length > 0)
+        .map(p => `<p style="margin-bottom:12px">${p}</p>`)
+        .join('');
+    }
 
-// ── 6. Build alert (Key Findings) replacements ────────────────
-// Findings are now produced by the generator (it has the Knowledge Base for
-// benchmark-based judgement). Colour follows the alert's OWN type.
-const alerts = Array.isArray(narrative.alerts) ? narrative.alerts : [];
-const alertClass = t =>
-  t === 'good' ? 'alert-good' : t === 'warn' ? 'alert-warn' : 'alert-info';
+    // ── 6. Build alert (Key Findings) replacements ────────────────
+    // Findings are now produced by the generator (it has the Knowledge Base for
+    // benchmark-based judgement). Colour follows the alert's OWN type.
+    const alerts = Array.isArray(narrative.alerts) ? narrative.alerts : [];
+    const alertClass = t =>
+      t === 'good' ? 'alert-good' : t === 'warn' ? 'alert-warn' : 'alert-info';
 
-const alertReplacements = {};
-for (let i = 0; i < 3; i++) {
-  const a = alerts[i] || {};
-  alertReplacements[`{{key_finding_${i + 1}_class}}`]   = alertClass(a.type);
-  alertReplacements[`{{key_finding_${i + 1}_heading}}`] = a.heading || '—';
-  alertReplacements[`{{key_finding_${i + 1}_body}}`]    = a.body || '';
-}
+    const alertReplacements = {};
+    for (let i = 0; i < 3; i++) {
+      const a = alerts[i] || {};
+      alertReplacements[`{{key_finding_${i + 1}_class}}`]   = alertClass(a.type);
+      alertReplacements[`{{key_finding_${i + 1}_heading}}`] = a.heading || '—';
+      alertReplacements[`{{key_finding_${i + 1}_body}}`]    = a.body || '';
+    }
 
-// ── 7. Build stack item replacements ──────────────────────────
-// Stack components + statuses are produced by the generator (status needs
-// Knowledge Base benchmarks). Status colour follows the item's OWN status.
-const stackItems  = Array.isArray(narrative.stackItems) ? narrative.stackItems : [];
-const statusLabel = { ok: '✓ OK', warn: '⚠ Review', gap: '✗ Gap' };
-const statusClass = { ok: 'td-status-ok', warn: 'td-status-warn', gap: 'td-status-gap' };
-const stackReplacements = {};
-for (let i = 0; i < 5; i++) {
-  const item = stackItems[i] || { label: '—', value: '—', status: 'ok' };
-  stackReplacements[`{{stack_item_${i + 1}_label}}`]        = item.label;
-  stackReplacements[`{{stack_item_${i + 1}_value}}`]        = item.value;
-  stackReplacements[`{{stack_item_${i + 1}_status}}`]       = statusLabel[item.status] || item.status;
-  stackReplacements[`{{stack_item_${i + 1}_status_class}}`] = statusClass[item.status] || 'td-status-ok';
-}
+    // ── 7. Build stack item replacements ──────────────────────────
+    // Stack components + statuses are produced by the generator (status needs
+    // Knowledge Base benchmarks). Status colour follows the item's OWN status.
+    const stackItems  = Array.isArray(narrative.stackItems) ? narrative.stackItems : [];
+    const statusLabel = { ok: '✓ OK', warn: '⚠ Review', gap: '✗ Gap' };
+    const statusClass = { ok: 'td-status-ok', warn: 'td-status-warn', gap: 'td-status-gap' };
+    const stackReplacements = {};
+    for (let i = 0; i < 5; i++) {
+      const item = stackItems[i] || { label: '—', value: '—', status: 'ok' };
+      stackReplacements[`{{stack_item_${i + 1}_label}}`]        = item.label;
+      stackReplacements[`{{stack_item_${i + 1}_value}}`]        = item.value;
+      stackReplacements[`{{stack_item_${i + 1}_status}}`]       = statusLabel[item.status] || item.status;
+      stackReplacements[`{{stack_item_${i + 1}_status_class}}`] = statusClass[item.status] || 'td-status-ok';
+    }
 
-// ── 8. Merchant identity (from program context) ───────────────
-// This is a B2B product — the report is prepared FOR THE COMPANY, with the
-// individual who submitted it recorded as the contact, not the addressee.
-const companyName  = programContext.match(/Company:\s*(.+)/)?.[1]?.trim() || '—';
-const contactName  = programContext.match(/Name:\s*(.+)/)?.[1]?.trim() || '—';
-const merchantEmail = programContext.match(/Email:\s*(.+)/)?.[1]?.trim() || '—';
+    // ── 8. Merchant identity (from program context) ───────────────
+    // This is a B2B product — the report is prepared FOR THE COMPANY, with the
+    // individual who submitted it recorded as the contact, not the addressee.
+    const companyName  = programContext.match(/Company:\s*(.+)/)?.[1]?.trim() || '—';
+    const contactName  = programContext.match(/Name:\s*(.+)/)?.[1]?.trim() || '—';
+    const merchantEmail = programContext.match(/Email:\s*(.+)/)?.[1]?.trim() || '—';
 
-// ── Build the fee composition bar HTML (or empty string if not derivable) ──
-const compositionHtml = feeComposition ? `
-  <div class="composition-wrap">
-    <div class="composition-bar">
-      ${feeComposition.interchangePct > 0 ? `<div class="composition-seg interchange" style="width:${feeComposition.interchangePct}%"></div>` : ''}
-      ${feeComposition.schemePct > 0 ? `<div class="composition-seg scheme" style="width:${feeComposition.schemePct}%"></div>` : ''}
-      ${feeComposition.marginPct > 0 ? `<div class="composition-seg margin" style="width:${feeComposition.marginPct}%"></div>` : ''}
-    </div>
-    <div class="composition-legend">
-      <div class="cl-item"><span class="cl-dot interchange"></span>Interchange <strong>${feeComposition.interchangePct}%</strong> (${fmtD(feeComposition.interchangeAmt)})</div>
-      <div class="cl-item"><span class="cl-dot scheme"></span>Scheme fees <strong>${feeComposition.schemePct}%</strong> (${fmtD(feeComposition.schemeAmt)})</div>
-      <div class="cl-item"><span class="cl-dot margin"></span>Provider margin &amp; other <strong>${feeComposition.marginPct}%</strong> (${fmtD(feeComposition.marginAmt)})</div>
-    </div>
-  </div>` : '';
+    // ── Build the fee composition bar HTML (or empty string if not derivable) ──
+    const compositionHtml = feeComposition ? `
+      <div class="composition-wrap">
+        <div class="composition-bar">
+          ${feeComposition.interchangePct > 0 ? `<div class="composition-seg interchange" style="width:${feeComposition.interchangePct}%"></div>` : ''}
+          ${feeComposition.schemePct > 0 ? `<div class="composition-seg scheme" style="width:${feeComposition.schemePct}%"></div>` : ''}
+          ${feeComposition.marginPct > 0 ? `<div class="composition-seg margin" style="width:${feeComposition.marginPct}%"></div>` : ''}
+        </div>
+        <div class="composition-legend">
+          <div class="cl-item"><span class="cl-dot interchange"></span>Interchange <strong>${feeComposition.interchangePct}%</strong> (${fmtD(feeComposition.interchangeAmt)})</div>
+          <div class="cl-item"><span class="cl-dot scheme"></span>Scheme fees <strong>${feeComposition.schemePct}%</strong> (${fmtD(feeComposition.schemeAmt)})</div>
+          <div class="cl-item"><span class="cl-dot margin"></span>Provider margin &amp; other <strong>${feeComposition.marginPct}%</strong> (${fmtD(feeComposition.marginAmt)})</div>
+        </div>
+      </div>` : '';
 
-// ── Build the benchmark comparison bar HTML (or empty string) ──
-const benchmarkBarHtml = benchmarkBars ? `
-  <div class="benchmark-wrap">
-    <div class="bench-row">
-      <div class="bench-row-label is-you">You (this statement)</div>
-      <div class="bench-track"><div class="bench-fill you" style="width:${benchmarkBars.you.pct}%"></div></div>
-      <div class="bench-row-val">${benchmarkBars.you.value.toFixed(2)}%</div>
-    </div>
-    <div class="bench-row">
-      <div class="bench-row-label">Small, blended plan</div>
-      <div class="bench-track"><div class="bench-fill typical" style="width:${benchmarkBars.smallBlended.pct}%"></div></div>
-      <div class="bench-row-val">${benchmarkBars.smallBlended.value.toFixed(2)}%</div>
-    </div>
-    <div class="bench-row">
-      <div class="bench-row-label">Small, unblended plan</div>
-      <div class="bench-track"><div class="bench-fill typical" style="width:${benchmarkBars.smallUnblended.pct}%"></div></div>
-      <div class="bench-row-val">${benchmarkBars.smallUnblended.value.toFixed(2)}%</div>
-    </div>
-    <div class="bench-row">
-      <div class="bench-row-label">Large / strategic rates</div>
-      <div class="bench-track"><div class="bench-fill strong" style="width:${benchmarkBars.large.pct}%"></div></div>
-      <div class="bench-row-val">${benchmarkBars.large.value.toFixed(2)}%</div>
-    </div>
-  </div>` : '';
+    // ── Build the benchmark comparison bar HTML (or empty string) ──
+    const benchmarkBarHtml = benchmarkBars ? `
+      <div class="benchmark-wrap">
+        <div class="bench-row">
+          <div class="bench-row-label is-you">You (this statement)</div>
+          <div class="bench-track"><div class="bench-fill you" style="width:${benchmarkBars.you.pct}%"></div></div>
+          <div class="bench-row-val">${benchmarkBars.you.value.toFixed(2)}%</div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-row-label">Small, blended plan</div>
+          <div class="bench-track"><div class="bench-fill typical" style="width:${benchmarkBars.smallBlended.pct}%"></div></div>
+          <div class="bench-row-val">${benchmarkBars.smallBlended.value.toFixed(2)}%</div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-row-label">Small, unblended plan</div>
+          <div class="bench-track"><div class="bench-fill typical" style="width:${benchmarkBars.smallUnblended.pct}%"></div></div>
+          <div class="bench-row-val">${benchmarkBars.smallUnblended.value.toFixed(2)}%</div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-row-label">Large / strategic rates</div>
+          <div class="bench-track"><div class="bench-fill strong" style="width:${benchmarkBars.large.pct}%"></div></div>
+          <div class="bench-row-val">${benchmarkBars.large.value.toFixed(2)}%</div>
+        </div>
+      </div>` : '';
 
-// ── 9. Build full replacement map ─────────────────────────────
-const replacements = {
-  '{{provider}}':               report.provider || '—',
-  '{{period}}':                 report.period || '—',
-  '{{effective_rate}}':         fmtP(report.effectiveRate),
-  '{{provider_rate}}':          report.providerRate || '—',
-  '{{total_fees}}':             fmtD(report.totalFees),
-  '{{volume}}':                 fmtD(report.volume),
-  '{{merchant_name}}':          companyName,
-  '{{contact_name}}':           contactName,
-  '{{merchant_email}}':         merchantEmail,
-  '{{report_date}}':            today,
-  '{{transactions}}':           report.transactions ? Number(report.transactions).toLocaleString('en-AU') : '—',
-  '{{avg_fee_per_txn}}':        fmtD(avgFeePerTxn),
-  '{{monthly_fee}}':            fmtD(report.monthlyFee),
-  '{{terminal_fees}}':          fmtD(report.terminalFees),
-  '{{pricing_model}}':          report.pricingModel || '—',
-  '{{lcr_status}}':             report.lcrStatus || '—',
-  '{{chargeback_ratio}}':       (report.chargebacks && report.chargebacks.ratio != null) ? fmtP(report.chargebacks.ratio) : 'Not shown on statement',
-  '{{fee_composition}}':        compositionHtml,
-  '{{benchmark_bars}}':         benchmarkBarHtml,
-  '{{landscape_preamble}}':     renderText(narrative.landscapePreamble   || ''),
-  '{{executive_summary}}':      renderText(narrative.executiveSummary     || ''),
-  '{{pricing_model_analysis}}': renderText(narrative.pricingModelAnalysis || ''),
-  '{{savings_opportunity}}':    renderText(narrative.savingsOpportunity   || ''),
-  '{{lcr_analysis}}':           renderText(narrative.lcrAnalysis          || ''),
-  '{{chargeback_analysis}}':    renderText(narrative.chargebackAnalysis   || ''),
-  '{{benchmark_comment}}':      renderText(narrative.benchmarkComment     || ''),
-  '{{stack_assessment}}':       renderText(narrative.stackAssessment      || ''),
-  '{{next_step_1}}':            narrative.nextStep1         || '',
-  '{{next_step_2}}':            narrative.nextStep2         || '',
-  '{{next_step_3}}':            narrative.nextStep3         || '',
-  '{{key_recommendation}}':     narrative.keyRecommendation || '',
-  ...alertReplacements,
-  ...stackReplacements,
-};
+    // ── 9. Build full replacement map ─────────────────────────────
+    const replacements = {
+      '{{provider}}':               report.provider || '—',
+      '{{period}}':                 report.period || '—',
+      '{{effective_rate}}':         fmtP(report.effectiveRate),
+      '{{provider_rate}}':          report.providerRate || '—',
+      '{{total_fees}}':             fmtD(report.totalFees),
+      '{{volume}}':                 fmtD(report.volume),
+      '{{merchant_name}}':          companyName,
+      '{{contact_name}}':           contactName,
+      '{{merchant_email}}':         merchantEmail,
+      '{{report_date}}':            today,
+      '{{transactions}}':           report.transactions ? Number(report.transactions).toLocaleString('en-AU') : '—',
+      '{{avg_fee_per_txn}}':        fmtD(avgFeePerTxn),
+      '{{monthly_fee}}':            fmtD(report.monthlyFee),
+      '{{terminal_fees}}':          fmtD(report.terminalFees),
+      '{{pricing_model}}':          report.pricingModel || '—',
+      '{{lcr_status}}':             report.lcrStatus || '—',
+      '{{chargeback_ratio}}':       (report.chargebacks && report.chargebacks.ratio != null) ? fmtP(report.chargebacks.ratio) : 'Not shown on statement',
+      '{{fee_composition}}':        compositionHtml,
+      '{{benchmark_bars}}':         benchmarkBarHtml,
+      '{{landscape_preamble}}':     renderText(narrative.landscapePreamble   || ''),
+      '{{executive_summary}}':      renderText(narrative.executiveSummary     || ''),
+      '{{pricing_model_analysis}}': renderText(narrative.pricingModelAnalysis || ''),
+      '{{savings_opportunity}}':    renderText(narrative.savingsOpportunity   || ''),
+      '{{lcr_analysis}}':           renderText(narrative.lcrAnalysis          || ''),
+      '{{chargeback_analysis}}':    renderText(narrative.chargebackAnalysis   || ''),
+      '{{benchmark_comment}}':      renderText(narrative.benchmarkComment     || ''),
+      '{{stack_assessment}}':       renderText(narrative.stackAssessment      || ''),
+      '{{next_step_1}}':            narrative.nextStep1         || '',
+      '{{next_step_2}}':            narrative.nextStep2         || '',
+      '{{next_step_3}}':            narrative.nextStep3         || '',
+      '{{key_recommendation}}':     narrative.keyRecommendation || '',
+      ...alertReplacements,
+      ...stackReplacements,
+    };
 
-for (const [key, value] of Object.entries(replacements)) {
-  html = html.split(key).join(value);
-}
+    for (const [key, value] of Object.entries(replacements)) {
+      html = html.split(key).join(value);
+    }
 
-// ── 10. Store completed HTML in Supabase Storage ──────────────
-const timestamp    = Date.now();
-const safeName     = companyName.replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 30);
-const safeProvider = (report.provider || 'Unknown').replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 20);
-const htmlPath     = `reports/${safeName}_${safeProvider}_${timestamp}.html`;
+    // ── 10. Store completed HTML in Supabase Storage ──────────────
+    const timestamp    = Date.now();
+    const safeName     = companyName.replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 30);
+    const safeProvider = (report.provider || 'Unknown').replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 20);
+    const htmlPath     = `reports/${safeName}_${safeProvider}_${timestamp}.html`;
 
-const uploadRes = await fetch(`${supabaseUrl}/storage/v1/object/statements/${htmlPath}`, {
-  method: 'POST',
-  headers: {
-    apikey:         supabaseKey,
-    Authorization:  `Bearer ${supabaseKey}`,
-    'Content-Type': 'text/html',
-    'x-upsert':     'true'
-  },
-  body: html
-});
-if (!uploadRes.ok) {
-  const detail = await uploadRes.text();
-  throw new Error(`Storage upload failed: ${uploadRes.status} ${detail}`);
-}
+    const uploadRes = await fetch(`${supabaseUrl}/storage/v1/object/statements/${htmlPath}`, {
+      method: 'POST',
+      headers: {
+        apikey:         supabaseKey,
+        Authorization:  `Bearer ${supabaseKey}`,
+        'Content-Type': 'text/html',
+        'x-upsert':     'true'
+      },
+      body: html
+    });
+    if (!uploadRes.ok) {
+      const detail = await uploadRes.text();
+      throw new Error(`Storage upload failed: ${uploadRes.status} ${detail}`);
+    }
 
-// ── 11. Update submission status ──────────────────────────────
-// Persist the (possibly admin-corrected) facts back to report_json and the
-// indexed columns so the dashboard list/modal reflect any edits made here.
-await fetch(`${supabaseUrl}/rest/v1/submissions?id=eq.${submissionId}`, {
-  method: 'PATCH',
-  headers: {
-    'Content-Type': 'application/json',
-    apikey:         supabaseKey,
-    Authorization:  `Bearer ${supabaseKey}`
-  },
-  body: JSON.stringify({
-    status:           'approved',
-    report_narrative: JSON.stringify(narrative),
-    report_html_path: htmlPath,
-    report_json:      JSON.stringify(report),
-    provider:         report.provider ?? null,
-    period:           report.period ?? null,
-    volume:           report.volume ?? null,
-    total_fees:       report.totalFees ?? null,
-    effective_rate:   report.effectiveRate ?? null,
-    pricing_model:    report.pricingModel ?? null,
-    lcr_status:       report.lcrStatus ?? null,
-    chargeback_ratio: (report.chargebacks && report.chargebacks.ratio) ?? null
-  })
-});
+    // ── 11. Update submission status ──────────────────────────────
+    // Persist the (possibly admin-corrected) facts back to report_json and the
+    // indexed columns so the dashboard list/modal reflect any edits made here.
+    await fetch(`${supabaseUrl}/rest/v1/submissions?id=eq.${submissionId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey:         supabaseKey,
+        Authorization:  `Bearer ${supabaseKey}`
+      },
+      body: JSON.stringify({
+        status:           'approved',
+        report_narrative: JSON.stringify(narrative),
+        report_html_path: htmlPath,
+        report_json:      JSON.stringify(report),
+        provider:         report.provider ?? null,
+        period:           report.period ?? null,
+        volume:           report.volume ?? null,
+        total_fees:       report.totalFees ?? null,
+        effective_rate:   report.effectiveRate ?? null,
+        pricing_model:    report.pricingModel ?? null,
+        lcr_status:       report.lcrStatus ?? null,
+        chargeback_ratio: (report.chargebacks && report.chargebacks.ratio) ?? null
+      })
+    });
 
-return res.status(200).json({ success: true, htmlPath });
-```
+    return res.status(200).json({ success: true, htmlPath });
 
-} catch (err) {
-// Log the full stack (not just .message) so a future failure is fully
-// diagnosable from Vercel logs in one read, and guard against a thrown
-// value that isn’t a proper Error (e.g. a string or undefined).
-const message = err && err.message ? err.message : String(err);
-console.error(‘generate-report error:’, message);
-if (err && err.stack) console.error(err.stack);
-return res.status(500).json({ error: message });
-}
+  } catch (err) {
+    // Log the full stack (not just .message) so a future failure is fully
+    // diagnosable from Vercel logs in one read, and guard against a thrown
+    // value that isn't a proper Error (e.g. a string or undefined).
+    const message = err && err.message ? err.message : String(err);
+    console.error('generate-report error:', message);
+    if (err && err.stack) console.error(err.stack);
+    return res.status(500).json({ error: message });
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -585,8 +572,7 @@ return res.status(500).json({ error: message });
 //              · 5 Savings/LCR/Benchmark · 6 Stack · 7 Opportunities · CTA
 // ════════════════════════════════════════════════════════════════
 function buildTemplate() {
-return `<!DOCTYPE html>
-
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -600,137 +586,137 @@ return `<!DOCTYPE html>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-font-family: ‘Inter’, -apple-system, BlinkMacSystemFont, sans-serif;
-color: #1a1a2e;
-background: #fff;
-font-size: 13px;
-line-height: 1.6;
--webkit-print-color-adjust: exact;
-print-color-adjust: exact;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #1a1a2e;
+  background: #fff;
+  font-size: 13px;
+  line-height: 1.6;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 /* ── PAGE LAYOUT ──
-IMPORTANT: `.page` uses min-height (a floor), not height (a ceiling) — by
-design, since narrative length varies per report and we cannot pre-measure
-it. If a page’s content is too long for 297mm, the element grows taller
-and pushes the next page’s content down the document; the browser/PDF
-engine then paginates the WHOLE flowing document using the page-break
-rules below, rather than us trying to hard-clip content (which silently
-eats text) or hard-fix one page’s height (which breaks for shorter
-reports). `overflow` is intentionally not `hidden` here so a long page
-reflows instead of clipping its own text. */
+   IMPORTANT: \`.page\` uses min-height (a floor), not height (a ceiling) — by
+   design, since narrative length varies per report and we cannot pre-measure
+   it. If a page's content is too long for 297mm, the element grows taller
+   and pushes the next page's content down the document; the browser/PDF
+   engine then paginates the WHOLE flowing document using the page-break
+   rules below, rather than us trying to hard-clip content (which silently
+   eats text) or hard-fix one page's height (which breaks for shorter
+   reports). \`overflow\` is intentionally not \`hidden\` here so a long page
+   reflows instead of clipping its own text. */
 .page {
-width: 210mm;
-min-height: 297mm;
-margin: 0 auto;
-position: relative;
-page-break-after: always;
-break-after: page;
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  position: relative;
+  page-break-after: always;
+  break-after: page;
 }
 .page:last-child { page-break-after: avoid; break-after: avoid; }
 
 /* ── COVER PAGE ── */
 .cover {
-background: #0F1218;
-min-height: 297mm;
-display: flex;
-flex-direction: column;
-padding: 16mm 18mm;
-box-sizing: border-box;
+  background: #0F1218;
+  min-height: 297mm;
+  display: flex;
+  flex-direction: column;
+  padding: 16mm 18mm;
+  box-sizing: border-box;
 }
 .cover-logo-row {
-display: flex;
-align-items: center;
-gap: 12px;
-margin-bottom: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: auto;
 }
 .cover-acceptor-mark {
-position: relative;
-width: 26px;
-height: 23px;
-display: inline-block;
-flex-shrink: 0;
+  position: relative;
+  width: 26px;
+  height: 23px;
+  display: inline-block;
+  flex-shrink: 0;
 }
 .cover-acceptor-mark span {
-position: absolute;
-bottom: 0;
-width: 9px;
-height: 23px;
-border-radius: 2px;
-background: #E6EBF6;
+  position: absolute;
+  bottom: 0;
+  width: 9px;
+  height: 23px;
+  border-radius: 2px;
+  background: #E6EBF6;
 }
 .cover-acceptor-mark span:first-child { left: 4px; transform: skewX(-30deg); }
 .cover-acceptor-mark span:last-child  { right: 4px; height: 16px; transform: skewX(30deg); }
 .cover-acceptor-word {
-font-size: 19px;
-font-weight: 300;
-letter-spacing: -0.055em;
-color: rgba(230,235,246,0.92);
+  font-size: 19px;
+  font-weight: 300;
+  letter-spacing: -0.055em;
+  color: rgba(230,235,246,0.92);
 }
 .cover-acceptor-word span { font-weight: 500; letter-spacing: -0.04em; color: #A9CCF2; }
 
 .cover-body { margin-top: auto; }
 
 .cover-eyebrow {
-font-size: 10px;
-font-weight: 600;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-color: rgba(169,204,242,0.8);
-margin-bottom: 16px;
-display: flex;
-align-items: center;
-gap: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(169,204,242,0.8);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .cover-eyebrow::after {
-content: ‘’;
-flex: 1;
-height: 1px;
-background: rgba(169,204,242,0.3);
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(169,204,242,0.3);
 }
 
 .cover-title {
-font-size: 40px;
-font-weight: 300;
-color: #E6EBF6;
-letter-spacing: -0.05em;
-line-height: 1.08;
-margin-bottom: 8px;
+  font-size: 40px;
+  font-weight: 300;
+  color: #E6EBF6;
+  letter-spacing: -0.05em;
+  line-height: 1.08;
+  margin-bottom: 8px;
 }
 .cover-title span { font-weight: 500; color: #A9CCF2; }
 
 .cover-subtitle {
-font-size: 16px;
-font-weight: 300;
-color: rgba(224,233,246,0.55);
-margin-bottom: 36px;
+  font-size: 16px;
+  font-weight: 300;
+  color: rgba(224,233,246,0.55);
+  margin-bottom: 36px;
 }
 
 .cover-stats {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 1px;
-background: rgba(224,233,246,0.08);
-border-radius: 0;
-overflow: hidden;
-margin-bottom: 36px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(224,233,246,0.08);
+  border-radius: 0;
+  overflow: hidden;
+  margin-bottom: 36px;
 }
 .cover-stat { background: rgba(224,233,246,0.04); padding: 16px 18px; }
 .cover-stat-val {
-font-size: 26px;
-font-weight: 500;
-color: #E6EBF6;
-letter-spacing: -0.04em;
-display: block;
-margin-bottom: 4px;
-word-break: break-word;
+  font-size: 26px;
+  font-weight: 500;
+  color: #E6EBF6;
+  letter-spacing: -0.04em;
+  display: block;
+  margin-bottom: 4px;
+  word-break: break-word;
 }
 .cover-stat-lbl {
-font-size: 10px;
-font-weight: 600;
-text-transform: uppercase;
-letter-spacing: 0.12em;
-color: rgba(224,233,246,0.35);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(224,233,246,0.35);
 }
 
 .cover-divider { height: 1px; background: rgba(224,233,246,0.08); margin-bottom: 24px; }
@@ -739,73 +725,73 @@ color: rgba(224,233,246,0.35);
 .cover-meta > div { margin-right: 40px; margin-bottom: 12px; }
 .cover-meta > div:last-child { margin-right: 0; }
 .cover-meta-label {
-font-size: 9px;
-font-weight: 700;
-letter-spacing: 0.14em;
-text-transform: uppercase;
-color: rgba(224,233,246,0.28);
-margin-bottom: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(224,233,246,0.28);
+  margin-bottom: 4px;
 }
 .cover-meta-value { font-size: 13px; color: rgba(224,233,246,0.65); font-weight: 400; word-break: break-word; }
 
 .cover-confidential {
-font-size: 9px;
-color: rgba(224,233,246,0.2);
-letter-spacing: 0.1em;
-text-transform: uppercase;
-border-top: 1px solid rgba(224,233,246,0.06);
-padding-top: 14px;
-line-height: 1.6;
+  font-size: 9px;
+  color: rgba(224,233,246,0.2);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-top: 1px solid rgba(224,233,246,0.06);
+  padding-top: 14px;
+  line-height: 1.6;
 }
 
 /* ── CONTENT PAGES ──
-box-sizing:border-box so the 14mm/16mm padding is INSIDE the 297mm height
-budget rather than added on top of it (the latter was silently pushing
-real content past the page boundary on every single content page). */
+   box-sizing:border-box so the 14mm/16mm padding is INSIDE the 297mm height
+   budget rather than added on top of it (the latter was silently pushing
+   real content past the page boundary on every single content page). */
 .content-page {
-background: #fff;
-padding: 16mm 18mm 16mm;
-min-height: 297mm;
-box-sizing: border-box;
-display: flex;
-flex-direction: column;
+  background: #fff;
+  padding: 16mm 18mm 16mm;
+  min-height: 297mm;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .page-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 16px;
-padding-bottom: 10px;
-border-bottom: 2px solid #f0f2f7;
-margin-bottom: 26px;
-flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f0f2f7;
+  margin-bottom: 26px;
+  flex-shrink: 0;
 }
 .page-header-logo {
-display: flex;
-align-items: center;
-gap: 9px;
-font-size: 13px;
-font-weight: 300;
-color: #0F1218;
-letter-spacing: -0.05em;
-flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 300;
+  color: #0F1218;
+  letter-spacing: -0.05em;
+  flex-shrink: 0;
 }
 .page-header-logo span { font-weight: 500; color: #3F77D6; }
 .page-header-mark {
-position: relative;
-width: 16px;
-height: 14px;
-display: inline-block;
-flex-shrink: 0;
+  position: relative;
+  width: 16px;
+  height: 14px;
+  display: inline-block;
+  flex-shrink: 0;
 }
 .page-header-mark span {
-position: absolute;
-bottom: 0;
-width: 5px;
-height: 14px;
-border-radius: 1px;
-background: #0F1218;
+  position: absolute;
+  bottom: 0;
+  width: 5px;
+  height: 14px;
+  border-radius: 1px;
+  background: #0F1218;
 }
 .page-header-mark span:first-child { left: 2px; transform: skewX(-30deg); }
 .page-header-mark span:last-child  { right: 2px; height: 10px; transform: skewX(30deg); }
@@ -814,49 +800,49 @@ background: #0F1218;
 .page-content { flex: 1; }
 
 .page-footer {
-margin-top: auto;
-padding-top: 14px;
-border-top: 1px solid #f0f2f7;
-display: flex;
-justify-content: space-between;
-align-items: center;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #f0f2f7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .page-footer-left {
-font-size: 9px;
-color: #aab0c4;
-text-transform: uppercase;
-letter-spacing: 0.08em;
+  font-size: 9px;
+  color: #aab0c4;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 .page-footer-right { font-size: 9px; color: #aab0c4; }
 
 /* ── SECTIONS ──
-page-break-inside:avoid keeps each section as one block where possible —
-without this, a section starting near the bottom of a page can have its
-heading on one page and its body on the next. Standard property +
-break-inside (the modern equivalent) for cross-engine support. */
+   page-break-inside:avoid keeps each section as one block where possible —
+   without this, a section starting near the bottom of a page can have its
+   heading on one page and its body on the next. Standard property +
+   break-inside (the modern equivalent) for cross-engine support. */
 .section { margin-bottom: 28px; page-break-inside: avoid; break-inside: avoid; }
 .section:last-child { margin-bottom: 0; }
 
 .section-label {
-font-size: 9px;
-font-weight: 700;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-color: #3F77D6;
-margin-bottom: 6px;
-display: flex;
-align-items: center;
-gap: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #3F77D6;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.section-label::after { content: ‘’; flex: 1; height: 1px; background: #e8ecf4; }
+.section-label::after { content: ''; flex: 1; height: 1px; background: #e8ecf4; }
 
 .section-title {
-font-size: 20px;
-font-weight: 300;
-color: #0F1218;
-letter-spacing: -0.045em;
-margin-bottom: 12px;
-line-height: 1.2;
+  font-size: 20px;
+  font-weight: 300;
+  color: #0F1218;
+  letter-spacing: -0.045em;
+  margin-bottom: 12px;
+  line-height: 1.2;
 }
 
 .section-body { font-size: 13px; color: #3d4663; line-height: 1.75; }
@@ -865,54 +851,54 @@ line-height: 1.2;
 .section-body.compact p { margin-bottom: 8px; font-size: 12.5px; }
 
 .lead-in {
-font-size: 14px;
-color: #56607e;
-line-height: 1.7;
-margin-bottom: 22px;
-max-width: 60ch;
+  font-size: 14px;
+  color: #56607e;
+  line-height: 1.7;
+  margin-bottom: 22px;
+  max-width: 60ch;
 }
 
 /* ── LANDSCAPE STRIP (compact stat row used on the merged exec-summary page) ── */
 .landscape-strip {
-display: flex;
-background: #e4e8f0;
-margin-bottom: 14px;
-page-break-inside: avoid;
-break-inside: avoid;
+  display: flex;
+  background: #e4e8f0;
+  margin-bottom: 14px;
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
 .ls-item {
-flex: 1;
-background: #f7f9fc;
-padding: 9px 12px;
-box-sizing: border-box;
-border-right: 1px solid #e4e8f0;
+  flex: 1;
+  background: #f7f9fc;
+  padding: 9px 12px;
+  box-sizing: border-box;
+  border-right: 1px solid #e4e8f0;
 }
 .ls-item:last-child { border-right: none; }
 .ls-val {
-display: block;
-font-size: 15px;
-font-weight: 700;
-color: #0F1218;
-letter-spacing: -0.02em;
-margin-bottom: 2px;
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0F1218;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
 }
 .ls-lbl {
-font-size: 9px;
-font-weight: 600;
-text-transform: uppercase;
-letter-spacing: 0.06em;
-color: #7c8db0;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #7c8db0;
 }
 
 /* ── FEE COMPOSITION BAR (visual breakdown of where the fee dollar goes) ── */
 .composition-wrap { margin: 16px 0 22px; page-break-inside: avoid; break-inside: avoid; }
 .composition-bar {
-display: flex;
-width: 100%;
-height: 28px;
-border-radius: 0;
-overflow: hidden;
-margin-bottom: 10px;
+  display: flex;
+  width: 100%;
+  height: 28px;
+  border-radius: 0;
+  overflow: hidden;
+  margin-bottom: 10px;
 }
 .composition-seg { height: 100%; }
 .composition-seg.interchange { background: #3F77D6; }
@@ -920,9 +906,9 @@ margin-bottom: 10px;
 .composition-seg.margin      { background: #C9D8F2; }
 .composition-legend { display: flex; flex-wrap: wrap; }
 .cl-item {
-display: flex; align-items: center;
-font-size: 11.5px; color: #56607e;
-margin-right: 18px; margin-bottom: 4px;
+  display: flex; align-items: center;
+  font-size: 11.5px; color: #56607e;
+  margin-right: 18px; margin-bottom: 4px;
 }
 .cl-item:last-child { margin-right: 0; }
 .cl-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; margin-right: 6px; }
@@ -946,35 +932,35 @@ margin-right: 18px; margin-bottom: 4px;
 
 /* ── STAT CARDS ── */
 .stat-row {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 12px;
-margin-bottom: 24px;
-page-break-inside: avoid;
-break-inside: avoid;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
 .stat-card { background: #f7f9fc; border: 1px solid #e4e8f0; border-radius: 0; padding: 16px 18px; box-sizing: border-box; }
 .stat-card.dark { background: #0F1218; border-color: #0F1218; }
 .stat-card.accent { background: #eef3ff; border-color: #c5d4f8; }
 .stat-val {
-font-size: 24px;
-font-weight: 500;
-color: #0F1218;
-letter-spacing: -0.04em;
-display: block;
-margin-bottom: 3px;
-word-break: break-word;
+  font-size: 24px;
+  font-weight: 500;
+  color: #0F1218;
+  letter-spacing: -0.04em;
+  display: block;
+  margin-bottom: 3px;
+  word-break: break-word;
 }
 .stat-card.dark .stat-val { color: #E6EBF6; }
 .stat-val.high { color: #c0392b; }
 .stat-val.mid  { color: #c8960c; }
 .stat-val.low  { color: #0a7a52; }
 .stat-lbl {
-font-size: 10px;
-font-weight: 600;
-text-transform: uppercase;
-letter-spacing: 0.1em;
-color: #7c8db0;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #7c8db0;
 }
 .stat-card.dark .stat-lbl { color: rgba(224,233,246,0.4); }
 
@@ -983,15 +969,15 @@ color: #7c8db0;
 .data-table thead { display: table-header-group; } /* repeat header if a table spans a break */
 .data-table tr { page-break-inside: avoid; break-inside: avoid; }
 .data-table th {
-padding: 8px 12px;
-text-align: left;
-font-size: 9px;
-font-weight: 700;
-letter-spacing: 0.1em;
-text-transform: uppercase;
-color: #7c8db0;
-border-bottom: 2px solid #e4e8f0;
-background: #f7f9fc;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7c8db0;
+  border-bottom: 2px solid #e4e8f0;
+  background: #f7f9fc;
 }
 .data-table td { padding: 10px 12px; border-bottom: 1px solid #f0f2f7; vertical-align: top; color: #3d4663; word-break: break-word; }
 .data-table tr:last-child td { border-bottom: none; }
@@ -1017,59 +1003,59 @@ background: #f7f9fc;
 .rec-list { display: flex; flex-direction: column; gap: 14px; }
 .rec-item { display: flex; gap: 14px; align-items: flex-start; page-break-inside: avoid; break-inside: avoid; }
 .rec-num {
-width: 26px;
-height: 26px;
-border-radius: 50%;
-background: #3F77D6;
-color: white;
-font-size: 11px;
-font-weight: 700;
-display: flex;
-align-items: center;
-justify-content: center;
-flex-shrink: 0;
-margin-top: 1px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #3F77D6;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
 }
 .rec-body { flex: 1; font-size: 13px; color: #3d4663; line-height: 1.65; }
 .rec-body strong { color: #0F1218; font-weight: 600; display: block; margin-bottom: 2px; }
 
 .key-rec-box {
-background: #0F1218;
-border-radius: 0;
-padding: 20px 22px;
-margin-top: 20px;
-box-sizing: border-box;
-page-break-inside: avoid;
-break-inside: avoid;
+  background: #0F1218;
+  border-radius: 0;
+  padding: 20px 22px;
+  margin-top: 20px;
+  box-sizing: border-box;
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
 .key-rec-label {
-font-size: 9px;
-font-weight: 700;
-letter-spacing: 0.16em;
-text-transform: uppercase;
-color: #A9CCF2;
-margin-bottom: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #A9CCF2;
+  margin-bottom: 8px;
 }
 .key-rec-text { font-size: 14px; font-weight: 600; color: #E6EBF6; line-height: 1.45; letter-spacing: -0.01em; }
 
 /* ── CTA PAGE ── */
 .cta-page {
-background: #0F1218;
-min-height: 297mm;
-box-sizing: border-box;
-display: flex;
-flex-direction: column;
-padding: 16mm 18mm;
+  background: #0F1218;
+  min-height: 297mm;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 16mm 18mm;
 }
 .cta-page-logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: auto; }
 .cta-body { margin-top: auto; }
 .cta-eyebrow {
-font-size: 10px;
-font-weight: 600;
-letter-spacing: 0.18em;
-text-transform: uppercase;
-color: rgba(169,204,242,0.7);
-margin-bottom: 18px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(169,204,242,0.7);
+  margin-bottom: 18px;
 }
 .cta-title { font-size: 36px; font-weight: 300; color: #E6EBF6; letter-spacing: -0.05em; line-height: 1.08; margin-bottom: 16px; max-width: 480px; }
 .cta-sub { font-size: 14px; font-weight: 300; color: rgba(224,233,246,0.55); line-height: 1.7; max-width: 440px; margin-bottom: 36px; }
@@ -1078,34 +1064,34 @@ margin-bottom: 18px;
 .cta-contacts > div { margin-right: 40px; }
 .cta-contacts > div:last-child { margin-right: 0; }
 .cta-contact-label {
-font-size: 9px;
-font-weight: 700;
-letter-spacing: 0.14em;
-text-transform: uppercase;
-color: rgba(224,233,246,0.28);
-margin-bottom: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(224,233,246,0.28);
+  margin-bottom: 4px;
 }
 .cta-contact-value { font-size: 13px; color: #A9CCF2; font-weight: 500; }
 .cta-prepared { font-size: 11px; color: rgba(224,233,246,0.3); border-top: 1px solid rgba(224,233,246,0.06); padding-top: 16px; }
 .cta-confidential { font-size: 9px; color: rgba(224,233,246,0.15); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 10px; }
 
 /* ── PRINT ──
-Explicitly zero out the screen-preview body padding/background here too —
-relying on @media screen alone to “not apply” during print is what was
-producing the stray blank trailing page (that grey 20px top/bottom
-padding was bleeding into the print layout and overflowing onto its own
-page after the last real content page). */
+   Explicitly zero out the screen-preview body padding/background here too —
+   relying on @media screen alone to "not apply" during print is what was
+   producing the stray blank trailing page (that grey 20px top/bottom
+   padding was bleeding into the print layout and overflowing onto its own
+   page after the last real content page). */
 @media print {
-@page { size: A4; margin: 0; }
-html, body { margin: 0; padding: 0; background: #fff; }
-.page { page-break-after: always; break-after: page; width: 210mm; box-shadow: none; margin: 0; }
-.page:last-child { page-break-after: avoid; break-after: avoid; }
+  @page { size: A4; margin: 0; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  .page { page-break-after: always; break-after: page; width: 210mm; box-shadow: none; margin: 0; }
+  .page:last-child { page-break-after: avoid; break-after: avoid; }
 }
 
 /* ── SCREEN PREVIEW ── */
 @media screen {
-body { background: #e8ecf4; padding: 20px 0; }
-.page { box-shadow: 0 4px 32px rgba(0,0,0,0.15); margin-bottom: 20px; border-radius: 0; }
+  body { background: #e8ecf4; padding: 20px 0; }
+  .page { box-shadow: 0 4px 32px rgba(0,0,0,0.15); margin-bottom: 20px; border-radius: 0; }
 }
 
 </style>
@@ -1113,7 +1099,6 @@ body { background: #e8ecf4; padding: 20px 0; }
 <body>
 
 <!-- ═══ PAGE 1 — COVER ═══ -->
-
 <div class="page">
 <div class="cover">
   <div class="cover-logo-row">
@@ -1145,7 +1130,6 @@ body { background: #e8ecf4; padding: 20px 0; }
 </div>
 
 <!-- ═══ PAGE 2 — THE AUSTRALIAN PAYMENTS LANDSCAPE ═══ -->
-
 <div class="page">
 <div class="content-page">
   <div class="page-header">
@@ -1175,7 +1159,6 @@ body { background: #e8ecf4; padding: 20px 0; }
 </div>
 
 <!-- ═══ PAGE 3 — EXECUTIVE SUMMARY ═══ -->
-
 <div class="page">
 <div class="content-page">
   <div class="page-header">
@@ -1265,7 +1248,6 @@ body { background: #e8ecf4; padding: 20px 0; }
 </div>
 
 <!-- ═══ PAGE 5 — SAVINGS & BENCHMARK ═══ -->
-
 <div class="page">
 <div class="content-page">
   <div class="page-header">
@@ -1302,7 +1284,6 @@ body { background: #e8ecf4; padding: 20px 0; }
 </div>
 
 <!-- ═══ PAGE 6 — PAYMENTS STACK ASSESSMENT & AREAS TO EXPLORE ═══ -->
-
 <div class="page">
 <div class="content-page">
   <div class="page-header">
@@ -1354,7 +1335,6 @@ body { background: #e8ecf4; padding: 20px 0; }
 </div>
 
 <!-- ═══ PAGE 7 — NEXT STEPS & CONTACT ═══ -->
-
 <div class="page">
 <div class="cta-page">
   <div class="cta-page-logo-row">
