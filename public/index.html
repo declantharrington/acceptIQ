@@ -2948,6 +2948,26 @@ initMG('hero-mg');
   });
 })();
 </script>
-  
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.innerWidth > 760) return;
+
+  document.querySelector(".mobile-menu-btn")?.addEventListener("click", () => {
+    document.body.classList.toggle("mobile-menu-open");
+  });
+
+  document.querySelectorAll(".advisor-card").forEach(card => {
+    card.addEventListener("click", () => {
+      card.classList.toggle("is-open");
+    });
+  });
+
+  document.querySelectorAll(".fcol").forEach(section => {
+    section.querySelector("h4")?.addEventListener("click", () => {
+      section.classList.toggle("is-open");
+    });
+  });
+});
+</script>  
 </body>
 </html>
