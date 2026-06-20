@@ -77,6 +77,19 @@
     display:none !important;
   }
 
+  /* Lock the background from scrolling while the dropdown is open.
+     The dropdown itself uses position:fixed so it always stays put on
+     screen — but without this, the page underneath was still free to
+     scroll, so the header it's meant to sit just below would scroll
+     away while the menu stayed floating in place, disconnected from it.
+     `top` is set inline by JS to the negative of the current scroll
+     offset, so the page doesn't visibly jump when the lock engages. */
+  body.mobile-menu-open{
+    position:fixed;
+    width:100%;
+    overflow:hidden;
+  }
+
   /* Circular icon button instead of a hard-edged square — sits inset
      from the edge by the same 20px the rest of the nav content uses
      (an absolutely-positioned right:0 here would sit flush against the
