@@ -118,6 +118,59 @@ export default async function handler(req, res) {
       return null;
     })();
 
+    // ── Fee composition bar (visual) ────────────────────────────────
+    // Derived deterministically from feeBreakdown, NOT left to the AI to
+    // estimate — matches line items by keyword into the three MSF buckets
+    // from the Knowledge Base (interchange / scheme fees / acquirer margin).
+    // Returns null if the breakdown doesn't clearly separate these, so the
+    // visual is only shown when it can be drawn honestly.
+    const feeComposition = (() => {
+      const items = Array.isArray(report.feeBreakdown) ? report.feeBreakdown : [];
+      if (!items.length) return null;
+      let interchange = 0, scheme = 0, margin = 0, other = 0;
+      for (const item of items) {
+        const label = (item.label || '').toLowerCase();
+        const amt = Number(item.amount) || 0;
+        if (/interchange/.test(label)) interchange += amt;
+        else if (/scheme/.test(label)) scheme += amt;
+        else if (/margin|merchant service fee|msf|provider/.test(label)) margin += amt;
+        else other += amt;
+      }
+      const total = interchange + scheme + margin + other;
+      if (total <= 0) return null;
+      // Fold "other" proportionally into margin rather than adding a fourth
+      // segment — the chart stays a clean 3-part story (issuer / network /
+      // provider) which matches how the report explains the MSF elsewhere.
+      margin += other;
+      return {
+        interchangePct: Math.round((interchange / total) * 1000) / 10,
+        schemePct:      Math.round((scheme / total) * 1000) / 10,
+        marginPct:      Math.round((margin / total) * 1000) / 10,
+        interchangeAmt: interchange,
+        schemeAmt:      scheme,
+        marginAmt:      margin,
+      };
+    })();
+
+    // ── Benchmark comparison bar (visual) ───────────────────────────
+    // Fixed reference points from the Knowledge Base §6 (small-blended 1.4%,
+    // small-unblended 0.9%, large/strategic 0.6%), plotted against the
+    // merchant's own effective rate on a shared scale. Scale ceiling is
+    // padded above the highest of the four values so no bar ever touches 100%.
+    const benchmarkBars = (() => {
+      if (report.effectiveRate == null) return null;
+      const you = report.effectiveRate;
+      const refs = { smallBlended: 1.4, smallUnblended: 0.9, large: 0.6 };
+      const ceiling = Math.max(you, refs.smallBlended) * 1.15;
+      const pct = v => Math.max(2, Math.round((v / ceiling) * 1000) / 10); // floor so tiny bars stay visible
+      return {
+        you: { value: you, pct: pct(you) },
+        smallBlended: { value: refs.smallBlended, pct: pct(refs.smallBlended) },
+        smallUnblended: { value: refs.smallUnblended, pct: pct(refs.smallUnblended) },
+        large: { value: refs.large, pct: pct(refs.large) },
+      };
+    })();
+
     // ── 3. Call Claude to write personalised narrative ────────────
     // The acceptorIQ Knowledge Base is prepended as authoritative reference for
     // all Australian payments facts, benchmarks and the report philosophy. The
@@ -136,7 +189,7 @@ TONE: ${toneGuide}
 ═══ CORE PHILOSOPHY — read carefully, this governs everything ═══
 This report is a DIAGNOSTIC that opens the merchant's eyes to where money may be leaking and how large the opportunity could be. It is NOT a set of instructions.
 - SURFACE opportunities and SIZE them; do NOT prescribe the fix. Write "this is an area worth reviewing" — never "switch to X" or "do Y".
-- Do NOT name any payment providers, banks, gateways, products or plans. Stay vendor-neutral.
+- Do NOT name any payment providers, banks, gateways, products or plans. Stay vendor-neutral. This extends to fraud-prevention, dispute-alert and chargeback-representment tools and vendors — name no specific product or company.
 - Quantify the potential prize using the merchant's own numbers, but withhold the method — the specific change, provider and implementation are what an acceptorIQ advisor delivers in person.
 - Frame "next steps" and the priority item as AREAS TO EXPLORE or QUESTIONS TO BRING TO A REVIEW, phrased as observations, naturally pointing toward a conversation with an acceptorIQ advisor. Never as directives.
 - Be specific and personal about what you OBSERVE in their data; be open-ended about what to DO about it.
@@ -180,6 +233,7 @@ Return ONLY valid JSON — no markdown fences, no preamble. Use this exact struc
   "pricingModelAnalysis": "**Your Current Setup:**\\n\\n[plain-English explanation of how they appear to be charged]\\n\\n**Why This Matters:**\\n\\n[what it means for their costs]\\n\\n**What's Worth Understanding:**\\n\\n[observation about how this compares, no instruction]",
   "savingsOpportunity": "**Where The Opportunity Appears:**\\n\\n[specific maths grounded in their numbers]\\n\\n**What This Could Be Worth:**\\n\\n[sized, conservative]\\n\\n**A Conservative View:**\\n\\n[hedged lower-bound framing]",
   "lcrAnalysis": "**The Current Picture:**\\n\\n[plain explanation of routing and what their data suggests]\\n\\n**Why It Matters For You:**\\n\\n[dollar relevance, no instruction]",
+  "chargebackAnalysis": "**The Current Picture:**\\n\\n[plain-English explanation of chargebacks and what their data shows or, if not shown on the statement, says so plainly without implying a clean record]\\n\\n**Why It Matters For You:**\\n\\n[risk/cost relevance — scheme monitoring risk if elevated, or general context if not visible — no instruction, no named tools or vendors]",
   "benchmarkComment": "**Where You Sit:**\\n\\n[their effective rate vs the typical range for their size]\\n\\n**What Strong Looks Like:**\\n\\n[what better-positioned businesses of their size tend to pay]",
   "stackAssessment": "**The Overall Picture:**\\n\\n[paragraph]\\n\\n**What Appears To Be Working:**\\n\\n[paragraph]\\n\\n**Areas Worth A Closer Look:**\\n\\n[paragraph]",
   "nextStep1": "An area worth reviewing — observational, names no provider or specific action, one or two sentences.",
@@ -195,8 +249,12 @@ Return ONLY valid JSON — no markdown fences, no preamble. Use this exact struc
 }
 
 DERIVING alerts AND stackItems:
-- Produce EXACTLY 3 "alerts" — the three most important Key Findings for this merchant, ordered most to least significant. Choose the "type" to reflect the finding (warn = a cost/risk worth attention, good = something working well, info = a neutral but notable observation). These are where your interpretation lives, but stay grounded in the merchant's actual facts and the Knowledge Base benchmarks; remain non-prescriptive.
-- Produce 3 to 5 "stackItems" describing the merchant's current setup component-by-component. Assign "status" by comparing each component to the Knowledge Base benchmarks: ok = in line with or better than typical, warn = worth a closer look, gap = a clear shortfall or missed opportunity. The "value" must be factual (from the provided facts); the status is your judgement.`;
+- Produce EXACTLY 3 "alerts" — the three most important Key Findings for this merchant, ordered most to least significant. Choose the "type" to reflect the finding (warn = a cost/risk worth attention, good = something working well, info = a neutral but notable observation). These are where your interpretation lives, but stay grounded in the merchant's actual facts and the Knowledge Base benchmarks; remain non-prescriptive. If chargeback data shows an elevated ratio (commonly-cited scheme monitoring range is roughly 0.65%-1%, hedge this figure per the Knowledge Base), this is a strong candidate for one of the three alerts given the account-risk stakes — but only when the data actually shows it; do not include a chargeback alert just to cover the topic if the statement shows nothing.
+- Produce 3 to 5 "stackItems" describing the merchant's current setup component-by-component. Assign "status" by comparing each component to the Knowledge Base benchmarks: ok = in line with or better than typical, warn = worth a closer look, gap = a clear shortfall or missed opportunity. The "value" must be factual (from the provided facts); the status is your judgement. Include a chargebacks stackItem only when chargeback data is present on the statement — if absent, do not invent a "no chargebacks" item, simply omit it and let the 3-5 item range be filled by other components.
+
+DERIVING chargebackAnalysis:
+- If chargeback data IS present in the STATEMENT FACTS below: analyse it properly — state the ratio/count plainly, compare to the commonly-cited scheme monitoring range (hedged, not asserted as exact), and explain the dollar and account-risk relevance.
+- If chargeback data is NOT shown (the facts will say so explicitly): write 1-2 short sentences noting that chargeback activity isn't visible on this statement and that it's a worthwhile area to understand as part of a fuller payments review — do NOT imply this means zero chargebacks, and do NOT make this section longer than necessary just because there's nothing to report. A short, honest "not visible here" is correct and sufficient.`;
 
     const facts = report; // the analyser now returns facts only
 
@@ -227,6 +285,18 @@ DERIVING alerts AND stackItems:
     const observationsStr = Array.isArray(facts.observations) && facts.observations.length
       ? facts.observations.map(o => `- ${o}`).join('\n')
       : '—';
+    // Chargebacks are sparse data — most statements won't show this at all.
+    // Say so explicitly rather than letting the model infer "not shown" as
+    // "zero chargebacks", which would be a fabricated claim of a clean record.
+    const cb = facts.chargebacks || null;
+    const chargebackStr = cb
+      ? [
+          cb.count  != null ? `Count: ${cb.count}` : null,
+          cb.ratio  != null ? `Ratio: ${cb.ratio.toFixed(2)}% of transactions` : null,
+          cb.amount != null ? `Disputed amount: ${fmtD(cb.amount)}` : null,
+          cb.fees   != null ? `Chargeback fees charged: ${fmtD(cb.fees)}` : null,
+        ].filter(Boolean).join('\n') || 'Not shown on this statement.'
+      : 'Not shown on this statement — this does NOT mean zero chargebacks occurred, only that this data point is not visible here.';
 
     const userMessage = `Write a personalised payments review for this merchant, using ONLY the facts below plus the Knowledge Base for context, benchmarks and interpretation. The facts come from the merchant's own statement; everything interpretive (findings, opinions, narrative, framing) is yours to add.
 
@@ -246,6 +316,9 @@ Pricing model (observed): ${facts.pricingModel || '—'}
 Provider rate / margin (observed): ${facts.providerRate || '—'}
 LCR status (observed): ${facts.lcrStatus || '—'}
 Card mix: ${cardMixStr}
+
+CHARGEBACKS:
+${chargebackStr}
 
 FEE BREAKDOWN (as printed):
 ${feeBreakdownStr}
@@ -352,6 +425,46 @@ ${adminNotes}` : ''}`;
     const contactName  = programContext.match(/Name:\s*(.+)/)?.[1]?.trim() || '—';
     const merchantEmail = programContext.match(/Email:\s*(.+)/)?.[1]?.trim() || '—';
 
+    // ── Build the fee composition bar HTML (or empty string if not derivable) ──
+    const compositionHtml = feeComposition ? `
+      <div class="composition-wrap">
+        <div class="composition-bar">
+          ${feeComposition.interchangePct > 0 ? `<div class="composition-seg interchange" style="width:${feeComposition.interchangePct}%"></div>` : ''}
+          ${feeComposition.schemePct > 0 ? `<div class="composition-seg scheme" style="width:${feeComposition.schemePct}%"></div>` : ''}
+          ${feeComposition.marginPct > 0 ? `<div class="composition-seg margin" style="width:${feeComposition.marginPct}%"></div>` : ''}
+        </div>
+        <div class="composition-legend">
+          <div class="cl-item"><span class="cl-dot interchange"></span>Interchange <strong>${feeComposition.interchangePct}%</strong> (${fmtD(feeComposition.interchangeAmt)})</div>
+          <div class="cl-item"><span class="cl-dot scheme"></span>Scheme fees <strong>${feeComposition.schemePct}%</strong> (${fmtD(feeComposition.schemeAmt)})</div>
+          <div class="cl-item"><span class="cl-dot margin"></span>Provider margin &amp; other <strong>${feeComposition.marginPct}%</strong> (${fmtD(feeComposition.marginAmt)})</div>
+        </div>
+      </div>` : '';
+
+    // ── Build the benchmark comparison bar HTML (or empty string) ──
+    const benchmarkBarHtml = benchmarkBars ? `
+      <div class="benchmark-wrap">
+        <div class="bench-row">
+          <div class="bench-row-label is-you">You (this statement)</div>
+          <div class="bench-track"><div class="bench-fill you" style="width:${benchmarkBars.you.pct}%"></div></div>
+          <div class="bench-row-val">${benchmarkBars.you.value.toFixed(2)}%</div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-row-label">Small, blended plan</div>
+          <div class="bench-track"><div class="bench-fill typical" style="width:${benchmarkBars.smallBlended.pct}%"></div></div>
+          <div class="bench-row-val">${benchmarkBars.smallBlended.value.toFixed(2)}%</div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-row-label">Small, unblended plan</div>
+          <div class="bench-track"><div class="bench-fill typical" style="width:${benchmarkBars.smallUnblended.pct}%"></div></div>
+          <div class="bench-row-val">${benchmarkBars.smallUnblended.value.toFixed(2)}%</div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-row-label">Large / strategic rates</div>
+          <div class="bench-track"><div class="bench-fill strong" style="width:${benchmarkBars.large.pct}%"></div></div>
+          <div class="bench-row-val">${benchmarkBars.large.value.toFixed(2)}%</div>
+        </div>
+      </div>` : '';
+
     // ── 9. Build full replacement map ─────────────────────────────
     const replacements = {
       '{{provider}}':               report.provider || '—',
@@ -370,11 +483,15 @@ ${adminNotes}` : ''}`;
       '{{terminal_fees}}':          fmtD(report.terminalFees),
       '{{pricing_model}}':          report.pricingModel || '—',
       '{{lcr_status}}':             report.lcrStatus || '—',
+      '{{chargeback_ratio}}':       (report.chargebacks && report.chargebacks.ratio != null) ? fmtP(report.chargebacks.ratio) : 'Not shown on statement',
+      '{{fee_composition}}':        compositionHtml,
+      '{{benchmark_bars}}':         benchmarkBarHtml,
       '{{landscape_preamble}}':     renderText(narrative.landscapePreamble   || ''),
       '{{executive_summary}}':      renderText(narrative.executiveSummary     || ''),
       '{{pricing_model_analysis}}': renderText(narrative.pricingModelAnalysis || ''),
       '{{savings_opportunity}}':    renderText(narrative.savingsOpportunity   || ''),
       '{{lcr_analysis}}':           renderText(narrative.lcrAnalysis          || ''),
+      '{{chargeback_analysis}}':    renderText(narrative.chargebackAnalysis   || ''),
       '{{benchmark_comment}}':      renderText(narrative.benchmarkComment     || ''),
       '{{stack_assessment}}':       renderText(narrative.stackAssessment      || ''),
       '{{next_step_1}}':            narrative.nextStep1         || '',
@@ -431,7 +548,8 @@ ${adminNotes}` : ''}`;
         total_fees:       report.totalFees ?? null,
         effective_rate:   report.effectiveRate ?? null,
         pricing_model:    report.pricingModel ?? null,
-        lcr_status:       report.lcrStatus ?? null
+        lcr_status:       report.lcrStatus ?? null,
+        chargeback_ratio: (report.chargebacks && report.chargebacks.ratio) ?? null
       })
     });
 
@@ -725,6 +843,7 @@ body {
 .section-body { font-size: 13px; color: #3d4663; line-height: 1.75; }
 .section-body p { margin-bottom: 12px; page-break-inside: avoid; break-inside: avoid; }
 .section-body p:last-child { margin-bottom: 0; }
+.section-body.compact p { margin-bottom: 8px; font-size: 12.5px; }
 
 .lead-in {
   font-size: 14px;
@@ -733,6 +852,78 @@ body {
   margin-bottom: 22px;
   max-width: 60ch;
 }
+
+/* ── LANDSCAPE STRIP (compact stat row used on the merged exec-summary page) ── */
+.landscape-strip {
+  display: flex;
+  background: #e4e8f0;
+  margin-bottom: 14px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.ls-item {
+  flex: 1;
+  background: #f7f9fc;
+  padding: 9px 12px;
+  box-sizing: border-box;
+  border-right: 1px solid #e4e8f0;
+}
+.ls-item:last-child { border-right: none; }
+.ls-val {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0F1218;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+.ls-lbl {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #7c8db0;
+}
+
+/* ── FEE COMPOSITION BAR (visual breakdown of where the fee dollar goes) ── */
+.composition-wrap { margin: 16px 0 22px; page-break-inside: avoid; break-inside: avoid; }
+.composition-bar {
+  display: flex;
+  width: 100%;
+  height: 28px;
+  border-radius: 0;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.composition-seg { height: 100%; }
+.composition-seg.interchange { background: #3F77D6; }
+.composition-seg.scheme      { background: #8BAEE8; }
+.composition-seg.margin      { background: #C9D8F2; }
+.composition-legend { display: flex; flex-wrap: wrap; }
+.cl-item {
+  display: flex; align-items: center;
+  font-size: 11.5px; color: #56607e;
+  margin-right: 18px; margin-bottom: 4px;
+}
+.cl-item:last-child { margin-right: 0; }
+.cl-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; margin-right: 6px; }
+.cl-dot.interchange { background: #3F77D6; }
+.cl-dot.scheme      { background: #8BAEE8; }
+.cl-dot.margin      { background: #C9D8F2; }
+.cl-item strong { color: #0F1218; margin: 0 4px; }
+
+/* ── BENCHMARK COMPARISON BAR (visual rate-vs-typical comparison) ── */
+.benchmark-wrap { margin: 14px 0 20px; page-break-inside: avoid; break-inside: avoid; }
+.bench-row { display: grid; grid-template-columns: 130px 1fr 60px; align-items: center; gap: 10px; margin-bottom: 9px; }
+.bench-row:last-child { margin-bottom: 0; }
+.bench-row-label { font-size: 11.5px; color: #56607e; }
+.bench-row-label.is-you { font-weight: 700; color: #0F1218; }
+.bench-track { height: 9px; background: #eef1f6; border-radius: 0; overflow: hidden; }
+.bench-fill { height: 100%; border-radius: 0; }
+.bench-fill.you      { background: #3F77D6; }
+.bench-fill.typical  { background: #c5d4f8; }
+.bench-fill.strong   { background: #9FD9B4; }
+.bench-row-val { font-size: 12px; font-weight: 700; color: #0F1218; text-align: right; }
 
 /* ── STAT CARDS ── */
 .stat-row {
@@ -947,11 +1138,10 @@ body {
     <div class="section">
       <div class="section-label">The Australian Payments Landscape</div>
       <div class="section-title">Understanding what it costs to get paid</div>
-      <div class="lead-in">Accepting card payments is now a core cost of doing business in Australia — yet it is one of the few costs many businesses set once and never revisit. Here is the bigger picture your own numbers sit within.</div>
-      <div class="stat-row">
-        <div class="stat-card dark"><span class="stat-val">$1.8B</span><span class="stat-lbl">Card surcharges paid each year</span></div>
-        <div class="stat-card"><span class="stat-val">70% &rarr; 15%</span><span class="stat-lbl">Cash use, 2007 to 2025</span></div>
-        <div class="stat-card accent"><span class="stat-val">1 Oct 2026</span><span class="stat-lbl">Major RBA reforms begin</span></div>
+      <div class="landscape-strip">
+        <div class="ls-item"><span class="ls-val">$1.8B</span><span class="ls-lbl">Surcharges paid/year</span></div>
+        <div class="ls-item"><span class="ls-val">70%&rarr;15%</span><span class="ls-lbl">Cash use, 2007-2025</span></div>
+        <div class="ls-item"><span class="ls-val">1 Oct 2026</span><span class="ls-lbl">RBA reforms begin</span></div>
       </div>
       <div class="section-body">{{landscape_preamble}}</div>
     </div>
@@ -1009,6 +1199,7 @@ body {
 </div>
 
 <!-- ═══ PAGE 4 — FEE ANALYSIS ═══ -->
+
 <div class="page">
 <div class="content-page">
   <div class="page-header">
@@ -1021,6 +1212,7 @@ body {
   <div class="page-content">
     <div class="section">
       <div class="section-label">Fee Analysis</div>
+      {{fee_composition}}
       <table class="data-table">
         <thead><tr><th style="width:42%">Component</th><th>Value</th></tr></thead>
         <tbody>
@@ -1034,6 +1226,7 @@ body {
           <tr><td class="td-label">Terminal fees</td><td class="td-value">{{terminal_fees}}</td></tr>
           <tr><td class="td-label">Pricing model</td><td class="td-value">{{pricing_model}}</td></tr>
           <tr><td class="td-label">LCR status</td><td class="td-value">{{lcr_status}}</td></tr>
+          <tr><td class="td-label">Chargeback ratio</td><td class="td-value">{{chargeback_ratio}}</td></tr>
         </tbody>
       </table>
     </div>
@@ -1069,7 +1262,12 @@ body {
       <div class="section-body">{{lcr_analysis}}</div>
     </div>
     <div class="section">
+      <div class="section-label">Chargebacks</div>
+      <div class="section-body">{{chargeback_analysis}}</div>
+    </div>
+    <div class="section">
       <div class="section-label">Market Benchmark</div>
+      {{benchmark_bars}}
       <div class="section-body">{{benchmark_comment}}</div>
     </div>
   </div>
@@ -1080,7 +1278,7 @@ body {
 </div>
 </div>
 
-<!-- ═══ PAGE 6 — PAYMENTS STACK ASSESSMENT ═══ -->
+<!-- ═══ PAGE 6 — PAYMENTS STACK ASSESSMENT & AREAS TO EXPLORE ═══ -->
 <div class="page">
 <div class="content-page">
   <div class="page-header">
@@ -1093,7 +1291,7 @@ body {
   <div class="page-content">
     <div class="section">
       <div class="section-label">Payments Stack Assessment</div>
-      <div class="section-body">{{stack_assessment}}</div>
+      <div class="section-body compact">{{stack_assessment}}</div>
     </div>
     <div class="section">
       <div class="section-label">Stack Component Review</div>
@@ -1110,28 +1308,9 @@ body {
         </tbody>
       </table>
     </div>
-  </div>
-  <div class="page-footer">
-    <div class="page-footer-left">acceptorIQ Advisory &middot; Confidential</div>
-    <div class="page-footer-right">Page 6</div>
-  </div>
-</div>
-</div>
-
-<!-- ═══ PAGE 7 — OPPORTUNITIES IDENTIFIED ═══ -->
-<div class="page">
-<div class="content-page">
-  <div class="page-header">
-    <div class="page-header-logo">
-      <span class="page-header-mark"><span></span><span></span></span>
-      acceptor<span>IQ</span>
-    </div>
-    <div class="page-header-meta">Payments Stack Analysis &middot; Confidential &middot; {{report_date}}</div>
-  </div>
-  <div class="page-content">
     <div class="section">
       <div class="section-label">Areas to Explore</div>
-      <div class="lead-in">These are areas where our analysis suggests there may be value worth examining more closely. They are starting points for a conversation, not prescribed changes — your acceptorIQ advisor can work through what each could mean for your business.</div>
+      <div class="lead-in" style="font-size:12.5px;margin-bottom:16px">These are areas where our analysis suggests there may be value worth examining more closely. They are starting points for a conversation, not prescribed changes.</div>
       <div class="rec-list">
         <div class="rec-item"><div class="rec-num">1</div><div class="rec-body">{{next_step_1}}</div></div>
         <div class="rec-item"><div class="rec-num">2</div><div class="rec-body">{{next_step_2}}</div></div>
@@ -1145,12 +1324,12 @@ body {
   </div>
   <div class="page-footer">
     <div class="page-footer-left">acceptorIQ Advisory &middot; Confidential</div>
-    <div class="page-footer-right">Page 7</div>
+    <div class="page-footer-right">Page 6</div>
   </div>
 </div>
 </div>
 
-<!-- ═══ PAGE 8 — NEXT STEPS & CONTACT ═══ -->
+<!-- ═══ PAGE 7 — NEXT STEPS & CONTACT ═══ -->
 <div class="page">
 <div class="cta-page">
   <div class="cta-page-logo-row">
