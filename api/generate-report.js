@@ -1,5 +1,5 @@
 // api/generate-report.js
-// Triggered when admin approves a submission.
+// Triggered when admin approves a submission. 
 // Fetches the HTML template, populates it with real merchant data, stores in Supabase.
 //
 // Report philosophy (keep in sync with the acceptorIQ Knowledge Base):
