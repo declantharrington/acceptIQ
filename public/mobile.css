@@ -1,0 +1,440 @@
+/* acceptorIQ â€” mobile.css
+   Load only on mobile:
+   <link rel="stylesheet" href="mobile.css" media="(max-width: 760px)">
+*/
+
+/* Hide desktop-only behaviours/layout on mobile without touching desktop CSS */
+@media (max-width:760px){
+
+  body{
+    background:var(--bg);
+  }
+
+  .shell{
+    width:calc(100% - 28px);
+    margin:0 auto;
+    border-left:1px solid rgba(230,235,246,.08);
+    border-right:1px solid rgba(230,235,246,.08);
+    overflow:hidden;
+  }
+
+  .wrap{
+    padding:0 28px;
+  }
+
+  /* ----------------------------- */
+  /* Mobile nav                    */
+  /* ----------------------------- */
+
+  header{
+    background:rgba(15,18,24,.84);
+    border-bottom:1px solid rgba(230,235,246,.08);
+  }
+
+  .nav{
+    height:68px;
+    position:relative;
+    justify-content:center;
+  }
+
+  .nav-wrap{
+    padding:0 22px;
+  }
+
+  .brand.acceptor-logo{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    gap:10px;
+  }
+
+  .acceptor-word{
+    font-size:21px;
+  }
+
+  .acceptor-mark{
+    width:25px;
+    height:23px;
+  }
+
+  .acceptor-mark span{
+    width:8px;
+    height:23px;
+    border-radius:2px;
+  }
+
+  .acceptor-mark span:first-child{
+    left:5px;
+  }
+
+  .acceptor-mark span:last-child{
+    right:5px;
+    height:17px;
+  }
+
+  .nav-right{
+    display:none;
+  }
+
+  .mobile-menu-btn{
+    display:flex;
+    position:absolute;
+    right:0;
+    top:50%;
+    transform:translateY(-50%);
+    width:42px;
+    height:42px;
+    border:1px solid rgba(230,235,246,.10);
+    background:rgba(230,235,246,.035);
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:6px;
+    cursor:pointer;
+  }
+
+  .mobile-menu-btn span{
+    width:18px;
+    height:1px;
+    background:rgba(230,235,246,.85);
+    display:block;
+  }
+
+  /* Optional mobile dropdown if you add .mobile-menu */
+  .mobile-menu{
+    display:none;
+    position:absolute;
+    top:68px;
+    left:0;
+    right:0;
+    z-index:70;
+    padding:18px 22px 22px;
+    background:rgba(15,18,24,.96);
+    border-bottom:1px solid rgba(230,235,246,.08);
+  }
+
+  body.mobile-menu-open .mobile-menu{
+    display:block;
+  }
+
+  .mobile-menu a{
+    display:block;
+    padding:15px 0;
+    font-size:16px;
+    color:var(--cream-soft);
+    border-top:1px solid rgba(230,235,246,.08);
+  }
+
+  .mobile-menu a:first-child{
+    border-top:none;
+  }
+
+  /* ----------------------------- */
+  /* Hero                          */
+  /* ----------------------------- */
+
+  .hero{
+    padding:76px 0 0;
+  }
+
+  .hero h1{
+    font-size:clamp(40px,11vw,56px);
+    line-height:1.07;
+  }
+
+  .hero .sub{
+    font-size:17px;
+    line-height:1.45;
+    max-width:340px;
+    margin-top:22px;
+  }
+
+  .hero-stage{
+    min-height:auto;
+    margin-top:42px;
+    padding-bottom:88px;
+  }
+
+  .hero-band{
+    top:110px;
+    height:320px;
+  }
+
+  .hero .phone{
+    position:relative !important;
+    top:auto !important;
+    left:auto !important;
+    transform:none !important;
+    margin:0 auto !important;
+    width:255px;
+    z-index:2;
+  }
+
+  /* ----------------------------- */
+  /* Two-up sections               */
+  /* ----------------------------- */
+
+  .twoup{
+    display:block;
+    padding:0;
+    border-top:1px solid rgba(230,235,246,.08);
+  }
+
+  .twoup::before{
+    display:none;
+  }
+
+  .twoup .col{
+    min-height:auto;
+    padding:82px 28px 88px;
+    border-bottom:1px solid rgba(230,235,246,.08);
+  }
+
+  .twoup h2,
+  .bleed h2,
+  .control h2,
+  .final h2{
+    font-size:clamp(38px,10vw,52px);
+    line-height:1.08;
+  }
+
+  .twoup p,
+  .bleed p,
+  .control p,
+  .advisor-section .sub,
+  .final p{
+    font-size:17px;
+    line-height:1.48;
+  }
+
+  .vis{
+    margin-top:48px;
+    min-height:auto;
+  }
+
+  .payment-web{
+    transform:scale(.78);
+    transform-origin:center;
+    margin:-34px auto;
+  }
+
+  /* ----------------------------- */
+  /* Action plan section           */
+  /* ----------------------------- */
+
+  .bleed{
+    display:block;
+  }
+
+  .bleed .copy{
+    padding:86px 28px 64px;
+    text-align:center;
+    align-items:center;
+    border-right:none;
+    border-bottom:1px solid rgba(230,235,246,.08);
+  }
+
+  .bleed .copy h2,
+  .bleed .copy p{
+    width:100%;
+    text-align:center;
+  }
+
+  .bleed .stage{
+    min-height:600px;
+  }
+
+  .glass{
+    width:calc(100% - 42px);
+    max-width:340px;
+  }
+
+  /* ----------------------------- */
+  /* Advisor cards as accordions   */
+  /* ----------------------------- */
+
+  .advisor-section{
+    padding:84px 0 90px;
+  }
+
+  .advisor-stack{
+    height:auto;
+    display:grid;
+    gap:12px;
+    margin-top:44px;
+    width:100%;
+  }
+
+  .advisor-card,
+  .advisor-card[data-card="0"],
+  .advisor-card[data-card="1"],
+  .advisor-card[data-card="2"],
+  .advisor-card.is-active,
+  .advisor-card.is-back{
+    position:relative;
+    top:auto;
+    left:auto;
+    width:100%;
+    min-height:0;
+    transform:none !important;
+    opacity:1;
+    z-index:1;
+    padding:18px 20px;
+    border-radius:0;
+    cursor:pointer;
+  }
+
+  .advisor-card .card-icon,
+  .advisor-card .rule{
+    display:none;
+  }
+
+  .advisor-card .step{
+    display:inline-block;
+    font-size:12px;
+    margin:0 12px 0 0;
+    vertical-align:middle;
+  }
+
+  .advisor-card h3{
+    display:inline;
+    font-size:18px;
+    line-height:1.2;
+    letter-spacing:-0.03em;
+    text-align:left !important;
+  }
+
+  .advisor-card h3 br{
+    display:none;
+  }
+
+  .advisor-card p{
+    display:none;
+    font-size:14px;
+    line-height:1.55;
+    margin-top:14px;
+    color:var(--cream-soft);
+  }
+
+  .advisor-card.is-open p{
+    display:block;
+  }
+
+  .advisor-card[data-card="1"] .step,
+  .advisor-card[data-card="1"] h3,
+  .advisor-card[data-card="2"] .step,
+  .advisor-card[data-card="2"] h3{
+    text-align:left;
+  }
+
+  /* ----------------------------- */
+  /* Final CTA                     */
+  /* ----------------------------- */
+
+  .final{
+    padding:84px 0 88px;
+    border-top:1px solid rgba(230,235,246,.08);
+  }
+
+  /* ----------------------------- */
+  /* Footer cleanup                */
+  /* ----------------------------- */
+
+  .footer-section{
+    border-top:1px solid rgba(230,235,246,.08);
+  }
+
+  #dots-stage{
+    display:none;
+  }
+
+  .fcols{
+    display:block;
+    padding:42px 28px 30px;
+  }
+
+  .fbrand{
+    margin-bottom:34px;
+  }
+
+  .fcol{
+    padding:22px 0;
+    border-top:1px solid rgba(230,235,246,.08);
+  }
+
+  .fcol h4{
+    margin-bottom:12px;
+    font-size:12px;
+  }
+
+  .fcol a{
+    font-size:15px;
+    padding:7px 0;
+  }
+
+  .fcopy{
+    margin:0 28px;
+    padding:22px 0 28px;
+  }
+
+  /* ----------------------------- */
+  /* Abi chat mobile positioning   */
+  /* ----------------------------- */
+
+  #abi-launcher{
+    right:24px;
+    bottom:24px;
+  }
+}
+
+@media (max-width:480px){
+
+  .shell{
+    width:calc(100% - 28px);
+  }
+
+  .wrap{
+    padding:0 24px;
+  }
+
+  .twoup .col{
+    padding-left:24px;
+    padding-right:24px;
+  }
+
+  .hero h1,
+  .twoup h2,
+  .bleed h2,
+  .control h2,
+  .final h2{
+    font-size:clamp(38px,11vw,50px);
+  }
+
+  .hero .sub,
+  .twoup p,
+  .bleed p,
+  .control p,
+  .advisor-section .sub,
+  .final p{
+    font-size:16px;
+  }
+
+  .payment-web{
+    transform:scale(.72);
+    margin:-48px auto;
+  }
+
+  .glass{
+    width:calc(100% - 32px);
+  }
+
+  .fcols{
+    padding-left:24px;
+    padding-right:24px;
+  }
+
+  .fcopy{
+    margin-left:24px;
+    margin-right:24px;
+  }
+}
