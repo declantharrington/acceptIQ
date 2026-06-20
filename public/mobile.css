@@ -338,8 +338,9 @@
   }
 
   .glass{
-    width:calc(100% - 42px);
-    max-width:340px;
+    width:calc(100% - 48px);
+    max-width:300px;
+    padding:18px;
   }
 
   .advisor-section{padding:90px 0 96px;}
