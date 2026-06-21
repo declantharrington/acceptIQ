@@ -339,8 +339,41 @@
 
   .glass{
     width:calc(100% - 48px);
-    max-width:300px;
+    max-width:280px;
     padding:18px;
+  }
+
+  /* Compact, scannable version for mobile — same message (what each
+     action is + what it saves), far fewer words. The full sentence
+     describing each action reads fine on desktop but is the heaviest
+     part of this card on a phone, so it's dropped here entirely
+     rather than just shrinking the container around it. */
+  .plan-total{
+    padding:14px 0 18px;
+  }
+
+  .plan-total strong{
+    font-size:32px;
+  }
+
+  .plan-row{
+    grid-template-columns:22px 1fr auto;
+    align-items:center;
+    gap:10px;
+    padding:13px 0;
+  }
+
+  .plan-num{
+    padding-top:0;
+  }
+
+  .plan-main strong{
+    font-size:14px;
+    margin-bottom:0;
+  }
+
+  .plan-main span{
+    display:none;
   }
 
   .advisor-section{padding:90px 0 96px;}
