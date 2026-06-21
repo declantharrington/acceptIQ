@@ -152,6 +152,43 @@ export default async function handler(req, res) {
       };
     })();
 
+    // -- Pricing model classification, verified against the actual fee
+    // breakdown ------------------------------------------------------------
+    // report.pricingModel comes from the earlier extraction step (analyse.js)
+    // reading the statement's own labelling, and that label can be wrong -
+    // extraction reads what the provider CALLS the plan, not what the itemised
+    // numbers structurally show. Per Knowledge Base section 7: Interchange-plus-plus
+    // (IC++) itemises interchange, scheme fees AND a margin as three SEPARATE
+    // line items; Interchange-plus (IC+) separates out interchange but folds
+    // scheme fees into a single markup with the margin (no separate scheme
+    // line). A statement showing all three as distinct line items is
+    // structurally IC++ regardless of what label the extraction step picked up.
+    //
+    // This is corrected here, in code, rather than left for the narrative
+    // model to "notice and describe correctly" - the Fee Analysis table's
+    // {{pricing_model}} cell is a direct passthrough of report.pricingModel
+    // with no LLM involved, so asking the model to silently use a different,
+    // corrected label in its prose would just create a new contradiction
+    // between the table and the narrative instead of fixing the original one.
+    // Correcting the fact itself, once, keeps every downstream consumer
+    // (the table, the narrative prompt, and the persisted Supabase record)
+    // in agreement automatically.
+    (() => {
+      if (!feeComposition) return;
+      const hasInterchange = feeComposition.interchangeAmt > 0;
+      const hasScheme       = feeComposition.schemeAmt > 0;
+      const hasMargin       = feeComposition.marginAmt > 0;
+      let derived = null;
+      if (hasInterchange && hasScheme && hasMargin) derived = 'Interchange-plus-plus';
+      else if (hasInterchange && hasMargin && !hasScheme) derived = 'Interchange-plus';
+      if (derived && report.pricingModel && derived !== report.pricingModel) {
+        console.warn(`generate-report: pricingModel mismatch - extracted "${report.pricingModel}", fee breakdown structurally shows "${derived}". Using the derived value.`);
+        report.pricingModel = derived;
+      } else if (derived && !report.pricingModel) {
+        report.pricingModel = derived;
+      }
+    })();
+
     // -- Benchmark comparison bar (visual) ---------------------------
     // Fixed reference points from the Knowledge Base section 6 (small-blended 1.4%,
     // small-unblended 0.9%, large/strategic 0.6%), plotted against the
@@ -202,6 +239,32 @@ export default async function handler(req, res) {
       return { creditTurnover, monthly, annual: monthly * 12 };
     })();
 
+    // -- LCR (least-cost routing) savings estimate -------------------
+    // Computed deterministically, same rationale as reformSavings above: this
+    // is frequently one of the largest single opportunities on a debit-heavy
+    // statement, sometimes larger than the October 2026 reform figure, and it
+    // was previously left as an unquantified aside ("that is a material
+    // number worth understanding") instead of a concrete dollar estimate -
+    // which undersells what can be a genuinely major finding.
+    //
+    // Methodology, grounded in Knowledge Base section 5/13: LCR reduces the
+    // cost of accepting DEBIT specifically by ~20% (RBA estimate). Statements
+    // don't generally break out a debit-specific fee figure, so the debit fee
+    // component is approximated as (debit turnover x the merchant's own
+    // blended effective rate) - a reasonable stand-in given the data
+    // available, and one the prompt is told explicitly to treat as an
+    // estimate rather than a precise figure.
+    const lcrSavings = (() => {
+      const debitPct = report.cardMix && report.cardMix.debit != null ? Number(report.cardMix.debit) : null;
+      if (!report.volume || !report.effectiveRate || debitPct == null || Number.isNaN(debitPct) || debitPct <= 0) return null;
+      const debitTurnover = Number(report.volume) * (debitPct / 100);
+      const estDebitFees = debitTurnover * (Number(report.effectiveRate) / 100);
+      const LCR_REDUCTION = 0.20; // Knowledge Base section 5 - RBA estimate
+      const monthly = estDebitFees * LCR_REDUCTION;
+      if (monthly <= 0) return null;
+      return { debitTurnover, estDebitFees, monthly, annual: monthly * 12 };
+    })();
+
     // -- 3. Call Claude to write personalised narrative ------------
     // The acceptorIQ Knowledge Base is prepended as authoritative reference for
     // all Australian payments facts, benchmarks and the report philosophy. The
@@ -233,11 +296,14 @@ Previous reports ran to 12+ substantive pages for what is meant to be a fast, sc
 FIELD OWNERSHIP (the one place each idea is explained in full):
 - The October 2026 consumer credit interchange reform and its dollar opportunity -> owned by "savingsOpportunity" ONLY. "executiveSummary" may name it and give its headline figure in one sentence; "alerts" and "keyRecommendation" may reference it in one sentence. None of them re-derive the maths - they all use the exact REFORM SAVINGS FIGURE given to you in the facts below, every time, with no variation.
 - What interchange-plus (or whichever pricing model applies) means and why the structure is sound or not -> owned by "pricingModelAnalysis" ONLY. "executiveSummary" and "stackAssessment" may refer to "your interchange-plus structure" in passing without re-explaining what that means.
-- Debit routing / least-cost routing -> owned by "lcrAnalysis" ONLY. Other fields may reference "your debit routing" in one clause without re-explaining LCR.
+- Debit routing / least-cost routing AND its dollar opportunity -> owned by "lcrAnalysis" ONLY. When LCR is not confirmed on (off, unknown, or the statement shows no eftpos-routed debit), this is frequently one of the LARGEST single findings in the whole report and must be sized in dollars using the exact LCR SAVINGS FIGURE given to you in the facts below - do not leave it as a vague aside ("that's a material number worth understanding") when a real figure is available. Other fields may reference "your debit routing" or its headline figure in one clause without re-deriving it.
 "executiveSummary" previews the findings in one or two sentences each and points the reader onward - it must NOT become a second opportunity-overview or a second pricing-model explainer.
 
 === THE REFORM SAVINGS FIGURE - use it exactly, do not recompute ===
 A dollar estimate for the October 2026 consumer credit interchange opportunity is computed for you and given in the facts below as REFORM SAVINGS ESTIMATE. Wherever you state a dollar size for this opportunity - in savingsOpportunity, executiveSummary, an alert, or keyRecommendation - use that exact figure, worded however fits the sentence, but never a different number and never your own estimate. If the facts say the figure is not calculable, do not state any specific dollar figure for this opportunity anywhere in the report; describe it qualitatively only (e.g. "a meaningful share of your turnover sits in the consumer credit category affected by this reform").
+
+=== THE LCR SAVINGS FIGURE - use it exactly, do not recompute ===
+A dollar estimate for the least-cost-routing opportunity is computed for you and given in the facts below as LCR SAVINGS ESTIMATE, alongside the merchant's LCR STATUS. If LCR status is anything other than confirmed "On" (i.e. it's Off, Unknown, Partial, or the statement simply shows no eftpos-routed debit), this is a live, unrealised opportunity - state the LCR SAVINGS ESTIMATE figure plainly and prominently in lcrAnalysis (this is the one field that owns the full explanation), and it is a strong candidate for one of the three "alerts" given how large this finding often is. Use the exact figure given, never your own estimate, and never a different number elsewhere in the report. If LCR status is confirmed "On", do NOT present this figure as an opportunity at all - note instead that the merchant is likely already capturing this benefit, and do not state a dollar figure in that case. If the facts say the figure is not calculable, describe the LCR question qualitatively only, with no specific dollar figure.
 
 === PLAIN ENGLISH ===
 Write so a business owner with no payments knowledge understands it. Explain every payments term in a simple line the first time it appears (e.g. "interchange - the wholesale fee your provider passes through to the bank that issued your customer's card"). Lead with dollar impact, then the mechanism. Short sentences. Calm, trusted-adviser voice - explaining, not selling.
@@ -276,7 +342,7 @@ Return ONLY valid JSON - no markdown fences, no preamble. Use this exact structu
   "executiveSummary": "3 short paragraphs separated by \\n\\n (each 2-3 sentences), specific to this merchant's numbers but non-prescriptive. First: what we observed (their rate and what it means in plain terms). Second: the main theme (interchange, and that the October 2026 reform is the headline opportunity - state the REFORM SAVINGS FIGURE once here, in full, since this is the one place a reader skimming only this far still gets the number). Third: a brief, warm pointer to what a review with acceptorIQ could help clarify. Do not re-derive the savings maths - state the figure once and move on.",
   "pricingModelAnalysis": "**Your Current Setup:**\\n\\n[plain-English explanation of how they appear to be charged]\\n\\n**Why This Matters:**\\n\\n[what it means for their costs]\\n\\n**What's Worth Understanding:**\\n\\n[observation about how this compares, no instruction]",
   "savingsOpportunity": "**Where The Opportunity Appears:**\\n\\n[specific maths grounded in their numbers]\\n\\n**What This Could Be Worth:**\\n\\n[state the REFORM SAVINGS FIGURE plainly - this is its one full explanation in the report, so this is the place to show the working, but do not also introduce a second, different estimate as an alternative or upside scenario]\\n\\n**A Conservative View:**\\n\\n[one short paragraph on what capturing it depends on - pass-through - without re-stating the dollar figure a third time]",
-  "lcrAnalysis": "**The Current Picture:**\\n\\n[plain explanation of routing and what their data suggests]\\n\\n**Why It Matters For You:**\\n\\n[dollar relevance, no instruction]",
+  "lcrAnalysis": "**The Current Picture:**\\n\\n[plain explanation of routing and what their data suggests]\\n\\n**Why It Matters For You:**\\n\\n[if LCR status is not confirmed On: state the LCR SAVINGS FIGURE plainly - this is a live, sizeable opportunity, not a vague aside. If LCR is confirmed On: no dollar figure, note the benefit is likely already being captured]",
   "chargebackAnalysis": "**The Current Picture:**\\n\\n[plain-English explanation of chargebacks and what their data shows]\\n\\n**Why It Matters For You:**\\n\\n[risk/cost relevance - scheme monitoring risk if elevated, or general context if not visible - no instruction, no named tools or vendors]. IMPORTANT: if chargeback data is NOT shown on the statement, collapse this entire field to ONE short paragraph of 1-2 sentences total (still starting with the **The Current Picture:** heading, but omit the second heading and skip straight to noting plainly that it isn't visible here and is worth understanding as part of a fuller review) - do not pad this with generic chargeback education when there is nothing merchant-specific to say.",
   "benchmarkComment": "**Where You Sit:**\\n\\n[their effective rate vs the typical range for their size, 2-3 sentences]\\n\\n**What Strong Looks Like:**\\n\\n[what better-positioned businesses of their size tend to pay, 2-3 sentences]",
   "stackAssessment": "**The Overall Picture:**\\n\\n[1 short paragraph]\\n\\n**What Appears To Be Working:**\\n\\n[1 short paragraph]. Do NOT add a third subheading about areas worth a closer look - that is the dedicated job of nextStep1/2/3 immediately following this section in the report, and repeating it here is exactly the duplication this report needs to stop doing.",
@@ -293,7 +359,7 @@ Return ONLY valid JSON - no markdown fences, no preamble. Use this exact structu
 }
 
 DERIVING alerts AND stackItems:
-- Produce EXACTLY 3 "alerts" - the three most important Key Findings for this merchant, ordered most to least significant. Choose the "type" to reflect the finding (warn = a cost/risk worth attention, good = something working well, info = a neutral but notable observation). These are where your interpretation lives, but stay grounded in the merchant's actual facts and the Knowledge Base benchmarks; remain non-prescriptive. If chargeback data shows an elevated ratio (commonly-cited scheme monitoring range is roughly 0.65%-1%, hedge this figure per the Knowledge Base), this is a strong candidate for one of the three alerts given the account-risk stakes - but only when the data actually shows it; do not include a chargeback alert just to cover the topic if the statement shows nothing.
+- Produce EXACTLY 3 "alerts" - the three most important Key Findings for this merchant, ordered most to least significant. Choose the "type" to reflect the finding (warn = a cost/risk worth attention, good = something working well, info = a neutral but notable observation). These are where your interpretation lives, but stay grounded in the merchant's actual facts and the Knowledge Base benchmarks; remain non-prescriptive. If chargeback data shows an elevated ratio (commonly-cited scheme monitoring range is roughly 0.65%-1%, hedge this figure per the Knowledge Base), this is a strong candidate for one of the three alerts given the account-risk stakes - but only when the data actually shows it; do not include a chargeback alert just to cover the topic if the statement shows nothing. Likewise, when LCR is not confirmed on and an LCR SAVINGS FIGURE is calculable, this is very often a top-3 finding given how large it tends to be - if it's used as an alert, its body should include the dollar figure, not just describe the routing gap qualitatively.
 - Produce 3 to 5 "stackItems" describing the merchant's current setup component-by-component. Assign "status" by comparing each component to the Knowledge Base benchmarks: ok = in line with or better than typical, warn = worth a closer look, gap = a clear shortfall or missed opportunity. The "value" must be factual (from the provided facts); the status is your judgement. Include a chargebacks stackItem only when chargeback data is present on the statement - if absent, do not invent a "no chargebacks" item, simply omit it and let the 3-5 item range be filled by other components.
 
 DERIVING chargebackAnalysis:
@@ -348,6 +414,14 @@ DERIVING chargebackAnalysis:
       ? `Based on credit card turnover of ${fmtD(reformSavings.creditTurnover)} and the confirmed average-to-cap interchange reduction (0.47% average today -> 0.30% cap from 1 October 2026): approximately ${fmtD(reformSavings.monthly)} per month, or approximately ${fmtD(reformSavings.annual)} per year. Use this figure exactly, every time you cite a dollar size for this opportunity.`
       : 'Not calculable - no usable credit-card-mix percentage available. Do not state any specific dollar figure for this opportunity anywhere in the report; describe it qualitatively only.';
 
+    // Stated as a fixed fact for the model to quote verbatim - see the
+    // "LCR SAVINGS FIGURE" instruction in the system prompt above. Whether
+    // this is presented as a live opportunity depends on lcrStatus, which is
+    // given alongside it so the model can apply that gating itself.
+    const lcrSavingsStr = lcrSavings
+      ? `Based on debit card turnover of ${fmtD(lcrSavings.debitTurnover)}, an estimated current debit fee cost of approximately ${fmtD(lcrSavings.estDebitFees)} (debit turnover x this merchant's own blended effective rate, used as a stand-in since debit-specific fees aren't broken out on the statement), and the RBA's ~20% LCR debit-cost reduction estimate: approximately ${fmtD(lcrSavings.monthly)} per month, or approximately ${fmtD(lcrSavings.annual)} per year. This is an ESTIMATE (the underlying debit fee figure is approximated, not read directly off the statement) - say so if you state the figure. Only present this as a live opportunity if LCR status (given above) is not confirmed "On".`
+      : 'Not calculable - no usable debit-card-mix percentage and/or effective rate available. Do not state any specific dollar figure for this opportunity anywhere in the report; describe it qualitatively only.';
+
     const userMessage = `Write a personalised payments review for this merchant, using ONLY the facts below plus the Knowledge Base for context, benchmarks and interpretation. The facts come from the merchant's own statement; everything interpretive (findings, opinions, narrative, framing) is yours to add.
 
 STATEMENT FACTS:
@@ -362,13 +436,16 @@ Average fee per transaction (avg sale value x effective rate): ${fmtD(avgFeePerT
 Monthly fee: ${fmtD(facts.monthlyFee)}
 Terminal fees: ${fmtD(facts.terminalFees)}
 Fixed per-transaction fee (if any): ${facts.perTransactionFee != null ? facts.perTransactionFee + 'c' : '-'}
-Pricing model (observed): ${facts.pricingModel || '-'}
+Pricing model (verified against the itemised fee breakdown - this is authoritative, not just the statement's own label): ${facts.pricingModel || '-'}
 Provider rate / margin (observed): ${facts.providerRate || '-'}
 LCR status (observed): ${facts.lcrStatus || '-'}
 Card mix: ${cardMixStr}
 
 REFORM SAVINGS ESTIMATE (computed - use this EXACT figure, do not recompute or estimate a different number):
 ${reformSavingsStr}
+
+LCR SAVINGS ESTIMATE (computed - use this EXACT figure, do not recompute or estimate a different number):
+${lcrSavingsStr}
 
 CHARGEBACKS:
 ${chargebackStr}
