@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F1218">
 <meta name="description" content="acceptorIQ — get an AI-reviewed, human-verified analysis of your payments setup and fees.">
 <title>acceptorIQ — Payments Review</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1196,8 +1197,8 @@ input#fileInput { display: none; }
 
   <!-- Confirm -->
   <div class="screen" id="sConfirm">
-    <div class="q-text" style="font-size:clamp(28px,3.5vw,42px);margin-bottom:12px">Your report is<br>being prepared.</div>
-    <div class="q-sub" style="margin-bottom:24px">Here's exactly what happens between now and when you hear from us.</div>
+    <div class="q-text" style="font-size:clamp(28px,3.5vw,42px);margin-bottom:12px">Your report's<br>already done.</div>
+    <div class="q-sub" style="margin-bottom:24px">Here's what happens between now and when it lands in your inbox.</div>
     <div id="confirmReveal"></div>
     <div style="display:flex;flex-direction:column;gap:0;max-width:520px">
       <div class="confirm-step">
@@ -1680,27 +1681,27 @@ function renderConfirmReveal(effectiveRate) {
     const scale = v => Math.min(100, Math.max(4, (v / 2) * 100));
     el.innerHTML =
       '<div class="confirm-reveal">' +
-        '<div class="confirm-reveal-eyebrow">While you wait</div>' +
+        '<div class="confirm-reveal-eyebrow">From your report</div>' +
         '<div class="confirm-reveal-stat">' + rateStr + '%</div>' +
-        '<div class="confirm-reveal-sub">your effective rate, from the statement you just uploaded</div>' +
+        '<div class="confirm-reveal-sub">your effective rate, already pulled from the statement you uploaded</div>' +
         '<div class="confirm-reveal-bars">' +
           '<div class="cr-bar-row"><span class="cr-bar-label you">You</span><div class="cr-bar-track"><div class="cr-bar-fill you" style="width:' + scale(rate) + '%"></div></div><span class="cr-bar-val">' + rateStr + '%</span></div>' +
           '<div class="cr-bar-row"><span class="cr-bar-label">Typical SMB</span><div class="cr-bar-track"><div class="cr-bar-fill typical" style="width:' + scale(1.4) + '%"></div></div><span class="cr-bar-val">1.40%</span></div>' +
         '</div>' +
-        '<div class="confirm-reveal-note">We will break down exactly where this comes from, and where the savings are, in your full report.</div>' +
+        '<div class="confirm-reveal-note">Your full report already breaks down exactly where this comes from, and where the savings are.</div>' +
       '</div>';
-    if (stepTitle) stepTitle.textContent = 'AI analysis complete';
-    if (stepBody) stepBody.textContent = 'Our payments AI has reviewed your statement and merchant profile, benchmarked your rates against current market data, and produced a report specific to your setup.';
+    if (stepTitle) stepTitle.textContent = 'Your report is ready';
+    if (stepBody) stepBody.textContent = 'Our AI has read your statement and merchant profile and already produced your full report, personalised to your setup.';
   } else {
     el.innerHTML =
       '<div class="confirm-reveal">' +
         '<div class="confirm-reveal-eyebrow">Worth knowing</div>' +
         '<div class="confirm-reveal-stat">2x</div>' +
         '<div class="confirm-reveal-sub">small businesses often pay roughly double what large businesses pay, for the exact same card transaction</div>' +
-        '<div class="confirm-reveal-note">No statement this time, so we cannot show you your own number yet - your advisor will walk you through where you likely sit once your report is ready.</div>' +
+        '<div class="confirm-reveal-note">No statement this time, so we could not include your own number - but your report still covers where you likely sit, based on what you told us.</div>' +
       '</div>';
-    if (stepTitle) stepTitle.textContent = 'Profile received';
-    if (stepBody) stepBody.textContent = 'We will base your review on what you told us - a statement gives a sharper picture, any time you are ready to add one.';
+    if (stepTitle) stepTitle.textContent = 'Your report is ready';
+    if (stepBody) stepBody.textContent = 'Our AI has already put together your report based on what you told us. Add a statement any time for an even sharper picture.';
   }
 }
 
