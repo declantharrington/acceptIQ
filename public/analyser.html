@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -34,189 +35,188 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
 body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--cream);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  cursor: default;
+font-family: var(–sans);
+background: var(–bg);
+color: var(–cream);
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+text-rendering: optimizeLegibility;
+cursor: default;
 }
 
 /* Subtle ambient glow — blue tones to match the site */
 .ambient {
-  position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
-  background: radial-gradient(circle, rgba(63,119,214,0.07) 0%, transparent 70%);
+position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+background: radial-gradient(circle, rgba(63,119,214,0.07) 0%, transparent 70%);
 }
 .ambient-1 { width: 700px; height: 700px; top: -200px; right: -200px; }
 .ambient-2 { width: 500px; height: 500px; bottom: -150px; left: -100px; opacity: 0.5; }
 
-
 /* ── Nav / Chrome ── */
 .chrome {
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:500;
-  height:72px;
-  background:rgba(15,18,24,0.72);
-  backdrop-filter:saturate(160%) blur(12px);
-  -webkit-backdrop-filter:saturate(160%) blur(12px);
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:500;
+height:72px;
+background:rgba(15,18,24,0.72);
+backdrop-filter:saturate(160%) blur(12px);
+-webkit-backdrop-filter:saturate(160%) blur(12px);
 }
 
 .chrome-inner {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  width:calc(100vw - (var(--site-frame) * 2));
-  max-width:var(--shell-width);
-  height:72px;
-  margin:0 auto;
-  padding:0 26px;
-  border-bottom:1px solid var(--line);
+display:flex;
+align-items:center;
+justify-content:space-between;
+width:calc(100vw - (var(–site-frame) * 2));
+max-width:var(–shell-width);
+height:72px;
+margin:0 auto;
+padding:0 26px;
+border-bottom:1px solid var(–line);
 }
 
 /* Brand — acceptorIQ mark + wordmark, matches the main site exactly */
 .acceptor-logo{
-  display:flex;
-  align-items:center;
-  gap:16px;
-  text-decoration:none;
+display:flex;
+align-items:center;
+gap:16px;
+text-decoration:none;
 }
 
 .acceptor-mark{
-  position:relative;
-  width:38px;
-  height:34px;
-  display:inline-block;
-  flex-shrink:0;
+position:relative;
+width:38px;
+height:34px;
+display:inline-block;
+flex-shrink:0;
 }
 
 .acceptor-mark span{
-  position:absolute;
-  bottom:0;
-  width:12px;
-  height:34px;
-  border-radius:3px;
-  background:var(--cream);
-  transform-origin:bottom center;
+position:absolute;
+bottom:0;
+width:12px;
+height:34px;
+border-radius:3px;
+background:var(–cream);
+transform-origin:bottom center;
 }
 
 .acceptor-mark span:first-child{
-  left:7px;
-  transform:skewX(-30deg);
+left:7px;
+transform:skewX(-30deg);
 }
 
 .acceptor-mark span:last-child{
-  right:7px;
-  height:24px;
-  transform:skewX(30deg);
+right:7px;
+height:24px;
+transform:skewX(30deg);
 }
 
 .acceptor-word{
-  font-size:24px;
-  font-weight:300;
-  letter-spacing:-0.055em;
-  color:rgba(230,235,246,.92);
+font-size:24px;
+font-weight:300;
+letter-spacing:-0.055em;
+color:rgba(230,235,246,.92);
 }
 
 .acceptor-word span{
-  font-weight:500;
-  letter-spacing:-0.04em;
+font-weight:500;
+letter-spacing:-0.04em;
 }
 
-/* Progress bar — site's cream/blue palette */
+/* Progress bar — site’s cream/blue palette */
 .progress-wrap { display: flex; align-items: center; gap: 12px; min-width: 200px; }
 .progress-label {
-  font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
-  color: var(--cream-soft); white-space: nowrap; font-variant-numeric: tabular-nums;
+font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
+color: var(–cream-soft); white-space: nowrap; font-variant-numeric: tabular-nums;
 }
 .progress-bar {
-  flex: 1; height: 2px; border-radius: 0;
-  background: var(--line); overflow: hidden;
+flex: 1; height: 2px; border-radius: 0;
+background: var(–line); overflow: hidden;
 }
 .progress-fill {
-  height: 100%; width: 0%;
-  background: linear-gradient(90deg, var(--orange), var(--peach));
-  border-radius: 0;
-  transition: width 0.45s cubic-bezier(0.22,1,0.36,1);
+height: 100%; width: 0%;
+background: linear-gradient(90deg, var(–orange), var(–peach));
+border-radius: 0;
+transition: width 0.45s cubic-bezier(0.22,1,0.36,1);
 }
 
 /* ── Stage ── */
 .stage {
-  position: fixed; inset: 0; z-index: 1;
-  display: flex; align-items: center; justify-content: center;
-  padding-top: calc(80px + env(safe-area-inset-top));
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
-  padding-left: max(40px, env(safe-area-inset-left));
-  padding-right: max(40px, env(safe-area-inset-right));
+position: fixed; inset: 0; z-index: 1;
+display: flex; align-items: center; justify-content: center;
+padding-top: calc(80px + env(safe-area-inset-top));
+padding-bottom: calc(80px + env(safe-area-inset-bottom));
+padding-left: max(40px, env(safe-area-inset-left));
+padding-right: max(40px, env(safe-area-inset-right));
 }
 
 .screen {
-  position: absolute; width: 100%; max-width: 620px;
-  padding-right: 2px;
-  opacity: 0; pointer-events: none;
-  transform: translateX(48px) scale(var(--fit, 1));
-  transform-origin: center center;
-  will-change: transform;
-  transition: opacity 0.45s cubic-bezier(0.22,1,0.36,1),
-              transform 0.45s cubic-bezier(0.22,1,0.36,1);
-  scrollbar-width: thin;
-  scrollbar-color: var(--line) transparent;
+position: absolute; width: 100%; max-width: 620px;
+padding-right: 2px;
+opacity: 0; pointer-events: none;
+transform: translateX(48px) scale(var(–fit, 1));
+transform-origin: center center;
+will-change: transform;
+transition: opacity 0.45s cubic-bezier(0.22,1,0.36,1),
+transform 0.45s cubic-bezier(0.22,1,0.36,1);
+scrollbar-width: thin;
+scrollbar-color: var(–line) transparent;
 }
 .screen::-webkit-scrollbar { width: 4px; }
-.screen::-webkit-scrollbar-thumb { background: var(--line); border-radius: 0; }
-.screen.active    { opacity: 1; pointer-events: all; transform: translateX(0) scale(var(--fit, 1)); }
-.screen.exit      { opacity: 0; transform: translateX(-48px) scale(var(--fit, 1)); pointer-events: none; }
-.screen.exit-back { opacity: 0; transform: translateX(48px)  scale(var(--fit, 1)); pointer-events: none; }
-.screen.enter-back{ transform: translateX(-48px) scale(var(--fit, 1)); }
+.screen::-webkit-scrollbar-thumb { background: var(–line); border-radius: 0; }
+.screen.active    { opacity: 1; pointer-events: all; transform: translateX(0) scale(var(–fit, 1)); }
+.screen.exit      { opacity: 0; transform: translateX(-48px) scale(var(–fit, 1)); pointer-events: none; }
+.screen.exit-back { opacity: 0; transform: translateX(48px)  scale(var(–fit, 1)); pointer-events: none; }
+.screen.enter-back{ transform: translateX(-48px) scale(var(–fit, 1)); }
 
 /* ── Question text ── */
 .q-text {
-  font-size: clamp(32px, 4.5vw, 52px);
-  font-weight: 300;
-  line-height: 1.06;
-  letter-spacing: -0.055em;
-  color: rgba(230,235,246,0.90);
-  margin-bottom: 10px;
+font-size: clamp(32px, 4.5vw, 52px);
+font-weight: 300;
+line-height: 1.06;
+letter-spacing: -0.055em;
+color: rgba(230,235,246,0.90);
+margin-bottom: 10px;
 }
 
 .q-sub {
-  font-size: 15px; color: var(--cream-soft); line-height: 1.65;
-  margin-bottom: 36px; max-width: 480px; font-weight: 400;
+font-size: 15px; color: var(–cream-soft); line-height: 1.65;
+margin-bottom: 36px; max-width: 480px; font-weight: 400;
 }
-.q-sub b { font-weight: 600; color: var(--cream); }
+.q-sub b { font-weight: 600; color: var(–cream); }
 
 /* ── Text inputs — underline style ── */
 .q-input-wrap { position: relative; margin-bottom: 24px; }
 .q-label {
-  display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
-  text-transform: uppercase; color: var(--cream-faint); margin-bottom: 4px;
+display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
+text-transform: uppercase; color: var(–cream-faint); margin-bottom: 4px;
 }
 .q-input {
-  width: 100%; background: transparent; border: none;
-  border-bottom: 1px solid var(--frame);
-  font-family: var(--sans); font-size: clamp(24px, 3vw, 36px);
-  color: var(--cream); padding: 12px 0; outline: none;
-  transition: border-color 0.2s;
-  caret-color: var(--peach);
+width: 100%; background: transparent; border: none;
+border-bottom: 1px solid var(–frame);
+font-family: var(–sans); font-size: clamp(24px, 3vw, 36px);
+color: var(–cream); padding: 12px 0; outline: none;
+transition: border-color 0.2s;
+caret-color: var(–peach);
 }
-.q-input:focus { border-bottom-color: var(--peach); }
-.q-input::placeholder { color: var(--cream-faint); }
+.q-input:focus { border-bottom-color: var(–peach); }
+.q-input::placeholder { color: var(–cream-faint); }
 
 /* ── OTP digits ── */
 .otp-digits { display: flex; gap: 10px; margin-bottom: 8px; }
 .otp-digit {
-  width: 52px; height: 64px;
-  background: rgba(224,233,246,0.03);
-  border: 1px solid var(--line); border-radius: 0;
-  font-family: var(--sans); font-size: 28px; font-weight: 400;
-  color: var(--cream); text-align: center; outline: none;
-  transition: border-color 0.2s, background 0.2s;
-  caret-color: transparent;
+width: 52px; height: 64px;
+background: rgba(224,233,246,0.03);
+border: 1px solid var(–line); border-radius: 0;
+font-family: var(–sans); font-size: 28px; font-weight: 400;
+color: var(–cream); text-align: center; outline: none;
+transition: border-color 0.2s, background 0.2s;
+caret-color: transparent;
 }
-.otp-digit:focus { border-color: var(--peach); background: rgba(63,119,214,0.06); }
+.otp-digit:focus { border-color: var(–peach); background: rgba(63,119,214,0.06); }
 .otp-digit.filled { border-color: rgba(169,204,242,0.35); }
 
 /* ── Choice cards ── */
@@ -225,575 +225,626 @@ body {
 .choice-grid.cols-1 { grid-template-columns: 1fr; }
 
 .choice {
-  display: flex; align-items: center; gap: 14px;
-  background: rgba(224,233,246,0.03);
-  border: 1px solid var(--line);
-  border-radius: 0;
-  padding: 14px 18px; cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  font-family: var(--sans); text-align: left;
-  position: relative; overflow: hidden;
+display: flex; align-items: center; gap: 14px;
+background: rgba(224,233,246,0.03);
+border: 1px solid var(–line);
+border-radius: 0;
+padding: 14px 18px; cursor: pointer;
+transition: border-color 0.2s, background 0.2s;
+font-family: var(–sans); text-align: left;
+position: relative; overflow: hidden;
 }
 .choice:hover {
-  border-color: var(--frame);
-  background: rgba(63,119,214,0.06);
+border-color: var(–frame);
+background: rgba(63,119,214,0.06);
 }
-.choice:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; }
+.choice:focus-visible { outline: 2px solid var(–peach); outline-offset: 2px; }
 .choice.selected {
-  background: rgba(63,119,214,0.09);
-  border-color: rgba(127,166,230,0.4);
+background: rgba(63,119,214,0.09);
+border-color: rgba(127,166,230,0.4);
 }
 
 /* Left accent line on selected */
 .choice.selected::before {
-  content: '';
-  position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
-  background: linear-gradient(180deg, var(--orange), var(--peach));
+content: ‘’;
+position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+background: linear-gradient(180deg, var(–orange), var(–peach));
 }
 
 .choice-icon {
-  width: 38px; height: 38px; flex-shrink: 0;
-  background: rgba(63,119,214,0.08);
-  border: 1px solid rgba(63,119,214,0.15);
-  border-radius: 0;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; color: var(--peach);
+width: 38px; height: 38px; flex-shrink: 0;
+background: rgba(63,119,214,0.08);
+border: 1px solid rgba(63,119,214,0.15);
+border-radius: 0;
+display: flex; align-items: center; justify-content: center;
+transition: all 0.2s; color: var(–peach);
 }
 .choice.selected .choice-icon {
-  background: rgba(63,119,214,0.15);
-  border-color: rgba(127,166,230,0.3);
+background: rgba(63,119,214,0.15);
+border-color: rgba(127,166,230,0.3);
 }
 .choice-icon svg { stroke: currentColor; }
 
 .choice-text { flex: 1; }
 .choice-label {
-  font-size: 14px; font-weight: 600; color: var(--cream);
-  margin-bottom: 1px; letter-spacing: -0.01em;
+font-size: 14px; font-weight: 600; color: var(–cream);
+margin-bottom: 1px; letter-spacing: -0.01em;
 }
-.choice-sub { font-size: 12px; color: var(--cream-soft); line-height: 1.4; }
+.choice-sub { font-size: 12px; color: var(–cream-soft); line-height: 1.4; }
 
 .choice-check {
-  width: 18px; height: 18px; border-radius: 0;
-  border: 1px solid var(--line);
-  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
+width: 18px; height: 18px; border-radius: 0;
+border: 1px solid var(–line);
+flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+transition: all 0.2s;
 }
 .choice.selected .choice-check {
-  background: var(--orange); border-color: var(--orange);
+background: var(–orange); border-color: var(–orange);
 }
-.choice.selected .choice-check::after { content: '✓'; font-size: 10px; color: white; font-weight: 700; }
+.choice.selected .choice-check::after { content: ‘✓’; font-size: 10px; color: white; font-weight: 700; }
 
 /* ── Upload zone ── */
 .upload-zone {
-  border: 1.5px dashed rgba(224,233,246,0.15);
-  border-radius: 0;
-  padding: 48px 32px; text-align: center; cursor: pointer;
-  transition: all 0.25s; background: rgba(224,233,246,0.02);
-  margin-bottom: 16px; position: relative; overflow: hidden;
+border: 1.5px dashed rgba(224,233,246,0.15);
+border-radius: 0;
+padding: 48px 32px; text-align: center; cursor: pointer;
+transition: all 0.25s; background: rgba(224,233,246,0.02);
+margin-bottom: 16px; position: relative; overflow: hidden;
 }
 .upload-zone:hover, .upload-zone.drag-over {
-  border-color: rgba(127,166,230,0.4);
-  background: rgba(63,119,214,0.05);
+border-color: rgba(127,166,230,0.4);
+background: rgba(63,119,214,0.05);
 }
-.upload-zone:focus-visible { outline: 2px solid var(--peach); outline-offset: 3px; }
+.upload-zone:focus-visible { outline: 2px solid var(–peach); outline-offset: 3px; }
 .upload-icon {
-  width: 48px; height: 48px; border-radius: 0;
-  margin: 0 auto 16px;
-  background: rgba(63,119,214,0.08);
-  border: 1px solid rgba(63,119,214,0.2);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--peach);
+width: 48px; height: 48px; border-radius: 0;
+margin: 0 auto 16px;
+background: rgba(63,119,214,0.08);
+border: 1px solid rgba(63,119,214,0.2);
+display: flex; align-items: center; justify-content: center;
+color: var(–peach);
 }
 .upload-icon svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 1.5; fill: none; }
 .upload-title {
-  font-size: 18px; font-weight: 600; letter-spacing: -0.02em;
-  color: var(--cream); margin-bottom: 8px;
+font-size: 18px; font-weight: 600; letter-spacing: -0.02em;
+color: var(–cream); margin-bottom: 8px;
 }
-.upload-sub { font-size: 13px; color: var(--cream-soft); line-height: 1.65; }
-.upload-formats { font-size: 11px; color: var(--cream-faint); margin-top: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+.upload-sub { font-size: 13px; color: var(–cream-soft); line-height: 1.65; }
+.upload-formats { font-size: 11px; color: var(–cream-faint); margin-top: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
 input#fileInput { display: none; }
 
 /* File chips */
 .file-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 .file-chip {
-  display: flex; align-items: center; gap: 8px;
-  background: rgba(159,217,180,0.08); border: 1px solid rgba(159,217,180,0.22);
-  border-radius: 0; padding: 6px 12px 6px 10px;
-  font-family: var(--sans); font-size: 12px; color: var(--green);
+display: flex; align-items: center; gap: 8px;
+background: rgba(159,217,180,0.08); border: 1px solid rgba(159,217,180,0.22);
+border-radius: 0; padding: 6px 12px 6px 10px;
+font-family: var(–sans); font-size: 12px; color: var(–green);
 }
-.file-chip.parsed { background: rgba(63,119,214,0.08); border-color: rgba(127,166,230,0.25); color: var(--peach); }
+.file-chip.parsed { background: rgba(63,119,214,0.08); border-color: rgba(127,166,230,0.25); color: var(–peach); }
 .file-chip svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; }
 .file-chip-remove {
-  background: none; border: none; cursor: pointer; color: currentColor;
-  opacity: 0.5; padding: 4px; margin: -4px -2px -4px 2px;
-  line-height: 1; font-size: 15px; transition: opacity 0.15s;
+background: none; border: none; cursor: pointer; color: currentColor;
+opacity: 0.5; padding: 4px; margin: -4px -2px -4px 2px;
+line-height: 1; font-size: 15px; transition: opacity 0.15s;
 }
 .file-chip-remove:hover { opacity: 1; }
 
-/* ── Primary CTA button — matches site's .btn.btn-cream exactly ── */
+/* ── Primary CTA button — matches site’s .btn.btn-cream exactly ── */
 .cta {
-  display: inline-flex; align-items: center; justify-content: space-between;
-  gap: 32px; min-width: 210px; height: 56px;
-  font-family: var(--sans); font-size: 15px; font-weight: 600;
-  letter-spacing: -0.01em; padding: 0 24px;
-  background: var(--btn); color: var(--ink);
-  border: 1px solid transparent; border-radius: 0;
-  cursor: pointer; text-decoration: none;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  position: relative; overflow: hidden;
+display: inline-flex; align-items: center; justify-content: space-between;
+gap: 32px; min-width: 210px; height: 56px;
+font-family: var(–sans); font-size: 15px; font-weight: 600;
+letter-spacing: -0.01em; padding: 0 24px;
+background: var(–btn); color: var(–ink);
+border: 1px solid transparent; border-radius: 0;
+cursor: pointer; text-decoration: none;
+transition: transform 0.2s ease, opacity 0.2s ease;
+position: relative; overflow: hidden;
 }
 .cta:hover { transform: translateY(-2px); opacity: 0.92; }
 .cta:active { transform: translateY(0); }
-.cta:focus-visible { outline: 2px solid var(--peach); outline-offset: 3px; }
+.cta:focus-visible { outline: 2px solid var(–peach); outline-offset: 3px; }
 .cta:disabled { opacity: 0.28; cursor: not-allowed; transform: none; }
-.cta svg { width: 20px; height: 20px; stroke: var(--ink); stroke-width: 2.1; fill: none; flex-shrink: 0; }
+.cta svg { width: 20px; height: 20px; stroke: var(–ink); stroke-width: 2.1; fill: none; flex-shrink: 0; }
 
 .cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 
 /* Ghost / text link */
 .skip-link {
-  font-family: var(--sans); font-size: 13px; color: var(--cream-faint);
-  background: none; border: none; cursor: pointer;
-  text-decoration: underline; text-underline-offset: 3px;
-  transition: color 0.15s;
+font-family: var(–sans); font-size: 13px; color: var(–cream-faint);
+background: none; border: none; cursor: pointer;
+text-decoration: underline; text-underline-offset: 3px;
+transition: color 0.15s;
 }
-.skip-link:hover { color: var(--cream-soft); }
-.skip-link:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; border-radius: 0; }
+.skip-link:hover { color: var(–cream-soft); }
+.skip-link:focus-visible { outline: 2px solid var(–peach); outline-offset: 2px; border-radius: 0; }
 
 /* Status messages */
-.status-msg { font-family: var(--sans); font-size: 13px; margin-top: 10px; min-height: 20px; line-height: 1.5; }
+.status-msg { font-family: var(–sans); font-size: 13px; margin-top: 10px; min-height: 20px; line-height: 1.5; }
 .status-msg.error   { color: #E88A8A; }
-.status-msg.success { color: var(--green); display: flex; align-items: center; gap: 6px; }
-.status-msg.info    { color: var(--cream-soft); }
+.status-msg.success { color: var(–green); display: flex; align-items: center; gap: 6px; }
+.status-msg.info    { color: var(–cream-soft); }
 
 /* ── Loading screen ── */
 .loading-screen { text-align: center; }
 .loading-ring {
-  width: 44px; height: 44px; border-radius: 50%;
-  border: 1.5px solid var(--line); border-top-color: var(--peach);
-  animation: spin 1s linear infinite; margin: 0 auto 28px;
+width: 44px; height: 44px; border-radius: 50%;
+border: 1.5px solid var(–line); border-top-color: var(–peach);
+animation: spin 1s linear infinite; margin: 0 auto 28px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-label {
-  font-size: 24px; font-weight: 300; letter-spacing: -0.05em;
-  color: rgba(230,235,246,0.90); margin-bottom: 8px;
+font-size: 24px; font-weight: 300; letter-spacing: -0.05em;
+color: rgba(230,235,246,0.90); margin-bottom: 8px;
 }
-.loading-sub { font-size: 14px; color: var(--cream-soft); }
+.loading-sub { font-size: 14px; color: var(–cream-soft); }
 .loading-steps {
-  margin-top: 28px; display: flex; flex-direction: column; gap: 4px;
-  max-width: 300px; margin-left: auto; margin-right: auto;
+margin-top: 28px; display: flex; flex-direction: column; gap: 4px;
+max-width: 300px; margin-left: auto; margin-right: auto;
 }
 .loading-step {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 13px; color: var(--cream-faint);
-  padding: 8px 12px; transition: all 0.3s; text-align: left;
+display: flex; align-items: center; gap: 10px;
+font-size: 13px; color: var(–cream-faint);
+padding: 8px 12px; transition: all 0.3s; text-align: left;
 }
-.loading-step.active { color: var(--cream); background: rgba(63,119,214,0.07); font-weight: 500; }
-.loading-step.done   { color: var(--green); }
+.loading-step.active { color: var(–cream); background: rgba(63,119,214,0.07); font-weight: 500; }
+.loading-step.done   { color: var(–green); }
 .step-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--line); flex-shrink: 0; transition: all 0.3s;
+width: 5px; height: 5px; border-radius: 50%;
+background: var(–line); flex-shrink: 0; transition: all 0.3s;
 }
-.loading-step.active .step-dot { background: var(--peach); animation: blink 1s ease infinite; }
-.loading-step.done   .step-dot { background: var(--green); }
+.loading-step.active .step-dot { background: var(–peach); animation: blink 1s ease infinite; }
+.loading-step.done   .step-dot { background: var(–green); }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
 
 /* ── Review list ── */
 .review-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 28px; }
 .review-row {
-  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
-  padding: 11px 0; border-bottom: 1px solid var(--line);
+display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+padding: 11px 0; border-bottom: 1px solid var(–line);
 }
-.review-key { font-size: 13px; color: var(--cream-soft); flex-shrink: 0; }
-.review-val { font-size: 14px; color: var(--cream); font-weight: 500; text-align: right; }
+.review-key { font-size: 13px; color: var(–cream-soft); flex-shrink: 0; }
+.review-val { font-size: 14px; color: var(–cream); font-weight: 500; text-align: right; }
 .review-edit {
-  font-size: 12px; color: var(--rose); background: none; border: none; cursor: pointer;
-  text-decoration: underline; text-underline-offset: 2px; margin-left: 10px; flex-shrink: 0;
+font-size: 12px; color: var(–rose); background: none; border: none; cursor: pointer;
+text-decoration: underline; text-underline-offset: 2px; margin-left: 10px; flex-shrink: 0;
 }
-.review-edit:hover { color: var(--cream); }
+.review-edit:hover { color: var(–cream); }
 
 /* Info / note box */
 .reg-note {
-  display: flex; gap: 12px; align-items: flex-start;
-  background: rgba(63,119,214,0.06); border: 1px solid rgba(63,119,214,0.18);
-  border-radius: 0; padding: 14px 16px; margin-bottom: 28px;
+display: flex; gap: 12px; align-items: flex-start;
+background: rgba(63,119,214,0.06); border: 1px solid rgba(63,119,214,0.18);
+border-radius: 0; padding: 14px 16px; margin-bottom: 28px;
 }
-.reg-note svg { width: 16px; height: 16px; stroke: var(--peach); stroke-width: 1.8; fill: none; flex-shrink: 0; margin-top: 1px; }
-.reg-note-text { font-size: 12.5px; color: var(--cream-soft); line-height: 1.6; }
-.reg-note-text b { color: var(--cream); font-weight: 600; }
+.reg-note svg { width: 16px; height: 16px; stroke: var(–peach); stroke-width: 1.8; fill: none; flex-shrink: 0; margin-top: 1px; }
+.reg-note-text { font-size: 12.5px; color: var(–cream-soft); line-height: 1.6; }
+.reg-note-text b { color: var(–cream); font-weight: 600; }
 
 /* ── Floating Back / Keyboard hint ── */
 .back-btn {
-  position: fixed;
-  bottom: calc(36px + env(safe-area-inset-bottom));
-  left: max(40px, env(safe-area-inset-left));
-  z-index: 100;
-  background: rgba(15,18,24,0.7); backdrop-filter: blur(8px);
-  border: 1px solid var(--line); border-radius: 0;
-  padding: 9px 18px; font-family: var(--sans); font-size: 13px;
-  color: var(--cream-soft); cursor: pointer; transition: all 0.2s;
-  display: flex; align-items: center; gap: 6px;
+position: fixed;
+bottom: calc(36px + env(safe-area-inset-bottom));
+left: max(40px, env(safe-area-inset-left));
+z-index: 100;
+background: rgba(15,18,24,0.7); backdrop-filter: blur(8px);
+border: 1px solid var(–line); border-radius: 0;
+padding: 9px 18px; font-family: var(–sans); font-size: 13px;
+color: var(–cream-soft); cursor: pointer; transition: all 0.2s;
+display: flex; align-items: center; gap: 6px;
 }
-.back-btn:hover { border-color: var(--frame); color: var(--cream); }
-.back-btn:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; }
+.back-btn:hover { border-color: var(–frame); color: var(–cream); }
+.back-btn:focus-visible { outline: 2px solid var(–peach); outline-offset: 2px; }
 .back-btn svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; }
 
 .key-hint {
-  position: fixed;
-  bottom: calc(36px + env(safe-area-inset-bottom));
-  right: max(40px, env(safe-area-inset-right));
-  z-index: 100;
-  font-family: var(--sans); font-size: 12px; color: var(--cream-faint);
-  display: flex; align-items: center; gap: 6px;
+position: fixed;
+bottom: calc(36px + env(safe-area-inset-bottom));
+right: max(40px, env(safe-area-inset-right));
+z-index: 100;
+font-family: var(–sans); font-size: 12px; color: var(–cream-faint);
+display: flex; align-items: center; gap: 6px;
 }
 .key {
-  display: inline-flex; align-items: center; justify-content: center;
-  background: rgba(224,233,246,0.05); border: 1px solid var(--line);
-  border-radius: 0; padding: 2px 7px; font-size: 11px;
+display: inline-flex; align-items: center; justify-content: center;
+background: rgba(224,233,246,0.05); border: 1px solid var(–line);
+border-radius: 0; padding: 2px 7px; font-size: 11px;
 }
 
 /* ── Confirm screen numbered steps ── */
 .confirm-step {
-  display: flex; gap: 16px; align-items: flex-start;
-  padding: 16px 0; border-bottom: 1px solid var(--line);
+display: flex; gap: 16px; align-items: flex-start;
+padding: 16px 0; border-bottom: 1px solid var(–line);
 }
 .confirm-step:last-child { border-bottom: none; }
 .confirm-num {
-  width: 24px; height: 24px; border-radius: 0;
-  background: rgba(63,119,214,0.10); border: 1px solid rgba(63,119,214,0.22);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600; color: var(--peach);
-  flex-shrink: 0; margin-top: 2px;
+width: 24px; height: 24px; border-radius: 0;
+background: rgba(63,119,214,0.10); border: 1px solid rgba(63,119,214,0.22);
+display: flex; align-items: center; justify-content: center;
+font-size: 11px; font-weight: 600; color: var(–peach);
+flex-shrink: 0; margin-top: 2px;
 }
 .confirm-title {
-  font-size: 14px; font-weight: 600; color: var(--cream);
-  margin-bottom: 4px; letter-spacing: -0.01em;
+font-size: 14px; font-weight: 600; color: var(–cream);
+margin-bottom: 4px; letter-spacing: -0.01em;
 }
-.confirm-body { font-size: 13px; color: var(--cream-soft); line-height: 1.6; }
+.confirm-body { font-size: 13px; color: var(–cream-soft); line-height: 1.6; }
 .beta-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(231,178,122,0.10); border: 1px solid rgba(231,178,122,0.25);
-  border-radius: 0; padding: 3px 8px; font-size: 11px; font-weight: 600;
-  color: var(--gold); margin-bottom: 6px;
+display: inline-flex; align-items: center; gap: 5px;
+background: rgba(231,178,122,0.10); border: 1px solid rgba(231,178,122,0.25);
+border-radius: 0; padding: 3px 8px; font-size: 11px; font-weight: 600;
+color: var(–gold); margin-bottom: 6px;
 }
+
+/* ── Dropdown fields (sMoreDetails) — same underline language as .q-input,
+styled compact so several can stack on one screen ── */
+.q-select-wrap { margin-bottom: 20px; }
+.q-select {
+width: 100%;
+background: rgba(224,233,246,0.03);
+border: none;
+border-bottom: 1px solid var(–frame);
+border-radius: 0;
+font-family: var(–sans);
+font-size: 15px;
+color: var(–cream);
+padding: 12px 28px 12px 2px;
+outline: none;
+appearance: none;
+-webkit-appearance: none;
+cursor: pointer;
+background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ viewBox=‘0 0 24 24’ fill=‘none’ stroke=’%23A9CCF2’ stroke-width=‘2’ stroke-linecap=‘round’ stroke-linejoin=‘round’%3E%3Cpolyline points=‘6 9 12 15 18 9’/%3E%3C/svg%3E”);
+background-repeat: no-repeat;
+background-position: right 0 center;
+background-size: 16px;
+transition: border-color 0.2s;
+}
+.q-select:focus { border-bottom-color: var(–peach); }
+.q-select option { background: #14161A; color: var(–cream); }
+
+/* ── Success-page data reveal (sConfirm) — either the merchant’s own
+effective rate (when a statement was uploaded) or a fallback industry
+stat (when it wasn’t), in the same visual slot either way ── */
+.confirm-reveal { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(–line); }
+.confirm-reveal-eyebrow {
+font-size: 11px; font-weight: 500; letter-spacing: 0.10em; text-transform: uppercase;
+color: var(–peach); margin-bottom: 10px;
+}
+.confirm-reveal-stat {
+font-size: clamp(32px, 4vw, 44px); font-weight: 500; color: var(–cream);
+letter-spacing: -0.03em; margin-bottom: 6px; line-height: 1;
+}
+.confirm-reveal-sub { font-size: 14px; color: var(–cream-soft); line-height: 1.55; margin-bottom: 18px; max-width: 440px; }
+.confirm-reveal-bars { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; max-width: 360px; }
+.cr-bar-row { display: grid; grid-template-columns: 84px 1fr 52px; align-items: center; gap: 10px; }
+.cr-bar-label { font-size: 12px; color: var(–cream-faint); }
+.cr-bar-label.you { color: var(–cream); font-weight: 600; }
+.cr-bar-track { height: 7px; background: var(–line); border-radius: 0; overflow: hidden; }
+.cr-bar-fill { height: 100%; border-radius: 0; }
+.cr-bar-fill.you { background: var(–orange); }
+.cr-bar-fill.typical { background: rgba(169,204,242,0.35); }
+.cr-bar-val { font-size: 12px; color: var(–cream-soft); text-align: right; }
+.confirm-reveal-note { font-size: 12.5px; color: var(–cream-faint); line-height: 1.55; max-width: 440px; }
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
-  .chrome {
-    height:62px;
-  }
-  .chrome-inner {
-    width:100%;
-    max-width:none;
-    height:62px;
-    padding-left:max(22px, env(safe-area-inset-left));
-    padding-right:max(22px, env(safe-area-inset-right));
-  }
-  .progress-wrap { min-width: 96px; }
-  .progress-label { display: none; }
+.chrome {
+height:62px;
+}
+.chrome-inner {
+width:100%;
+max-width:none;
+height:62px;
+padding-left:max(22px, env(safe-area-inset-left));
+padding-right:max(22px, env(safe-area-inset-right));
+}
+.progress-wrap { min-width: 96px; }
+.progress-label { display: none; }
 
-  .stage {
-    align-items: flex-start;
-    padding-top: calc(72px + env(safe-area-inset-top));
-    padding-bottom: calc(18px + env(safe-area-inset-bottom));
-    padding-left: 0; padding-right: 0;
-  }
-  .screen {
-    --fit: 1 !important;
-    box-sizing: border-box;
-    padding-left: max(22px, env(safe-area-inset-left));
-    padding-right: max(22px, env(safe-area-inset-right));
-    max-height: calc(100dvh - 86px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    overflow-y: auto; overflow-x: hidden;
-  }
-  .q-text { font-size: 28px; margin-bottom: 6px; }
-  .q-sub  { font-size: 14px; margin-bottom: 16px; }
-  .choice-grid { gap: 6px; margin-bottom: 16px; }
-  .q-text + .choice-grid { margin-top: 24px; }
-  .choice { padding: 11px 14px; gap: 12px; }
-  .choice-icon { width: 34px; height: 34px; }
-  .choice-label { font-size: 14px; }
-  .cta-row { width: 100%; margin-top: 4px; }
-  .cta { width: 100%; justify-content: center; padding: 14px 22px; min-width: 0; }
-  .back-btn { left: max(22px, env(safe-area-inset-left)); bottom: calc(16px + env(safe-area-inset-bottom)); }
-  .key-hint { display: none; }
-  .choice-grid.cols-2 { grid-template-columns: 1fr; }
-  .otp-digit { width: 44px; height: 56px; font-size: 24px; }
-  .upload-zone { padding: 28px 16px; }
+.stage {
+align-items: flex-start;
+padding-top: calc(72px + env(safe-area-inset-top));
+padding-bottom: calc(18px + env(safe-area-inset-bottom));
+padding-left: 0; padding-right: 0;
+}
+.screen {
+–fit: 1 !important;
+box-sizing: border-box;
+padding-left: max(22px, env(safe-area-inset-left));
+padding-right: max(22px, env(safe-area-inset-right));
+max-height: calc(100dvh - 86px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+overflow-y: auto; overflow-x: hidden;
+}
+.q-text { font-size: 28px; margin-bottom: 6px; }
+.q-sub  { font-size: 14px; margin-bottom: 16px; }
+.choice-grid { gap: 6px; margin-bottom: 16px; }
+.q-text + .choice-grid { margin-top: 24px; }
+.choice { padding: 11px 14px; gap: 12px; }
+.choice-icon { width: 34px; height: 34px; }
+.choice-label { font-size: 14px; }
+.cta-row { width: 100%; margin-top: 4px; }
+.cta { width: 100%; justify-content: center; padding: 14px 22px; min-width: 0; }
+.back-btn { left: max(22px, env(safe-area-inset-left)); bottom: calc(16px + env(safe-area-inset-bottom)); }
+.key-hint { display: none; }
+.choice-grid.cols-2 { grid-template-columns: 1fr; }
+.otp-digit { width: 44px; height: 56px; font-size: 24px; }
+.upload-zone { padding: 28px 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.12s !important; }
-  .loading-ring { animation: spin 1s linear infinite; }
+*, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.12s !important; }
+.loading-ring { animation: spin 1s linear infinite; }
 }
 /* MOBILE OPTIMISATION — compact analyser flow */
 @media (max-width:760px){
 
-  html, body{
-    height:100%;
-    overflow:hidden;
-    background:var(--bg);
-  }
+html, body{
+height:100%;
+overflow:hidden;
+background:var(–bg);
+}
 
-  body::before,
-  body::after{
-    content:"";
-    position:fixed;
-    top:0;
-    bottom:0;
-    width:1px;
-    background:rgba(230,235,246,.08);
-    z-index:999;
-    pointer-events:none;
-  }
+body::before,
+body::after{
+content:””;
+position:fixed;
+top:0;
+bottom:0;
+width:1px;
+background:rgba(230,235,246,.08);
+z-index:999;
+pointer-events:none;
+}
 
-  body::before{ left:14px; }
-  body::after{ right:14px; }
+body::before{ left:14px; }
+body::after{ right:14px; }
 
-  .chrome{
-    height:74px;
-    background:rgba(15,18,24,.9);
-  }
+.chrome{
+height:74px;
+background:rgba(15,18,24,.9);
+}
 
-  .chrome-inner{
-    width:calc(100% - 28px);
-    height:74px;
-    padding:0 22px;
-    border-left:1px solid rgba(230,235,246,.08);
-    border-right:1px solid rgba(230,235,246,.08);
-    border-bottom:1px solid rgba(230,235,246,.08);
-  }
+.chrome-inner{
+width:calc(100% - 28px);
+height:74px;
+padding:0 22px;
+border-left:1px solid rgba(230,235,246,.08);
+border-right:1px solid rgba(230,235,246,.08);
+border-bottom:1px solid rgba(230,235,246,.08);
+}
 
-  .acceptor-word{
-    font-size:23px;
-  }
+.acceptor-word{
+font-size:23px;
+}
 
-  .acceptor-mark{
-    width:28px;
-    height:26px;
-  }
+.acceptor-mark{
+width:28px;
+height:26px;
+}
 
-  .acceptor-mark span{
-    width:9px;
-    height:26px;
-    border-radius:2.5px;
-  }
+.acceptor-mark span{
+width:9px;
+height:26px;
+border-radius:2.5px;
+}
 
-  .acceptor-mark span:first-child{ left:5px; }
-  .acceptor-mark span:last-child{
-    right:5px;
-    height:19px;
-  }
+.acceptor-mark span:first-child{ left:5px; }
+.acceptor-mark span:last-child{
+right:5px;
+height:19px;
+}
 
-  .progress-wrap{
-    min-width:82px;
-    max-width:90px;
-  }
+.progress-wrap{
+min-width:82px;
+max-width:90px;
+}
 
-  .progress-label{
-    display:none;
-  }
+.progress-label{
+display:none;
+}
 
-  .stage{
-    align-items:flex-start;
-    padding-top:calc(104px + env(safe-area-inset-top));
-    padding-bottom:calc(70px + env(safe-area-inset-bottom));
-    padding-left:0;
-    padding-right:0;
-  }
+.stage{
+align-items:flex-start;
+padding-top:calc(104px + env(safe-area-inset-top));
+padding-bottom:calc(70px + env(safe-area-inset-bottom));
+padding-left:0;
+padding-right:0;
+}
 
-  .screen{
-    --fit:1 !important;
-    width:calc(100% - 28px);
-    max-width:none;
-    max-height:calc(100dvh - 128px);
-    margin:0 auto;
-    padding:0 26px 24px;
-    overflow-y:auto;
-    overflow-x:hidden;
-  }
+.screen{
+–fit:1 !important;
+width:calc(100% - 28px);
+max-width:none;
+max-height:calc(100dvh - 128px);
+margin:0 auto;
+padding:0 26px 24px;
+overflow-y:auto;
+overflow-x:hidden;
+}
 
-  .q-text{
-    font-size:clamp(32px,8.7vw,42px);
-    line-height:1.08;
-    letter-spacing:-0.055em;
-    margin-bottom:14px;
-  }
+.q-text{
+font-size:clamp(32px,8.7vw,42px);
+line-height:1.08;
+letter-spacing:-0.055em;
+margin-bottom:14px;
+}
 
-  .q-sub{
-    font-size:15.5px;
-    line-height:1.42;
-    margin-bottom:20px;
-    max-width:330px;
-  }
+.q-sub{
+font-size:15.5px;
+line-height:1.42;
+margin-bottom:20px;
+max-width:330px;
+}
 
-  .choice-grid{
-    gap:7px;
-    margin-bottom:18px;
-  }
+.choice-grid{
+gap:7px;
+margin-bottom:18px;
+}
 
-  .choice-grid.cols-2{
-    grid-template-columns:1fr;
-  }
+.choice-grid.cols-2{
+grid-template-columns:1fr;
+}
 
-  .choice{
-    min-height:54px;
-    padding:12px 14px;
-    gap:12px;
-    background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
-    border:1px solid rgba(255,255,255,.10);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
-  }
+.choice{
+min-height:54px;
+padding:12px 14px;
+gap:12px;
+background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+border:1px solid rgba(255,255,255,.10);
+box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
 
-  .choice-icon{
-    width:34px;
-    height:34px;
-  }
+.choice-icon{
+width:34px;
+height:34px;
+}
 
-  .choice-label{
-    font-size:14px;
-  }
+.choice-label{
+font-size:14px;
+}
 
-  .choice-sub{
-    font-size:11.5px;
-    line-height:1.35;
-  }
+.choice-sub{
+font-size:11.5px;
+line-height:1.35;
+}
 
-  .choice-check{
-    width:18px;
-    height:18px;
-  }
+.choice-check{
+width:18px;
+height:18px;
+}
 
-  .q-input-wrap{
-    margin-top:22px;
-    margin-bottom:22px;
-  }
+.q-input-wrap{
+margin-top:22px;
+margin-bottom:22px;
+}
 
-  .q-label{
-    font-size:10.5px;
-    margin-bottom:8px;
-  }
+.q-label{
+font-size:10.5px;
+margin-bottom:8px;
+}
 
-  .q-input{
-    font-size:clamp(24px,7vw,32px);
-    padding:11px 0;
-  }
+.q-input{
+font-size:clamp(24px,7vw,32px);
+padding:11px 0;
+}
 
-  .cta-row{
-    width:100%;
-    margin-top:14px;
-    gap:8px;
-  }
+.cta-row{
+width:100%;
+margin-top:14px;
+gap:8px;
+}
 
-  .cta{
-    width:100%;
-    height:52px;
-    min-width:0;
-    justify-content:space-between;
-    padding:0 20px;
-    font-size:14px;
-  }
+.cta{
+width:100%;
+height:52px;
+min-width:0;
+justify-content:space-between;
+padding:0 20px;
+font-size:14px;
+}
 
-  .skip-link{
-    width:100%;
-    text-align:center;
-    font-size:13px;
-    padding:8px 0;
-  }
+.skip-link{
+width:100%;
+text-align:center;
+font-size:13px;
+padding:8px 0;
+}
 
-  .upload-zone{
-    padding:30px 18px;
-    margin-top:18px;
-    margin-bottom:16px;
-  }
+.upload-zone{
+padding:30px 18px;
+margin-top:18px;
+margin-bottom:16px;
+}
 
-  .upload-icon{
-    width:42px;
-    height:42px;
-    margin-bottom:12px;
-  }
+.upload-icon{
+width:42px;
+height:42px;
+margin-bottom:12px;
+}
 
-  .upload-title{
-    font-size:18px;
-  }
+.upload-title{
+font-size:18px;
+}
 
-  .upload-sub{
-    font-size:13px;
-  }
+.upload-sub{
+font-size:13px;
+}
 
-  .upload-formats{
-    font-size:10px;
-    margin-top:8px;
-  }
+.upload-formats{
+font-size:10px;
+margin-top:8px;
+}
 
-  .otp-digits{
-    gap:6px;
-    justify-content:space-between;
-  }
+.otp-digits{
+gap:6px;
+justify-content:space-between;
+}
 
-  .otp-digit{
-    width:42px;
-    height:54px;
-    font-size:23px;
-  }
+.otp-digit{
+width:42px;
+height:54px;
+font-size:23px;
+}
 
-  .status-msg{
-    font-size:12.5px;
-    margin-top:8px;
-  }
+.status-msg{
+font-size:12.5px;
+margin-top:8px;
+}
 
-  .review-row{
-    padding:10px 0;
-  }
+.review-row{
+padding:10px 0;
+}
 
-  .confirm-step{
-    padding:12px 0;
-  }
+.confirm-step{
+padding:12px 0;
+}
 
-  .back-btn{
-    left:28px;
-    bottom:calc(20px + env(safe-area-inset-bottom));
-    padding:8px 14px;
-    border-radius:0;
-    background:rgba(15,18,24,.82);
-  }
+.back-btn{
+left:28px;
+bottom:calc(20px + env(safe-area-inset-bottom));
+padding:8px 14px;
+border-radius:0;
+background:rgba(15,18,24,.82);
+}
 
-  .key-hint{
-    display:none !important;
-  }
+.key-hint{
+display:none !important;
+}
 }
 
 @media (max-width:480px){
 
-  .screen{
-    padding-left:24px;
-    padding-right:24px;
-  }
+.screen{
+padding-left:24px;
+padding-right:24px;
+}
 
-  .q-text{
-    font-size:clamp(30px,8.9vw,39px);
-  }
+.q-text{
+font-size:clamp(30px,8.9vw,39px);
+}
 
-  .q-sub{
-    font-size:14.5px;
-  }
+.q-sub{
+font-size:14.5px;
+}
 
-  .choice{
-    min-height:50px;
-    padding:10px 13px;
-  }
+.choice{
+min-height:50px;
+padding:10px 13px;
+}
 
-  .choice-icon{
-    width:31px;
-    height:31px;
-  }
+.choice-icon{
+width:31px;
+height:31px;
+}
 
-  .otp-digit{
-    width:39px;
-    height:52px;
-  }
+.otp-digit{
+width:39px;
+height:52px;
+}
 }
 </style>
+
 </head>
 <body>
 
@@ -825,6 +876,7 @@ input#fileInput { display: none; }
 <div class="stage">
 
   <!-- s5: Industry -->
+
   <div class="screen active" id="s5">
     <div class="q-text">What kind of<br>business are you?</div>
     <div class="choice-grid cols-2">
@@ -840,6 +892,7 @@ input#fileInput { display: none; }
   </div>
 
   <!-- s6: Channels -->
+
   <div class="screen" id="s6">
     <div class="q-text">How do you<br>take payments?</div>
     <div class="q-sub">Select all that apply.</div>
@@ -859,11 +912,17 @@ input#fileInput { display: none; }
   </div>
 
   <!-- s1: Name -->
+
   <div class="screen" id="s1">
-    <div class="q-text">What's your name?</div>
+    <div class="q-text">Let's start with<br>the basics.</div>
+    <div class="q-sub">Your report is prepared for the business, not just you.</div>
     <div class="q-input-wrap">
       <label class="q-label" for="inp-name">Full name</label>
-      <input class="q-input" type="text" id="inp-name" placeholder="Jane Smith" autocomplete="name" aria-label="Your full name" oninput="validateName()">
+      <input class="q-input" type="text" id="inp-name" placeholder="Jane Smith" autocomplete="name" aria-label="Your full name" oninput="validateContact1()">
+    </div>
+    <div class="q-input-wrap">
+      <label class="q-label" for="inp-company">Company name</label>
+      <input class="q-input" type="text" id="inp-company" placeholder="Riverside Hospitality Group" autocomplete="organization" aria-label="Your company name" oninput="validateContact1()">
     </div>
     <div class="cta-row">
       <button class="cta" id="ctaS1" onclick="next()" disabled>
@@ -873,29 +932,18 @@ input#fileInput { display: none; }
     </div>
   </div>
 
-  <!-- sCompany: Company name -->
-  <div class="screen" id="sCompany">
-    <div class="q-text">What's your<br>company called?</div>
-    <div class="q-sub">Your report is prepared for the business, not just you — so we'll need its name.</div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-company">Company name</label>
-      <input class="q-input" type="text" id="inp-company" placeholder="Riverside Hospitality Group" autocomplete="organization" aria-label="Your company name" oninput="validateCompany()">
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaCompany" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
-  </div>
+  <!-- s2: Email + Mobile -->
 
-  <!-- s2: Email -->
   <div class="screen" id="s2">
-    <div class="q-text">Where should we<br>send your report?</div>
-    <div class="q-sub">We'll email your completed review here once it's verified.</div>
+    <div class="q-text">How can we<br>reach you?</div>
+    <div class="q-sub">We'll email your completed review here once it's verified, and use your mobile if we need to follow up.</div>
     <div class="q-input-wrap">
       <label class="q-label" for="inp-email">Email</label>
-      <input class="q-input" type="email" id="inp-email" placeholder="you@company.com" autocomplete="email" aria-label="Your email address" oninput="validateEmail()">
+      <input class="q-input" type="email" id="inp-email" placeholder="you@company.com" autocomplete="email" aria-label="Your email address" oninput="validateContact2()">
+    </div>
+    <div class="q-input-wrap">
+      <label class="q-label" for="inp-phone">Mobile</label>
+      <input class="q-input" type="tel" id="inp-phone" placeholder="04XX XXX XXX" autocomplete="tel" aria-label="Your mobile number" oninput="validateContact2()">
     </div>
     <div class="cta-row">
       <button class="cta" id="ctaS2" onclick="sendOtp()" disabled>
@@ -908,6 +956,7 @@ input#fileInput { display: none; }
   </div>
 
   <!-- s3: OTP -->
+
   <div class="screen" id="s3">
     <div class="q-text">Check your<br>inbox.</div>
     <div class="q-sub" id="otpSub">We sent a 6-digit code to your email.</div>
@@ -929,22 +978,8 @@ input#fileInput { display: none; }
     </div>
   </div>
 
-  <!-- s4: Mobile -->
-  <div class="screen" id="s4">
-    <div class="q-text">What's your<br>mobile number?</div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-phone">Mobile</label>
-      <input class="q-input" type="tel" id="inp-phone" placeholder="04XX XXX XXX" autocomplete="tel" aria-label="Your mobile number" oninput="validatePhone()">
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaS4" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
-  </div>
-
   <!-- s0: Upload -->
+
   <div class="screen" id="s0">
     <div class="q-text">Upload your<br>merchant statements.</div>
     <div class="q-sub">The last 3 months gives the clearest picture — upload a PDF statement, or a clear photo of each.</div>
@@ -971,65 +1006,29 @@ input#fileInput { display: none; }
     </div>
   </div>
 
-  <!-- sProvider: Current provider(s) -->
-  <div class="screen" id="sProvider">
-    <div class="q-text">Who handles your<br>payments today?</div>
-    <div class="q-sub">Pick any that apply — plenty of businesses run different providers for in-store and online — and add anything not listed.</div>
-    <div class="choice-grid cols-2">
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'tyro')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Tyro</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'square')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Square</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'stripe')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Stripe</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'zeller')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Zeller</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'commbank')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">CBA</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'nab')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">NAB</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'westpac')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Westpac</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'anz')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">ANZ Worldline</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'adyen')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Adyen</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'paypal')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">PayPal / Braintree</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'fatzebra')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Fat Zebra</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggleProvider(this,'globalpayments')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Global Payments (Worldpay)</div></div><div class="choice-check"></div></div>
-    </div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-provider-other">Other provider(s)</label>
-      <input class="q-input" style="font-size:22px" type="text" id="inp-provider-other" placeholder="Type any not listed…" aria-label="Other providers" oninput="onProviderOther()">
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaProvider" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-      <button class="skip-link" onclick="data.providers=[];data.providerOther='';next()">I'm not sure</button>
-    </div>
-  </div>
+  <!-- sOtherVolume: catches volume not captured in the uploaded statement(s) — only shown when a statement WAS uploaded -->
 
-  <!-- sPaymentTypes: Payment types -->
-  <div class="screen" id="sPaymentTypes">
-    <div class="q-text">Which payment types<br>do you accept?</div>
-    <div class="q-sub">Select everything customers can currently pay with. This shows where you're covered — and where you might be missing a low-cost or in-demand option.</div>
-    <div class="choice-grid cols-2">
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','visa')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Visa</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','mastercard')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Mastercard</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','eftpos')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">eftpos</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','amex')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">American Express</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','unionpay')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">UnionPay</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','wallets')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Apple Pay / Google Pay</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','bnpl')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Buy Now Pay Later</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','paypal')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">PayPal</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','payto')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">PayTo</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','bpay')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">BPAY</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','dd_bank')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Direct debit — bank account</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','dd_card')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Direct debit — card</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'paymentTypes','eft')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">EFT / bank transfer</div></div><div class="choice-check"></div></div>
+  <div class="screen" id="sOtherVolume">
+    <div class="q-text">Does this cover<br>all your card payments?</div>
+    <div class="q-sub">If another provider handles payments this statement doesn't show — a separate online gateway, for example — let us know so your report reflects your whole business.</div>
+    <div class="choice-grid cols-1">
+      <div class="choice" tabindex="0" role="button" onclick="pickOtherVolume(this,'no')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Yes, this is everything</div></div><div class="choice-check"></div></div>
+      <div class="choice" tabindex="0" role="button" onclick="pickOtherVolume(this,'yes')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">No, I have other payment volume not shown here</div></div><div class="choice-check"></div></div>
     </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaPaymentTypes" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
+    <div id="totalVolumeFollowup" style="display:none">
+      <div class="q-sub" style="margin-top:20px">Roughly what's your total card volume across the whole business, including what's not shown here?</div>
+      <div class="choice-grid cols-1">
+        <div class="choice" tabindex="0" role="button" onclick="pickTotalVolume(this,'under10k')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Under $10k / month</div></div><div class="choice-check"></div></div>
+        <div class="choice" tabindex="0" role="button" onclick="pickTotalVolume(this,'10to50k')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$10k – $50k / month</div></div><div class="choice-check"></div></div>
+        <div class="choice" tabindex="0" role="button" onclick="pickTotalVolume(this,'50to250k')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$50k – $250k / month</div></div><div class="choice-check"></div></div>
+        <div class="choice" tabindex="0" role="button" onclick="pickTotalVolume(this,'250kto1m')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$250k – $1M / month</div></div><div class="choice-check"></div></div>
+        <div class="choice" tabindex="0" role="button" onclick="pickTotalVolume(this,'over1m')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$1M+ / month</div></div><div class="choice-check"></div></div>
+      </div>
     </div>
   </div>
 
   <!-- s6b: eCommerce platform -->
+
   <div class="screen" id="s6b">
     <div class="q-text">Which eCommerce<br>platform do you use?</div>
     <div class="choice-grid cols-1">
@@ -1043,6 +1042,7 @@ input#fileInput { display: none; }
   </div>
 
   <!-- s6c: Terminal setup -->
+
   <div class="screen" id="s6c">
     <div class="q-text">How are your<br>terminals set up?</div>
     <div class="choice-grid cols-1">
@@ -1051,30 +1051,8 @@ input#fileInput { display: none; }
     </div>
   </div>
 
-  <!-- s6f: Pricing model -->
-  <div class="screen" id="s6f">
-    <div class="q-text">What pricing model<br>are you on?</div>
-    <div class="q-sub">Your statement will confirm this, but knowing upfront helps us frame the analysis correctly.</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'pricingModel','blended')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Blended</div><div class="choice-sub">One flat rate for all card types</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'pricingModel','ic_plus')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Interchange Plus (IC+)</div><div class="choice-sub">Interchange cost plus a fixed processor margin</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'pricingModel','ic_plusplus')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Interchange++ (IC++)</div><div class="choice-sub">Every component itemised separately</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'pricingModel','unknown')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">I don't know</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
-
-  <!-- s6e: LCR status -->
-  <div class="screen" id="s6e">
-    <div class="q-text">Is Least Cost Routing<br>turned on?</div>
-    <div class="q-sub">LCR sends contactless debit down the cheapest network. Many merchants have it switched off without realising.</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'lcrStatus','on')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Yes, it's on</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'lcrStatus','off')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">No, it's off</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'lcrStatus','unknown')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">I don't know</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
-
   <!-- s6g: Surcharge -->
+
   <div class="screen" id="s6g">
     <div class="q-text">Do you pass on<br>the card surcharge?</div>
     <div class="q-sub">Whether you add a card fee at checkout, or absorb the cost yourself.</div>
@@ -1086,45 +1064,102 @@ input#fileInput { display: none; }
     </div>
   </div>
 
-  <!-- sVolume: Monthly card volume -->
-  <div class="screen" id="sVolume">
-    <div class="q-text">Roughly how much<br>do you process on<br>cards each month?</div>
-    <div class="q-sub">Card turnover — this is what your savings actually scale on. A rough band is fine.</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'monthlyVolume','under10k')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Under $10k / month</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'monthlyVolume','10to50k')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$10k – $50k / month</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'monthlyVolume','50to250k')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$50k – $250k / month</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'monthlyVolume','250kto1m')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$250k – $1M / month</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'monthlyVolume','over1m')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$1M+ / month</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
+  <!-- sMoreDetails: combined fallback questions — only shown when no statement was uploaded, since a
+       statement gives the AI all of these facts directly and far more accurately than a self-reported guess -->
 
-  <!-- sAtv: Average transaction value -->
-  <div class="screen" id="sAtv">
-    <div class="q-text">What's your average<br>transaction value?</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'atv','under20')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Under $20</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'atv','20to75')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$20 – $75</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'atv','75to250')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$75 – $250</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'atv','250to1000')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$250 – $1,000</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'atv','over1000')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">$1,000+</div></div><div class="choice-check"></div></div>
-    </div>
-  </div>
+  <div class="screen" id="sMoreDetails">
+    <div class="q-text">A few more<br>details.</div>
+    <div class="q-sub">With no statement to read this from, a quick best guess on each helps us frame your review.</div>
 
-  <!-- sMix: Card mix -->
-  <div class="screen" id="sMix">
-    <div class="q-text">What's your<br>card mix?</div>
-    <div class="q-sub">Roughly what your customers pay with. This drives interchange, routing savings and surcharge economics.</div>
-    <div class="choice-grid cols-1">
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'cardMix','mostly_debit')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Mostly debit</div><div class="choice-sub">Eftpos, Visa/Mastercard debit</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'cardMix','mostly_credit')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Mostly credit</div><div class="choice-sub">Including rewards / premium cards</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'cardMix','even')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Fairly even split</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'cardMix','lots_intl')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">A lot of international / Amex</div><div class="choice-sub">Tourists, overseas customers</div></div><div class="choice-check"></div></div>
-      <div class="choice" tabindex="0" role="button" onclick="pick(this,'cardMix','unknown')" onkeydown="kbd(event)"><div class="choice-text"><div class="choice-label">Not sure</div></div><div class="choice-check"></div></div>
-    </div>
+```
+<div class="q-select-wrap">
+  <label class="q-label" for="sel-provider">Current provider</label>
+  <select class="q-select" id="sel-provider" aria-label="Current payments provider" onchange="onMoreDetailsChange()">
+    <option value="">Select…</option>
+    <option value="tyro">Tyro</option>
+    <option value="square">Square</option>
+    <option value="stripe">Stripe</option>
+    <option value="zeller">Zeller</option>
+    <option value="major_bank">A major bank (CBA / NAB / Westpac / ANZ)</option>
+    <option value="fatzebra">Fat Zebra</option>
+    <option value="not_sure">Not sure</option>
+    <option value="other">Other</option>
+  </select>
+</div>
+<div class="q-select-wrap" id="providerOtherWrap" style="display:none">
+  <label class="q-label" for="inp-provider-other">Provider name</label>
+  <input class="q-input" style="font-size:18px" type="text" id="inp-provider-other" placeholder="Type the provider…" aria-label="Other provider" oninput="onMoreDetailsChange()">
+</div>
+
+<div class="q-select-wrap">
+  <label class="q-label" for="sel-pricing">Pricing model</label>
+  <select class="q-select" id="sel-pricing" aria-label="Pricing model" onchange="onMoreDetailsChange()">
+    <option value="">Select…</option>
+    <option value="blended">Blended — one flat rate for all cards</option>
+    <option value="ic_plus">Interchange Plus (IC+)</option>
+    <option value="ic_plusplus">Interchange++ (IC++)</option>
+    <option value="unknown">I don't know</option>
+  </select>
+</div>
+
+<div class="q-select-wrap" id="lcrWrap">
+  <label class="q-label" for="sel-lcr">Least cost routing</label>
+  <select class="q-select" id="sel-lcr" aria-label="Least cost routing status" onchange="onMoreDetailsChange()">
+    <option value="">Select…</option>
+    <option value="on">Yes, it's on</option>
+    <option value="off">No, it's off</option>
+    <option value="unknown">I don't know</option>
+  </select>
+</div>
+
+<div class="q-select-wrap">
+  <label class="q-label" for="sel-volume">Monthly card volume</label>
+  <select class="q-select" id="sel-volume" aria-label="Monthly card volume" onchange="onMoreDetailsChange()">
+    <option value="">Select…</option>
+    <option value="under10k">Under $10k / month</option>
+    <option value="10to50k">$10k – $50k / month</option>
+    <option value="50to250k">$50k – $250k / month</option>
+    <option value="250kto1m">$250k – $1M / month</option>
+    <option value="over1m">$1M+ / month</option>
+  </select>
+</div>
+
+<div class="q-select-wrap">
+  <label class="q-label" for="sel-atv">Average transaction value</label>
+  <select class="q-select" id="sel-atv" aria-label="Average transaction value" onchange="onMoreDetailsChange()">
+    <option value="">Select…</option>
+    <option value="under20">Under $20</option>
+    <option value="20to75">$20 – $75</option>
+    <option value="75to250">$75 – $250</option>
+    <option value="250to1000">$250 – $1,000</option>
+    <option value="over1000">$1,000+</option>
+  </select>
+</div>
+
+<div class="q-select-wrap">
+  <label class="q-label" for="sel-mix">Card mix</label>
+  <select class="q-select" id="sel-mix" aria-label="Card mix" onchange="onMoreDetailsChange()">
+    <option value="">Select…</option>
+    <option value="mostly_debit">Mostly debit</option>
+    <option value="mostly_credit">Mostly credit</option>
+    <option value="even">Fairly even split</option>
+    <option value="lots_intl">A lot of international / Amex</option>
+    <option value="unknown">Not sure</option>
+  </select>
+</div>
+
+<div class="cta-row" style="margin-top:8px">
+  <button class="cta" id="ctaMoreDetails" onclick="next()" disabled>
+    Continue
+    <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
+  </button>
+</div>
+```
+
   </div>
 
   <!-- sGoal: Goals -->
+
   <div class="screen" id="sGoal">
     <div class="q-text">What would make<br>this a win for you?</div>
     <div class="q-sub">Pick everything that matters, and tell us what's prompting the switch. This shapes what your report prioritises.</div>
@@ -1148,6 +1183,7 @@ input#fileInput { display: none; }
   </div>
 
   <!-- sReview: Summary -->
+
   <div class="screen" id="sReview">
     <div class="q-text" style="font-size:clamp(28px,3.6vw,44px)">One last look<br>before we run it.</div>
     <div class="q-sub">Check anything looks right. Tap edit to fix a detail.</div>
@@ -1161,6 +1197,7 @@ input#fileInput { display: none; }
   </div>
 
   <!-- Loading -->
+
   <div class="screen" id="sLoading">
     <div class="loading-screen">
       <div class="loading-ring"></div>
@@ -1176,15 +1213,17 @@ input#fileInput { display: none; }
   </div>
 
   <!-- Confirm -->
+
   <div class="screen" id="sConfirm">
     <div class="q-text" style="font-size:clamp(28px,3.5vw,42px);margin-bottom:12px">Your report is<br>being prepared.</div>
-    <div class="q-sub" style="margin-bottom:32px">Here's exactly what happens between now and when you hear from us.</div>
+    <div class="q-sub" style="margin-bottom:24px">Here's exactly what happens between now and when you hear from us.</div>
+    <div id="confirmReveal"></div>
     <div style="display:flex;flex-direction:column;gap:0;max-width:520px">
       <div class="confirm-step">
         <div class="confirm-num">1</div>
         <div>
-          <div class="confirm-title">AI analysis complete</div>
-          <div class="confirm-body">Our payments AI has reviewed your statement and merchant profile, benchmarked your rates against current market data, and produced a report specific to your setup.</div>
+          <div class="confirm-title" id="confirmStep1Title">AI analysis complete</div>
+          <div class="confirm-body" id="confirmStep1Body">Our payments AI has reviewed your statement and merchant profile, benchmarked your rates against current market data, and produced a report specific to your setup.</div>
         </div>
       </div>
       <div class="confirm-step">
@@ -1213,13 +1252,15 @@ input#fileInput { display: none; }
 </div><!-- /stage -->
 
 <!-- All JS is identical to the original — zero logic changes -->
+
 <script>
 const data = {
   files: [], parsedTabular: [], skippedUpload: false,
   name: '', companyName: '', email: '', emailVerified: false, skippedEmail: false,
   phone: '', industry: '', channels: [],
   ecomPlatform: '', terminalSetup: '',
-  providers: [], providerOther: '', paymentTypes: [],
+  hasOtherVolume: '', totalBusinessVolume: '',
+  provider: '',
   monthlyVolume: '', atv: '', cardMix: '',
   lcrStatus: '', pricingModel: '', surcharge: '', goals: [], pain: ''
 };
@@ -1230,14 +1271,15 @@ let history = [];
 let busy = false;
 
 function computePath() {
-  const p = ['s5','s6','s1','sCompany','s2'];
+  const p = ['s5','s6','s1','s2'];
   if (!data.skippedEmail) p.push('s3');
-  p.push('s4','s0','sProvider','sPaymentTypes');
+  p.push('s0');
+  if (!data.skippedUpload) p.push('sOtherVolume');
   if (data.channels.includes('online'))  p.push('s6b');
   if (data.channels.includes('instore')) p.push('s6c');
-  p.push('s6f');
-  if (data.channels.includes('instore')) p.push('s6e');
-  p.push('s6g','sVolume','sAtv','sMix','sGoal','sReview');
+  p.push('s6g');
+  if (data.skippedUpload) p.push('sMoreDetails');
+  p.push('sGoal','sReview');
   return p;
 }
 
@@ -1248,7 +1290,7 @@ function renderProgress() {
   document.getElementById('progressFill').style.width = pct + '%';
 }
 
-const KEYHINT_SCREENS = ['s1','sCompany','s2','s3','s4'];
+const KEYHINT_SCREENS = ['s1','s2','s3'];
 function updateChrome() {
   document.getElementById('backBtn').style.display = history.length ? 'flex' : 'none';
   document.getElementById('keyHint').style.display = KEYHINT_SCREENS.includes(currentId) ? 'flex' : 'none';
@@ -1288,6 +1330,7 @@ function show(id, reverse) {
   if (!to) return;
   busy = true;
   if (id === 'sReview') renderReview();
+  if (id === 'sMoreDetails') initMoreDetails();
   to.scrollTop = 0;
   to.classList.remove('active','exit','exit-back','enter-back');
   applyFit(to);
@@ -1356,20 +1399,55 @@ function kbd(e) {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); }
 }
 
-function toggleProvider(el, val) {
-  el.classList.toggle('selected');
-  const on = el.classList.contains('selected');
-  el.setAttribute('aria-checked', on ? 'true' : 'false');
-  if (on) { if (!data.providers.includes(val)) data.providers.push(val); }
-  else    { data.providers = data.providers.filter(v => v !== val); }
-  updateProviderCta();
+function pickOtherVolume(el, val) {
+  el.closest('.choice-grid').querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  data.hasOtherVolume = val;
+  const followup = document.getElementById('totalVolumeFollowup');
+  if (val === 'yes') {
+    data.totalBusinessVolume = '';
+    followup.style.display = 'block';
+    refit();
+  } else {
+    followup.style.display = 'none';
+    data.totalBusinessVolume = '';
+    refit();
+    setTimeout(next, 300);
+  }
 }
-function onProviderOther() {
-  data.providerOther = document.getElementById('inp-provider-other').value.trim();
-  updateProviderCta();
+function pickTotalVolume(el, val) {
+  el.closest('.choice-grid').querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  data.totalBusinessVolume = val;
+  setTimeout(next, 300);
 }
-function updateProviderCta() {
-  document.getElementById('ctaProvider').disabled = !(data.providers.length || data.providerOther);
+
+// sMoreDetails: combined dropdown screen shown only when no statement was
+// uploaded. LCR is only relevant in-store, so its row is hidden (and excluded
+// from validation) when the merchant hasn't said they take in-store payments.
+function initMoreDetails() {
+  const showLcr = data.channels.includes('instore');
+  document.getElementById('lcrWrap').style.display = showLcr ? 'block' : 'none';
+  if (!showLcr) data.lcrStatus = '';
+  onMoreDetailsChange();
+}
+function onMoreDetailsChange() {
+  const providerSel = document.getElementById('sel-provider').value;
+  document.getElementById('providerOtherWrap').style.display = providerSel === 'other' ? 'block' : 'none';
+  data.provider = providerSel === 'other'
+    ? document.getElementById('inp-provider-other').value.trim()
+    : providerSel;
+  data.pricingModel  = document.getElementById('sel-pricing').value;
+  data.lcrStatus      = document.getElementById('lcrWrap').style.display === 'none' ? '' : document.getElementById('sel-lcr').value;
+  data.monthlyVolume = document.getElementById('sel-volume').value;
+  data.atv            = document.getElementById('sel-atv').value;
+  data.cardMix        = document.getElementById('sel-mix').value;
+
+  const lcrRequired = document.getElementById('lcrWrap').style.display !== 'none';
+  const required = [data.provider, data.pricingModel, data.monthlyVolume, data.atv, data.cardMix];
+  if (lcrRequired) required.push(data.lcrStatus);
+  document.getElementById('ctaMoreDetails').disabled = required.some(v => !v);
+  refit();
 }
 
 function toggleGoal(el, val) {
@@ -1384,10 +1462,18 @@ function updateGoalCta() {
   document.getElementById('ctaGoal').disabled = !(data.goals.length || data.pain);
 }
 
-function validateName()  { data.name  = document.getElementById('inp-name').value.trim();  document.getElementById('ctaS1').disabled = data.name.length < 2; }
-function validateCompany() { data.companyName = document.getElementById('inp-company').value.trim(); document.getElementById('ctaCompany').disabled = data.companyName.length < 2; }
-function validateEmail() { data.email = document.getElementById('inp-email').value.trim(); document.getElementById('ctaS2').disabled = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email); }
-function validatePhone() { data.phone = document.getElementById('inp-phone').value.trim(); document.getElementById('ctaS4').disabled = data.phone.replace(/\D/g,'').length < 8; }
+function validateContact1() {
+  data.name = document.getElementById('inp-name').value.trim();
+  data.companyName = document.getElementById('inp-company').value.trim();
+  document.getElementById('ctaS1').disabled = data.name.length < 2 || data.companyName.length < 2;
+}
+function validateContact2() {
+  data.email = document.getElementById('inp-email').value.trim();
+  data.phone = document.getElementById('inp-phone').value.trim();
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email);
+  const phoneOk = data.phone.replace(/\D/g,'').length >= 8;
+  document.getElementById('ctaS2').disabled = !(emailOk && phoneOk);
+}
 function firstName() { return (data.name.split(' ')[0] || data.name); }
 
 function onDragOver(e){ e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
@@ -1508,21 +1594,19 @@ async function verifyOtp() {
 
 const LABELS = {
   industry:{retail:'Retail',food:'Food & Hospitality',ecommerce:'eCommerce',health:'Healthcare',professional:'Professional Services',trades:'Trades & Construction',accommodation:'Accommodation',other:'Other'},
-  provider:{tyro:'Tyro',square:'Square',stripe:'Stripe',zeller:'Zeller',commbank:'CBA',nab:'NAB',westpac:'Westpac',anz:'ANZ Worldline',adyen:'Adyen',paypal:'PayPal / Braintree',fatzebra:'Fat Zebra',globalpayments:'Global Payments (Worldpay)'},
-  paymentTypes:{visa:'Visa',mastercard:'Mastercard',eftpos:'eftpos',amex:'American Express',unionpay:'UnionPay',wallets:'Apple/Google Pay',bnpl:'Buy Now Pay Later',paypal:'PayPal',payto:'PayTo',bpay:'BPAY',dd_bank:'Direct debit (bank)',dd_card:'Direct debit (card)',eft:'EFT / bank transfer'},
+  provider:{tyro:'Tyro',square:'Square',stripe:'Stripe',zeller:'Zeller',major_bank:'A major bank (CBA/NAB/Westpac/ANZ)',fatzebra:'Fat Zebra',not_sure:'Not sure'},
   monthlyVolume:{under10k:'Under $10k/mo','10to50k':'$10k–$50k/mo','50to250k':'$50k–$250k/mo','250kto1m':'$250k–$1M/mo',over1m:'$1M+/mo'},
   atv:{under20:'Under $20','20to75':'$20–$75','75to250':'$75–$250','250to1000':'$250–$1,000',over1000:'$1,000+'},
   cardMix:{mostly_debit:'Mostly debit',mostly_credit:'Mostly credit',even:'Even split',lots_intl:'Lots of intl/Amex',unknown:'Not sure'},
   pricingModel:{blended:'Blended',ic_plus:'Interchange Plus',ic_plusplus:'Interchange++',unknown:'Not sure'},
   lcrStatus:{on:'On',off:'Off',unknown:'Not sure'},
   surcharge:{yes:'Passes it on',no:'Absorbs it',partial:'Sometimes',unsure:'Not sure'},
+  hasOtherVolume:{yes:'Yes, there\'s more', no:'No, that\'s everything'},
   goal:{lower_fees:'Lower fees',better_tech:'Better tech',consolidate:'Consolidate',leave_provider:'Leave provider',benchmark:'Honest benchmark'}
 };
 function lbl(key, val){ return (LABELS[key] && LABELS[key][val]) || val; }
 function providerSummary() {
-  const names = data.providers.map(p => lbl('provider', p));
-  if (data.providerOther) names.push(data.providerOther);
-  return names.join(', ');
+  return data.provider ? (LABELS.provider[data.provider] || data.provider) : '';
 }
 function goalSummary() { return data.goals.map(g => lbl('goal', g)).join(', '); }
 
@@ -1532,18 +1616,20 @@ function renderReview() {
   const add = (label, value, editId) => { if (value) rows.push({label, value, editId}); };
   add('Statements', data.skippedUpload ? 'None uploaded' : (data.files.length + ' file' + (data.files.length===1?'':'s')), 's0');
   add('Name', data.name, 's1');
-  add('Company', data.companyName, 'sCompany');
-  add('Email', data.email + (data.emailVerified ? ' ✓' : ''), 's2');
+  add('Company', data.companyName, 's1');
+  add('Email', data.email + (data.emailVerified ? ' \u2713' : ''), 's2');
+  add('Mobile', data.phone, 's2');
   add('Industry', lbl('industry', data.industry), 's5');
   add('Channels', data.channels.map(c=>channelNames[c]).join(', '), 's6');
-  add('Current provider(s)', providerSummary(), 'sProvider');
-  add('Accepts', data.paymentTypes.map(t=>lbl('paymentTypes',t)).join(', '), 'sPaymentTypes');
-  add('Pricing model', lbl('pricingModel', data.pricingModel), 's6f');
-  if (data.lcrStatus) add('LCR', lbl('lcrStatus', data.lcrStatus), 's6e');
+  if (data.hasOtherVolume) add('Other payment volume?', lbl('hasOtherVolume', data.hasOtherVolume), 'sOtherVolume');
+  if (data.totalBusinessVolume) add('Total business volume', lbl('monthlyVolume', data.totalBusinessVolume), 'sOtherVolume');
+  add('Current provider', providerSummary(), 'sMoreDetails');
+  add('Pricing model', lbl('pricingModel', data.pricingModel), 'sMoreDetails');
+  if (data.lcrStatus) add('LCR', lbl('lcrStatus', data.lcrStatus), 'sMoreDetails');
   add('Surcharging', lbl('surcharge', data.surcharge), 's6g');
-  add('Monthly card volume', lbl('monthlyVolume', data.monthlyVolume), 'sVolume');
-  add('Avg transaction', lbl('atv', data.atv), 'sAtv');
-  add('Card mix', lbl('cardMix', data.cardMix), 'sMix');
+  add('Monthly card volume', lbl('monthlyVolume', data.monthlyVolume), 'sMoreDetails');
+  add('Avg transaction', lbl('atv', data.atv), 'sMoreDetails');
+  add('Card mix', lbl('cardMix', data.cardMix), 'sMoreDetails');
   add('Goal', goalSummary(), 'sGoal');
   document.getElementById('reviewList').innerHTML = rows.map(r =>
     '<div class="review-row"><span class="review-key">' + r.label + '</span>' +
@@ -1603,6 +1689,41 @@ function parseModelJson(raw) {
   throw new Error('The report was cut off by the server and couldn\'t be recovered.');
 }
 
+function renderConfirmReveal(effectiveRate) {
+  const el = document.getElementById('confirmReveal');
+  const stepTitle = document.getElementById('confirmStep1Title');
+  const stepBody = document.getElementById('confirmStep1Body');
+  if (!el) return;
+  const rate = Number(effectiveRate);
+  if (effectiveRate != null && !Number.isNaN(rate)) {
+    const rateStr = rate.toFixed(2);
+    const scale = v => Math.min(100, Math.max(4, (v / 2) * 100));
+    el.innerHTML =
+      '<div class="confirm-reveal">' +
+        '<div class="confirm-reveal-eyebrow">While you wait</div>' +
+        '<div class="confirm-reveal-stat">' + rateStr + '%</div>' +
+        '<div class="confirm-reveal-sub">your effective rate, from the statement you just uploaded</div>' +
+        '<div class="confirm-reveal-bars">' +
+          '<div class="cr-bar-row"><span class="cr-bar-label you">You</span><div class="cr-bar-track"><div class="cr-bar-fill you" style="width:' + scale(rate) + '%"></div></div><span class="cr-bar-val">' + rateStr + '%</span></div>' +
+          '<div class="cr-bar-row"><span class="cr-bar-label">Typical SMB</span><div class="cr-bar-track"><div class="cr-bar-fill typical" style="width:' + scale(1.4) + '%"></div></div><span class="cr-bar-val">1.40%</span></div>' +
+        '</div>' +
+        '<div class="confirm-reveal-note">We will break down exactly where this comes from, and where the savings are, in your full report.</div>' +
+      '</div>';
+    if (stepTitle) stepTitle.textContent = 'AI analysis complete';
+    if (stepBody) stepBody.textContent = 'Our payments AI has reviewed your statement and merchant profile, benchmarked your rates against current market data, and produced a report specific to your setup.';
+  } else {
+    el.innerHTML =
+      '<div class="confirm-reveal">' +
+        '<div class="confirm-reveal-eyebrow">Worth knowing</div>' +
+        '<div class="confirm-reveal-stat">2x</div>' +
+        '<div class="confirm-reveal-sub">small businesses often pay roughly double what large businesses pay, for the exact same card transaction</div>' +
+        '<div class="confirm-reveal-note">No statement this time, so we cannot show you your own number yet - your advisor will walk you through where you likely sit once your report is ready.</div>' +
+      '</div>';
+    if (stepTitle) stepTitle.textContent = 'Profile received';
+    if (stepBody) stepBody.textContent = 'We will base your review on what you told us - a statement gives a sharper picture, any time you are ready to add one.';
+  }
+}
+
 async function submitAll() {
   const loading = document.getElementById('sLoading');
   document.getElementById('sReview').classList.remove('active');
@@ -1626,7 +1747,6 @@ async function submitAll() {
 
   const providerStr = providerSummary();
   const goalStr = goalSummary();
-  const paymentTypeStr = data.paymentTypes.map(t => LABELS.paymentTypes[t] || t).join(', ');
 
   const programContext = [
     'Name: ' + data.name,
@@ -1637,8 +1757,7 @@ async function submitAll() {
     data.channels.length ? 'Payment channels: ' + data.channels.join(', ') : '',
     data.ecomPlatform    ? 'eCommerce platform: ' + data.ecomPlatform : '',
     data.terminalSetup   ? 'Terminal setup: ' + data.terminalSetup : '',
-    providerStr          ? 'Current provider(s): ' + providerStr : '',
-    paymentTypeStr       ? 'Accepted payment types: ' + paymentTypeStr : '',
+    providerStr          ? 'Current provider: ' + providerStr : '',
     data.monthlyVolume   ? 'Monthly card volume: ' + (LABELS.monthlyVolume[data.monthlyVolume]||data.monthlyVolume) : '',
     data.atv             ? 'Average transaction value: ' + (LABELS.atv[data.atv]||data.atv) : '',
     data.cardMix         ? 'Card mix: ' + (LABELS.cardMix[data.cardMix]||data.cardMix) : '',
@@ -1647,7 +1766,10 @@ async function submitAll() {
     data.surcharge       ? 'Surcharges customers: ' + (LABELS.surcharge[data.surcharge]||data.surcharge) : '',
     goalStr              ? 'Primary goal(s): ' + goalStr : '',
     data.pain            ? 'Biggest frustration: ' + data.pain : '',
-    data.skippedUpload   ? 'Statements: not uploaded' : 'Statements uploaded: ' + data.files.length + ' file(s)'
+    data.skippedUpload   ? 'Statements: not uploaded' : 'Statements uploaded: ' + data.files.length + ' file(s)',
+    data.hasOtherVolume === 'yes'
+      ? 'IMPORTANT: merchant says this statement does NOT capture all their card volume. Total business card volume (self-reported, including what is not shown on the statement): ' + (LABELS.monthlyVolume[data.totalBusinessVolume] || data.totalBusinessVolume || 'not specified') + '. Treat the volume and effective-rate figures on the statement as understating the full picture.'
+      : ''
   ].filter(Boolean).join('\n');
 
   const system = `You are a payments statement analyser for acceptorIQ. Read the merchant's payment statement(s) and extract or compute ONLY factual information from them.
@@ -1717,6 +1839,7 @@ RULES:
     }, 30000).catch(() => null);
     clearInterval(iv);
     steps.forEach(id => document.getElementById(id).className = 'loading-step done');
+    renderConfirmReveal(report.effectiveRate);
     setTimeout(() => {
       loading.classList.remove('active');
       const c = document.getElementById('sConfirm');
@@ -1756,5 +1879,6 @@ window.previewSuccess = function () {
   c.classList.add('active'); currentId = 'sConfirm'; applyFit(c);
 };
 </script>
+
 </body>
 </html>
