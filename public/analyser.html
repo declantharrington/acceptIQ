@@ -1263,12 +1263,11 @@ function computePath() {
   const p = ['s5','s6','s1','s2'];
   if (!data.skippedEmail) p.push('s3');
   p.push('s0');
+  if (data.skippedUpload) p.push('sMoreDetails');
   if (!data.skippedUpload) p.push('sOtherVolume');
   if (data.channels.includes('online'))  p.push('s6b');
   if (data.channels.includes('instore')) p.push('s6c');
-  p.push('s6g');
-  if (data.skippedUpload) p.push('sMoreDetails');
-  p.push('sGoal','sReview');
+  p.push('s6g','sGoal','sReview');
   return p;
 }
 
