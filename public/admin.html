@@ -559,9 +559,16 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 
     <!-- ══ EMPLOYEE TASKS ══ -->
     <div class="page" id="page-tasks">
-      <div class="page-head">
-        <div class="page-title">Employee Tasks</div>
-        <div class="page-sub">Run individual pipeline stages or execute the full outreach flow in sequence.</div>
+      <div class="page-head" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+        <div>
+          <div class="page-title">Employee Tasks</div>
+          <div class="page-sub">Run individual pipeline stages or execute the full outreach flow in sequence.</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(224,233,246,0.03);border:1px solid rgba(224,233,246,0.08);padding:8px 14px;flex-shrink:0;margin-top:4px">
+          <div id="agent-server-dot" style="width:7px;height:7px;border-radius:50%;background:#E88A8A;flex-shrink:0"></div>
+          <span id="agent-server-text" style="font-size:11px;color:rgba(224,233,246,0.4)">Checking agent server…</span>
+          <button onclick="checkAgentServer()" style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 8px;background:rgba(224,233,246,0.06);border:1px solid rgba(224,233,246,0.1);color:rgba(224,233,246,0.4);cursor:pointer;border-radius:0;margin-left:4px">↺ Check</button>
+        </div>
       </div>
       <div class="tasks-layout">
         <div class="pipeline-nav">
@@ -617,10 +624,8 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
               <span>Click Run to start this agent</span>
             </div>
           </div>
-          <div class="task-footer">
-            <div class="task-stat"><b id="ts-leads">0</b> leads found</div>
-            <div class="task-stat"><b id="ts-emails">0</b> emails written</div>
-            <div class="task-stat"><b id="ts-sent">0</b> sent</div>
+          <div class="task-footer" style="font-size:11px;color:rgba(224,233,246,0.25)">
+            Output streams live from <span style="font-family:'JetBrains Mono',monospace;color:rgba(169,204,242,0.4)">localhost:5000</span> — keep your terminal open while agents run.
           </div>
         </div>
       </div>
@@ -1098,14 +1103,35 @@ function closeModal(e){if(e.target===document.getElementById('modal-overlay'))cl
 function closeModalBtn(){document.getElementById('modal-overlay').classList.remove('open');document.body.style.overflow='';}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModalBtn();});
 
-/* ── EMPLOYEE TASKS ── */
+/* ── EMPLOYEE TASKS — wired to server.py at localhost:5000 ── */
+const AGENT_SERVER = 'http://localhost:5000';
+
+// Maps pipeline step names to server.py agent IDs
 const TASK_CONFIG={
-  leads:{title:'Lead Identification',sub:'Maya reads the Apollo CSV and uploads new leads to Google Sheets, skipping duplicates.'},
-  emails:{title:'Email Personalisation',sub:'Leo classifies each business with Claude AI and writes a tailored email for every lead.'},
-  send:{title:'Email Dispatch',sub:'Zara sends approved emails via SendGrid. Dry run mode is on by default.'},
-  all:{title:'Full Pipeline',sub:'Runs Maya → Leo → Zara in sequence.'},
+  leads:  { title:'Lead Identification',   sub:'Maya reads the Apollo CSV and uploads new leads to Google Sheets, skipping duplicates.', agentId:'agent1' },
+  emails: { title:'Email Personalisation', sub:'Leo classifies each business with Claude AI and writes a tailored email for every lead.', agentId:'agent3' },
+  send:   { title:'Email Dispatch',        sub:'Zara sends approved emails via SendGrid. Dry run mode is on by default.',                agentId:'agent4' },
+  all:    { title:'Full Pipeline',         sub:'Runs Maya → Leo → Zara in sequence.',                                                    agentId:null },
 };
-let currentTask='leads',taskRunning=false,taskStats={leads:0,emails:0,sent:0};
+let currentTask='leads', taskRunning=false, activeTaskSource=null;
+
+// Check whether server.py is running and update the status indicator
+async function checkAgentServer(){
+  const dot  = document.getElementById('agent-server-dot');
+  const text = document.getElementById('agent-server-text');
+  try {
+    const res = await fetch(`${AGENT_SERVER}/agents`, { signal: AbortSignal.timeout(2000) });
+    if (res.ok) {
+      dot.style.background  = '#9FD9B4';
+      text.textContent = 'Agent server online';
+      return true;
+    }
+  } catch(e) {}
+  dot.style.background  = '#E88A8A';
+  text.textContent = 'Agent server offline — run: python3 server.py';
+  return false;
+}
+
 function selectTask(task){
   if(taskRunning)return; currentTask=task;
   document.querySelectorAll('.pipeline-step').forEach(s=>s.classList.remove('active'));
@@ -1117,67 +1143,119 @@ function selectTask(task){
   btn.textContent=task==='all'?'⚡ Run all':'▶ Run'; btn.className='run-btn';
   clearTaskFeed();
 }
+
 function clearTaskFeed(){
   document.getElementById('task-feed').innerHTML='<div class="task-empty"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Click Run to start this agent</span></div>';
   document.getElementById('task-progress').style.width='0%';
-  taskStats={leads:0,emails:0,sent:0};
   ['ts-leads','ts-emails','ts-sent'].forEach(id=>document.getElementById(id).textContent=0);
 }
+
 function appendFeedEl(html){
   const feed=document.getElementById('task-feed');
   const empty=feed.querySelector('.task-empty'); if(empty)empty.remove();
-  const d=document.createElement('div');d.innerHTML=html;
-  feed.appendChild(d.firstChild);feed.scrollTop=feed.scrollHeight;
+  const d=document.createElement('div'); d.innerHTML=html;
+  feed.appendChild(d.firstChild); feed.scrollTop=feed.scrollHeight;
 }
+
+function classifyLine(line){
+  if(/===|---/.test(line)) return 'heading';
+  if(/error|ERROR|FAILED|failed/i.test(line)) return 'error';
+  if(/done\.|success|added|sent|generated/i.test(line)) return 'success';
+  if(/warning|REJECTED|WARNING|skip/i.test(line)) return 'warning';
+  return '';
+}
+
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-function runCurrentTask(){
-  if(taskRunning)return;
-  if(currentTask==='all'){runAllTasks();return;}
-  const stage=currentTask; taskRunning=true;
+
+async function runCurrentTask(){
+  if(taskRunning) return;
+  const online = await checkAgentServer();
+  if(!online){
+    clearTaskFeed();
+    appendFeedEl(`<div class="tf-status" style="border-color:rgba(232,138,138,0.3);color:#E88A8A">Agent server is not running. Open your terminal and run: python3 server.py</div>`);
+    return;
+  }
+  if(currentTask==='all'){ runAllTasks(); return; }
+  const stage=currentTask;
+  const agentId=TASK_CONFIG[stage].agentId;
+  taskRunning=true;
   const btn=document.getElementById('task-run-btn');
-  btn.disabled=true;btn.className='run-btn running';btn.textContent='⏳ Running…';
+  btn.disabled=true; btn.className='run-btn running'; btn.textContent='⏳ Running…';
   clearTaskFeed();
   const stEl=document.getElementById('sstatus-'+stage);
-  if(stEl){stEl.textContent='Running';stEl.className='step-status running';}
-  streamStage(stage,()=>{
-    taskRunning=false;btn.disabled=false;btn.className='run-btn';btn.textContent='▶ Run';
-    if(stEl){stEl.textContent='Done';stEl.className='step-status done';}
+  if(stEl){ stEl.textContent='Running'; stEl.className='step-status running'; }
+  streamAgent(agentId, ()=>{
+    taskRunning=false; btn.disabled=false; btn.className='run-btn'; btn.textContent='▶ Run';
+    if(stEl){ stEl.textContent='Done'; stEl.className='step-status done'; }
     document.getElementById('pstep-'+stage)?.classList.add('done');
+    loadSubmissions(); // refresh reports after agent finishes
   });
 }
+
 async function runAllTasks(){
   taskRunning=true;
   const btn=document.getElementById('task-run-btn');
-  btn.disabled=true;btn.className='run-btn running';btn.textContent='⏳ Running pipeline…';
+  btn.disabled=true; btn.className='run-btn running'; btn.textContent='⏳ Running pipeline…';
   clearTaskFeed();
-  for(const stage of['leads','emails','send']){
+  for(const stage of ['leads','emails','send']){
     document.querySelectorAll('.pipeline-step').forEach(s=>s.classList.remove('active'));
     document.getElementById('pstep-'+stage)?.classList.add('active');
     document.getElementById('task-title').textContent=TASK_CONFIG[stage].title;
     document.getElementById('sstatus-'+stage).textContent='Running';
     document.getElementById('sstatus-'+stage).className='step-status running';
-    await new Promise(resolve=>streamStage(stage,()=>{
+    await new Promise(resolve=>streamAgent(TASK_CONFIG[stage].agentId, ()=>{
       document.getElementById('sstatus-'+stage).textContent='Done';
       document.getElementById('sstatus-'+stage).className='step-status done';
       document.getElementById('pstep-'+stage)?.classList.add('done');
       resolve();
     }));
-    await sleep(500);
+    await sleep(600);
   }
-  taskRunning=false;btn.disabled=false;btn.className='run-btn';btn.textContent='⚡ Run all';
+  taskRunning=false; btn.disabled=false; btn.className='run-btn'; btn.textContent='⚡ Run all';
+  loadSubmissions();
 }
-function streamStage(stage,onDone){
-  const source=new EventSource('/stream/'+stage);
-  source.onmessage=e=>{
-    const data=JSON.parse(e.data);
-    document.getElementById('task-progress').style.width=(data.progress||0)+'%';
-    if(data.type==='status'){appendFeedEl(`<div class="tf-status"><div class="tf-spinner"></div>${esc(data.message)}</div>`);}
-    else if(data.type==='lead'){taskStats.leads++;document.getElementById('ts-leads').textContent=taskStats.leads;const l=data.lead;appendFeedEl(`<div class="tf-lead"><div class="tf-lead-av">${initials(l.name)}</div><div><div class="tf-lead-name">${esc(l.name)} · ${esc(l.business)}</div><div class="tf-lead-detail">${esc(l.title)} · ${esc(l.city)}</div></div><span class="tf-tag">${esc(l.industry)}</span></div>`);}
-    else if(data.type==='email'){taskStats.emails++;document.getElementById('ts-emails').textContent=taskStats.emails;const l=data.lead,em=data.email;appendFeedEl(`<div class="tf-email"><div class="tf-email-to">→ ${esc(l.email)}</div><div class="tf-email-subject">${esc(em.subject)}</div><div class="tf-email-preview">${esc(em.preview)}</div></div>`);}
-    else if(data.type==='sent'){taskStats.sent++;document.getElementById('ts-sent').textContent=taskStats.sent;const l=data.lead,em=data.email;appendFeedEl(`<div class="tf-sent"><div class="tf-sent-check">✓</div><div><div class="tf-sent-name">${esc(l.name)} · ${esc(l.business)}</div><div class="tf-sent-sub">${esc(em.subject)}</div></div></div>`);}
-    else if(data.type==='done'){appendFeedEl(`<div class="tf-done">✓ &nbsp;${esc(data.message)}</div>`);source.close();onDone();}
+
+// Streams raw terminal lines from server.py's /run/<agentId> endpoint
+function streamAgent(agentId, onDone){
+  if(activeTaskSource){ activeTaskSource.close(); activeTaskSource=null; }
+  const source = new EventSource(`${AGENT_SERVER}/run/${agentId}`);
+  activeTaskSource = source;
+
+  // Fake a simple progress bar that fills slowly then jumps on done
+  let progress = 0;
+  const progressTimer = setInterval(()=>{
+    progress = Math.min(progress + 1, 85);
+    document.getElementById('task-progress').style.width = progress + '%';
+  }, 800);
+
+  source.onmessage = e => {
+    const raw = e.data;
+
+    if(raw === '__SUCCESS__'){
+      clearInterval(progressTimer);
+      document.getElementById('task-progress').style.width = '100%';
+      appendFeedEl(`<div class="tf-done">✓ &nbsp;Agent finished successfully.</div>`);
+      source.close(); activeTaskSource=null; onDone(); return;
+    }
+    if(raw.startsWith('__ERROR__')){
+      clearInterval(progressTimer);
+      document.getElementById('task-progress').style.width = '100%';
+      const msg = raw.replace('__ERROR__:','').trim();
+      appendFeedEl(`<div class="tf-status" style="border-color:rgba(232,138,138,0.3);color:#E88A8A">✗ ${esc(msg)}</div>`);
+      source.close(); activeTaskSource=null; onDone(); return;
+    }
+
+    // Colour-code the raw terminal line
+    const cls = classifyLine(raw);
+    const colour = {heading:'color:#A9CCF2;font-weight:500', error:'color:#E88A8A', success:'color:#9FD9B4', warning:'color:#E7B27A'}[cls] || 'color:rgba(224,233,246,0.5)';
+    appendFeedEl(`<div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.7;padding:2px 0;${colour}">${esc(raw)}</div>`);
   };
-  source.onerror=()=>{source.close();onDone();};
+
+  source.onerror = () => {
+    clearInterval(progressTimer);
+    if(activeTaskSource){ activeTaskSource.close(); activeTaskSource=null; }
+    onDone();
+  };
 }
 
 /* ── EMPLOYEE PHOTOS ── */
@@ -1197,7 +1275,14 @@ function handleUpload(name,input){
 
 /* ── INIT ── */
 loadSubmissions();
-setInterval(loadSubmissions,60000);
+setInterval(loadSubmissions, 60000);
+checkAgentServer();
+// Re-check server status whenever the tasks tab is opened
+const _origShowPage = showPage;
+window.showPage = function(id, btn) {
+  _origShowPage(id, btn);
+  if (id === 'tasks') checkAgentServer();
+};
 </script>
 </body>
 </html>
