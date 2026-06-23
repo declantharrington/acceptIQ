@@ -3,223 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>acceptorIQ — Submissions Dashboard</title>
+<title>acceptorIQ — Operations Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; min-height: 100vh; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -webkit-font-smoothing: antialiased; font-size: 13px; }
+
+/* ── SHELL ── */
+.shell { display: grid; grid-template-columns: 220px 1fr; grid-template-rows: 56px 1fr; height: 100vh; }
 
 /* ── NAV ── */
-.nav {
-  height: 56px; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 32px; background: rgba(224,233,246,0.03);
-  border-bottom: 1px solid rgba(224,233,246,0.08); position: sticky; top: 0; z-index: 100;
-}
-.nav-title { display: flex; align-items: center; gap: 10px; font-size: 15px; }
-.nav-acceptor-mark { position: relative; width: 18px; height: 16px; display: inline-block; flex-shrink: 0; }
-.nav-acceptor-mark span { position: absolute; bottom: 0; width: 6px; height: 16px; border-radius: 2px; background: #E6EBF6; }
-.nav-acceptor-mark span:first-child { left: 3px; transform: skewX(-30deg); }
-.nav-acceptor-mark span:last-child  { right: 3px; height: 11px; transform: skewX(30deg); }
-.nav-word { font-weight: 300; letter-spacing: -0.055em; color: rgba(230,235,246,.92); }
-.nav-word span { font-weight: 500; letter-spacing: -0.04em; color: #A9CCF2; }
-.nav-divider { color: rgba(224,233,246,0.3); font-weight: 400; margin: 0 4px; }
-.nav-sub { color: rgba(224,233,246,0.5); font-weight: 500; }
-.nav-badge {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-  background: rgba(63,119,214,0.15); color: #A9CCF2; padding: 4px 10px; border-radius: 100px;
-}
+.nav { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding: 0 24px 0 0; background: rgba(224,233,246,0.02); border-bottom: 1px solid rgba(224,233,246,0.08); z-index: 10; }
+.nav-brand { display: flex; align-items: center; height: 56px; width: 220px; padding: 0 20px; border-right: 1px solid rgba(224,233,246,0.08); }
+.nav-mark { position: relative; width: 18px; height: 16px; display: inline-block; flex-shrink: 0; margin-right: 10px; }
+.nav-mark span { position: absolute; bottom: 0; width: 6px; height: 16px; border-radius: 2px; background: #E6EBF6; }
+.nav-mark span:first-child { left: 3px; transform: skewX(-30deg); }
+.nav-mark span:last-child  { right: 3px; height: 11px; transform: skewX(30deg); }
+.nav-word { font-weight: 300; letter-spacing: -0.055em; color: rgba(230,235,246,.92); font-size: 15px; }
+.nav-word b { font-weight: 500; color: #A9CCF2; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-system { display: flex; align-items: center; gap: 7px; font-size: 11px; color: rgba(224,233,246,0.4); }
+.sys-dot { width: 6px; height: 6px; border-radius: 50%; background: #9FD9B4; animation: syspulse 2.5s ease-in-out infinite; }
+@keyframes syspulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.nav-badge-count { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(63,119,214,0.15); color: #A9CCF2; padding: 4px 10px; border-radius: 100px; }
+.nav-avatar { width: 28px; height: 28px; border-radius: 50%; background: rgba(63,119,214,0.2); border: 1px solid rgba(63,119,214,0.3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #A9CCF2; cursor: pointer; }
 
-/* ── MAIN ── */
-.main { max-width: 1180px; margin: 0 auto; padding: 32px 24px; }
-.page-header { margin-bottom: 28px; }
-.page-title { font-size: 26px; font-weight: 300; letter-spacing: -0.045em; margin-bottom: 6px; color: rgba(230,235,246,.92); }
-.page-sub { font-size: 14px; color: rgba(224,233,246,0.4); }
+/* ── SIDEBAR ── */
+.sidebar { background: rgba(224,233,246,0.02); border-right: 1px solid rgba(224,233,246,0.08); display: flex; flex-direction: column; padding: 16px 12px; overflow-y: auto; gap: 2px; }
+.sidebar::-webkit-scrollbar { width: 0; }
+.sidebar-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(224,233,246,0.2); padding: 0 8px; margin: 16px 0 6px; }
+.sidebar-section-label:first-child { margin-top: 0; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 1px solid transparent; background: transparent; color: rgba(224,233,246,0.45); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500; transition: all 0.12s; width: 100%; text-align: left; border-radius: 0; }
+.nav-item:hover { background: rgba(224,233,246,0.04); color: rgba(224,233,246,0.75); border-color: rgba(224,233,246,0.07); }
+.nav-item.active { background: rgba(63,119,214,0.1); color: #A9CCF2; border-color: rgba(63,119,214,0.25); }
+.nav-item-icon { font-size: 14px; width: 16px; text-align: center; flex-shrink: 0; color: rgba(224,233,246,0.28); transition: color 0.12s; }
+.nav-item.active .nav-item-icon { color: #A9CCF2; }
+.nav-item-badge { margin-left: auto; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 100px; background: rgba(231,178,122,0.15); color: #E7B27A; }
+.nav-spacer { flex: 1; }
+.sidebar-footer { padding: 12px 10px; border-top: 1px solid rgba(224,233,246,0.06); font-size: 11px; color: rgba(224,233,246,0.2); }
 
-/* ── STATS ROW ── */
-.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 28px; }
-.stat-card {
-  background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.08);
-  border-radius: 0; padding: 18px 20px;
-}
-.stat-card-val { font-size: 26px; font-weight: 500; letter-spacing: -0.04em; margin-bottom: 4px; }
-.stat-card-lbl { font-size: 12px; color: rgba(224,233,246,0.35); font-weight: 500; }
+/* ── CONTENT ── */
+.content { overflow-y: auto; background: #0F1218; }
+.content::-webkit-scrollbar { width: 5px; }
+.content::-webkit-scrollbar-thumb { background: rgba(224,233,246,0.08); border-radius: 2px; }
+.page { display: none; padding: 32px 36px; min-height: 100%; }
+.page.active { display: block; }
+.page-head { margin-bottom: 28px; }
+.page-title { font-size: 22px; font-weight: 300; letter-spacing: -0.04em; color: rgba(230,235,246,.92); margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: rgba(224,233,246,0.35); }
 
-/* ── TOOLBAR ── */
-.toolbar { margin-bottom: 14px; }
-.toolbar-row {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  margin-bottom: 12px;
-}
+/* ── STAT CARDS ── */
+.stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); padding: 20px; }
+.stat-card-val { font-size: 28px; font-weight: 300; letter-spacing: -0.04em; color: #E6EBF6; margin-bottom: 4px; }
+.stat-card-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(224,233,246,0.3); }
+.stat-card-delta { font-size: 11px; margin-top: 8px; color: rgba(159,217,180,0.8); }
+.stat-card-delta.neg { color: rgba(232,138,138,0.8); }
 
-.search-wrap { position: relative; flex: 1 1 240px; min-width: 200px; }
-.search-icon {
-  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-  width: 15px; height: 15px; color: rgba(224,233,246,0.3); pointer-events: none;
-}
-.search-input {
-  width: 100%; font-family: 'Inter', sans-serif; font-size: 13px;
-  padding: 9px 12px 9px 36px; border-radius: 0;
-  background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.1);
-  color: #E6EBF6; transition: border-color 0.15s;
-}
+/* ── CHARTS ── */
+.charts-row { display: grid; grid-template-columns: 1fr 1fr 340px; gap: 12px; margin-bottom: 24px; }
+.chart-card { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); padding: 20px; }
+.chart-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(224,233,246,0.28); margin-bottom: 16px; }
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
+.bar { width: 100%; background: rgba(63,119,214,0.25); border-top: 2px solid rgba(63,119,214,0.6); transition: background 0.2s; cursor: pointer; }
+.bar:hover { background: rgba(63,119,214,0.38); }
+.bar.accent { background: rgba(159,217,180,0.2); border-top-color: rgba(159,217,180,0.6); }
+.bar-lbl { font-size: 10px; color: rgba(224,233,246,0.25); }
+.funnel { display: flex; flex-direction: column; gap: 8px; }
+.funnel-bar-bg { height: 28px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.07); position: relative; overflow: hidden; }
+.funnel-bar-fill { height: 100%; background: rgba(63,119,214,0.2); border-right: 2px solid rgba(63,119,214,0.5); transition: width 1s ease; }
+.funnel-bar-fill.green { background: rgba(159,217,180,0.2); border-right-color: rgba(159,217,180,0.5); }
+.funnel-bar-fill.amber { background: rgba(231,178,122,0.2); border-right-color: rgba(231,178,122,0.5); }
+.funnel-label { position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 11px; font-weight: 500; color: rgba(224,233,246,0.6); }
+.funnel-val { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: rgba(224,233,246,0.7); font-family: 'JetBrains Mono', monospace; }
+.mini-list { display: flex; flex-direction: column; }
+.mini-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(224,233,246,0.05); }
+.mini-row:last-child { border-bottom: none; }
+.mini-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.mini-name { flex: 1; font-size: 12px; color: rgba(224,233,246,0.6); }
+.mini-val { font-size: 12px; font-weight: 600; color: rgba(224,233,246,0.8); font-family: 'JetBrains Mono', monospace; }
+.mini-pct { font-size: 10px; color: rgba(224,233,246,0.3); margin-left: 4px; }
+
+/* ── ACTIVITY ROW ── */
+.activity-row { display: grid; grid-template-columns: 1fr 380px; gap: 12px; }
+.table-card { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); }
+.table-card-head { padding: 14px 18px; border-bottom: 1px solid rgba(224,233,246,0.06); display: flex; align-items: center; justify-content: space-between; }
+.table-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(224,233,246,0.28); }
+.view-all-btn { font-size: 11px; color: rgba(63,119,214,0.7); cursor: pointer; font-weight: 500; border: none; background: none; font-family: 'Inter', sans-serif; }
+.view-all-btn:hover { color: #A9CCF2; }
+.mini-table { width: 100%; border-collapse: collapse; }
+.mini-table th { padding: 8px 18px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(224,233,246,0.2); text-align: left; }
+.mini-table td { padding: 11px 18px; border-top: 1px solid rgba(224,233,246,0.05); font-size: 12px; color: rgba(224,233,246,0.65); }
+.mini-table tr:hover td { background: rgba(224,233,246,0.02); cursor: pointer; }
+.mini-table td.primary { font-weight: 500; color: rgba(224,233,246,0.85); }
+.feed-card { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); }
+.feed-item { display: flex; gap: 12px; padding: 12px 18px; border-bottom: 1px solid rgba(224,233,246,0.05); }
+.feed-item:last-child { border-bottom: none; }
+.feed-icon { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; margin-top: 1px; }
+.feed-icon.blue { background: rgba(63,119,214,0.12); }
+.feed-icon.green { background: rgba(159,217,180,0.12); }
+.feed-icon.amber { background: rgba(231,178,122,0.12); }
+.feed-body { flex: 1; min-width: 0; }
+.feed-text { font-size: 12px; color: rgba(224,233,246,0.6); line-height: 1.5; }
+.feed-text b { color: rgba(224,233,246,0.85); font-weight: 500; }
+.feed-time { font-size: 10px; color: rgba(224,233,246,0.25); margin-top: 3px; }
+
+/* ── STATUS PILLS (shared) ── */
+.status-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 100px; }
+.status-badge.pending  { background: rgba(231,178,122,0.15); color: #E7B27A; }
+.status-badge.reviewed { background: rgba(224,233,246,0.08); color: rgba(224,233,246,0.5); }
+.status-badge.approved { background: rgba(159,217,180,0.15); color: #9FD9B4; }
+.status-badge.sent     { background: rgba(63,119,214,0.15); color: #A9CCF2; }
+.report-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #9FD9B4; margin-left: 6px; box-shadow: 0 0 6px rgba(159,217,180,0.5); vertical-align: middle; }
+.rate-pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
+.rate-hi  { background: rgba(232,138,138,0.12); color: #E88A8A; }
+.rate-mid { background: rgba(231,178,122,0.12); color: #E7B27A; }
+.rate-lo  { background: rgba(159,217,180,0.12); color: #9FD9B4; }
+
+/* ── REPORTS PAGE ── */
+.reports-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.search-wrap { position: relative; flex: 1; min-width: 200px; }
+.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; color: rgba(224,233,246,0.3); pointer-events: none; }
+.search-input { width: 100%; font-family: 'Inter', sans-serif; font-size: 12.5px; padding: 8px 10px 8px 32px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.1); color: #E6EBF6; transition: border-color 0.15s; border-radius: 0; }
 .search-input::placeholder { color: rgba(224,233,246,0.3); }
 .search-input:focus { outline: none; border-color: rgba(63,119,214,0.4); background: rgba(63,119,214,0.04); }
-
-.toolbar-select {
-  font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500;
-  padding: 9px 30px 9px 12px; border-radius: 0;
-  background: rgba(224,233,246,0.04) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A9CCF2' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;
-  border: 1px solid rgba(224,233,246,0.1);
-  color: rgba(224,233,246,0.75); cursor: pointer; transition: border-color 0.15s;
-  appearance: none; -webkit-appearance: none;
-}
+.toolbar-select { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; padding: 8px 28px 8px 10px; background: rgba(224,233,246,0.04) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A9CCF2' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center; border: 1px solid rgba(224,233,246,0.1); color: rgba(224,233,246,0.65); cursor: pointer; appearance: none; border-radius: 0; }
 .toolbar-select:focus { outline: none; border-color: rgba(63,119,214,0.4); }
-.toolbar-select:hover { border-color: rgba(224,233,246,0.2); }
-
-.date-range {
-  display: flex; align-items: center; gap: 6px;
-  background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.1);
-  padding: 0 10px;
-}
-.toolbar-date {
-  font-family: 'Inter', sans-serif; font-size: 12.5px;
-  padding: 8px 2px; border: none; background: transparent;
-  color: rgba(224,233,246,0.75); color-scheme: dark; cursor: pointer;
-}
+.date-range { display: flex; align-items: center; gap: 6px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.1); padding: 0 10px; }
+.toolbar-date { font-family: 'Inter', sans-serif; font-size: 12px; padding: 7px 2px; border: none; background: transparent; color: rgba(224,233,246,0.65); color-scheme: dark; cursor: pointer; }
 .toolbar-date:focus { outline: none; }
 .date-sep { color: rgba(224,233,246,0.25); font-size: 12px; }
+.clear-btn { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; padding: 8px 12px; border: 1px solid rgba(232,138,138,0.25); background: rgba(232,138,138,0.08); color: #E88A8A; cursor: pointer; border-radius: 0; white-space: nowrap; }
+.clear-btn:hover { background: rgba(232,138,138,0.16); }
+.filter-pills { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.fpill { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 100px; border: 1px solid rgba(224,233,246,0.1); background: none; color: rgba(224,233,246,0.4); cursor: pointer; transition: all 0.12s; }
+.fpill.active { background: rgba(63,119,214,0.12); border-color: rgba(63,119,214,0.35); color: #A9CCF2; }
+.fpill:hover:not(.active) { border-color: rgba(224,233,246,0.2); color: rgba(224,233,246,0.65); }
+.results-count { font-size: 12px; color: rgba(224,233,246,0.3); margin-bottom: 10px; }
 
-.clear-filters-btn {
-  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
-  padding: 9px 14px; border-radius: 0; border: 1px solid rgba(232,138,138,0.25);
-  background: rgba(232,138,138,0.08); color: #E88A8A; cursor: pointer; transition: background 0.15s;
-  white-space: nowrap;
-}
-.clear-filters-btn:hover { background: rgba(232,138,138,0.16); }
-
-.results-count {
-  font-size: 12px; color: rgba(224,233,246,0.35); margin-bottom: 10px;
-}
-
-/* ── FILTERS (status pills) ── */
-.filters { display: flex; gap: 8px; flex-wrap: wrap; }
-.filter-btn {
-  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
-  padding: 7px 14px; border-radius: 100px; border: 1px solid rgba(224,233,246,0.1);
-  background: none; color: rgba(224,233,246,0.45); cursor: pointer; transition: all 0.15s;
-}
-.filter-btn.active { background: rgba(63,119,214,0.15); border-color: rgba(63,119,214,0.4); color: #A9CCF2; }
-.filter-btn:hover:not(.active) { border-color: rgba(224,233,246,0.2); color: rgba(224,233,246,0.7); }
-
-/* ── TABLE ── */
-.table-wrap {
-  background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08);
-  border-radius: 0; overflow: hidden;
-}
-.table-header, .table-row {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 0.8fr 0.7fr 0.85fr 1fr 1fr;
-  align-items: center;
-}
-.table-header {
-  padding: 12px 20px; border-bottom: 1px solid rgba(224,233,246,0.06);
-  font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-  color: rgba(224,233,246,0.28);
-}
-.th-sort {
-  display: flex; align-items: center; gap: 5px;
-  cursor: pointer; user-select: none; transition: color 0.15s;
-}
-.th-sort:hover { color: rgba(224,233,246,0.55); }
-.th-sort.active { color: #A9CCF2; }
-.sort-arrow {
-  width: 9px; height: 9px; display: inline-block; flex-shrink: 0;
-  opacity: 0; transition: opacity 0.15s, transform 0.15s;
-  border-left: 3px solid transparent; border-right: 3px solid transparent; border-bottom: 4px solid currentColor;
-}
-.th-sort.active .sort-arrow { opacity: 1; }
-.th-sort.active.desc .sort-arrow { transform: rotate(180deg); }
-.table-row {
-  padding: 16px 20px; border-bottom: 1px solid rgba(224,233,246,0.05);
-  transition: background 0.15s; cursor: pointer;
-}
-.table-row:last-child { border-bottom: none; }
-.table-row:hover { background: rgba(224,233,246,0.03); }
-.table-cell { font-size: 13px; color: rgba(224,233,246,0.75); min-width: 0; }
-.table-cell.primary { font-weight: 600; color: #E6EBF6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.table-cell.muted { color: rgba(224,233,246,0.35); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cell-actions { display: flex; gap: 6px; justify-content: flex-end; }
-
-.status-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 100px;
-}
-.status-badge.pending { background: rgba(231,178,122,0.15); color: #E7B27A; }
-.status-badge.reviewed { background: rgba(159,217,180,0.15); color: #9FD9B4; }
-.status-badge.sent { background: rgba(63,119,214,0.15); color: #A9CCF2; }
-.status-badge.approved { background: rgba(159,217,180,0.15); color: #9FD9B4; }
-
-.report-dot {
-  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
-  background: #9FD9B4; margin-left: 6px; vertical-align: middle;
-  box-shadow: 0 0 8px rgba(159,217,180,0.5);
-}
-
-.rate-pill {
-  display: inline-block; font-size: 12px; font-weight: 600;
-  padding: 3px 9px; border-radius: 100px;
-}
-.rate-pill.high { background: rgba(232,138,138,0.15); color: #E88A8A; }
-.rate-pill.mid  { background: rgba(231,178,122,0.15); color: #E7B27A; }
-.rate-pill.low  { background: rgba(159,217,180,0.15); color: #9FD9B4; }
-
-.view-btn {
-  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
-  padding: 6px 12px; background: rgba(224,233,246,0.06); color: rgba(224,233,246,0.6);
-  border: none; border-radius: 0; cursor: pointer; transition: all 0.15s; white-space: nowrap;
-}
-.view-btn:hover { background: rgba(224,233,246,0.1); color: #E6EBF6; }
-.view-btn.report { background: rgba(63,119,214,0.15); color: #A9CCF2; }
-.view-btn.report:hover { background: rgba(63,119,214,0.25); color: #E6EBF6; }
-
-.empty-state {
-  text-align: center; padding: 60px 20px;
-  color: rgba(224,233,246,0.25); font-size: 14px;
-}
-.empty-state h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: rgba(224,233,246,0.4); }
+.reports-table-wrap { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); overflow: hidden; }
+.rtable { width: 100%; border-collapse: collapse; }
+.rtable th { padding: 11px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(224,233,246,0.22); text-align: left; border-bottom: 1px solid rgba(224,233,246,0.07); cursor: pointer; white-space: nowrap; user-select: none; }
+.rtable th:hover { color: rgba(224,233,246,0.45); }
+.rtable th.active-sort { color: #A9CCF2; }
+.sort-arrow { display: inline-block; width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent; border-bottom: 4px solid currentColor; margin-left: 4px; vertical-align: middle; opacity: 0; transition: opacity 0.15s, transform 0.15s; }
+.rtable th.active-sort .sort-arrow { opacity: 1; }
+.rtable th.active-sort.desc .sort-arrow { transform: rotate(180deg); }
+.rtable td { padding: 13px 16px; border-top: 1px solid rgba(224,233,246,0.05); font-size: 12px; color: rgba(224,233,246,0.6); vertical-align: middle; }
+.rtable tr:hover td { background: rgba(224,233,246,0.02); cursor: pointer; }
+.rtable td.primary { font-weight: 500; color: rgba(224,233,246,0.85); }
+.rtable td.mono { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+.action-btn { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; padding: 5px 10px; border: none; cursor: pointer; transition: background 0.12s; border-radius: 0; }
+.action-btn.ghost { background: rgba(224,233,246,0.06); color: rgba(224,233,246,0.55); }
+.action-btn.ghost:hover { background: rgba(224,233,246,0.1); color: rgba(224,233,246,0.85); }
+.action-btn.blue { background: rgba(63,119,214,0.12); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.25); }
+.action-btn.blue:hover { background: rgba(63,119,214,0.22); }
+.loading-spinner { text-align: center; padding: 60px 20px; color: rgba(224,233,246,0.3); font-size: 14px; }
+.empty-state-row td { text-align: center; padding: 50px 20px; color: rgba(224,233,246,0.25); font-size: 13px; }
 
 /* ── MODAL ── */
-.modal-bg {
-  position: fixed; inset: 0; z-index: 500;
-  background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
-  display: none; align-items: flex-start; justify-content: center;
-  padding: 40px 20px; overflow-y: auto;
-}
-.modal-bg.open { display: flex; }
-.modal {
-  background: #13161e; border: 1px solid rgba(224,233,246,0.09);
-  border-radius: 0; width: 100%; max-width: 720px;
-  position: relative; margin: auto;
-}
-.modal-close {
-  position: absolute; top: 16px; right: 16px;
-  width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(224,233,246,0.08); border: none; cursor: pointer;
-  color: rgba(224,233,246,0.5); display: flex; align-items: center; justify-content: center;
-  font-size: 16px; transition: background 0.15s;
-}
+.modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; }
+.modal-overlay.open { display: flex; }
+.modal { background: #13161e; border: 1px solid rgba(224,233,246,0.09); width: 100%; max-width: 720px; position: relative; margin: auto; border-radius: 0; }
+.modal-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; background: rgba(224,233,246,0.08); border: none; cursor: pointer; color: rgba(224,233,246,0.5); display: flex; align-items: center; justify-content: center; font-size: 14px; transition: background 0.15s; }
 .modal-close:hover { background: rgba(224,233,246,0.14); }
-.modal-header {
-  background: linear-gradient(135deg,#0F1218 0%,#171c26 100%);
-  padding: 28px 32px; border-radius: 0;
-}
+.modal-header { background: linear-gradient(135deg,#0F1218 0%,#171c26 100%); padding: 28px 32px; }
 .modal-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(224,233,246,0.28); margin-bottom: 8px; }
 .modal-title { font-size: 20px; font-weight: 300; letter-spacing: -0.04em; color: #E6EBF6; margin-bottom: 4px; }
 .modal-meta { font-size: 12px; color: rgba(224,233,246,0.3); }
 .modal-contact { font-size: 12.5px; color: rgba(224,233,246,0.55); margin-top: 8px; line-height: 1.6; }
 .modal-contact a { color: #A9CCF2; text-decoration: none; }
-.modal-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; margin-top: 18px; background: rgba(224,233,246,0.07); border-radius: 0; overflow: hidden; }
+.modal-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; margin-top: 18px; background: rgba(224,233,246,0.07); overflow: hidden; }
 .modal-stat { padding: 12px; background: rgba(224,233,246,0.04); text-align: center; }
 .modal-stat-val { font-size: 16px; font-weight: 600; color: #E6EBF6; display: block; margin-bottom: 3px; }
 .modal-stat-lbl { font-size: 10px; color: rgba(224,233,246,0.28); text-transform: uppercase; letter-spacing: 0.09em; }
@@ -235,207 +192,485 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; mi
 .modal-table tr:last-child td { border-bottom: none; }
 .obs-list { margin: 0; padding-left: 18px; }
 .obs-list li { font-size: 13px; color: rgba(224,233,246,0.55); line-height: 1.7; margin-bottom: 4px; }
-.modal-alert { border-radius: 0; padding: 12px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
+.modal-alert { padding: 12px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; border-radius: 0; }
 .modal-alert.warn { background: rgba(231,178,122,0.1); border-left: 3px solid #E7B27A; color: rgba(224,233,246,0.65); }
 .modal-alert.good { background: rgba(159,217,180,0.1); border-left: 3px solid #9FD9B4; color: rgba(224,233,246,0.65); }
 .modal-alert.info { background: rgba(63,119,214,0.1); border-left: 3px solid #3F77D6; color: rgba(224,233,246,0.65); }
 .modal-alert strong { font-weight: 600; display: block; margin-bottom: 3px; color: rgba(224,233,246,0.85); }
-.report-ready-banner {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  background: rgba(159,217,180,0.1); border: 1px solid rgba(159,217,180,0.25);
-  border-radius: 0; padding: 14px 16px;
-}
+.program-box { background: rgba(224,233,246,0.04); padding: 14px; font-size: 13px; line-height: 1.7; color: rgba(224,233,246,0.5); }
+.report-ready-banner { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: rgba(159,217,180,0.1); border: 1px solid rgba(159,217,180,0.25); padding: 14px 16px; }
 .report-ready-banner .rb-text { font-size: 13px; color: #9FD9B4; font-weight: 500; }
-.program-box { background: rgba(224,233,246,0.04); border-radius: 0; padding: 14px; font-size: 13px; line-height: 1.7; color: rgba(224,233,246,0.5); }
-.loading-spinner { text-align: center; padding: 60px 20px; color: rgba(224,233,246,0.3); font-size: 14px; }
 
-/* ── ACTION BUTTONS ── */
+/* Modal action buttons */
 .modal-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-.btn-mark-reviewed {
-  background: rgba(159,217,180,0.15); color: #9FD9B4; border: 1px solid rgba(159,217,180,0.3);
-  border-radius: 0; padding: 10px 18px; font-family: 'Inter', sans-serif;
-  font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s;
-}
+.btn-mark-reviewed { background: rgba(159,217,180,0.15); color: #9FD9B4; border: 1px solid rgba(159,217,180,0.3); padding: 10px 18px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s; border-radius: 0; }
 .btn-mark-reviewed:hover { background: rgba(159,217,180,0.25); }
-.btn-approve {
-  background: rgba(63,119,214,0.15); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.3);
-  border-radius: 0; padding: 10px 18px; font-family: 'Inter', sans-serif;
-  font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s;
-  display: flex; align-items: center; gap: 7px;
-}
+.btn-approve { background: rgba(63,119,214,0.15); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.3); padding: 10px 18px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 7px; border-radius: 0; }
 .btn-approve:hover { background: rgba(63,119,214,0.25); }
 .btn-approve:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-mark-sent {
-  background: rgba(63,119,214,0.15); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.3);
-  border-radius: 0; padding: 10px 18px; font-family: 'Inter', sans-serif;
-  font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s;
-}
+.btn-mark-sent { background: rgba(63,119,214,0.15); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.3); padding: 10px 18px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s; border-radius: 0; }
 .btn-mark-sent:hover { background: rgba(63,119,214,0.25); }
-.btn-open-report {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(63,119,214,0.15); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.3);
-  border-radius: 0; padding: 10px 18px; font-family: 'Inter', sans-serif;
-  font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s;
-}
+.btn-open-report { display: inline-flex; align-items: center; gap: 7px; background: rgba(63,119,214,0.15); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.3); padding: 10px 18px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; border-radius: 0; }
 .btn-open-report:hover { background: rgba(63,119,214,0.25); color: #E6EBF6; }
 
 /* ── EDIT PANEL ── */
-.edit-panel-toggle {
-  display: flex; align-items: center; gap: 8px; width: 100%;
-  background: rgba(231,178,122,0.06); border: 1px solid rgba(231,178,122,0.18);
-  border-radius: 0; padding: 11px 16px; cursor: pointer;
-  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
-  color: rgba(231,178,122,0.85); transition: background 0.15s; margin-bottom: 0;
-}
+.edit-panel-toggle { display: flex; align-items: center; gap: 8px; width: 100%; background: rgba(231,178,122,0.06); border: 1px solid rgba(231,178,122,0.18); padding: 11px 16px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: rgba(231,178,122,0.85); transition: background 0.15s; border-radius: 0; }
 .edit-panel-toggle:hover { background: rgba(231,178,122,0.1); }
-.edit-panel-toggle .toggle-icon {
-  margin-left: auto; font-size: 11px; transition: transform 0.2s;
-  color: rgba(231,178,122,0.5);
-}
+.edit-panel-toggle .toggle-icon { margin-left: auto; font-size: 11px; transition: transform 0.2s; color: rgba(231,178,122,0.5); }
 .edit-panel-toggle.open .toggle-icon { transform: rotate(180deg); }
-
-.edit-panel {
-  display: none; margin-top: 12px;
-  background: rgba(224,233,246,0.02); border: 1px solid rgba(224,233,246,0.07);
-  border-radius: 0; padding: 20px; gap: 16px; flex-direction: column;
-}
+.edit-panel { display: none; margin-top: 12px; background: rgba(224,233,246,0.02); border: 1px solid rgba(224,233,246,0.07); padding: 20px; gap: 16px; flex-direction: column; }
 .edit-panel.open { display: flex; }
-
 .edit-field { display: flex; flex-direction: column; gap: 6px; }
-.edit-field-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(224,233,246,0.3);
-}
-.edit-field-hint {
-  font-size: 11px; color: rgba(224,233,246,0.2); margin-top: -3px; line-height: 1.5;
-}
-.edit-textarea {
-  font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.65;
-  background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.09);
-  border-radius: 0; color: rgba(224,233,246,0.75); padding: 10px 12px;
-  resize: vertical; min-height: 72px; transition: border-color 0.15s;
-}
-.edit-textarea:focus {
-  outline: none; border-color: rgba(63,119,214,0.4);
-  background: rgba(63,119,214,0.04);
-}
-.edit-input, .edit-select {
-  font-family: 'Inter', sans-serif; font-size: 13px;
-  background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.09);
-  border-radius: 0; color: rgba(224,233,246,0.75); padding: 9px 12px;
-  transition: border-color 0.15s; width: 100%;
-}
+.edit-field-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(224,233,246,0.3); }
+.edit-field-hint { font-size: 11px; color: rgba(224,233,246,0.2); margin-top: -3px; line-height: 1.5; }
+.edit-textarea { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.65; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.09); color: rgba(224,233,246,0.75); padding: 10px 12px; resize: vertical; min-height: 72px; transition: border-color 0.15s; border-radius: 0; }
+.edit-textarea:focus { outline: none; border-color: rgba(63,119,214,0.4); background: rgba(63,119,214,0.04); }
+.edit-input, .edit-select { font-family: 'Inter', sans-serif; font-size: 13px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.09); color: rgba(224,233,246,0.75); padding: 9px 12px; transition: border-color 0.15s; width: 100%; border-radius: 0; }
 .edit-input:focus, .edit-select:focus { outline: none; border-color: rgba(63,119,214,0.4); background: rgba(63,119,214,0.04); }
 .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .edit-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.edit-panel-note { font-size: 11px; color: rgba(224,233,246,0.2); line-height: 1.6; padding: 10px 12px; background: rgba(224,233,246,0.02); border: 1px solid rgba(224,233,246,0.05); }
 
-.edit-panel-note {
-  font-size: 11px; color: rgba(224,233,246,0.2); line-height: 1.6;
-  padding: 10px 12px; background: rgba(224,233,246,0.02);
-  border-radius: 0; border: 1px solid rgba(224,233,246,0.05);
-}
+/* ── EMPLOYEES ── */
+.employees-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.emp-card { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); transition: border-color 0.15s; }
+.emp-card:hover { border-color: rgba(224,233,246,0.15); }
+.emp-card-top { padding: 24px 24px 16px; display: flex; flex-direction: column; align-items: center; text-align: center; border-bottom: 1px solid rgba(224,233,246,0.06); }
+.emp-avatar { width: 64px; height: 64px; border-radius: 50%; background: rgba(63,119,214,0.12); border: 2px solid rgba(63,119,214,0.22); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 300; color: #A9CCF2; margin-bottom: 12px; overflow: hidden; position: relative; }
+.emp-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+.emp-avatar-upload { position: absolute; inset: 0; background: rgba(15,18,24,0.65); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: rgba(224,233,246,0.8); font-family: 'Inter', sans-serif; font-weight: 500; opacity: 0; cursor: pointer; transition: opacity 0.15s; border: none; }
+.emp-avatar:hover .emp-avatar-upload { opacity: 1; }
+.emp-name { font-size: 15px; font-weight: 500; color: rgba(230,235,246,.9); letter-spacing: -0.02em; margin-bottom: 2px; }
+.emp-role { font-size: 11px; color: rgba(224,233,246,0.35); margin-bottom: 6px; }
+.emp-personality { font-size: 11.5px; font-style: italic; color: rgba(169,204,242,0.4); line-height: 1.5; max-width: 200px; }
+.emp-card-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.emp-stat { padding: 12px; text-align: center; border-right: 1px solid rgba(224,233,246,0.06); }
+.emp-stat:last-child { border-right: none; }
+.emp-stat-val { font-size: 16px; font-weight: 500; color: rgba(224,233,246,0.85); letter-spacing: -0.02em; display: block; margin-bottom: 2px; }
+.emp-stat-lbl { font-size: 10px; color: rgba(224,233,246,0.25); text-transform: uppercase; letter-spacing: 0.07em; }
+.emp-card-footer { padding: 12px 16px; border-top: 1px solid rgba(224,233,246,0.06); display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.emp-tag { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 100px; background: rgba(224,233,246,0.06); color: rgba(224,233,246,0.35); }
 
-@media (max-width: 900px) {
-  .table-header, .table-row { grid-template-columns: 1.3fr 0.9fr 1fr 1fr; }
-  .table-header > *:nth-child(3),
-  .table-header > *:nth-child(4),
-  .table-header > *:nth-child(5),
-  .table-header > *:nth-child(6),
-  .table-row > *:nth-child(3),
-  .table-row > *:nth-child(4),
-  .table-row > *:nth-child(5),
-  .table-row > *:nth-child(6) { display: none; }
-  .stats-row { grid-template-columns: 1fr 1fr; }
-  .edit-grid, .edit-grid-3 { grid-template-columns: 1fr; }
-  .toolbar-row { flex-direction: column; align-items: stretch; }
-  .search-wrap { flex: 1 1 auto; }
-  .date-range { justify-content: space-between; }
-}
+/* ── EMPLOYEE TASKS ── */
+.tasks-layout { display: grid; grid-template-columns: 280px 1fr; gap: 16px; min-height: 600px; }
+.pipeline-nav { display: flex; flex-direction: column; gap: 2px; }
+.pipeline-step { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid rgba(224,233,246,0.07); background: rgba(224,233,246,0.02); cursor: pointer; transition: all 0.12s; position: relative; border-radius: 0; }
+.pipeline-step:hover { background: rgba(224,233,246,0.04); border-color: rgba(224,233,246,0.12); }
+.pipeline-step.active { background: rgba(63,119,214,0.08); border-color: rgba(63,119,214,0.3); }
+.pipeline-step::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #3F77D6; opacity: 0; transition: opacity 0.15s; }
+.pipeline-step.active::before { opacity: 1; }
+.pipeline-step.done { border-color: rgba(159,217,180,0.2); }
+.pipeline-step.done::before { background: #9FD9B4; opacity: 1; }
+.step-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(224,233,246,0.06); border: 1px solid rgba(224,233,246,0.12); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: rgba(224,233,246,0.35); flex-shrink: 0; margin-top: 1px; }
+.pipeline-step.active .step-num { background: rgba(63,119,214,0.2); border-color: rgba(63,119,214,0.4); color: #A9CCF2; }
+.pipeline-step.done .step-num { background: rgba(159,217,180,0.15); border-color: rgba(159,217,180,0.3); color: #9FD9B4; }
+.step-info { flex: 1; min-width: 0; }
+.step-agent { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(224,233,246,0.25); margin-bottom: 2px; }
+.step-title { font-size: 13px; font-weight: 500; color: rgba(224,233,246,0.75); margin-bottom: 2px; }
+.step-desc { font-size: 11px; color: rgba(224,233,246,0.3); line-height: 1.4; }
+.step-status { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 100px; align-self: center; white-space: nowrap; }
+.step-status.idle    { background: rgba(224,233,246,0.06); color: rgba(224,233,246,0.3); }
+.step-status.running { background: rgba(231,178,122,0.12); color: #E7B27A; }
+.step-status.done    { background: rgba(159,217,180,0.12); color: #9FD9B4; }
+.task-runner { background: rgba(224,233,246,0.02); border: 1px solid rgba(224,233,246,0.08); display: flex; flex-direction: column; }
+.task-runner-head { padding: 18px 22px; border-bottom: 1px solid rgba(224,233,246,0.07); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.task-runner-title { font-size: 15px; font-weight: 400; letter-spacing: -0.02em; color: rgba(224,233,246,0.85); }
+.task-runner-sub { font-size: 12px; color: rgba(224,233,246,0.3); margin-top: 2px; }
+.run-btn { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 9px 18px; background: rgba(63,119,214,0.2); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.35); cursor: pointer; transition: all 0.12s; display: flex; align-items: center; gap: 7px; border-radius: 0; }
+.run-btn:hover { background: rgba(63,119,214,0.3); color: #E6EBF6; }
+.run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.run-btn.running { background: rgba(231,178,122,0.12); color: #E7B27A; border-color: rgba(231,178,122,0.3); }
+.progress-track { height: 2px; background: rgba(224,233,246,0.06); flex-shrink: 0; }
+.progress-fill { height: 100%; background: #3F77D6; transition: width 0.4s ease; width: 0%; }
+.task-feed { flex: 1; overflow-y: auto; padding: 16px 22px; display: flex; flex-direction: column; gap: 6px; min-height: 320px; max-height: 420px; }
+.task-feed::-webkit-scrollbar { width: 4px; }
+.task-feed::-webkit-scrollbar-thumb { background: rgba(224,233,246,0.08); }
+.task-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: rgba(224,233,246,0.2); font-size: 12px; padding: 40px; }
+.tf-status { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.07); font-size: 12px; color: rgba(224,233,246,0.45); font-family: 'JetBrains Mono', monospace; }
+.tf-spinner { width: 12px; height: 12px; border: 1.5px solid rgba(231,178,122,0.25); border-top-color: #E7B27A; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.tf-lead { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: rgba(224,233,246,0.02); border: 1px solid rgba(224,233,246,0.07); }
+.tf-lead-av { width: 32px; height: 32px; border-radius: 50%; background: rgba(63,119,214,0.12); border: 1px solid rgba(63,119,214,0.2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #A9CCF2; flex-shrink: 0; }
+.tf-lead-name { font-size: 12.5px; font-weight: 500; color: rgba(224,233,246,0.8); }
+.tf-lead-detail { font-size: 11px; color: rgba(224,233,246,0.35); margin-top: 1px; }
+.tf-tag { margin-left: auto; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 100px; background: rgba(63,119,214,0.1); color: rgba(169,204,242,0.7); white-space: nowrap; flex-shrink: 0; }
+.tf-email { padding: 10px 12px; background: rgba(224,233,246,0.02); border: 1px solid rgba(224,233,246,0.07); border-left: 2px solid rgba(159,217,180,0.4); }
+.tf-email-to { font-size: 11px; color: rgba(224,233,246,0.3); font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
+.tf-email-subject { font-size: 12.5px; font-weight: 500; color: rgba(224,233,246,0.8); margin-bottom: 3px; }
+.tf-email-preview { font-size: 11.5px; color: rgba(224,233,246,0.35); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tf-sent { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: rgba(159,217,180,0.04); border: 1px solid rgba(159,217,180,0.12); }
+.tf-sent-check { width: 22px; height: 22px; border-radius: 50%; background: rgba(159,217,180,0.15); display: flex; align-items: center; justify-content: center; font-size: 11px; color: #9FD9B4; flex-shrink: 0; }
+.tf-sent-name { font-size: 12px; font-weight: 500; color: rgba(224,233,246,0.75); }
+.tf-sent-sub { font-size: 11px; color: rgba(224,233,246,0.35); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 360px; }
+.tf-done { padding: 12px 14px; background: rgba(159,217,180,0.07); border: 1px solid rgba(159,217,180,0.2); font-size: 12.5px; font-weight: 500; color: #9FD9B4; display: flex; align-items: center; gap: 10px; }
+.task-footer { padding: 14px 22px; border-top: 1px solid rgba(224,233,246,0.06); display: flex; gap: 20px; flex-shrink: 0; }
+.task-stat { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: rgba(224,233,246,0.35); }
+.task-stat b { font-size: 14px; font-weight: 600; color: rgba(224,233,246,0.75); font-family: 'JetBrains Mono', monospace; }
+
+/* ── SETTINGS ── */
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.settings-card { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); padding: 22px; }
+.settings-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(224,233,246,0.28); margin-bottom: 16px; }
+.settings-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(224,233,246,0.05); }
+.settings-row:last-of-type { border-bottom: none; }
+.settings-label { font-size: 12.5px; color: rgba(224,233,246,0.6); }
+.settings-hint { font-size: 11px; color: rgba(224,233,246,0.25); margin-top: 2px; }
+.settings-input { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 10px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.1); color: rgba(224,233,246,0.7); width: 200px; border-radius: 0; }
+.settings-input:focus { outline: none; border-color: rgba(63,119,214,0.4); }
+.toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; cursor: pointer; inset: 0; background: rgba(224,233,246,0.1); border: 1px solid rgba(224,233,246,0.15); transition: .2s; border-radius: 20px; }
+.toggle-slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background: rgba(224,233,246,0.4); transition: .2s; border-radius: 50%; }
+.toggle input:checked + .toggle-slider { background: rgba(63,119,214,0.3); border-color: rgba(63,119,214,0.5); }
+.toggle input:checked + .toggle-slider:before { transform: translateX(16px); background: #A9CCF2; }
+.save-btn { margin-top: 16px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; padding: 8px 16px; background: rgba(63,119,214,0.15); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.3); cursor: pointer; transition: background 0.12s; border-radius: 0; }
+.save-btn:hover { background: rgba(63,119,214,0.25); }
+.int-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid rgba(224,233,246,0.05); }
+.int-row:last-child { border-bottom: none; }
+.int-icon { width: 32px; height: 32px; background: rgba(224,233,246,0.05); border: 1px solid rgba(224,233,246,0.08); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.int-name { font-size: 12.5px; font-weight: 500; color: rgba(224,233,246,0.7); }
+.int-sub { font-size: 11px; color: rgba(224,233,246,0.3); }
+.int-badge { margin-left: auto; font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 100px; }
+.int-badge.connected { background: rgba(159,217,180,0.12); color: #9FD9B4; }
+.int-badge.error { background: rgba(232,138,138,0.12); color: #E88A8A; }
 </style>
 </head>
 <body>
+<div class="shell">
 
-<nav class="nav">
-  <div class="nav-title">
-    <span class="nav-acceptor-mark"><span></span><span></span></span>
-    <span class="nav-word">acceptor<span>IQ</span></span>
-    <span class="nav-divider">·</span>
-    <span class="nav-sub">Submissions</span>
-  </div>
-  <div class="nav-badge" id="nav-count">Loading...</div>
-</nav>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-mark"><span></span><span></span></div>
+      <span class="nav-word">acceptor<b>IQ</b></span>
+    </div>
+    <div class="nav-right">
+      <div class="nav-system"><div class="sys-dot"></div>All systems operational</div>
+      <div class="nav-badge-count" id="nav-pending-count">— pending</div>
+      <div class="nav-avatar">DH</div>
+    </div>
+  </nav>
 
-<div class="main">
-  <div class="page-header">
-    <div class="page-title">Submission Dashboard</div>
-    <div class="page-sub">Review and correct the extracted data, then generate and send each merchant's report.</div>
-  </div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section-label">Overview</div>
+    <button class="nav-item active" onclick="showPage('dashboard',this)">
+      <span class="nav-item-icon">◈</span> Dashboard
+    </button>
+    <div class="sidebar-section-label">Operations</div>
+    <button class="nav-item" onclick="showPage('reports',this)">
+      <span class="nav-item-icon">⊞</span> Reports
+      <span class="nav-item-badge" id="sidebar-pending">—</span>
+    </button>
+    <button class="nav-item" onclick="showPage('tasks',this)">
+      <span class="nav-item-icon">⚡</span> Employee Tasks
+    </button>
+    <div class="sidebar-section-label">Team</div>
+    <button class="nav-item" onclick="showPage('employees',this)">
+      <span class="nav-item-icon">◉</span> Employees
+    </button>
+    <div class="sidebar-section-label">System</div>
+    <button class="nav-item" onclick="showPage('settings',this)">
+      <span class="nav-item-icon">◎</span> Settings
+    </button>
+    <div class="nav-spacer"></div>
+    <div class="sidebar-footer">acceptorIQ · Declan Harrington</div>
+  </aside>
 
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-card-val" id="stat-total">—</div>
-      <div class="stat-card-lbl">Total submissions</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-val" style="color:#E7B27A" id="stat-pending">—</div>
-      <div class="stat-card-lbl">Pending review</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-val" style="color:#9FD9B4" id="stat-approved">—</div>
-      <div class="stat-card-lbl">Reports generated</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-val" style="color:#A9CCF2" id="stat-sent">—</div>
-      <div class="stat-card-lbl">Sent to client</div>
-    </div>
-  </div>
+  <!-- CONTENT -->
+  <div class="content">
 
-  <div class="toolbar">
-    <div class="toolbar-row">
-      <div class="search-wrap">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="search-input" class="search-input" placeholder="Search company, provider, contact or email…" oninput="onSearchInput()">
+    <!-- ══ DASHBOARD ══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-head">
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Performance overview · Last 30 days</div>
       </div>
-      <select id="provider-filter" class="toolbar-select" onchange="onProviderFilterChange()">
-        <option value="all">All providers</option>
-      </select>
-      <div class="date-range">
-        <input type="date" id="date-from" class="toolbar-date" onchange="onDateRangeChange()" aria-label="Submitted from date">
-        <span class="date-sep">→</span>
-        <input type="date" id="date-to" class="toolbar-date" onchange="onDateRangeChange()" aria-label="Submitted to date">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-val" id="dash-total">—</div>
+          <div class="stat-card-lbl">Total submissions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-val" style="color:#E7B27A" id="dash-pending">—</div>
+          <div class="stat-card-lbl">Pending review</div>
+          <div class="stat-card-delta neg" id="dash-pending-note"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-val" style="color:#9FD9B4" id="dash-approved">—</div>
+          <div class="stat-card-lbl">Reports generated</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-val" style="color:#A9CCF2" id="dash-sent">—</div>
+          <div class="stat-card-lbl">Sent to client</div>
+        </div>
       </div>
-      <button class="clear-filters-btn" id="clear-filters-btn" onclick="clearAllFilters()" style="display:none">Clear filters</button>
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Submissions — last 8 weeks</div>
+          <div class="bar-chart" id="bar-chart"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Pipeline conversion</div>
+          <div class="funnel" id="dash-funnel"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Effective rate distribution</div>
+          <div class="mini-list" id="dash-rate-dist"></div>
+        </div>
+      </div>
+      <div class="activity-row">
+        <div class="table-card">
+          <div class="table-card-head">
+            <span class="table-card-title">Recent submissions</span>
+            <button class="view-all-btn" onclick="showPage('reports', document.querySelectorAll('.nav-item')[1])">View all →</button>
+          </div>
+          <table class="mini-table">
+            <thead><tr><th>Company</th><th>Provider</th><th>Rate</th><th>Status</th></tr></thead>
+            <tbody id="dash-recent"></tbody>
+          </table>
+        </div>
+        <div class="feed-card">
+          <div class="table-card-head"><span class="table-card-title">Activity</span></div>
+          <div id="dash-activity"></div>
+        </div>
+      </div>
     </div>
-    <div class="filters">
-      <button class="filter-btn active" data-status="all" onclick="filterSubmissions('all',this)">All</button>
-      <button class="filter-btn" data-status="pending_review" onclick="filterSubmissions('pending_review',this)">Pending review</button>
-      <button class="filter-btn" data-status="reviewed" onclick="filterSubmissions('reviewed',this)">Reviewed</button>
-      <button class="filter-btn" data-status="approved" onclick="filterSubmissions('approved',this)">Reports generated</button>
-      <button class="filter-btn" data-status="sent" onclick="filterSubmissions('sent',this)">Sent to client</button>
-    </div>
-  </div>
 
-  <div class="results-count" id="results-count"></div>
-
-  <div class="table-wrap">
-    <div class="table-header">
-      <div class="th-sort" data-sort="company" onclick="onSortClick('company')">Company<span class="sort-arrow"></span></div>
-      <div class="th-sort" data-sort="submitted_at" onclick="onSortClick('submitted_at')">Submitted<span class="sort-arrow"></span></div>
-      <div class="th-sort" data-sort="provider" onclick="onSortClick('provider')">Provider<span class="sort-arrow"></span></div>
-      <div class="th-sort" data-sort="volume" onclick="onSortClick('volume')">Volume<span class="sort-arrow"></span></div>
-      <div class="th-sort" data-sort="effective_rate" onclick="onSortClick('effective_rate')">Eff. Rate<span class="sort-arrow"></span></div>
-      <div class="th-sort" data-sort="total_fees" onclick="onSortClick('total_fees')">Fees<span class="sort-arrow"></span></div>
-      <div class="th-sort" data-sort="status" onclick="onSortClick('status')">Status<span class="sort-arrow"></span></div>
-      <div></div>
+    <!-- ══ REPORTS ══ -->
+    <div class="page" id="page-reports">
+      <div class="page-head">
+        <div class="page-title">Reports</div>
+        <div class="page-sub">Review extracted data, correct fields, and generate merchant reports.</div>
+      </div>
+      <div class="reports-toolbar">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search company, provider, contact or email…" oninput="onSearchInput()">
+        </div>
+        <select id="provider-filter" class="toolbar-select" onchange="onProviderChange()">
+          <option value="all">All providers</option>
+        </select>
+        <div class="date-range">
+          <input type="date" id="date-from" class="toolbar-date" onchange="onDateChange()">
+          <span class="date-sep">→</span>
+          <input type="date" id="date-to" class="toolbar-date" onchange="onDateChange()">
+        </div>
+        <button class="clear-btn" id="clear-filters-btn" onclick="clearAllFilters()" style="display:none">Clear filters</button>
+      </div>
+      <div class="filter-pills">
+        <button class="fpill active" data-status="all" onclick="filterStatus('all',this)">All</button>
+        <button class="fpill" data-status="pending_review" onclick="filterStatus('pending_review',this)">Pending review</button>
+        <button class="fpill" data-status="reviewed" onclick="filterStatus('reviewed',this)">Reviewed</button>
+        <button class="fpill" data-status="approved" onclick="filterStatus('approved',this)">Reports generated</button>
+        <button class="fpill" data-status="sent" onclick="filterStatus('sent',this)">Sent to client</button>
+      </div>
+      <div class="results-count" id="results-count"></div>
+      <div class="reports-table-wrap">
+        <table class="rtable">
+          <thead>
+            <tr>
+              <th onclick="onSortClick('company')">Company<span class="sort-arrow"></span></th>
+              <th onclick="onSortClick('submitted_at')">Submitted<span class="sort-arrow"></span></th>
+              <th onclick="onSortClick('provider')">Provider<span class="sort-arrow"></span></th>
+              <th onclick="onSortClick('volume')">Volume<span class="sort-arrow"></span></th>
+              <th onclick="onSortClick('effective_rate')" class="active-sort">Eff. Rate<span class="sort-arrow"></span></th>
+              <th onclick="onSortClick('total_fees')">Fees<span class="sort-arrow"></span></th>
+              <th onclick="onSortClick('status')">Status<span class="sort-arrow"></span></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="reports-tbody">
+            <tr><td colspan="8"><div class="loading-spinner">Loading submissions…</div></td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-    <div id="submissions-list">
-      <div class="loading-spinner">Loading submissions...</div>
-    </div>
-  </div>
-</div>
 
-<!-- Detail modal -->
-<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+    <!-- ══ EMPLOYEES ══ -->
+    <div class="page" id="page-employees">
+      <div class="page-head">
+        <div class="page-title">Employees</div>
+        <div class="page-sub">Your AI agent team — each specialised for a stage of the acceptorIQ pipeline.</div>
+      </div>
+      <div class="employees-grid">
+        <div class="emp-card">
+          <div class="emp-card-top">
+            <div class="emp-avatar" id="emp-av-maya">
+              <span id="emp-init-maya">M</span>
+              <button class="emp-avatar-upload" onclick="triggerUpload('maya')">Photo</button>
+              <input type="file" id="emp-file-maya" accept="image/*" onchange="handleUpload('maya',this)" style="display:none">
+            </div>
+            <div class="emp-name" contenteditable="true" spellcheck="false">Maya</div>
+            <div class="emp-role">Lead Scout · Agent 1</div>
+            <div class="emp-personality">"Detail-oriented and methodical. Never misses a duplicate."</div>
+          </div>
+          <div class="emp-card-stats">
+            <div class="emp-stat"><span class="emp-stat-val">1,240</span><span class="emp-stat-lbl">Leads</span></div>
+            <div class="emp-stat"><span class="emp-stat-val">98%</span><span class="emp-stat-lbl">Accuracy</span></div>
+            <div class="emp-stat"><span class="emp-stat-val">14</span><span class="emp-stat-lbl">Runs</span></div>
+          </div>
+          <div class="emp-card-footer">
+            <span class="emp-tag">Apollo.io</span><span class="emp-tag">Google Sheets</span><span class="emp-tag">CSV</span>
+          </div>
+        </div>
+        <div class="emp-card">
+          <div class="emp-card-top">
+            <div class="emp-avatar" id="emp-av-leo">
+              <span id="emp-init-leo">L</span>
+              <button class="emp-avatar-upload" onclick="triggerUpload('leo')">Photo</button>
+              <input type="file" id="emp-file-leo" accept="image/*" onchange="handleUpload('leo',this)" style="display:none">
+            </div>
+            <div class="emp-name" contenteditable="true" spellcheck="false">Leo</div>
+            <div class="emp-role">Copywriter · Agent 3</div>
+            <div class="emp-personality">"Warm and creative. Writes emails that feel personal, not automated."</div>
+          </div>
+          <div class="emp-card-stats">
+            <div class="emp-stat"><span class="emp-stat-val">892</span><span class="emp-stat-lbl">Emails</span></div>
+            <div class="emp-stat"><span class="emp-stat-val">78%</span><span class="emp-stat-lbl">Approved</span></div>
+            <div class="emp-stat"><span class="emp-stat-val">11</span><span class="emp-stat-lbl">Runs</span></div>
+          </div>
+          <div class="emp-card-footer">
+            <span class="emp-tag">Claude AI</span><span class="emp-tag">Google Sheets</span>
+          </div>
+        </div>
+        <div class="emp-card">
+          <div class="emp-card-top">
+            <div class="emp-avatar" id="emp-av-zara">
+              <span id="emp-init-zara">Z</span>
+              <button class="emp-avatar-upload" onclick="triggerUpload('zara')">Photo</button>
+              <input type="file" id="emp-file-zara" accept="image/*" onchange="handleUpload('zara',this)" style="display:none">
+            </div>
+            <div class="emp-name" contenteditable="true" spellcheck="false">Zara</div>
+            <div class="emp-role">Dispatcher · Agent 4</div>
+            <div class="emp-personality">"Precise and punctual. Dry run by default until you say go."</div>
+          </div>
+          <div class="emp-card-stats">
+            <div class="emp-stat"><span class="emp-stat-val">697</span><span class="emp-stat-lbl">Sent</span></div>
+            <div class="emp-stat"><span class="emp-stat-val">0</span><span class="emp-stat-lbl">Bounced</span></div>
+            <div class="emp-stat"><span class="emp-stat-val">9</span><span class="emp-stat-lbl">Runs</span></div>
+          </div>
+          <div class="emp-card-footer">
+            <span class="emp-tag">SendGrid</span><span class="emp-tag">Google Sheets</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ EMPLOYEE TASKS ══ -->
+    <div class="page" id="page-tasks">
+      <div class="page-head">
+        <div class="page-title">Employee Tasks</div>
+        <div class="page-sub">Run individual pipeline stages or execute the full outreach flow in sequence.</div>
+      </div>
+      <div class="tasks-layout">
+        <div class="pipeline-nav">
+          <div class="pipeline-step active" id="pstep-leads" onclick="selectTask('leads')">
+            <div class="step-num" id="snum-leads">1</div>
+            <div class="step-info">
+              <div class="step-agent">Maya · Lead Scout</div>
+              <div class="step-title">Lead Identification</div>
+              <div class="step-desc">Apollo CSV → deduplicate → Google Sheets</div>
+            </div>
+            <span class="step-status idle" id="sstatus-leads">Idle</span>
+          </div>
+          <div class="pipeline-step" id="pstep-emails" onclick="selectTask('emails')">
+            <div class="step-num" id="snum-emails">2</div>
+            <div class="step-info">
+              <div class="step-agent">Leo · Copywriter</div>
+              <div class="step-title">Email Personalisation</div>
+              <div class="step-desc">Classify business → Claude AI → write email</div>
+            </div>
+            <span class="step-status idle" id="sstatus-emails">Idle</span>
+          </div>
+          <div class="pipeline-step" id="pstep-send" onclick="selectTask('send')">
+            <div class="step-num" id="snum-send">3</div>
+            <div class="step-info">
+              <div class="step-agent">Zara · Dispatcher</div>
+              <div class="step-title">Email Dispatch</div>
+              <div class="step-desc">Approved leads → SendGrid → mark sent</div>
+            </div>
+            <span class="step-status idle" id="sstatus-send">Idle</span>
+          </div>
+          <div style="height:12px"></div>
+          <div class="pipeline-step" id="pstep-all" onclick="selectTask('all')" style="background:rgba(63,119,214,0.04);border-color:rgba(63,119,214,0.18)">
+            <div class="step-num" style="background:rgba(63,119,214,0.15);border-color:rgba(63,119,214,0.3);color:#A9CCF2">⚡</div>
+            <div class="step-info">
+              <div class="step-agent">Full pipeline</div>
+              <div class="step-title">Run All Agents</div>
+              <div class="step-desc">Maya → Leo → Zara in sequence</div>
+            </div>
+          </div>
+        </div>
+        <div class="task-runner">
+          <div class="task-runner-head">
+            <div>
+              <div class="task-runner-title" id="task-title">Lead Identification</div>
+              <div class="task-runner-sub" id="task-sub">Maya reads the Apollo CSV and uploads new leads to Google Sheets.</div>
+            </div>
+            <button class="run-btn" id="task-run-btn" onclick="runCurrentTask()">▶ Run</button>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="task-progress"></div></div>
+          <div class="task-feed" id="task-feed">
+            <div class="task-empty">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+              <span>Click Run to start this agent</span>
+            </div>
+          </div>
+          <div class="task-footer">
+            <div class="task-stat"><b id="ts-leads">0</b> leads found</div>
+            <div class="task-stat"><b id="ts-emails">0</b> emails written</div>
+            <div class="task-stat"><b id="ts-sent">0</b> sent</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div class="page" id="page-settings">
+      <div class="page-head">
+        <div class="page-title">Settings</div>
+        <div class="page-sub">API credentials, integrations, and pipeline configuration.</div>
+      </div>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <div class="settings-card-title">API Credentials</div>
+          <div class="settings-row"><div><div class="settings-label">Anthropic API Key</div><div class="settings-hint">Used by Leo for email generation</div></div><input class="settings-input" type="password" placeholder="sk-ant-…"></div>
+          <div class="settings-row"><div><div class="settings-label">SendGrid API Key</div><div class="settings-hint">Used by Zara to send emails</div></div><input class="settings-input" type="password" placeholder="SG.…"></div>
+          <div class="settings-row"><div><div class="settings-label">Apollo API Key</div><div class="settings-hint">Used by Maya for lead enrichment</div></div><input class="settings-input" type="password" placeholder="API key…"></div>
+          <button class="save-btn">Save credentials</button>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-title">Sender Identity</div>
+          <div class="settings-row"><div class="settings-label">Your name</div><input class="settings-input" type="text" value="Declan Harrington" style="font-family:'Inter',sans-serif"></div>
+          <div class="settings-row"><div class="settings-label">Your email</div><input class="settings-input" type="email" value="declan.t.harrington@gmail.com" style="font-family:'Inter',sans-serif"></div>
+          <div class="settings-row"><div class="settings-label">Your website</div><input class="settings-input" type="text" value="www.paymentsiqtesttesttest.com.au" style="font-family:'Inter',sans-serif"></div>
+          <div class="settings-row"><div class="settings-label">Google Sheet name</div><input class="settings-input" type="text" value="Payments Agent Leads" style="font-family:'Inter',sans-serif"></div>
+          <button class="save-btn">Save identity</button>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-title">Pipeline Settings</div>
+          <div class="settings-row"><div><div class="settings-label">Zara dry run mode</div><div class="settings-hint">Preview emails without sending</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="settings-row"><div><div class="settings-label">Daily send limit</div><div class="settings-hint">Max emails per Zara run</div></div><input class="settings-input" type="number" value="50" style="width:80px"></div>
+          <div class="settings-row"><div><div class="settings-label">Send delay (seconds)</div><div class="settings-hint">Pause between each email</div></div><input class="settings-input" type="number" value="1" style="width:80px"></div>
+          <button class="save-btn">Save pipeline config</button>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-title">Integrations</div>
+          <div class="int-row"><div class="int-icon">📊</div><div><div class="int-name">Google Sheets</div><div class="int-sub">payments-agent@trusty-force…</div></div><span class="int-badge connected">Connected</span></div>
+          <div class="int-row"><div class="int-icon">📨</div><div><div class="int-name">SendGrid</div><div class="int-sub">declan.t.harrington@gmail.com</div></div><span class="int-badge connected">Connected</span></div>
+          <div class="int-row"><div class="int-icon">🔍</div><div><div class="int-name">Apollo.io</div><div class="int-sub">tPqaVy054wPE…</div></div><span class="int-badge connected">Connected</span></div>
+          <div class="int-row"><div class="int-icon">🤖</div><div><div class="int-name">Anthropic / Claude</div><div class="int-sub">claude-haiku-4-5</div></div><span class="int-badge connected">Connected</span></div>
+          <div class="int-row"><div class="int-icon">✉️</div><div><div class="int-name">ZeroBounce</div><div class="int-sub">No key set</div></div><span class="int-badge error">Not connected</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /shell -->
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal" id="modal">
     <button class="modal-close" onclick="closeModalBtn()">✕</button>
     <div id="modal-content"></div>
@@ -443,602 +678,526 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; mi
 </div>
 
 <script>
+/* ─────────────────────────────────────────────────────────────
+   SUPABASE CONFIG
+───────────────────────────────────────────────────────────── */
 const SUPABASE_URL = 'https://lnelbjisofzeufihtzlp.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuZWxiamlzb2Z6ZXVmaWh0emxwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MDIxNzMsImV4cCI6MjA5NjM3ODE3M30.BekqvtOv4S--6J-LyD9Pe4JgRBYUQImuuj5egyoKhhw';
 
+/* ─────────────────────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────────────────────── */
 let allSubmissions = [];
-let currentFilter = 'all';
+let currentStatusFilter = 'all';
 let currentSearch = '';
 let currentProvider = 'all';
 let currentDateFrom = '';
 let currentDateTo = '';
 let sortField = 'submitted_at';
-let sortDir = 'desc'; // 'asc' | 'desc'
+let sortDir = 'desc';
 
-const fmtD = n => n != null && n !== '' ? '$'+Number(n).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
-const fmtP = n => n != null && n !== '' ? Number(n).toFixed(2)+'%' : '—';
+/* ─────────────────────────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────────────────────────── */
+const fmtD = n => (n != null && n !== '') ? '$' + Number(n).toLocaleString('en-AU', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
+const fmtP = n => (n != null && n !== '') ? Number(n).toFixed(2) + '%' : '—';
 const esc  = v => (v == null ? '' : String(v)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const escAttr = v => esc(v).replace(/"/g,'&quot;');
+const escA = v => esc(v).replace(/"/g,'&quot;');
 
-// Merchant identity lives in program_context as "Name: ...", "Company: ...", "Email: ...", etc.
 function parseMerchant(ctx) {
   ctx = ctx || '';
-  const grab = re => (ctx.match(re) || [])[1] ? ctx.match(re)[1].trim() : '';
-  const email = grab(/Email:\s*(.+)/).replace(/\s*\(.*\)\s*$/, ''); // strip "(verified)"/"(skipped)"
-  return {
-    company:  grab(/Company:\s*(.+)/),
-    name:     grab(/Name:\s*(.+)/),
-    email,
-    phone:    grab(/Phone:\s*(.+)/),
-    industry: grab(/Industry:\s*(.+)/),
-  };
+  const grab = re => { const m = ctx.match(re); return m && m[1] ? m[1].trim() : ''; };
+  const email = grab(/Email:\s*(.+)/).replace(/\s*\(.*\)\s*$/, '');
+  return { company: grab(/Company:\s*(.+)/), name: grab(/Name:\s*(.+)/), email, phone: grab(/Phone:\s*(.+)/), industry: grab(/Industry:\s*(.+)/) };
 }
-
 function parseJSON(str, fallback) { try { return str ? JSON.parse(str) : fallback; } catch { return fallback; } }
 function facts(s)    { return parseJSON(s.report_json, {}) || {}; }
 function narrative(s){ return parseJSON(s.report_narrative, null); }
 function hasReport(s){ return !!s.report_html_path; }
+function ratePillClass(r) { if (!r) return ''; return r > 1.7 ? 'rate-hi' : r > 1.3 ? 'rate-mid' : 'rate-lo'; }
+function initials(name) { return (name || '').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() || '?'; }
+
+const STATUS_ORDER = { pending_review:0, reviewed:1, approved:2, sent:3 };
+const STATUS_LABEL = { pending_review:'Pending review', reviewed:'Reviewed', approved:'Report ready', sent:'Sent to client' };
+const STATUS_CLASS = { pending_review:'pending', reviewed:'reviewed', approved:'approved', sent:'sent' };
 
 function cardMixStr(cm) {
   if (!cm || typeof cm !== 'object') return '—';
   const parts = Object.entries(cm).filter(([,v]) => v != null && v !== '').map(([k,v]) => `${k} ${v}%`);
   return parts.length ? parts.join(' · ') : '—';
 }
-// Light preview render: drop markdown bold markers, keep paragraph breaks.
-function previewText(t) { return esc(t).replace(/\*\*(.+?)\*\*/g, '$1'); }
+function previewText(t) { return esc(t).replace(/\*\*(.+?)\*\*/g,'$1'); }
 
+/* ─────────────────────────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────────────────────────── */
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LOAD SUPABASE DATA
+───────────────────────────────────────────────────────────── */
 async function loadSubmissions() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/submissions?order=submitted_at.desc&limit=100`, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/submissions?order=submitted_at.desc&limit=200`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
     });
     allSubmissions = await res.json();
-    updateStats();
+    updateDashboard();
     populateProviderFilter();
     applyView();
+    updateSidebarBadge();
   } catch(err) {
-    document.getElementById('submissions-list').innerHTML =
-      '<div class="empty-state"><h3>Could not load submissions</h3><p>'+esc(err.message)+'</p></div>';
+    document.getElementById('reports-tbody').innerHTML =
+      `<tr><td colspan="8" class="empty-state-row">Could not load submissions: ${esc(err.message)}</td></tr>`;
   }
 }
 
-function updateStats() {
+/* ─────────────────────────────────────────────────────────────
+   DASHBOARD
+───────────────────────────────────────────────────────────── */
+function updateDashboard() {
   const total    = allSubmissions.length;
   const pending  = allSubmissions.filter(s => s.status === 'pending_review').length;
   const approved = allSubmissions.filter(s => s.status === 'approved').length;
   const sent     = allSubmissions.filter(s => s.status === 'sent').length;
-  document.getElementById('stat-total').textContent    = total;
-  document.getElementById('stat-pending').textContent  = pending;
-  document.getElementById('stat-approved').textContent = approved;
-  document.getElementById('stat-sent').textContent     = sent;
-  document.getElementById('nav-count').textContent     = pending + ' pending';
+  const reviewed = allSubmissions.filter(s => s.status === 'reviewed').length;
+
+  document.getElementById('dash-total').textContent   = total;
+  document.getElementById('dash-pending').textContent  = pending;
+  document.getElementById('dash-approved').textContent = approved;
+  document.getElementById('dash-sent').textContent     = sent;
+  if (pending > 0) { document.getElementById('dash-pending-note').textContent = 'Needs attention'; }
+
+  // Funnel
+  const funnelEl = document.getElementById('dash-funnel');
+  const steps = [
+    { label:'Submitted', val:total, pct:100, cls:'' },
+    { label:'Reviewed', val:reviewed+approved+sent, pct:total?Math.round((reviewed+approved+sent)/total*100):0, cls:'amber' },
+    { label:'Report generated', val:approved+sent, pct:total?Math.round((approved+sent)/total*100):0, cls:'green' },
+    { label:'Sent to client', val:sent, pct:total?Math.round(sent/total*100):0, cls:'green' },
+  ];
+  funnelEl.innerHTML = steps.map(s => `
+    <div style="position:relative">
+      <div class="funnel-bar-bg">
+        <div class="funnel-bar-fill ${s.cls}" style="width:${s.pct}%"></div>
+        <span class="funnel-label">${s.label}</span>
+        <span class="funnel-val">${s.val}</span>
+      </div>
+    </div>`).join('');
+
+  // Rate distribution
+  const rates = allSubmissions.map(s => s.effective_rate).filter(r => r != null && r !== '');
+  const hi  = rates.filter(r => r > 1.7).length;
+  const mid = rates.filter(r => r > 1.3 && r <= 1.7).length;
+  const lo  = rates.filter(r => r <= 1.3).length;
+  const avgRate = rates.length ? (rates.reduce((a,b)=>a+b,0)/rates.length).toFixed(2)+'%' : '—';
+  const avgFees = allSubmissions.filter(s=>s.total_fees).length
+    ? fmtD(allSubmissions.reduce((a,s)=>a+(+s.total_fees||0),0)/allSubmissions.filter(s=>s.total_fees).length) : '—';
+  const avgVol = allSubmissions.filter(s=>s.volume).length
+    ? fmtD(allSubmissions.reduce((a,s)=>a+(+s.volume||0),0)/allSubmissions.filter(s=>s.volume).length) : '—';
+  document.getElementById('dash-rate-dist').innerHTML = `
+    <div class="mini-row"><div class="mini-dot" style="background:#E88A8A"></div><div class="mini-name">Above 1.7%</div><div class="mini-val">${hi}<span class="mini-pct">${rates.length?Math.round(hi/rates.length*100):0}%</span></div></div>
+    <div class="mini-row"><div class="mini-dot" style="background:#E7B27A"></div><div class="mini-name">1.3% – 1.7%</div><div class="mini-val">${mid}<span class="mini-pct">${rates.length?Math.round(mid/rates.length*100):0}%</span></div></div>
+    <div class="mini-row"><div class="mini-dot" style="background:#9FD9B4"></div><div class="mini-name">Below 1.3%</div><div class="mini-val">${lo}<span class="mini-pct">${rates.length?Math.round(lo/rates.length*100):0}%</span></div></div>
+    <div class="mini-row" style="padding-top:14px;margin-top:4px;border-top:1px solid rgba(224,233,246,0.07);border-bottom:none"><div class="mini-name" style="color:rgba(224,233,246,0.35)">Avg. effective rate</div><div class="mini-val">${avgRate}</div></div>
+    <div class="mini-row"><div class="mini-name" style="color:rgba(224,233,246,0.35)">Avg. monthly fees</div><div class="mini-val">${avgFees}</div></div>
+    <div class="mini-row"><div class="mini-name" style="color:rgba(224,233,246,0.35)">Avg. card volume</div><div class="mini-val">${avgVol}</div></div>`;
+
+  // Bar chart — group by week (last 8 weeks)
+  const weekBuckets = new Array(8).fill(0);
+  const now = Date.now();
+  allSubmissions.forEach(s => {
+    const age = (now - new Date(s.submitted_at).getTime()) / (7*24*60*60*1000);
+    const w = Math.floor(age);
+    if (w < 8) weekBuckets[7-w]++;
+  });
+  const maxB = Math.max(...weekBuckets, 1);
+  const weekLabels = ['W1','W2','W3','W4','W5','W6','W7','W8'];
+  document.getElementById('bar-chart').innerHTML = weekBuckets.map((v,i) =>
+    `<div class="bar-col"><div class="bar${i===7?' accent':''}" style="height:${Math.round(v/maxB*100)}%" title="${v}"></div><div class="bar-lbl">${weekLabels[i]}</div></div>`
+  ).join('');
+
+  // Recent submissions table
+  const recent = allSubmissions.slice(0,5);
+  document.getElementById('dash-recent').innerHTML = recent.map(s => {
+    const m = parseMerchant(s.program_context);
+
+    return `<tr onclick="openSubmission('${s.id}'); showPage('reports', document.querySelectorAll('.nav-item')[1])">
+      <td class="primary">${esc(m.company)||'Unknown'}</td>
+      <td>${esc(s.provider)||'—'}</td>
+      <td>${s.effective_rate ? `<span class="rate-pill ${ratePillClass(s.effective_rate)}">${fmtP(s.effective_rate)}</span>` : '—'}</td>
+      <td><span class="status-badge ${STATUS_CLASS[s.status]||'pending'}">${STATUS_LABEL[s.status]||'Pending'}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Activity feed
+  const feedItems = allSubmissions.slice(0,5).map(s => {
+    const m = parseMerchant(s.program_context);
+    const company = esc(m.company) || 'Unknown';
+    const timeStr = new Date(s.submitted_at).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+    const icon = (s.status === 'sent' || s.status === 'approved') ? {cls:'green',char:'✓'} : {cls:'blue',char:'↓'};
+    const text = s.status === 'sent' ? `Report sent to <b>${company}</b>` :
+                 s.status === 'approved' ? `Report generated for <b>${company}</b>` :
+                 `New submission from <b>${company}</b>`;
+    return `<div class="feed-item"><div class="feed-icon ${icon.cls}">${icon.char}</div><div class="feed-body"><div class="feed-text">${text}</div><div class="feed-time">${timeStr}</div></div></div>`;
+  }).join('');
+  document.getElementById('dash-activity').innerHTML = feedItems ||
+    '<div class="feed-item"><div class="feed-body"><div class="feed-text" style="color:rgba(224,233,246,0.25)">No recent activity</div></div></div>';
 }
 
-// Build the provider dropdown's options from whatever providers actually
-// appear in the loaded submissions, so it never shows stale/irrelevant options.
+function updateSidebarBadge() {
+  const n = allSubmissions.filter(s => s.status === 'pending_review').length;
+  document.getElementById('sidebar-pending').textContent = n;
+  document.getElementById('nav-pending-count').textContent = n + ' pending';
+}
+
+/* ── REPORTS FILTERS & SORT ── */
 function populateProviderFilter() {
   const sel = document.getElementById('provider-filter');
-  const providers = Array.from(new Set(
-    allSubmissions.map(s => (s.provider || '').trim()).filter(Boolean)
-  )).sort((a, b) => a.localeCompare(b));
-
-  const prevValue = sel.value || 'all';
+  const providers = [...new Set(allSubmissions.map(s=>(s.provider||'').trim()).filter(Boolean))].sort();
+  const prev = sel.value || 'all';
   sel.innerHTML = '<option value="all">All providers</option>' +
-    providers.map(p => `<option value="${escAttr(p)}">${esc(p)}</option>`).join('');
-  // Preserve the current selection if it's still a valid option.
-  sel.value = providers.includes(prevValue) ? prevValue : 'all';
-  currentProvider = sel.value;
+    providers.map(p => `<option value="${escA(p)}">${esc(p)}</option>`).join('');
+  sel.value = providers.includes(prev) ? prev : 'all';
 }
 
-function ratePillClass(rate) {
-  if (!rate) return '';
-  if (rate > 1.7) return 'high';
-  if (rate > 1.3) return 'mid';
-  return 'low';
-}
-
-// ── Filter handlers ─────────────────────────────────────────────────────
-
-function filterSubmissions(filter, btn) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  applyView();
-}
-
-let searchDebounceTimer;
+let searchDebounce;
 function onSearchInput() {
-  clearTimeout(searchDebounceTimer);
-  searchDebounceTimer = setTimeout(() => {
-    currentSearch = document.getElementById('search-input').value.trim().toLowerCase();
-    applyView();
-  }, 180); // light debounce so typing fast doesn't re-render on every keystroke
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(() => { currentSearch = document.getElementById('search-input').value.trim().toLowerCase(); applyView(); }, 180);
 }
-
-function onProviderFilterChange() {
-  currentProvider = document.getElementById('provider-filter').value;
-  applyView();
+function onProviderChange() { currentProvider = document.getElementById('provider-filter').value; applyView(); }
+function onDateChange() { currentDateFrom = document.getElementById('date-from').value; currentDateTo = document.getElementById('date-to').value; applyView(); }
+function filterStatus(status, btn) {
+  currentStatusFilter = status;
+  document.querySelectorAll('.fpill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); applyView();
 }
-
-function onDateRangeChange() {
-  currentDateFrom = document.getElementById('date-from').value; // 'YYYY-MM-DD' or ''
-  currentDateTo   = document.getElementById('date-to').value;
-  applyView();
-}
-
 function clearAllFilters() {
-  currentFilter = 'all';
-  currentSearch = '';
-  currentProvider = 'all';
-  currentDateFrom = '';
-  currentDateTo = '';
-
-  document.getElementById('search-input').value = '';
-  document.getElementById('provider-filter').value = 'all';
-  document.getElementById('date-from').value = '';
-  document.getElementById('date-to').value = '';
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector('.filter-btn[data-status="all"]').classList.add('active');
-
-  applyView();
+  currentStatusFilter='all'; currentSearch=''; currentProvider='all'; currentDateFrom=''; currentDateTo='';
+  document.getElementById('search-input').value=''; document.getElementById('provider-filter').value='all';
+  document.getElementById('date-from').value=''; document.getElementById('date-to').value='';
+  document.querySelectorAll('.fpill').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.fpill[data-status="all"]').classList.add('active'); applyView();
 }
-
-function anyFilterActive() {
-  return currentFilter !== 'all' || currentSearch !== '' || currentProvider !== 'all' || currentDateFrom !== '' || currentDateTo !== '';
-}
-
-// ── Sorting ──────────────────────────────────────────────────────────────
-
-// Maps a sortable column id to the value used for comparison. Company and
-// provider sort alphabetically; dollar/percent fields sort numerically with
-// nulls always sorted to the end regardless of direction (so "no data" never
-// jumps to the top just because descending sort was picked); status sorts by
-// a fixed pipeline order (pending → reviewed → approved → sent) rather than
-// alphabetically, since that's the order the work actually happens in.
-const STATUS_ORDER = { pending_review: 0, reviewed: 1, approved: 2, sent: 3 };
+function anyFilterActive() { return currentStatusFilter!=='all'||currentSearch!==''||currentProvider!=='all'||currentDateFrom!==''||currentDateTo!==''; }
 
 function sortValue(s, field) {
-  if (field === 'company') return (parseMerchant(s.program_context).company || '').toLowerCase();
-  if (field === 'provider') return (s.provider || '').toLowerCase();
-  if (field === 'status') return STATUS_ORDER[s.status] ?? 99;
-  if (field === 'submitted_at') return new Date(s.submitted_at).getTime();
-  return s[field]; // volume, effective_rate, total_fees — already numeric or null
+  if (field==='company') return (parseMerchant(s.program_context).company||'').toLowerCase();
+  if (field==='provider') return (s.provider||'').toLowerCase();
+  if (field==='status') return STATUS_ORDER[s.status]??99;
+  if (field==='submitted_at') return new Date(s.submitted_at).getTime();
+  return s[field];
 }
-
 function onSortClick(field) {
-  if (sortField === field) {
-    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-  } else {
-    sortField = field;
-    // Dollar/rate/date fields default to descending (biggest/most-recent
-    // first); text fields (company/provider/status) default to ascending.
-    sortDir = ['company', 'provider', 'status'].includes(field) ? 'asc' : 'desc';
-  }
-  updateSortHeaderUI();
+  sortDir = (sortField===field) ? (sortDir==='asc'?'desc':'asc') : (['company','provider','status'].includes(field)?'asc':'desc');
+  sortField = field;
+  document.querySelectorAll('.rtable th').forEach(th=>th.classList.remove('active-sort','desc'));
+  const fieldMap=['company','submitted_at','provider','volume','effective_rate','total_fees','status'];
+  const idx=fieldMap.indexOf(field);
+  if(idx>=0){ const th=document.querySelectorAll('.rtable th')[idx]; th.classList.add('active-sort'); if(sortDir==='desc') th.classList.add('desc'); }
   applyView();
 }
-
-function updateSortHeaderUI() {
-  document.querySelectorAll('.th-sort').forEach(el => {
-    const isActive = el.getAttribute('data-sort') === sortField;
-    el.classList.toggle('active', isActive);
-    el.classList.toggle('desc', isActive && sortDir === 'desc');
-  });
-}
-
-function sortSubmissions(list) {
-  const sorted = list.slice().sort((a, b) => {
-    let va = sortValue(a, sortField);
-    let vb = sortValue(b, sortField);
-    const aNull = va == null || va === '';
-    const bNull = vb == null || vb === '';
-    if (aNull && bNull) return 0;
-    if (aNull) return 1;  // nulls always last, regardless of direction
-    if (bNull) return -1;
-    let cmp;
-    if (typeof va === 'string') cmp = va.localeCompare(vb);
-    else cmp = va < vb ? -1 : va > vb ? 1 : 0;
-    return sortDir === 'asc' ? cmp : -cmp;
-  });
-  return sorted;
-}
-
-// ── The single pipeline: status → search → provider → date range → sort ──
 
 function applyView() {
   let list = allSubmissions;
-
-  if (currentFilter !== 'all') {
-    list = list.filter(s => s.status === currentFilter);
-  }
-
-  if (currentProvider !== 'all') {
-    list = list.filter(s => (s.provider || '') === currentProvider);
-  }
-
-  if (currentDateFrom) {
-    const from = new Date(currentDateFrom + 'T00:00:00');
-    list = list.filter(s => new Date(s.submitted_at) >= from);
-  }
-  if (currentDateTo) {
-    const to = new Date(currentDateTo + 'T23:59:59');
-    list = list.filter(s => new Date(s.submitted_at) <= to);
-  }
-
-  if (currentSearch) {
-    list = list.filter(s => {
-      const m = parseMerchant(s.program_context);
-      const haystack = [m.company, m.name, m.email, s.provider, s.period]
-        .filter(Boolean).join(' ').toLowerCase();
-      return haystack.includes(currentSearch);
-    });
-  }
-
-  list = sortSubmissions(list);
-
-  document.getElementById('clear-filters-btn').style.display = anyFilterActive() ? 'inline-block' : 'none';
-  const countEl = document.getElementById('results-count');
-  countEl.textContent = anyFilterActive()
-    ? `Showing ${list.length} of ${allSubmissions.length} submissions`
-    : `${allSubmissions.length} submission${allSubmissions.length === 1 ? '' : 's'}`;
-
+  if (currentStatusFilter!=='all') list=list.filter(s=>s.status===currentStatusFilter);
+  if (currentProvider!=='all') list=list.filter(s=>(s.provider||'')===currentProvider);
+  if (currentDateFrom) { const from=new Date(currentDateFrom+'T00:00:00'); list=list.filter(s=>new Date(s.submitted_at)>=from); }
+  if (currentDateTo)   { const to=new Date(currentDateTo+'T23:59:59');   list=list.filter(s=>new Date(s.submitted_at)<=to); }
+  if (currentSearch)   { list=list.filter(s=>{const m=parseMerchant(s.program_context);return[m.company,m.name,m.email,s.provider,s.period].filter(Boolean).join(' ').toLowerCase().includes(currentSearch);}); }
+  list=list.slice().sort((a,b)=>{
+    let va=sortValue(a,sortField),vb=sortValue(b,sortField);
+    if(va==null&&vb==null)return 0; if(va==null)return 1; if(vb==null)return -1;
+    let cmp=typeof va==='string'?va.localeCompare(vb):va<vb?-1:va>vb?1:0;
+    return sortDir==='asc'?cmp:-cmp;
+  });
+  document.getElementById('clear-filters-btn').style.display=anyFilterActive()?'inline-block':'none';
+  document.getElementById('results-count').textContent=anyFilterActive()
+    ?`Showing ${list.length} of ${allSubmissions.length} submissions`
+    :`${allSubmissions.length} submission${allSubmissions.length===1?'':'s'}`;
   renderTable(list);
 }
 
 function renderTable(submissions) {
   if (!submissions.length) {
-    document.getElementById('submissions-list').innerHTML =
-      allSubmissions.length
-        ? '<div class="empty-state"><h3>No matching submissions</h3><p>Try adjusting your search or filters.</p></div>'
-        : '<div class="empty-state"><h3>No submissions yet</h3><p>They\'ll appear here as merchants submit their statements.</p></div>';
+    document.getElementById('reports-tbody').innerHTML=`<tr><td colspan="8" class="empty-state-row">${allSubmissions.length?'No matching submissions.':'No submissions yet.'}</td></tr>`;
     return;
   }
-  document.getElementById('submissions-list').innerHTML = submissions.map(s => {
-    const m = parseMerchant(s.program_context);
-    const dateShort = new Date(s.submitted_at).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
-    const timeShort = new Date(s.submitted_at).toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'});
-    const rateClass = ratePillClass(s.effective_rate);
-    const statusMap = { pending_review:'pending', reviewed:'reviewed', sent:'sent', approved:'approved' };
-    const statusLabel = { pending_review:'Pending review', reviewed:'Reviewed', sent:'Sent to client', approved:'Report ready' };
-    const openBtn = hasReport(s)
-      ? `<button class="view-btn report" onclick="event.stopPropagation();openReport('${escAttr(s.report_html_path)}')">Report ↗</button>`
-      : '';
-    return `<div class="table-row" onclick="openSubmission('${s.id}')">
-      <div class="table-cell primary">${esc(m.company) || 'Unknown company'}<div class="table-cell muted" style="margin-top:2px">${esc(m.name) || '—'}</div></div>
-      <div class="table-cell">${esc(dateShort)}<div class="table-cell muted" style="margin-top:2px">${esc(timeShort)}</div></div>
-      <div class="table-cell">${esc(s.provider)||'Unknown'}<div class="table-cell muted" style="margin-top:2px">${esc(s.period)||'—'}</div></div>
-      <div class="table-cell">${fmtD(s.volume)}</div>
-      <div class="table-cell">${s.effective_rate ? `<span class="rate-pill ${rateClass}">${fmtP(s.effective_rate)}</span>` : '—'}</div>
-      <div class="table-cell">${fmtD(s.total_fees)}</div>
-      <div class="table-cell"><span class="status-badge ${statusMap[s.status]||'pending'}">${statusLabel[s.status]||'Pending'}</span>${hasReport(s)?'<span class="report-dot" title="Report generated"></span>':''}</div>
-      <div class="table-cell cell-actions">${openBtn}<button class="view-btn" onclick="event.stopPropagation();openSubmission('${s.id}')">View →</button></div>
-    </div>`;
+  document.getElementById('reports-tbody').innerHTML=submissions.map(s=>{
+    const m=parseMerchant(s.program_context);
+    const dateStr=new Date(s.submitted_at).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
+    const timeStr=new Date(s.submitted_at).toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'});
+    const sc=STATUS_CLASS[s.status]||'pending'; const sl=STATUS_LABEL[s.status]||'Pending';
+    const reportBtn=hasReport(s)?`<button class="action-btn blue" onclick="event.stopPropagation();openReport('${escA(s.report_html_path)}')">Report ↗</button>`:'';
+    return `<tr onclick="openSubmission('${s.id}')">
+      <td class="primary">${esc(m.company)||'Unknown'}<br><span style="font-size:11px;color:rgba(224,233,246,0.3);font-weight:400">${esc(m.name)||''}</span></td>
+      <td style="color:rgba(224,233,246,0.4)">${dateStr}<br><span style="font-size:10px;color:rgba(224,233,246,0.25)">${timeStr}</span></td>
+      <td>${esc(s.provider)||'—'}<br><span style="font-size:10px;color:rgba(224,233,246,0.3)">${esc(s.period)||''}</span></td>
+      <td class="mono">${fmtD(s.volume)}</td>
+      <td>${s.effective_rate?`<span class="rate-pill ${ratePillClass(s.effective_rate)}">${fmtP(s.effective_rate)}</span>`:'—'}</td>
+      <td class="mono">${fmtD(s.total_fees)}</td>
+      <td><span class="status-badge ${sc}">${sl}</span>${hasReport(s)?'<span class="report-dot"></span>':''}</td>
+      <td style="text-align:right"><div style="display:flex;gap:6px;justify-content:flex-end">${reportBtn}<button class="action-btn ghost" onclick="event.stopPropagation();openSubmission('${s.id}')">View →</button></div></td>
+    </tr>`;
   }).join('');
 }
 
-// ── EDIT PANEL (facts review/correct) ───────────────────────────────────────
-
-function toggleEditPanel(id) {
-  document.getElementById('edit-toggle-' + id).classList.toggle('open');
-  document.getElementById('edit-panel-' + id).classList.toggle('open');
-}
-
-const PRICING_OPTS = ['', 'Single-rate', 'Blended', 'Interchange-plus', 'Interchange-plus-plus', 'Subscription', 'Unknown'];
-const LCR_OPTS = ['', 'On', 'Off', 'Partial', 'Unknown'];
-
-function selectHtml(field, value, opts) {
-  return `<select class="edit-select" data-field="${field}">` +
-    opts.map(o => `<option value="${escAttr(o)}" ${String(value||'')===o?'selected':''}>${esc(o)||'—'}</option>`).join('') +
-    `</select>`;
-}
-
-function buildEditPanel(id, f) {
-  const num = v => (v == null || v === '') ? '' : v;
-  const obs = Array.isArray(f.observations) ? f.observations.join('\n') : '';
-  return `
-  <div class="modal-section" style="padding-top:20px">
-    <button class="edit-panel-toggle" id="edit-toggle-${id}" onclick="toggleEditPanel('${id}')">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      Review &amp; correct the extracted data before generating
-      <span class="toggle-icon">▼</span>
-    </button>
-
-    <div class="edit-panel" id="edit-panel-${id}">
-
-      <div class="edit-grid">
-        <div class="edit-field">
-          <div class="edit-field-label">Provider</div>
-          <input class="edit-input" type="text" data-field="provider" value="${escAttr(f.provider)}" />
-        </div>
-        <div class="edit-field">
-          <div class="edit-field-label">Period</div>
-          <input class="edit-input" type="text" data-field="period" value="${escAttr(f.period)}" />
-        </div>
-      </div>
-
-      <div class="edit-grid">
-        <div class="edit-field">
-          <div class="edit-field-label">Card volume (AUD)</div>
-          <input class="edit-input" type="number" step="any" data-field="volume" value="${num(f.volume)}" />
-        </div>
-        <div class="edit-field">
-          <div class="edit-field-label">Total fees (AUD, GST incl.)</div>
-          <div class="edit-field-hint">Effective rate is recalculated from volume &amp; total fees.</div>
-          <input class="edit-input" type="number" step="any" data-field="totalFees" value="${num(f.totalFees)}" />
-        </div>
-      </div>
-
-      <div class="edit-grid-3">
-        <div class="edit-field">
-          <div class="edit-field-label">Transactions</div>
-          <input class="edit-input" type="number" step="1" data-field="transactions" value="${num(f.transactions)}" />
-        </div>
-        <div class="edit-field">
-          <div class="edit-field-label">Monthly fee (AUD)</div>
-          <input class="edit-input" type="number" step="any" data-field="monthlyFee" value="${num(f.monthlyFee)}" />
-        </div>
-        <div class="edit-field">
-          <div class="edit-field-label">Terminal fees (AUD)</div>
-          <input class="edit-input" type="number" step="any" data-field="terminalFees" value="${num(f.terminalFees)}" />
-        </div>
-      </div>
-
-      <div class="edit-grid-3">
-        <div class="edit-field">
-          <div class="edit-field-label">Provider rate / margin</div>
-          <input class="edit-input" type="text" data-field="providerRate" value="${escAttr(f.providerRate)}" placeholder="e.g. 0.12%" />
-        </div>
-        <div class="edit-field">
-          <div class="edit-field-label">Pricing model</div>
-          ${selectHtml('pricingModel', f.pricingModel, PRICING_OPTS)}
-        </div>
-        <div class="edit-field">
-          <div class="edit-field-label">LCR status</div>
-          ${selectHtml('lcrStatus', f.lcrStatus, LCR_OPTS)}
-        </div>
-      </div>
-
-      <div class="edit-field">
-        <div class="edit-field-label">Factual observations</div>
-        <div class="edit-field-hint">One per line. These factual notes guide the report's findings.</div>
-        <textarea class="edit-textarea" data-field="observations">${esc(obs)}</textarea>
-      </div>
-
-      <div class="edit-field">
-        <div class="edit-field-label">Admin notes (internal only)</div>
-        <div class="edit-field-hint">Passed to Claude as extra context when generating — will NOT appear in the report.</div>
-        <textarea class="edit-textarea" data-field="adminNotes" placeholder="e.g. Online merchant — likely a separate gateway fee not on this statement. Focus on debit routing."></textarea>
-      </div>
-
-      <div class="edit-panel-note">
-        ✦ Corrections here are applied to the facts before the report is written, and saved back to the submission. Fields left unchanged are used as-is.
-      </div>
-    </div>
-  </div>`;
-}
-
-function readEditOverrides(id) {
-  const panel = document.getElementById('edit-panel-' + id);
-  if (!panel) return {};
-  const get = sel => { const el = panel.querySelector(sel); return el ? el.value.trim() : ''; };
-  const ov = {};
-  ['provider','period','providerRate','pricingModel','lcrStatus'].forEach(k => {
-    const v = get(`[data-field="${k}"]`); if (v) ov[k] = v;
-  });
-  ['volume','totalFees','transactions','monthlyFee','terminalFees'].forEach(k => {
-    const v = get(`[data-field="${k}"]`); if (v !== '') ov[k] = Number(v);
-  });
-  const obs = get('[data-field="observations"]');
-  if (obs) ov.observations = obs.split('\n').map(l => l.trim()).filter(Boolean);
-  const notes = get('[data-field="adminNotes"]');
-  if (notes) ov.adminNotes = notes;
-  return ov;
-}
-
-// ── MODAL ──────────────────────────────────────────────────────────────────
-
+/* ── MODAL ── */
 function openSubmission(id) {
-  const s = allSubmissions.find(x => x.id == id);
-  if (!s) return;
-  const f = facts(s);
-  const n = narrative(s);
-  const m = parseMerchant(s.program_context);
-  const date = new Date(s.submitted_at).toLocaleString('en-AU',{dateStyle:'long',timeStyle:'short'});
-  const statusLabel = { pending_review:'Pending review', reviewed:'Reviewed', sent:'Sent to client', approved:'Report generated' }[s.status] || s.status || 'pending_review';
-
-  const contactBits = [
-    m.name  ? esc(m.name) : '',
-    m.email ? `<a href="mailto:${escAttr(m.email)}">${esc(m.email)}</a>` : '',
-    m.phone ? esc(m.phone) : '',
-    m.industry ? esc(m.industry) : ''
-  ].filter(Boolean).join('&nbsp;·&nbsp;');
-
-  // Observations (factual, pre-generation)
-  const obsHtml = Array.isArray(f.observations) && f.observations.length
-    ? `<ul class="obs-list">${f.observations.map(o => `<li>${esc(o)}</li>`).join('')}</ul>`
-    : '<div class="modal-section-text">No observations recorded.</div>';
-
-  // Current setup (factual components)
-  const setupHtml = Array.isArray(f.setup) && f.setup.length
-    ? `<table class="modal-table"><tbody>${f.setup.map(x => `<tr><td>${esc(x.label)}</td><td>${esc(x.value)}</td></tr>`).join('')}</tbody></table>`
-    : '';
-
-  // Generated narrative preview (post-generation)
-  let narrativeHtml = '';
-  if (n) {
-    const alertsHtml = Array.isArray(n.alerts) && n.alerts.length
-      ? n.alerts.map(a => `<div class="modal-alert ${esc(a.type)||'info'}"><strong>${esc(a.heading)}</strong>${esc(a.body)}</div>`).join('')
-      : '';
-    const sec = (label, text) => text ? `<div class="modal-section"><div class="modal-section-label">${label}</div><div class="modal-section-text">${previewText(text)}</div></div>` : '';
-    narrativeHtml = `
-      ${alertsHtml ? `<div class="modal-section"><div class="modal-section-label">Key Findings (generated)</div>${alertsHtml}</div>` : ''}
-      ${sec('Executive Summary', n.executiveSummary)}
-      ${sec('Savings Opportunity', n.savingsOpportunity)}
-      ${sec('Pricing Model Analysis', n.pricingModelAnalysis)}
-      ${sec('LCR Analysis', n.lcrAnalysis)}
-      ${sec('Market Benchmark', n.benchmarkComment)}
-      ${n.keyRecommendation ? `<div class="modal-section"><div class="modal-section-label">Priority Area</div><div class="modal-section-text">${previewText(n.keyRecommendation)}</div></div>` : ''}`;
+  const s=allSubmissions.find(x=>x.id==id); if(!s) return;
+  const f=facts(s); const n=narrative(s); const m=parseMerchant(s.program_context);
+  const dateStr=new Date(s.submitted_at).toLocaleString('en-AU',{dateStyle:'long',timeStyle:'short'});
+  const sl=STATUS_LABEL[s.status]||s.status||'pending_review';
+  const contactBits=[m.name?esc(m.name):'',m.email?`<a href="mailto:${escA(m.email)}">${esc(m.email)}</a>`:'',m.phone?esc(m.phone):'',m.industry?esc(m.industry):''].filter(Boolean).join(' &nbsp;·&nbsp; ');
+  const obsHtml=Array.isArray(f.observations)&&f.observations.length?`<ul class="obs-list">${f.observations.map(o=>`<li>${esc(o)}</li>`).join('')}</ul>`:'<div class="modal-section-text">No observations recorded.</div>';
+  const setupHtml=Array.isArray(f.setup)&&f.setup.length?`<div class="modal-section"><div class="modal-section-label">Current Setup</div><table class="modal-table"><tbody>${f.setup.map(x=>`<tr><td>${esc(x.label)}</td><td>${esc(x.value)}</td></tr>`).join('')}</tbody></table></div>`:'';
+  let narrativeHtml='';
+  if(n){
+    const alertsHtml=Array.isArray(n.alerts)&&n.alerts.length?n.alerts.map(a=>`<div class="modal-alert ${esc(a.type)||'info'}"><strong>${esc(a.heading)}</strong>${esc(a.body)}</div>`).join(''):'';
+    const sec=(label,text)=>text?`<div class="modal-section"><div class="modal-section-label">${label}</div><div class="modal-section-text">${previewText(text)}</div></div>`:'';
+    narrativeHtml=`${alertsHtml?`<div class="modal-section"><div class="modal-section-label">Key Findings</div>${alertsHtml}</div>`:''}${sec('Executive Summary',n.executiveSummary)}${sec('Savings Opportunity',n.savingsOpportunity)}${sec('Pricing Model Analysis',n.pricingModelAnalysis)}${sec('LCR Analysis',n.lcrAnalysis)}${sec('Market Benchmark',n.benchmarkComment)}${n.keyRecommendation?`<div class="modal-section"><div class="modal-section-label">Priority Area</div><div class="modal-section-text">${previewText(n.keyRecommendation)}</div></div>`:''}`;
   }
-
-  const reportReadyBanner = hasReport(s)
-    ? `<div class="modal-section"><div class="report-ready-banner">
-         <span class="rb-text">✓ Report generated</span>
-         <button class="btn-open-report" onclick="openReport('${escAttr(s.report_html_path)}')">
-           <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-           Open report
-         </button>
-       </div></div>`
-    : '';
-
-  const approveLabel = hasReport(s) ? 'Regenerate report' : 'Approve &amp; generate report';
-
-  const html = `
+  const reportBanner=hasReport(s)?`<div class="modal-section"><div class="report-ready-banner"><span class="rb-text">✓ Report generated</span><button class="btn-open-report" onclick="openReport('${escA(s.report_html_path)}')"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Open report</button></div></div>`:'';
+  const approveLabel=hasReport(s)?'Regenerate report':'Approve &amp; generate report';
+  document.getElementById('modal-content').innerHTML=`
     <div class="modal-header">
-      <div class="modal-eyebrow">Submission #${esc(s.id)} · ${esc(date)} · ${esc(statusLabel)}</div>
-      <div class="modal-title">${esc(m.company) || 'Unknown company'}</div>
+      <div class="modal-eyebrow">Submission #${esc(String(s.id))} · ${esc(dateStr)} · ${esc(sl)}</div>
+      <div class="modal-title">${esc(m.company)||'Unknown company'}</div>
       <div class="modal-meta">${esc(s.provider)||'Unknown provider'} — ${esc(s.period)||'Review'}</div>
-      ${contactBits ? `<div class="modal-contact">${contactBits}</div>` : ''}
+      ${contactBits?`<div class="modal-contact">${contactBits}</div>`:''}
       <div class="modal-stats">
-        <div class="modal-stat"><span class="modal-stat-val">${fmtP(f.effectiveRate ?? s.effective_rate)}</span><span class="modal-stat-lbl">Eff. rate</span></div>
-        <div class="modal-stat"><span class="modal-stat-val">${fmtD(f.totalFees ?? s.total_fees)}</span><span class="modal-stat-lbl">Total fees</span></div>
-        <div class="modal-stat"><span class="modal-stat-val">${esc(f.providerRate) || '—'}</span><span class="modal-stat-lbl">Provider rate</span></div>
+        <div class="modal-stat"><span class="modal-stat-val">${fmtP(f.effectiveRate??s.effective_rate)}</span><span class="modal-stat-lbl">Eff. rate</span></div>
+        <div class="modal-stat"><span class="modal-stat-val">${fmtD(f.totalFees??s.total_fees)}</span><span class="modal-stat-lbl">Total fees</span></div>
+        <div class="modal-stat"><span class="modal-stat-val">${esc(f.providerRate)||'—'}</span><span class="modal-stat-lbl">Provider rate</span></div>
       </div>
     </div>
     <div class="modal-body">
-
-      ${reportReadyBanner}
-
-      <div class="modal-section">
-        <div class="modal-section-label">Statement Data (extracted)</div>
+      ${reportBanner}
+      <div class="modal-section"><div class="modal-section-label">Statement Data</div>
         <table class="modal-table">
-          <tr><td>Card volume</td><td>${fmtD(f.volume ?? s.volume)}</td></tr>
-          <tr><td>Total fees (GST incl.)</td><td>${fmtD(f.totalFees ?? s.total_fees)}</td></tr>
-          <tr><td>Effective rate</td><td>${fmtP(f.effectiveRate ?? s.effective_rate)}</td></tr>
-          <tr><td>Provider rate / margin</td><td>${esc(f.providerRate) || '—'}</td></tr>
-          <tr><td>Transactions</td><td>${f.transactions != null ? Number(f.transactions).toLocaleString('en-AU') : '—'}</td></tr>
+          <tr><td>Card volume</td><td>${fmtD(f.volume??s.volume)}</td></tr>
+          <tr><td>Total fees (GST incl.)</td><td>${fmtD(f.totalFees??s.total_fees)}</td></tr>
+          <tr><td>Effective rate</td><td>${fmtP(f.effectiveRate??s.effective_rate)}</td></tr>
+          <tr><td>Provider rate / margin</td><td>${esc(f.providerRate)||'—'}</td></tr>
+          <tr><td>Transactions</td><td>${f.transactions!=null?Number(f.transactions).toLocaleString('en-AU'):'—'}</td></tr>
           <tr><td>Avg transaction value</td><td>${fmtD(f.averageTransactionValue)}</td></tr>
           <tr><td>Monthly fee</td><td>${fmtD(f.monthlyFee)}</td></tr>
           <tr><td>Terminal fees</td><td>${fmtD(f.terminalFees)}</td></tr>
-          <tr><td>Pricing model</td><td>${esc(f.pricingModel ?? s.pricing_model) || '—'}</td></tr>
-          <tr><td>LCR status</td><td>${esc(f.lcrStatus ?? s.lcr_status) || '—'}</td></tr>
+          <tr><td>Pricing model</td><td>${esc(f.pricingModel??s.pricing_model)||'—'}</td></tr>
+          <tr><td>LCR status</td><td>${esc(f.lcrStatus??s.lcr_status)||'—'}</td></tr>
           <tr><td>Card mix</td><td>${esc(cardMixStr(f.cardMix))}</td></tr>
         </table>
       </div>
-
-      <div class="modal-section">
-        <div class="modal-section-label">Factual Observations</div>
-        ${obsHtml}
-      </div>
-
-      ${setupHtml ? `<div class="modal-section"><div class="modal-section-label">Current Setup</div>${setupHtml}</div>` : ''}
-
-      ${s.program_context ? `<div class="modal-section"><div class="modal-section-label">Merchant Profile</div><div class="program-box">${esc(s.program_context).replace(/\n/g,'<br>')}</div></div>` : ''}
-
+      <div class="modal-section"><div class="modal-section-label">Factual Observations</div>${obsHtml}</div>
+      ${setupHtml}
+      ${s.program_context?`<div class="modal-section"><div class="modal-section-label">Merchant Profile</div><div class="program-box">${esc(s.program_context).replace(/\n/g,'<br>')}</div></div>`:''}
       ${narrativeHtml}
-
-      ${buildEditPanel(s.id, f)}
-
-      <div class="modal-section">
-        <div class="modal-section-label">Actions</div>
+      ${buildEditPanel(s.id,f)}
+      <div class="modal-section"><div class="modal-section-label">Actions</div>
         <div class="modal-actions">
           <button class="btn-mark-reviewed" onclick="updateStatus('${s.id}','reviewed')">✓ Mark as reviewed</button>
-          <button class="btn-approve" id="btn-approve-${s.id}" onclick="approveAndGenerate('${s.id}')">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            ${approveLabel}
-          </button>
+          <button class="btn-approve" id="btn-approve-${s.id}" onclick="approveAndGenerate('${s.id}')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>${approveLabel}</button>
           <button class="btn-mark-sent" onclick="updateStatus('${s.id}','sent')">→ Mark as sent to client</button>
         </div>
         <div id="report-status-${s.id}" style="margin-top:10px;font-size:12px;color:rgba(224,233,246,0.4)"></div>
       </div>
     </div>`;
-
-  document.getElementById('modal-content').innerHTML = html;
-  document.getElementById('modal-bg').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
 }
 
-async function updateStatus(id, status) {
-  await fetch(`${SUPABASE_URL}/rest/v1/submissions?id=eq.${id}`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`
-    },
-    body: JSON.stringify({ status })
-  });
-  const s = allSubmissions.find(x => x.id == id);
-  if (s) s.status = status;
-  updateStats();
-  applyView();
-  closeModalBtn();
+/* ── EDIT PANEL ── */
+const PRICING_OPTS=['','Single-rate','Blended','Interchange-plus','Interchange-plus-plus','Subscription','Unknown'];
+const LCR_OPTS=['','On','Off','Partial','Unknown'];
+function selectHtml(field,value,opts){return`<select class="edit-select" data-field="${field}">`+opts.map(o=>`<option value="${escA(o)}" ${String(value||'')=== o?'selected':''}>${esc(o)||'—'}</option>`).join('')+`</select>`;}
+function buildEditPanel(id,f){
+  const num=v=>(v==null||v==='')?'':v;
+  const obs=Array.isArray(f.observations)?f.observations.join('\n'):'';
+  return `<div class="modal-section" style="padding-top:20px">
+    <button class="edit-panel-toggle" id="edit-toggle-${id}" onclick="toggleEditPanel('${id}')">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Review &amp; correct the extracted data before generating
+      <span class="toggle-icon">▼</span>
+    </button>
+    <div class="edit-panel" id="edit-panel-${id}">
+      <div class="edit-grid">
+        <div class="edit-field"><div class="edit-field-label">Provider</div><input class="edit-input" type="text" data-field="provider" value="${escA(f.provider||'')}"></div>
+        <div class="edit-field"><div class="edit-field-label">Period</div><input class="edit-input" type="text" data-field="period" value="${escA(f.period||'')}"></div>
+      </div>
+      <div class="edit-grid">
+        <div class="edit-field"><div class="edit-field-label">Card volume (AUD)</div><input class="edit-input" type="number" step="any" data-field="volume" value="${num(f.volume)}"></div>
+        <div class="edit-field"><div class="edit-field-label">Total fees (AUD, GST incl.)</div><div class="edit-field-hint">Effective rate recalculated from volume &amp; fees.</div><input class="edit-input" type="number" step="any" data-field="totalFees" value="${num(f.totalFees)}"></div>
+      </div>
+      <div class="edit-grid-3">
+        <div class="edit-field"><div class="edit-field-label">Transactions</div><input class="edit-input" type="number" step="1" data-field="transactions" value="${num(f.transactions)}"></div>
+        <div class="edit-field"><div class="edit-field-label">Monthly fee</div><input class="edit-input" type="number" step="any" data-field="monthlyFee" value="${num(f.monthlyFee)}"></div>
+        <div class="edit-field"><div class="edit-field-label">Terminal fees</div><input class="edit-input" type="number" step="any" data-field="terminalFees" value="${num(f.terminalFees)}"></div>
+      </div>
+      <div class="edit-grid-3">
+        <div class="edit-field"><div class="edit-field-label">Provider rate</div><input class="edit-input" type="text" data-field="providerRate" value="${escA(f.providerRate||'')}" placeholder="e.g. 0.12%"></div>
+        <div class="edit-field"><div class="edit-field-label">Pricing model</div>${selectHtml('pricingModel',f.pricingModel,PRICING_OPTS)}</div>
+        <div class="edit-field"><div class="edit-field-label">LCR status</div>${selectHtml('lcrStatus',f.lcrStatus,LCR_OPTS)}</div>
+      </div>
+      <div class="edit-field"><div class="edit-field-label">Factual observations</div><div class="edit-field-hint">One per line.</div><textarea class="edit-textarea" data-field="observations">${esc(obs)}</textarea></div>
+      <div class="edit-field"><div class="edit-field-label">Admin notes (internal only)</div><textarea class="edit-textarea" data-field="adminNotes" placeholder="Extra context for Claude — won't appear in report."></textarea></div>
+      <div class="edit-panel-note">✦ Corrections are applied before the report is written and saved back to the submission.</div>
+    </div>
+  </div>`;
+}
+function toggleEditPanel(id){document.getElementById('edit-toggle-'+id).classList.toggle('open');document.getElementById('edit-panel-'+id).classList.toggle('open');}
+function readEditOverrides(id){
+  const panel=document.getElementById('edit-panel-'+id); if(!panel) return{};
+  const get=sel=>{const el=panel.querySelector(sel);return el?el.value.trim():'';};
+  const ov={};
+  ['provider','period','providerRate','pricingModel','lcrStatus'].forEach(k=>{const v=get(`[data-field="${k}"]`);if(v)ov[k]=v;});
+  ['volume','totalFees','transactions','monthlyFee','terminalFees'].forEach(k=>{const v=get(`[data-field="${k}"]`);if(v!=='')ov[k]=Number(v);});
+  const obs=get('[data-field="observations"]'); if(obs) ov.observations=obs.split('\n').map(l=>l.trim()).filter(Boolean);
+  const notes=get('[data-field="adminNotes"]'); if(notes) ov.adminNotes=notes;
+  return ov;
 }
 
-async function openReport(htmlPath) {
-  try {
-    const res = await fetch(`${SUPABASE_URL}/storage/v1/object/public/statements/${htmlPath}`, {
-      headers: { apikey: SUPABASE_KEY }
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const html = await res.text();
-    const blob = new Blob([html], { type: 'text/html' });
-    const url  = URL.createObjectURL(blob);
-    window.open(url, '_blank');
-  } catch(err) {
-    alert('Could not open report: ' + err.message);
-  }
+/* ── STATUS & REPORT GENERATION ── */
+async function updateStatus(id,status){
+  await fetch(`${SUPABASE_URL}/rest/v1/submissions?id=eq.${id}`,{method:'PATCH',headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`},body:JSON.stringify({status})});
+  const s=allSubmissions.find(x=>x.id==id); if(s) s.status=status;
+  updateDashboard(); applyView(); updateSidebarBadge(); closeModalBtn();
 }
-
-async function approveAndGenerate(id) {
-  const btn      = document.getElementById('btn-approve-' + id);
-  const statusEl = document.getElementById('report-status-' + id);
-
-  const overrides = readEditOverrides(id);
-
-  if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Generating report...'; }
-  if (statusEl) statusEl.textContent = 'Claude is writing the personalised report…';
-
-  try {
-    const res = await fetch('/api/generate-report', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ submissionId: id, overrides })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Generation failed');
-
-    const s = allSubmissions.find(x => x.id == id);
-    if (s) { s.status = 'approved'; s.report_html_path = data.htmlPath; }
-
-    if (statusEl) {
-      statusEl.innerHTML =
-        `<span style="color:#9FD9B4;font-weight:600">✓ Report generated.</span> ` +
-        `<button class="btn-open-report" style="padding:6px 14px;margin-left:8px" onclick="openReport('${escAttr(data.htmlPath)}')">
-           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-           Open report
-         </button>`;
-    }
-    if (btn) { btn.disabled = false; btn.innerHTML = 'Regenerate report'; }
-
-    // Refresh from server so corrected facts + status flow into the list/modal.
+async function approveAndGenerate(id){
+  const btn=document.getElementById('btn-approve-'+id);
+  const statusEl=document.getElementById('report-status-'+id);
+  const overrides=readEditOverrides(id);
+  if(btn){btn.disabled=true;btn.innerHTML='⏳ Generating report…';}
+  if(statusEl) statusEl.textContent='Claude is writing the personalised report…';
+  try{
+    const res=await fetch('/api/generate-report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({submissionId:id,overrides})});
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'Generation failed');
+    const s=allSubmissions.find(x=>x.id==id); if(s){s.status='approved';s.report_html_path=data.htmlPath;}
+    if(statusEl) statusEl.innerHTML=`<span style="color:#9FD9B4;font-weight:600">✓ Report generated.</span> <button class="btn-open-report" style="padding:6px 14px;margin-left:8px" onclick="openReport('${escA(data.htmlPath)}')">Open report</button>`;
+    if(btn){btn.disabled=false;btn.innerHTML='Regenerate report';}
     await loadSubmissions();
-
-  } catch (err) {
-    if (statusEl) statusEl.innerHTML = `<span style="color:#E88A8A">Error: ${esc(err.message)}</span>`;
-    if (btn) { btn.disabled = false; btn.innerHTML = 'Approve &amp; generate report'; }
+  }catch(err){
+    if(statusEl) statusEl.innerHTML=`<span style="color:#E88A8A">Error: ${esc(err.message)}</span>`;
+    if(btn){btn.disabled=false;btn.innerHTML='Approve &amp; generate report';}
   }
 }
-
-function closeModal(e) { if (e.target === document.getElementById('modal-bg')) closeModalBtn(); }
-function closeModalBtn() {
-  document.getElementById('modal-bg').classList.remove('open');
-  document.body.style.overflow = '';
+async function openReport(htmlPath){
+  try{
+    const res=await fetch(`${SUPABASE_URL}/storage/v1/object/public/statements/${htmlPath}`,{headers:{apikey:SUPABASE_KEY}});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const html=await res.text();
+    window.open(URL.createObjectURL(new Blob([html],{type:'text/html'})),'_blank');
+  }catch(err){alert('Could not open report: '+err.message);}
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
+function closeModal(e){if(e.target===document.getElementById('modal-overlay'))closeModalBtn();}
+function closeModalBtn(){document.getElementById('modal-overlay').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModalBtn();});
 
-updateSortHeaderUI();
+/* ── EMPLOYEE TASKS ── */
+const TASK_CONFIG={
+  leads:{title:'Lead Identification',sub:'Maya reads the Apollo CSV and uploads new leads to Google Sheets, skipping duplicates.'},
+  emails:{title:'Email Personalisation',sub:'Leo classifies each business with Claude AI and writes a tailored email for every lead.'},
+  send:{title:'Email Dispatch',sub:'Zara sends approved emails via SendGrid. Dry run mode is on by default.'},
+  all:{title:'Full Pipeline',sub:'Runs Maya → Leo → Zara in sequence.'},
+};
+let currentTask='leads',taskRunning=false,taskStats={leads:0,emails:0,sent:0};
+function selectTask(task){
+  if(taskRunning)return; currentTask=task;
+  document.querySelectorAll('.pipeline-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('pstep-'+task)?.classList.add('active');
+  const cfg=TASK_CONFIG[task];
+  document.getElementById('task-title').textContent=cfg.title;
+  document.getElementById('task-sub').textContent=cfg.sub;
+  const btn=document.getElementById('task-run-btn');
+  btn.textContent=task==='all'?'⚡ Run all':'▶ Run'; btn.className='run-btn';
+  clearTaskFeed();
+}
+function clearTaskFeed(){
+  document.getElementById('task-feed').innerHTML='<div class="task-empty"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Click Run to start this agent</span></div>';
+  document.getElementById('task-progress').style.width='0%';
+  taskStats={leads:0,emails:0,sent:0};
+  ['ts-leads','ts-emails','ts-sent'].forEach(id=>document.getElementById(id).textContent=0);
+}
+function appendFeedEl(html){
+  const feed=document.getElementById('task-feed');
+  const empty=feed.querySelector('.task-empty'); if(empty)empty.remove();
+  const d=document.createElement('div');d.innerHTML=html;
+  feed.appendChild(d.firstChild);feed.scrollTop=feed.scrollHeight;
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function runCurrentTask(){
+  if(taskRunning)return;
+  if(currentTask==='all'){runAllTasks();return;}
+  const stage=currentTask; taskRunning=true;
+  const btn=document.getElementById('task-run-btn');
+  btn.disabled=true;btn.className='run-btn running';btn.textContent='⏳ Running…';
+  clearTaskFeed();
+  const stEl=document.getElementById('sstatus-'+stage);
+  if(stEl){stEl.textContent='Running';stEl.className='step-status running';}
+  streamStage(stage,()=>{
+    taskRunning=false;btn.disabled=false;btn.className='run-btn';btn.textContent='▶ Run';
+    if(stEl){stEl.textContent='Done';stEl.className='step-status done';}
+    document.getElementById('pstep-'+stage)?.classList.add('done');
+  });
+}
+async function runAllTasks(){
+  taskRunning=true;
+  const btn=document.getElementById('task-run-btn');
+  btn.disabled=true;btn.className='run-btn running';btn.textContent='⏳ Running pipeline…';
+  clearTaskFeed();
+  for(const stage of['leads','emails','send']){
+    document.querySelectorAll('.pipeline-step').forEach(s=>s.classList.remove('active'));
+    document.getElementById('pstep-'+stage)?.classList.add('active');
+    document.getElementById('task-title').textContent=TASK_CONFIG[stage].title;
+    document.getElementById('sstatus-'+stage).textContent='Running';
+    document.getElementById('sstatus-'+stage).className='step-status running';
+    await new Promise(resolve=>streamStage(stage,()=>{
+      document.getElementById('sstatus-'+stage).textContent='Done';
+      document.getElementById('sstatus-'+stage).className='step-status done';
+      document.getElementById('pstep-'+stage)?.classList.add('done');
+      resolve();
+    }));
+    await sleep(500);
+  }
+  taskRunning=false;btn.disabled=false;btn.className='run-btn';btn.textContent='⚡ Run all';
+}
+function streamStage(stage,onDone){
+  const source=new EventSource('/stream/'+stage);
+  source.onmessage=e=>{
+    const data=JSON.parse(e.data);
+    document.getElementById('task-progress').style.width=(data.progress||0)+'%';
+    if(data.type==='status'){appendFeedEl(`<div class="tf-status"><div class="tf-spinner"></div>${esc(data.message)}</div>`);}
+    else if(data.type==='lead'){taskStats.leads++;document.getElementById('ts-leads').textContent=taskStats.leads;const l=data.lead;appendFeedEl(`<div class="tf-lead"><div class="tf-lead-av">${initials(l.name)}</div><div><div class="tf-lead-name">${esc(l.name)} · ${esc(l.business)}</div><div class="tf-lead-detail">${esc(l.title)} · ${esc(l.city)}</div></div><span class="tf-tag">${esc(l.industry)}</span></div>`);}
+    else if(data.type==='email'){taskStats.emails++;document.getElementById('ts-emails').textContent=taskStats.emails;const l=data.lead,em=data.email;appendFeedEl(`<div class="tf-email"><div class="tf-email-to">→ ${esc(l.email)}</div><div class="tf-email-subject">${esc(em.subject)}</div><div class="tf-email-preview">${esc(em.preview)}</div></div>`);}
+    else if(data.type==='sent'){taskStats.sent++;document.getElementById('ts-sent').textContent=taskStats.sent;const l=data.lead,em=data.email;appendFeedEl(`<div class="tf-sent"><div class="tf-sent-check">✓</div><div><div class="tf-sent-name">${esc(l.name)} · ${esc(l.business)}</div><div class="tf-sent-sub">${esc(em.subject)}</div></div></div>`);}
+    else if(data.type==='done'){appendFeedEl(`<div class="tf-done">✓ &nbsp;${esc(data.message)}</div>`);source.close();onDone();}
+  };
+  source.onerror=()=>{source.close();onDone();};
+}
+
+/* ── EMPLOYEE PHOTOS ── */
+function triggerUpload(name){document.getElementById('emp-file-'+name).click();}
+function handleUpload(name,input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const av=document.getElementById('emp-av-'+name);
+    const initEl=document.getElementById('emp-init-'+name); if(initEl)initEl.style.display='none';
+    const old=av.querySelector('img');if(old)old.remove();
+    const img=document.createElement('img');img.src=e.target.result;
+    av.insertBefore(img,av.querySelector('button'));
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ── INIT ── */
 loadSubmissions();
-setInterval(loadSubmissions, 60000);
+setInterval(loadSubmissions,60000);
 </script>
 </body>
 </html>
