@@ -1642,6 +1642,47 @@ section{position:relative}
   }
 }
     
+/* Logo image assets */
+.logo-full{
+  height:34px;
+  width:auto;
+  display:block;
+}
+
+.logo-phone{
+  height:22px;
+  width:auto;
+  display:block;
+}
+
+.logo-phone-text{
+  height:12px;
+  width:auto;
+  display:block;
+  opacity:.9;
+}
+
+.logo-web{
+  width:42px;
+  height:auto;
+  display:block;
+}
+
+.logo-web-text{
+  width:105px;
+  height:auto;
+  display:block;
+  opacity:.92;
+}
+
+@media(max-width:760px){
+  .logo-full{height:36px;}
+}
+
+@media(max-width:480px){
+  .logo-full{height:34px;}
+}
+
 </style>  
 <link rel="stylesheet" href="mobile.css">  
 </head>
@@ -1656,15 +1697,8 @@ section{position:relative}
 <header>
   <div class="nav nav-wrap">
 
-    <a href="#" class="brand acceptor-logo">
-      <span class="acceptor-mark">
-        <span></span>
-        <span></span>
-      </span>
-
-      <span class="acceptor-word">
-        acceptor<span>IQ</span>
-      </span>
+    <a href="#" class="brand">
+      <img src="acceptorIQ-full.png" alt="acceptorIQ" class="logo-full">
     </a>
 
     <button class="mobile-menu-btn" aria-label="Open menu">
@@ -1708,14 +1742,8 @@ section{position:relative}
       <div class="screen">
         <div class="sbar"><span>11:43</span><span class="r">●●●</span></div>
 <div class="chead">
-  <span class="acceptor-mark mini">
-    <span></span>
-    <span></span>
-  </span>
-
-  <span class="nm">
-    acceptor<span>IQ</span>
-  </span>
+  <img src="acceptorIQ-logo.png" alt="acceptorIQ" class="logo-phone">
+  <img src="acceptorIQ-logotext.png" alt="acceptorIQ" class="logo-phone-text">
 </div>
         <div class="chat">
           <div class="msg-you">Credit card acceptance is costing my business a lot of money.</div>
@@ -1776,11 +1804,8 @@ section{position:relative}
   <div class="vis">
     <div class="payment-web">
       <div class="web-core">
-        <span class="acceptor-mark small">
-          <span></span>
-          <span></span>
-        </span>
-        <strong>acceptorIQ</strong>
+        <img src="acceptorIQ-logo.png" alt="acceptorIQ" class="logo-web">
+        <img src="acceptorIQ-logotext.png" alt="acceptorIQ" class="logo-web-text">
       </div>
 
 <svg class="web-lines" viewBox="0 0 500 500" aria-hidden="true">
@@ -2007,15 +2032,8 @@ section{position:relative}
   <footer class="wrap">
     <div class="fcols">
       <div class="fbrand">
-        <a href="#" class="brand acceptor-logo">
-          <span class="acceptor-mark">
-            <span></span>
-            <span></span>
-          </span>
-
-          <span class="acceptor-word">
-            acceptor<span>IQ</span>
-          </span>
+        <a href="#" class="brand">
+          <img src="acceptorIQ-full.png" alt="acceptorIQ" class="logo-full">
         </a>
       </div>
 
