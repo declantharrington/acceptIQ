@@ -1,4 +1,4 @@
-/* acceptorIQ — shared mobile.css
+/* acceptorIQ â€” shared mobile.css
    Load this AFTER the page's main inline <style> block:
    <link rel="stylesheet" href="mobile.css" media="(max-width: 760px)">
 */
@@ -26,7 +26,7 @@
   }
 
   .wrap{
-    padding:0 26px;
+    padding:0 22px;
   }
 
   header{
@@ -52,6 +52,20 @@
     gap:10px;
   }
 
+  .logo-full{
+    height:34px !important;
+    width:auto;
+  }
+
+  .logo-phone{
+    height:20px !important;
+  }
+
+  .logo-phone-text{
+    height:11px !important;
+  }
+
+
   .acceptor-word{font-size:21px;}
 
   .acceptor-mark{
@@ -76,7 +90,7 @@
 
   /* Lock the background from scrolling while the dropdown is open.
      The dropdown itself uses position:fixed so it always stays put on
-     screen — but without this, the page underneath was still free to
+     screen â€” but without this, the page underneath was still free to
      scroll, so the header it's meant to sit just below would scroll
      away while the menu stayed floating in place, disconnected from it.
      `top` is set inline by JS to the negative of the current scroll
@@ -87,7 +101,7 @@
     overflow:hidden;
   }
 
-  /* Circular icon button instead of a hard-edged square — sits inset
+  /* Circular icon button instead of a hard-edged square â€” sits inset
      from the edge by the same 20px the rest of the nav content uses
      (an absolutely-positioned right:0 here would sit flush against the
      true screen edge, ignoring the parent's own padding). */
@@ -175,13 +189,13 @@
   }
 
   .mobile-menu a::after{
-    content:"→";
+    content:"â†’";
     color:rgba(230,235,246,.38);
     font-size:15px;
   }
 
   /* Optional: give one link in the dropdown a stand-out pill treatment
-     instead of the plain arrow row — add class="mm-cta" to that <a>
+     instead of the plain arrow row â€” add class="mm-cta" to that <a>
      (e.g. the homepage's "Get my review" link). No-op if unused. */
   .mobile-menu a.mm-cta{
     margin:14px 0;
@@ -206,34 +220,34 @@
 
   .btn,
   .btn-lg{
-    height:54px;
-    min-width:190px;
-    padding:0 22px;
+    height:50px;
+    min-width:180px;
+    padding:0 20px;
     font-size:14px;
   }
 
   /* Homepage mobile */
-  .hero{padding:84px 0 0;}
+  .hero{padding:76px 0 0;}
 
   .hero h1{
-    font-size:clamp(46px,12vw,62px);
-    line-height:1.045;
-    letter-spacing:-0.065em;
-    max-width:365px;
+    font-size:clamp(34px,8.6vw,42px);
+    line-height:1.08;
+    letter-spacing:-0.055em;
+    max-width:360px;
     margin:0 auto;
   }
 
   .hero .sub{
-    font-size:17px;
-    line-height:1.48;
-    max-width:342px;
-    margin:24px auto 0;
+    font-size:15.5px;
+    line-height:1.5;
+    max-width:330px;
+    margin:20px auto 0;
   }
 
   .hero-stage{
     min-height:auto;
-    margin-top:48px;
-    padding-bottom:96px;
+    margin-top:42px;
+    padding-bottom:84px;
   }
 
   .hero-band{
@@ -263,7 +277,7 @@
 
   .twoup .col{
     min-height:auto;
-    padding:92px 26px 98px;
+    padding:78px 22px 84px;
     border-bottom:1px solid rgba(230,235,246,.08);
   }
 
@@ -271,8 +285,13 @@
   .bleed h2,
   .control h2,
   .final h2{
-    font-size:clamp(40px,10.8vw,56px);
-    line-height:1.065;
+    font-size:clamp(32px,8vw,40px);
+    line-height:1.1;
+    letter-spacing:-0.05em;
+  }
+
+  .final h2{
+    font-size:clamp(31px,7.8vw,36px);
   }
 
   .twoup p,
@@ -280,22 +299,27 @@
   .control p,
   .advisor-section .sub,
   .final p{
-    font-size:16.5px;
+    font-size:15.5px;
     line-height:1.5;
   }
 
   .vis{
-    margin-top:50px;
+    margin-top:42px;
     min-height:auto;
   }
 
   .statement-analyser{max-width:240px;}
 
   .payment-web{
-    width:320px;
-    height:320px;
+    width:300px;
+    height:300px;
     transform:none;
     margin:0 auto;
+  }
+
+  .partner-web-image{
+    width:min(300px,100%) !important;
+    height:auto;
   }
 
   .web-core{
@@ -321,7 +345,7 @@
   }
 
   .bleed .copy{
-    padding:92px 26px 70px;
+    padding:78px 22px 62px;
     border-right:none;
     border-bottom:1px solid rgba(230,235,246,.08);
   }
@@ -333,17 +357,17 @@
   }
 
   .bleed .stage{
-    min-height:610px;
-    padding:54px 0;
+    min-height:560px;
+    padding:48px 0;
   }
 
   .glass{
-    width:calc(100% - 48px);
-    max-width:280px;
-    padding:18px;
+    width:calc(100% - 44px);
+    max-width:276px;
+    padding:17px;
   }
 
-  /* Compact, scannable version for mobile — same message (what each
+  /* Compact, scannable version for mobile â€” same message (what each
      action is + what it saves), far fewer words. The full sentence
      describing each action reads fine on desktop but is the heaviest
      part of this card on a phone, so it's dropped here entirely
@@ -376,7 +400,7 @@
     display:none;
   }
 
-  .advisor-section{padding:90px 0 96px;}
+  .advisor-section{padding:78px 0 88px;}
 
   .advisor-stack{
     height:auto !important;
@@ -385,7 +409,7 @@
     gap:14px;
     width:100%;
     max-width:400px;
-    margin:46px auto 0 !important;
+    margin:38px auto 0 !important;
   }
 
   .advisor-card,
@@ -455,11 +479,11 @@
   }
 
   /* the <br> inside each title (kept for desktop's two-line layout) is
-     swapped for a real space character by JS on mobile — hiding it via
+     swapped for a real space character by JS on mobile â€” hiding it via
      CSS alone strips the only thing separating the words with no space
      left behind, which is what caused "Understandthe report" before */
   .advisor-card::after{
-    content:"⌄";
+    content:"âŒ„";
     grid-column:3;
     grid-row:1;
     justify-self:end;
@@ -505,6 +529,16 @@
     text-align:left !important;
   }
 
+
+  .final{
+    padding:84px 0 92px;
+  }
+
+  .final .wrap{
+    padding-left:18px;
+    padding-right:18px;
+  }
+
   /* Pricing page mobile */
   .pricing{
     padding:86px 0 96px !important;
@@ -517,15 +551,15 @@
   }
 
   .pricing-head h1{
-    font-size:clamp(42px,11.5vw,58px) !important;
-    line-height:1.055 !important;
-    letter-spacing:-0.064em !important;
+    font-size:clamp(34px,8.6vw,42px) !important;
+    line-height:1.08 !important;
+    letter-spacing:-0.055em !important;
   }
 
   .pricing-head p{
     max-width:330px;
-    margin-top:24px !important;
-    font-size:16.5px !important;
+    margin-top:20px !important;
+    font-size:15.5px !important;
     line-height:1.5 !important;
   }
 
@@ -594,7 +628,7 @@
 
   .price-col .btn{
     width:100% !important;
-    height:52px !important;
+    height:50px !important;
     margin-top:8px !important;
     padding:0 20px !important;
   }
@@ -644,7 +678,7 @@
   }
 
   .fcol h4::after{
-    content:"⌄";
+    content:"âŒ„";
     font-size:16px;
     color:rgba(230,235,246,.42);
     transition:transform .22s ease;
@@ -696,27 +730,37 @@
 
 @media (max-width:480px){
 
-  .wrap{padding:0 24px;}
+  .wrap{padding:0 18px;}
 
   .pricing-head,
   .pricing-grid{
-    padding-left:24px;
-    padding-right:24px;
+    padding-left:18px;
+    padding-right:18px;
   }
 
   .pricing-head h1,
-  .hero h1,
+  .hero h1{
+    font-size:clamp(33px,8.6vw,40px) !important;
+  }
+
   .twoup h2,
   .bleed h2,
-  .control h2,
+  .control h2{
+    font-size:clamp(31px,8vw,38px) !important;
+  }
+
   .final h2{
-    font-size:clamp(40px,11.5vw,52px) !important;
+    font-size:clamp(30px,7.8vw,34px) !important;
   }
 
   .payment-web{
-    width:306px;
-    height:306px;
-    margin-left:-8px;
+    width:286px;
+    height:286px;
+    margin-left:0;
+  }
+
+  .partner-web-image{
+    width:min(286px,100%) !important;
   }
 }
 
