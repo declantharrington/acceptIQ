@@ -482,20 +482,21 @@
      swapped for a real space character by JS on mobile â€” hiding it via
      CSS alone strips the only thing separating the words with no space
      left behind, which is what caused "Understandthe report" before */
-  .advisor-card::after{
-    content:"âŒ„";
-    grid-column:3;
-    grid-row:1;
+.advisor-card::after{
+    content:"";
+    width:8px;
+    height:8px;
+    border-right:1.8px solid rgba(230,235,246,.50);
+    border-bottom:1.8px solid rgba(230,235,246,.50);
+    transform:rotate(45deg);
     justify-self:end;
-    color:rgba(230,235,246,.50);
-    font-size:17px;
-    line-height:1;
-    transition:transform .25s ease;
-  }
+    transition:transform .25s ease,border-color .25s ease;
+}
 
-  .advisor-card.is-open::after{
-    transform:rotate(180deg);
-  }
+.advisor-card.is-open::after{
+    transform:rotate(-135deg);
+    border-color:rgba(230,235,246,.82);
+}
 
   .advisor-card p{
     grid-column:1 / -1;
@@ -677,14 +678,22 @@
     color:rgba(230,235,246,.88) !important;
   }
 
-  .fcol h4::after{
-    content:"âŒ„";
-    font-size:16px;
-    color:rgba(230,235,246,.42);
-    transition:transform .22s ease;
-  }
+.fcol h4::after{
+    content:"";
+    width:8px;
+    height:8px;
+    border-right:1.8px solid rgba(230,235,246,.42);
+    border-bottom:1.8px solid rgba(230,235,246,.42);
+    transform:rotate(45deg);
+    transition:transform .22s ease, border-color .22s ease;
+    margin-left:auto;
+    flex-shrink:0;
+}
 
-  .fcol.is-open h4::after{transform:rotate(180deg);}
+.fcol.is-open h4::after{
+    transform:rotate(-135deg);
+    border-color:rgba(230,235,246,.72);
+}
 
   .fcol a{
     display:block;
