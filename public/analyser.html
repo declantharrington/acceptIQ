@@ -127,6 +127,14 @@ body {
   letter-spacing:-0.04em;
 }
 
+/* Logo image assets */
+.logo-full{
+  height:34px;
+  width:auto;
+  display:block;
+}
+
+
 /* Progress bar — site's cream/blue palette */
 .progress-wrap { display: flex; align-items: center; gap: 12px; min-width: 200px; }
 .progress-label {
@@ -647,6 +655,12 @@ input#fileInput { display: none; }
     height:19px;
   }
 
+  .logo-full{
+    height:34px;
+    width:auto;
+    display:block;
+  }
+
   .progress-wrap{
     min-width:82px;
     max-width:90px;
@@ -866,8 +880,7 @@ input#fileInput { display: none; }
 <header class="chrome">
   <div class="chrome-inner">
     <a href="/" class="acceptor-logo">
-      <span class="acceptor-mark"><span></span><span></span></span>
-      <span class="acceptor-word">acceptor<span>IQ</span></span>
+      <img src="acceptorIQ-full.png" alt="acceptorIQ" class="logo-full">
     </a>
     <div class="progress-wrap" aria-hidden="true">
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
