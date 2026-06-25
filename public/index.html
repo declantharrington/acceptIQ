@@ -721,6 +721,21 @@ section{position:relative}
   margin:0 auto;
 }
 
+.partner-web-image{
+  width:min(420px,100%);
+  height:auto;
+  display:block;
+  margin:0 auto;
+  border-radius:0;
+}
+
+@media(max-width:700px){
+  .partner-web-image{
+    width:min(320px,100%);
+  }
+}
+
+
 .web-lines{
   position:absolute;
   inset:0;
@@ -1802,64 +1817,7 @@ section{position:relative}
   <p>See how every provider, network and payment partner connects — and where the best opportunities sit.</p>
 
   <div class="vis">
-    <div class="payment-web">
-      <div class="web-core">
-        <img src="acceptorIQ-logo.png" alt="acceptorIQ" class="logo-web">
-        <img src="acceptorIQ-logotext.png" alt="acceptorIQ" class="logo-web-text">
-      </div>
-
-<svg class="web-lines" viewBox="0 0 500 500" aria-hidden="true">
-  <!-- web rings -->
-  <path d="M250 55 L332 74 L397 120 L435 205 L421 303 L365 385 L250 435 L135 385 L79 303 L65 205 L103 120 L168 74 Z"></path>
-  <path d="M250 115 L308 128 L354 162 L382 220 L372 292 L330 340 L250 378 L170 340 L128 292 L118 220 L146 162 L192 128 Z"></path>
-  <path d="M250 170 L286 180 L315 205 L326 250 L315 295 L286 320 L250 332 L214 320 L185 295 L174 250 L185 205 L214 180 Z"></path>
-
-  <!-- spokes -->
-  <line x1="250" y1="250" x2="250" y2="55"></line>
-  <line x1="250" y1="250" x2="332" y2="74"></line>
-  <line x1="250" y1="250" x2="397" y2="120"></line>
-  <line x1="250" y1="250" x2="435" y2="205"></line>
-  <line x1="250" y1="250" x2="421" y2="303"></line>
-  <line x1="250" y1="250" x2="365" y2="385"></line>
-  <line x1="250" y1="250" x2="250" y2="435"></line>
-  <line x1="250" y1="250" x2="135" y2="385"></line>
-  <line x1="250" y1="250" x2="79" y2="303"></line>
-  <line x1="250" y1="250" x2="65" y2="205"></line>
-  <line x1="250" y1="250" x2="103" y2="120"></line>
-  <line x1="250" y1="250" x2="168" y2="74"></line>
-
-  <!-- cross connections -->
-  <line x1="250" y1="115" x2="354" y2="162"></line>
-  <line x1="354" y1="162" x2="372" y2="292"></line>
-  <line x1="372" y1="292" x2="250" y2="378"></line>
-  <line x1="250" y1="378" x2="128" y2="292"></line>
-  <line x1="128" y1="292" x2="146" y2="162"></line>
-  <line x1="146" y1="162" x2="250" y2="115"></line>
-
-  <line x1="286" y1="180" x2="326" y2="250"></line>
-  <line x1="326" y1="250" x2="286" y2="320"></line>
-  <line x1="286" y1="320" x2="214" y2="320"></line>
-  <line x1="214" y1="320" x2="174" y2="250"></line>
-  <line x1="174" y1="250" x2="214" y2="180"></line>
-  <line x1="214" y1="180" x2="286" y2="180"></line>
-</svg>
-
-      <div class="web-node n1">Stripe</div>
-      <div class="web-node n2">Adyen</div>
-      <div class="web-node n3">Worldpay</div>
-      <div class="web-node n4">Fiserv</div>
-      <div class="web-node n5">PayPal</div>
-      <div class="web-node n6">Square</div>
-      <div class="web-node n7">Tyro</div>
-      <div class="web-node n8">Zeller</div>
-      <div class="web-node n9">CBA</div>
-      <div class="web-node n10">NAB</div>
-      <div class="web-node n11">ANZ</div>
-      <div class="web-node n12">Westpac</div>
-      <div class="web-node n13">Visa</div>
-      <div class="web-node n14">Mastercard</div>
-      <div class="web-node n15">eftpos</div>
-    </div>
+    <img src="partner-web.png" alt="acceptorIQ partner payment network" class="partner-web-image">
   </div>
 </div>
 </section>
