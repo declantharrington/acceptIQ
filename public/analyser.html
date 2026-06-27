@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,22 +8,16 @@
 <meta name="description" content="Upload your merchant statement and get an AI-powered payments review with clear savings opportunities and advisor support.">
 <title>acceptorIQ — Payments Review</title>
 <link rel="canonical" href="https://www.acceptorIQ.com.au/analyser.html">
-
-<!-- Open Graph -->
 <meta property="og:title" content="acceptorIQ — Payments Review">
 <meta property="og:description" content="Upload your merchant statement and get an AI-powered payments review with clear savings opportunities and advisor support.">
 <meta property="og:image" content="https://www.acceptorIQ.com.au/social-preview.png">
 <meta property="og:url" content="https://www.acceptorIQ.com.au/analyser.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="acceptorIQ">
-
-<!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="acceptorIQ — Payments Review">
 <meta name="twitter:description" content="Upload your merchant statement and get an AI-powered payments review with clear savings opportunities and advisor support.">
 <meta name="twitter:image" content="https://www.acceptorIQ.com.au/social-preview.png">
-
-<!-- Favicon -->
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -31,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/shared.css">
+<link rel="stylesheet" href="/shared.css">
 <style>
 /* ── acceptorIQ design tokens ── */
 :root {
@@ -51,992 +46,522 @@
   --gold:        #E7B27A;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
 body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--cream);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  cursor: default;
+font-family: var(–sans);
+background: var(–bg);
+color: var(–cream);
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+text-rendering: optimizeLegibility;
+cursor: default;
 }
 
-/* Subtle ambient glow — blue tones to match the site */
-.ambient {
-  position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
-  background: radial-gradient(circle, rgba(63,119,214,0.07) 0%, transparent 70%);
-}
-.ambient-1 { width: 700px; height: 700px; top: -200px; right: -200px; }
-.ambient-2 { width: 500px; height: 500px; bottom: -150px; left: -100px; opacity: 0.5; }
-
+/* No ambient glows — keep consistent with the rest of the site */
+.ambient { display: none; }
 
 /* ── Nav / Chrome ── */
 .chrome {
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:500;
-  height:72px;
-  background:rgba(15,18,24,0.72);
-  backdrop-filter:saturate(160%) blur(12px);
-  -webkit-backdrop-filter:saturate(160%) blur(12px);
+position:fixed; top:0; left:0; right:0; z-index:500;
+height:72px;
+background:rgba(15,18,24,0.72);
+backdrop-filter:saturate(160%) blur(12px);
+-webkit-backdrop-filter:saturate(160%) blur(12px);
 }
-
 .chrome-inner {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  width:calc(100vw - (var(--site-frame) * 2));
-  max-width:var(--shell-width);
-  height:72px;
-  margin:0 auto;
-  padding:0 26px;
-  border-bottom:1px solid var(--line);
+display:flex; align-items:center; justify-content:space-between;
+width:calc(100vw - (var(–site-frame) * 2));
+max-width:var(–shell-width);
+height:72px; margin:0 auto; padding:0 26px;
+border-bottom:1px solid var(–line);
 }
+.acceptor-logo { display:flex; align-items:center; gap:16px; text-decoration:none; }
+.acceptor-mark { position:relative; width:38px; height:34px; display:inline-block; flex-shrink:0; }
+.acceptor-mark span { position:absolute; bottom:0; width:12px; height:34px; border-radius:3px; background:var(–cream); transform-origin:bottom center; }
+.acceptor-mark span:first-child { left:7px; transform:skewX(-30deg); }
+.acceptor-mark span:last-child { right:7px; height:24px; transform:skewX(30deg); }
+.acceptor-word { font-size:24px; font-weight:300; letter-spacing:-0.055em; color:rgba(230,235,246,.92); }
+.acceptor-word span { font-weight:500; letter-spacing:-0.04em; }
+.logo-full { height:34px; width:auto; display:block; }
 
-/* Brand — acceptorIQ mark + wordmark, matches the main site exactly */
-.acceptor-logo{
-  display:flex;
-  align-items:center;
-  gap:16px;
-  text-decoration:none;
-}
-
-.acceptor-mark{
-  position:relative;
-  width:38px;
-  height:34px;
-  display:inline-block;
-  flex-shrink:0;
-}
-
-.acceptor-mark span{
-  position:absolute;
-  bottom:0;
-  width:12px;
-  height:34px;
-  border-radius:3px;
-  background:var(--cream);
-  transform-origin:bottom center;
-}
-
-.acceptor-mark span:first-child{
-  left:7px;
-  transform:skewX(-30deg);
-}
-
-.acceptor-mark span:last-child{
-  right:7px;
-  height:24px;
-  transform:skewX(30deg);
-}
-
-.acceptor-word{
-  font-size:24px;
-  font-weight:300;
-  letter-spacing:-0.055em;
-  color:rgba(230,235,246,.92);
-}
-
-.acceptor-word span{
-  font-weight:500;
-  letter-spacing:-0.04em;
-}
-
-/* Logo image assets */
-.logo-full{
-  height:34px;
-  width:auto;
-  display:block;
-}
-
-
-/* Progress bar — site's cream/blue palette */
-.progress-wrap { display: flex; align-items: center; gap: 12px; min-width: 200px; }
-.progress-label {
-  font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
-  color: var(--cream-soft); white-space: nowrap; font-variant-numeric: tabular-nums;
-}
-.progress-bar {
-  flex: 1; height: 2px; border-radius: 0;
-  background: var(--line); overflow: hidden;
-}
+/* Progress bar */
+.progress-wrap { display:flex; align-items:center; gap:12px; min-width:200px; }
+.progress-label { font-size:11px; font-weight:500; letter-spacing:0.04em; color:var(–cream-soft); white-space:nowrap; font-variant-numeric:tabular-nums; }
+.progress-bar { flex:1; height:2px; border-radius:0; background:var(–line); overflow:hidden; }
 .progress-fill {
-  height: 100%; width: 0%;
-  background: linear-gradient(90deg, var(--orange), var(--peach));
-  border-radius: 0;
-  transition: width 0.45s cubic-bezier(0.22,1,0.36,1);
+height:100%; width:0%;
+background:linear-gradient(90deg, var(–orange), var(–peach));
+border-radius:0;
+transition:width 0.45s cubic-bezier(0.22,1,0.36,1);
 }
 
 /* ── Stage ── */
 .stage {
-  position: fixed; inset: 0; z-index: 1;
-  display: flex; align-items: center; justify-content: center;
-  padding-top: calc(80px + env(safe-area-inset-top));
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
-  padding-left: max(40px, env(safe-area-inset-left));
-  padding-right: max(40px, env(safe-area-inset-right));
+position:fixed; inset:0; z-index:1;
+display:flex; align-items:center; justify-content:center;
+padding-top:calc(80px + env(safe-area-inset-top));
+padding-bottom:calc(80px + env(safe-area-inset-bottom));
+padding-left:max(40px, env(safe-area-inset-left));
+padding-right:max(40px, env(safe-area-inset-right));
 }
-
 .screen {
-  position: absolute; width: 100%; max-width: 620px;
-  padding-right: 2px;
-  opacity: 0; pointer-events: none;
-  transform: translateX(48px) scale(var(--fit, 1));
-  transform-origin: center center;
-  will-change: transform;
-  transition: opacity 0.45s cubic-bezier(0.22,1,0.36,1),
-              transform 0.45s cubic-bezier(0.22,1,0.36,1);
-  scrollbar-width: thin;
-  scrollbar-color: var(--line) transparent;
+position:absolute; width:100%; max-width:620px; padding-right:2px;
+opacity:0; pointer-events:none;
+transform:translateX(48px) scale(var(–fit, 1));
+transform-origin:center center; will-change:transform;
+transition:opacity 0.45s cubic-bezier(0.22,1,0.36,1), transform 0.45s cubic-bezier(0.22,1,0.36,1);
+scrollbar-width:thin; scrollbar-color:var(–line) transparent;
 }
-.screen::-webkit-scrollbar { width: 4px; }
-.screen::-webkit-scrollbar-thumb { background: var(--line); border-radius: 0; }
-.screen.active    { opacity: 1; pointer-events: all; transform: translateX(0) scale(var(--fit, 1)); }
-.screen.exit      { opacity: 0; transform: translateX(-48px) scale(var(--fit, 1)); pointer-events: none; }
-.screen.exit-back { opacity: 0; transform: translateX(48px)  scale(var(--fit, 1)); pointer-events: none; }
-.screen.enter-back{ transform: translateX(-48px) scale(var(--fit, 1)); }
+.screen::-webkit-scrollbar { width:4px; }
+.screen::-webkit-scrollbar-thumb { background:var(–line); border-radius:0; }
+.screen.active    { opacity:1; pointer-events:all; transform:translateX(0) scale(var(–fit, 1)); }
+.screen.exit      { opacity:0; transform:translateX(-48px) scale(var(–fit, 1)); pointer-events:none; }
+.screen.exit-back { opacity:0; transform:translateX(48px)  scale(var(–fit, 1)); pointer-events:none; }
+.screen.enter-back{ transform:translateX(-48px) scale(var(–fit, 1)); }
 
 /* ── Question text ── */
 .q-text {
-  font-size: clamp(32px, 4.5vw, 52px);
-  font-weight: 300;
-  line-height: 1.06;
-  letter-spacing: -0.055em;
-  color: rgba(230,235,246,0.90);
-  margin-bottom: 10px;
+font-size:clamp(32px, 4.5vw, 52px);
+font-weight:300; line-height:1.06; letter-spacing:-0.055em;
+color:rgba(230,235,246,0.90); margin-bottom:10px;
 }
+.q-sub { font-size:15px; color:var(–cream-soft); line-height:1.65; margin-bottom:36px; max-width:480px; font-weight:400; }
+.q-sub b { font-weight:600; color:var(–cream); }
 
-.q-sub {
-  font-size: 15px; color: var(--cream-soft); line-height: 1.65;
-  margin-bottom: 36px; max-width: 480px; font-weight: 400;
-}
-.q-sub b { font-weight: 600; color: var(--cream); }
-
-/* ── Text inputs — underline style ── */
-.q-input-wrap { position: relative; margin-bottom: 24px; }
-.q-label {
-  display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
-  text-transform: uppercase; color: var(--cream-faint); margin-bottom: 4px;
-}
+/* ── Text inputs ── */
+.q-input-wrap { position:relative; margin-bottom:24px; }
+.q-label { display:block; font-size:11px; font-weight:500; letter-spacing:0.10em; text-transform:uppercase; color:var(–cream-faint); margin-bottom:4px; }
 .q-input {
-  width: 100%; background: transparent; border: none;
-  border-bottom: 1px solid var(--frame);
-  font-family: var(--sans); font-size: clamp(24px, 3vw, 36px);
-  color: var(--cream); padding: 12px 0; outline: none;
-  transition: border-color 0.2s;
-  caret-color: var(--peach);
+width:100%; background:transparent; border:none;
+border-bottom:1px solid var(–frame);
+font-family:var(–sans); font-size:clamp(24px, 3vw, 36px);
+color:var(–cream); padding:12px 0; outline:none;
+transition:border-color 0.2s; caret-color:var(–peach);
 }
-.q-input:focus { border-bottom-color: var(--peach); }
-.q-input::placeholder { color: var(--cream-faint); }
+.q-input:focus { border-bottom-color:var(–peach); }
+.q-input::placeholder { color:var(–cream-faint); }
 
 /* ── OTP digits ── */
-.otp-digits { display: flex; gap: 10px; margin-bottom: 8px; }
+.otp-digits { display:flex; gap:10px; margin-bottom:8px; }
 .otp-digit {
-  width: 52px; height: 64px;
-  background: rgba(224,233,246,0.03);
-  border: 1px solid var(--line); border-radius: 0;
-  font-family: var(--sans); font-size: 28px; font-weight: 400;
-  color: var(--cream); text-align: center; outline: none;
-  transition: border-color 0.2s, background 0.2s;
-  caret-color: transparent;
+width:52px; height:64px;
+background:rgba(224,233,246,0.03);
+border:1px solid var(–line); border-radius:0;
+font-family:var(–sans); font-size:28px; font-weight:400;
+color:var(–cream); text-align:center; outline:none;
+transition:border-color 0.2s, background 0.2s; caret-color:transparent;
 }
-.otp-digit:focus { border-color: var(--peach); background: rgba(63,119,214,0.06); }
-.otp-digit.filled { border-color: rgba(169,204,242,0.35); }
+.otp-digit:focus { border-color:var(–peach); background:rgba(63,119,214,0.06); }
+.otp-digit.filled { border-color:rgba(169,204,242,0.35); }
 
-/* ── Choice cards ── */
-.choice-grid { display: grid; gap: 6px; margin-bottom: 28px; }
-.choice-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-.choice-grid.cols-1 { grid-template-columns: 1fr; }
+/* ── Choice cards — aligned to brand ── */
+.choice-grid { display:grid; gap:6px; margin-bottom:28px; }
+.choice-grid.cols-2 { grid-template-columns:1fr 1fr; }
+.choice-grid.cols-1 { grid-template-columns:1fr; }
 
 .choice {
-  display: flex; align-items: center; gap: 14px;
-  background: rgba(224,233,246,0.03);
-  border: 1px solid var(--line);
-  border-radius: 0;
-  padding: 14px 18px; cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  font-family: var(--sans); text-align: left;
-  position: relative; overflow: hidden;
+display:flex; align-items:center; gap:14px;
+background:rgba(224,233,246,0.03);
+border:1px solid var(–line);
+border-radius:0;
+padding:14px 18px; cursor:pointer;
+transition:border-color 0.2s, background 0.2s;
+font-family:var(–sans); text-align:left;
+position:relative; overflow:hidden;
 }
 .choice:hover {
-  border-color: var(--frame);
-  background: rgba(63,119,214,0.06);
+border-color:rgba(224,233,246,0.22);
+background:rgba(224,233,246,0.06);
 }
-.choice:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; }
+.choice:focus-visible { outline:2px solid var(–peach); outline-offset:2px; }
+
+/* Selected state — cream accent, no blue */
 .choice.selected {
-  background: rgba(63,119,214,0.09);
-  border-color: rgba(127,166,230,0.4);
+background:rgba(224,233,246,0.07);
+border-color:rgba(224,233,246,0.30);
 }
 
-/* Left accent line on selected */
+/* Left accent line on selected — cream instead of blue gradient */
 .choice.selected::before {
-  content: '';
-  position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
-  background: linear-gradient(180deg, var(--orange), var(--peach));
+content:’’;
+position:absolute; left:0; top:0; bottom:0; width:2px;
+background:var(–cream);
 }
 
+/* Icon box — neutral cream tint, no blue */
 .choice-icon {
-  width: 38px; height: 38px; flex-shrink: 0;
-  background: rgba(63,119,214,0.08);
-  border: 1px solid rgba(63,119,214,0.15);
-  border-radius: 0;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; color: var(--peach);
+width:38px; height:38px; flex-shrink:0;
+background:rgba(224,233,246,0.05);
+border:1px solid rgba(224,233,246,0.10);
+border-radius:0;
+display:flex; align-items:center; justify-content:center;
+transition:all 0.2s; color:var(–cream-soft);
 }
 .choice.selected .choice-icon {
-  background: rgba(63,119,214,0.15);
-  border-color: rgba(127,166,230,0.3);
+background:rgba(224,233,246,0.10);
+border-color:rgba(224,233,246,0.22);
+color:var(–cream);
 }
-.choice-icon svg { stroke: currentColor; }
+.choice-icon svg { stroke:currentColor; }
 
-.choice-text { flex: 1; }
-.choice-label {
-  font-size: 14px; font-weight: 600; color: var(--cream);
-  margin-bottom: 1px; letter-spacing: -0.01em;
-}
-.choice-sub { font-size: 12px; color: var(--cream-soft); line-height: 1.4; }
+.choice-text { flex:1; }
+.choice-label { font-size:14px; font-weight:600; color:var(–cream); margin-bottom:1px; letter-spacing:-0.01em; }
+.choice-sub { font-size:12px; color:var(–cream-soft); line-height:1.4; }
 
+/* Checkbox — cream on selected */
 .choice-check {
-  width: 18px; height: 18px; border-radius: 0;
-  border: 1px solid var(--line);
-  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
+width:18px; height:18px; border-radius:0;
+border:1px solid var(–line);
+flex-shrink:0; display:flex; align-items:center; justify-content:center;
+transition:all 0.2s;
 }
 .choice.selected .choice-check {
-  background: var(--orange); border-color: var(--orange);
+background:var(–cream); border-color:var(–cream);
 }
-.choice.selected .choice-check::after { content: '✓'; font-size: 10px; color: white; font-weight: 700; }
+.choice.selected .choice-check::after { content:‘✓’; font-size:10px; color:var(–ink); font-weight:700; }
 
 /* ── Upload zone ── */
 .upload-zone {
-  border: 1.5px dashed rgba(224,233,246,0.15);
-  border-radius: 0;
-  padding: 48px 32px; text-align: center; cursor: pointer;
-  transition: all 0.25s; background: rgba(224,233,246,0.02);
-  margin-bottom: 16px; position: relative; overflow: hidden;
+border:1.5px dashed rgba(224,233,246,0.15);
+border-radius:0; padding:48px 32px; text-align:center; cursor:pointer;
+transition:all 0.25s; background:rgba(224,233,246,0.02);
+margin-bottom:16px; position:relative; overflow:hidden;
 }
 .upload-zone:hover, .upload-zone.drag-over {
-  border-color: rgba(127,166,230,0.4);
-  background: rgba(63,119,214,0.05);
+border-color:rgba(224,233,246,0.30);
+background:rgba(224,233,246,0.05);
 }
-.upload-zone:focus-visible { outline: 2px solid var(--peach); outline-offset: 3px; }
+.upload-zone:focus-visible { outline:2px solid var(–peach); outline-offset:3px; }
 .upload-icon {
-  width: 48px; height: 48px; border-radius: 0;
-  margin: 0 auto 16px;
-  background: rgba(63,119,214,0.08);
-  border: 1px solid rgba(63,119,214,0.2);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--peach);
+width:48px; height:48px; border-radius:0;
+margin:0 auto 16px;
+background:rgba(224,233,246,0.05);
+border:1px solid rgba(224,233,246,0.12);
+display:flex; align-items:center; justify-content:center;
+color:var(–cream-soft);
 }
-.upload-icon svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 1.5; fill: none; }
-.upload-title {
-  font-size: 18px; font-weight: 600; letter-spacing: -0.02em;
-  color: var(--cream); margin-bottom: 8px;
-}
-.upload-sub { font-size: 13px; color: var(--cream-soft); line-height: 1.65; }
-.upload-formats { font-size: 11px; color: var(--cream-faint); margin-top: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
-input#fileInput { display: none; }
+.upload-icon svg { width:22px; height:22px; stroke:currentColor; stroke-width:1.5; fill:none; }
+.upload-title { font-size:18px; font-weight:600; letter-spacing:-0.02em; color:var(–cream); margin-bottom:8px; }
+.upload-sub { font-size:13px; color:var(–cream-soft); line-height:1.65; }
+.upload-formats { font-size:11px; color:var(–cream-faint); margin-top:10px; letter-spacing:0.08em; text-transform:uppercase; }
+input#fileInput { display:none; }
 
 /* File chips */
-.file-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.file-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
 .file-chip {
-  display: flex; align-items: center; gap: 8px;
-  background: rgba(159,217,180,0.08); border: 1px solid rgba(159,217,180,0.22);
-  border-radius: 0; padding: 6px 12px 6px 10px;
-  font-family: var(--sans); font-size: 12px; color: var(--green);
+display:flex; align-items:center; gap:8px;
+background:rgba(159,217,180,0.08); border:1px solid rgba(159,217,180,0.22);
+border-radius:0; padding:6px 12px 6px 10px;
+font-family:var(–sans); font-size:12px; color:var(–green);
 }
-.file-chip.parsed { background: rgba(63,119,214,0.08); border-color: rgba(127,166,230,0.25); color: var(--peach); }
-.file-chip svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; }
+.file-chip.parsed { background:rgba(224,233,246,0.06); border-color:rgba(224,233,246,0.18); color:var(–cream-soft); }
+.file-chip svg { width:13px; height:13px; stroke:currentColor; stroke-width:2; fill:none; }
 .file-chip-remove {
-  background: none; border: none; cursor: pointer; color: currentColor;
-  opacity: 0.5; padding: 4px; margin: -4px -2px -4px 2px;
-  line-height: 1; font-size: 15px; transition: opacity 0.15s;
+background:none; border:none; cursor:pointer; color:currentColor;
+opacity:0.5; padding:4px; margin:-4px -2px -4px 2px;
+line-height:1; font-size:15px; transition:opacity 0.15s;
 }
-.file-chip-remove:hover { opacity: 1; }
+.file-chip-remove:hover { opacity:1; }
 
-/* ── Primary CTA button — matches site's .btn.btn-cream exactly ── */
+/* ── Primary CTA button — matches site’s .btn.btn-cream exactly ── */
 .cta {
-  display: inline-flex; align-items: center; justify-content: space-between;
-  gap: 32px; min-width: 210px; height: 56px;
-  font-family: var(--sans); font-size: 15px; font-weight: 600;
-  letter-spacing: -0.01em; padding: 0 24px;
-  background: var(--btn); color: var(--ink);
-  border: 1px solid transparent; border-radius: 0;
-  cursor: pointer; text-decoration: none;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  position: relative; overflow: hidden;
+display:inline-flex; align-items:center; justify-content:space-between;
+gap:32px; min-width:210px; height:56px;
+font-family:var(–sans); font-size:15px; font-weight:600;
+letter-spacing:-0.01em; padding:0 24px;
+background:var(–btn); color:var(–ink);
+border:1px solid transparent; border-radius:0;
+cursor:pointer; text-decoration:none;
+transition:transform 0.2s ease, opacity 0.2s ease;
+position:relative; overflow:hidden;
 }
-.cta:hover { transform: translateY(-2px); opacity: 0.92; }
-.cta:active { transform: translateY(0); }
-.cta:focus-visible { outline: 2px solid var(--peach); outline-offset: 3px; }
-.cta:disabled { opacity: 0.28; cursor: not-allowed; transform: none; }
-.cta svg { width: 20px; height: 20px; stroke: var(--ink); stroke-width: 2.1; fill: none; flex-shrink: 0; }
-
-.cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.cta:hover { transform:translateY(-2px); opacity:0.92; }
+.cta:active { transform:translateY(0); }
+.cta:focus-visible { outline:2px solid var(–peach); outline-offset:3px; }
+.cta:disabled { opacity:0.28; cursor:not-allowed; transform:none; }
+.cta svg { width:20px; height:20px; stroke:var(–ink); stroke-width:2.1; fill:none; flex-shrink:0; }
+.cta-row { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
 
 /* Ghost / text link */
 .skip-link {
-  font-family: var(--sans); font-size: 13px; color: var(--cream-faint);
-  background: none; border: none; cursor: pointer;
-  text-decoration: underline; text-underline-offset: 3px;
-  transition: color 0.15s;
+font-family:var(–sans); font-size:13px; color:var(–cream-faint);
+background:none; border:none; cursor:pointer;
+text-decoration:underline; text-underline-offset:3px;
+transition:color 0.15s;
 }
-.skip-link:hover { color: var(--cream-soft); }
-.skip-link:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; border-radius: 0; }
+.skip-link:hover { color:var(–cream-soft); }
+.skip-link:focus-visible { outline:2px solid var(–peach); outline-offset:2px; border-radius:0; }
 
 /* Status messages */
-.status-msg { font-family: var(--sans); font-size: 13px; margin-top: 10px; min-height: 20px; line-height: 1.5; }
-.status-msg.error   { color: #E88A8A; }
-.status-msg.success { color: var(--green); display: flex; align-items: center; gap: 6px; }
-.status-msg.info    { color: var(--cream-soft); }
+.status-msg { font-family:var(–sans); font-size:13px; margin-top:10px; min-height:20px; line-height:1.5; }
+.status-msg.error   { color:#E88A8A; }
+.status-msg.success { color:var(–green); display:flex; align-items:center; gap:6px; }
+.status-msg.info    { color:var(–cream-soft); }
 
 /* ── Loading screen ── */
-.loading-screen { text-align: center; }
+.loading-screen { text-align:center; }
 .loading-ring {
-  width: 44px; height: 44px; border-radius: 50%;
-  border: 1.5px solid var(--line); border-top-color: var(--peach);
-  animation: spin 1s linear infinite; margin: 0 auto 28px;
+width:44px; height:44px; border-radius:50%;
+border:1.5px solid var(–line); border-top-color:var(–peach);
+animation:spin 1s linear infinite; margin:0 auto 28px;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-label {
-  font-size: 24px; font-weight: 300; letter-spacing: -0.05em;
-  color: rgba(230,235,246,0.90); margin-bottom: 8px;
-}
-.loading-sub { font-size: 14px; color: var(--cream-soft); }
-.loading-steps {
-  margin-top: 28px; display: flex; flex-direction: column; gap: 4px;
-  max-width: 300px; margin-left: auto; margin-right: auto;
-}
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-label { font-size:24px; font-weight:300; letter-spacing:-0.05em; color:rgba(230,235,246,0.90); margin-bottom:8px; }
+.loading-sub { font-size:14px; color:var(–cream-soft); }
+.loading-steps { margin-top:28px; display:flex; flex-direction:column; gap:4px; max-width:300px; margin-left:auto; margin-right:auto; }
 .loading-step {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 13px; color: var(--cream-faint);
-  padding: 8px 12px; transition: all 0.3s; text-align: left;
+display:flex; align-items:center; gap:10px;
+font-size:13px; color:var(–cream-faint);
+padding:8px 12px; transition:all 0.3s; text-align:left;
 }
-.loading-step.active { color: var(--cream); background: rgba(63,119,214,0.07); font-weight: 500; }
-.loading-step.done   { color: var(--green); }
-.step-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--line); flex-shrink: 0; transition: all 0.3s;
-}
-.loading-step.active .step-dot { background: var(--peach); animation: blink 1s ease infinite; }
-.loading-step.done   .step-dot { background: var(--green); }
+.loading-step.active { color:var(–cream); background:rgba(224,233,246,0.05); font-weight:500; }
+.loading-step.done   { color:var(–green); }
+.step-dot { width:5px; height:5px; border-radius:50%; background:var(–line); flex-shrink:0; transition:all 0.3s; }
+.loading-step.active .step-dot { background:var(–peach); animation:blink 1s ease infinite; }
+.loading-step.done   .step-dot { background:var(–green); }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
 
 /* ── Review list ── */
-.review-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 28px; }
-.review-row {
-  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
-  padding: 11px 0; border-bottom: 1px solid var(--line);
-}
-.review-key { font-size: 13px; color: var(--cream-soft); flex-shrink: 0; }
-.review-val { font-size: 14px; color: var(--cream); font-weight: 500; text-align: right; }
-.review-edit {
-  font-size: 12px; color: var(--rose); background: none; border: none; cursor: pointer;
-  text-decoration: underline; text-underline-offset: 2px; margin-left: 10px; flex-shrink: 0;
-}
-.review-edit:hover { color: var(--cream); }
+.review-list { display:flex; flex-direction:column; gap:0; margin-bottom:28px; }
+.review-row { display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:11px 0; border-bottom:1px solid var(–line); }
+.review-key { font-size:13px; color:var(–cream-soft); flex-shrink:0; }
+.review-val { font-size:14px; color:var(–cream); font-weight:500; text-align:right; }
+.review-edit { font-size:12px; color:var(–rose); background:none; border:none; cursor:pointer; text-decoration:underline; text-underline-offset:2px; margin-left:10px; flex-shrink:0; }
+.review-edit:hover { color:var(–cream); }
 
-/* Info / note box */
+/* Info / note box — cream-tinted, no blue */
 .reg-note {
-  display: flex; gap: 12px; align-items: flex-start;
-  background: rgba(63,119,214,0.06); border: 1px solid rgba(63,119,214,0.18);
-  border-radius: 0; padding: 14px 16px; margin-bottom: 28px;
+display:flex; gap:12px; align-items:flex-start;
+background:rgba(224,233,246,0.04); border:1px solid rgba(224,233,246,0.12);
+border-radius:0; padding:14px 16px; margin-bottom:28px;
 }
-.reg-note svg { width: 16px; height: 16px; stroke: var(--peach); stroke-width: 1.8; fill: none; flex-shrink: 0; margin-top: 1px; }
-.reg-note-text { font-size: 12.5px; color: var(--cream-soft); line-height: 1.6; }
-.reg-note-text b { color: var(--cream); font-weight: 600; }
+.reg-note svg { width:16px; height:16px; stroke:var(–cream-soft); stroke-width:1.8; fill:none; flex-shrink:0; margin-top:1px; }
+.reg-note-text { font-size:12.5px; color:var(–cream-soft); line-height:1.6; }
+.reg-note-text b { color:var(–cream); font-weight:600; }
 
 /* ── Floating Back / Keyboard hint ── */
 .back-btn {
-  position: fixed;
-  bottom: calc(36px + env(safe-area-inset-bottom));
-  left: max(40px, env(safe-area-inset-left));
-  z-index: 100;
-  background: rgba(15,18,24,0.7); backdrop-filter: blur(8px);
-  border: 1px solid var(--line); border-radius: 0;
-  padding: 9px 18px; font-family: var(--sans); font-size: 13px;
-  color: var(--cream-soft); cursor: pointer; transition: all 0.2s;
-  display: flex; align-items: center; gap: 6px;
+position:fixed;
+bottom:calc(36px + env(safe-area-inset-bottom));
+left:max(40px, env(safe-area-inset-left));
+z-index:100;
+background:rgba(15,18,24,0.7); backdrop-filter:blur(8px);
+border:1px solid var(–line); border-radius:0;
+padding:9px 18px; font-family:var(–sans); font-size:13px;
+color:var(–cream-soft); cursor:pointer; transition:all 0.2s;
+display:flex; align-items:center; gap:6px;
 }
-.back-btn:hover { border-color: var(--frame); color: var(--cream); }
-.back-btn:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; }
-.back-btn svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; }
-
+.back-btn:hover { border-color:var(–frame); color:var(–cream); }
+.back-btn:focus-visible { outline:2px solid var(–peach); outline-offset:2px; }
+.back-btn svg { width:13px; height:13px; stroke:currentColor; stroke-width:2; fill:none; }
 .key-hint {
-  position: fixed;
-  bottom: calc(36px + env(safe-area-inset-bottom));
-  right: max(40px, env(safe-area-inset-right));
-  z-index: 100;
-  font-family: var(--sans); font-size: 12px; color: var(--cream-faint);
-  display: flex; align-items: center; gap: 6px;
+position:fixed;
+bottom:calc(36px + env(safe-area-inset-bottom));
+right:max(40px, env(safe-area-inset-right));
+z-index:100;
+font-family:var(–sans); font-size:12px; color:var(–cream-faint);
+display:flex; align-items:center; gap:6px;
 }
 .key {
-  display: inline-flex; align-items: center; justify-content: center;
-  background: rgba(224,233,246,0.05); border: 1px solid var(--line);
-  border-radius: 0; padding: 2px 7px; font-size: 11px;
+display:inline-flex; align-items:center; justify-content:center;
+background:rgba(224,233,246,0.05); border:1px solid var(–line);
+border-radius:0; padding:2px 7px; font-size:11px;
 }
 
 /* ── Confirm screen numbered steps ── */
-.confirm-step {
-  display: flex; gap: 16px; align-items: flex-start;
-  padding: 16px 0; border-bottom: 1px solid var(--line);
-}
-.confirm-step:last-child { border-bottom: none; }
+.confirm-step { display:flex; gap:16px; align-items:flex-start; padding:16px 0; border-bottom:1px solid var(–line); }
+.confirm-step:last-child { border-bottom:none; }
 .confirm-num {
-  width: 24px; height: 24px; border-radius: 0;
-  background: rgba(63,119,214,0.10); border: 1px solid rgba(63,119,214,0.22);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600; color: var(--peach);
-  flex-shrink: 0; margin-top: 2px;
+width:24px; height:24px; border-radius:0;
+background:rgba(224,233,246,0.05); border:1px solid rgba(224,233,246,0.15);
+display:flex; align-items:center; justify-content:center;
+font-size:11px; font-weight:600; color:var(–cream-soft);
+flex-shrink:0; margin-top:2px;
 }
-.confirm-title {
-  font-size: 14px; font-weight: 600; color: var(--cream);
-  margin-bottom: 4px; letter-spacing: -0.01em;
-}
-.confirm-body { font-size: 13px; color: var(--cream-soft); line-height: 1.6; }
+.confirm-title { font-size:14px; font-weight:600; color:var(–cream); margin-bottom:4px; letter-spacing:-0.01em; }
+.confirm-body { font-size:13px; color:var(–cream-soft); line-height:1.6; }
 .beta-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(231,178,122,0.10); border: 1px solid rgba(231,178,122,0.25);
-  border-radius: 0; padding: 3px 8px; font-size: 11px; font-weight: 600;
-  color: var(--gold); margin-bottom: 6px;
+display:inline-flex; align-items:center; gap:5px;
+background:rgba(231,178,122,0.10); border:1px solid rgba(231,178,122,0.25);
+border-radius:0; padding:3px 8px; font-size:11px; font-weight:600;
+color:var(–gold); margin-bottom:6px;
 }
 
-/* ── Dropdown fields (sMoreDetails) — same underline language as .q-input,
-   styled compact so several can stack on one screen ── */
-.q-select-wrap { margin-bottom: 12px; }
+/* ── Dropdown fields ── */
+.q-select-wrap { margin-bottom:12px; }
 .q-select {
-  width: 100%;
-  display: block;
-  background: rgba(224,233,246,0.03);
-  border: 1px solid var(--line);
-  border-radius: 0;
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--cream);
-  padding: 15px 38px 15px 16px;
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A9CCF2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
-  background-size: 16px;
-  transition: border-color 0.2s, background-color 0.2s;
+width:100%; display:block;
+background:rgba(224,233,246,0.03);
+border:1px solid var(–line); border-radius:0;
+font-family:var(–sans); font-size:14px; font-weight:600;
+color:var(–cream); padding:15px 38px 15px 16px;
+outline:none; appearance:none; -webkit-appearance:none; -moz-appearance:none;
+cursor:pointer;
+background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ viewBox=‘0 0 24 24’ fill=‘none’ stroke=’%23A9CCF2’ stroke-width=‘2’ stroke-linecap=‘round’ stroke-linejoin=‘round’%3E%3Cpolyline points=‘6 9 12 15 18 9’/%3E%3C/svg%3E”);
+background-repeat:no-repeat; background-position:right 16px center; background-size:16px;
+transition:border-color 0.2s, background-color 0.2s;
 }
-.q-select:hover {
-  border-color: var(--frame);
-  background-color: rgba(63,119,214,0.06);
-}
-.q-select:focus {
-  border-color: rgba(127,166,230,0.4);
-  background-color: rgba(63,119,214,0.09);
-}
-.q-select option { background: #14161A; color: var(--cream); }
+.q-select:hover { border-color:var(–frame); background-color:rgba(224,233,246,0.05); }
+.q-select:focus { border-color:rgba(224,233,246,0.30); background-color:rgba(224,233,246,0.07); }
+.q-select option { background:#14161A; color:var(–cream); }
 
-/* ── Success-page data reveal (sConfirm) — either the merchant's own
-   effective rate (when a statement was uploaded) or a fallback industry
-   stat (when it wasn't), in the same visual slot either way ── */
-.confirm-reveal { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
-.confirm-reveal-eyebrow {
-  font-size: 11px; font-weight: 500; letter-spacing: 0.10em; text-transform: uppercase;
-  color: var(--peach); margin-bottom: 10px;
-}
-.confirm-reveal-stat {
-  font-size: clamp(32px, 4vw, 44px); font-weight: 500; color: var(--cream);
-  letter-spacing: -0.03em; margin-bottom: 6px; line-height: 1;
-}
-.confirm-reveal-sub { font-size: 14px; color: var(--cream-soft); line-height: 1.55; margin-bottom: 18px; max-width: 440px; }
-.confirm-reveal-bars { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; max-width: 360px; }
-.cr-bar-row { display: grid; grid-template-columns: 84px 1fr 52px; align-items: center; gap: 10px; }
-.cr-bar-label { font-size: 12px; color: var(--cream-faint); }
-.cr-bar-label.you { color: var(--cream); font-weight: 600; }
-.cr-bar-track { height: 7px; background: var(--line); border-radius: 0; overflow: hidden; }
-.cr-bar-fill { height: 100%; border-radius: 0; }
-.cr-bar-fill.you { background: var(--orange); }
-.cr-bar-fill.typical { background: rgba(169,204,242,0.35); }
-.cr-bar-val { font-size: 12px; color: var(--cream-soft); text-align: right; }
-.confirm-reveal-note { font-size: 12.5px; color: var(--cream-faint); line-height: 1.55; max-width: 440px; }
+/* ── Confirm reveal ── */
+.confirm-reveal { margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(–line); }
+.confirm-reveal-eyebrow { font-size:11px; font-weight:500; letter-spacing:0.10em; text-transform:uppercase; color:var(–cream-soft); margin-bottom:10px; }
+.confirm-reveal-stat { font-size:clamp(32px, 4vw, 44px); font-weight:500; color:var(–cream); letter-spacing:-0.03em; margin-bottom:6px; line-height:1; }
+.confirm-reveal-sub { font-size:14px; color:var(–cream-soft); line-height:1.55; margin-bottom:18px; max-width:440px; }
+.confirm-reveal-bars { display:flex; flex-direction:column; gap:9px; margin-bottom:14px; max-width:360px; }
+.cr-bar-row { display:grid; grid-template-columns:84px 1fr 52px; align-items:center; gap:10px; }
+.cr-bar-label { font-size:12px; color:var(–cream-faint); }
+.cr-bar-label.you { color:var(–cream); font-weight:600; }
+.cr-bar-track { height:7px; background:var(–line); border-radius:0; overflow:hidden; }
+.cr-bar-fill { height:100%; border-radius:0; }
+.cr-bar-fill.you { background:var(–cream); }
+.cr-bar-fill.typical { background:rgba(224,233,246,0.20); }
+.cr-bar-val { font-size:12px; color:var(–cream-soft); text-align:right; }
+.confirm-reveal-note { font-size:12.5px; color:var(–cream-faint); line-height:1.55; max-width:440px; }
 
 /* ── Responsive ── */
-@media (max-width: 600px) {
-  .chrome {
-    height:62px;
-  }
-  .chrome-inner {
-    width:100%;
-    max-width:none;
-    height:62px;
-    padding-left:max(22px, env(safe-area-inset-left));
-    padding-right:max(22px, env(safe-area-inset-right));
-  }
-  .progress-wrap { min-width: 96px; }
-  .progress-label { display: none; }
-
-  .stage {
-    align-items: flex-start;
-    padding-top: calc(72px + env(safe-area-inset-top));
-    padding-bottom: calc(18px + env(safe-area-inset-bottom));
-    padding-left: 0; padding-right: 0;
-  }
-  .screen {
-    --fit: 1 !important;
-    box-sizing: border-box;
-    padding-left: max(22px, env(safe-area-inset-left));
-    padding-right: max(22px, env(safe-area-inset-right));
-    max-height: calc(100dvh - 86px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    overflow-y: auto; overflow-x: hidden;
-  }
-  .q-text { font-size: 28px; margin-bottom: 6px; }
-  .q-sub  { font-size: 14px; margin-bottom: 16px; }
-  .choice-grid { gap: 6px; margin-bottom: 16px; }
-  .q-text + .choice-grid { margin-top: 24px; }
-  .choice { padding: 11px 14px; gap: 12px; }
-  .choice-icon { width: 34px; height: 34px; }
-  .choice-label { font-size: 14px; }
-  .cta-row { width: 100%; margin-top: 4px; }
-  .cta { width: 100%; justify-content: center; padding: 14px 22px; min-width: 0; }
-  .back-btn { left: max(22px, env(safe-area-inset-left)); bottom: calc(16px + env(safe-area-inset-bottom)); }
-  .key-hint { display: none; }
-  .choice-grid.cols-2 { grid-template-columns: 1fr; }
-  .otp-digit { width: 44px; height: 56px; font-size: 24px; }
-  .upload-zone { padding: 28px 16px; }
+@media (max-width:600px) {
+.chrome { height:62px; }
+.chrome-inner { width:100%; max-width:none; height:62px; padding-left:max(22px, env(safe-area-inset-left)); padding-right:max(22px, env(safe-area-inset-right)); }
+.progress-wrap { min-width:96px; }
+.progress-label { display:none; }
+.stage { align-items:flex-start; padding-top:calc(72px + env(safe-area-inset-top)); padding-bottom:calc(18px + env(safe-area-inset-bottom)); padding-left:0; padding-right:0; }
+.screen { –fit:1 !important; box-sizing:border-box; padding-left:max(22px, env(safe-area-inset-left)); padding-right:max(22px, env(safe-area-inset-right)); max-height:calc(100dvh - 86px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow-y:auto; overflow-x:hidden; }
+.q-text { font-size:28px; margin-bottom:6px; }
+.q-sub  { font-size:14px; margin-bottom:16px; }
+.choice-grid { gap:6px; margin-bottom:16px; }
+.q-text + .choice-grid { margin-top:24px; }
+.choice { padding:11px 14px; gap:12px; }
+.choice-icon { width:34px; height:34px; }
+.choice-label { font-size:14px; }
+.cta-row { width:100%; margin-top:4px; }
+.cta { width:100%; justify-content:center; padding:14px 22px; min-width:0; }
+.back-btn { left:max(22px, env(safe-area-inset-left)); bottom:calc(16px + env(safe-area-inset-bottom)); }
+.key-hint { display:none; }
+.choice-grid.cols-2 { grid-template-columns:1fr; }
+.otp-digit { width:44px; height:56px; font-size:24px; }
+.upload-zone { padding:28px 16px; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.12s !important; }
-  .loading-ring { animation: spin 1s linear infinite; }
-}
-/* MOBILE OPTIMISATION — compact analyser flow */
-@media (max-width:760px){
-
-  html, body{
-    height:100%;
-    overflow:hidden;
-    background:var(--bg);
-  }
-
-  body::before,
-  body::after{
-    content:"";
-    position:fixed;
-    top:0;
-    bottom:0;
-    width:1px;
-    background:rgba(230,235,246,.08);
-    z-index:999;
-    pointer-events:none;
-  }
-
-  body::before{ left:14px; }
-  body::after{ right:14px; }
-
-  .chrome{
-    height:74px;
-    background:var(--bg);
-    backdrop-filter:none;
-    -webkit-backdrop-filter:none;
-  }
-
-  .chrome-inner{
-    width:calc(100% - 28px);
-    height:74px;
-    padding:0 22px;
-    border-left:1px solid rgba(230,235,246,.08);
-    border-right:1px solid rgba(230,235,246,.08);
-    border-bottom:1px solid rgba(230,235,246,.08);
-  }
-
-  .acceptor-word{
-    font-size:23px;
-  }
-
-  .acceptor-mark{
-    width:28px;
-    height:26px;
-  }
-
-  .acceptor-mark span{
-    width:9px;
-    height:26px;
-    border-radius:2.5px;
-  }
-
-  .acceptor-mark span:first-child{ left:5px; }
-  .acceptor-mark span:last-child{
-    right:5px;
-    height:19px;
-  }
-
-  .logo-full{
-    height:34px;
-    width:auto;
-    display:block;
-  }
-
-  .progress-wrap{
-    min-width:82px;
-    max-width:90px;
-  }
-
-  .progress-label{
-    display:none;
-  }
-
-  .stage{
-    align-items:flex-start;
-    padding-top:calc(104px + env(safe-area-inset-top));
-    padding-bottom:calc(70px + env(safe-area-inset-bottom));
-    padding-left:0;
-    padding-right:0;
-  }
-
-  .screen{
-    --fit:1 !important;
-    width:calc(100% - 28px);
-    max-width:none;
-    max-height:calc(100dvh - 128px);
-    margin:0 auto;
-    padding:0 26px 24px;
-    overflow-y:auto;
-    overflow-x:hidden;
-  }
-
-  .q-text{
-    font-size:clamp(32px,8.7vw,42px);
-    line-height:1.08;
-    letter-spacing:-0.055em;
-    margin-bottom:14px;
-  }
-
-  .q-sub{
-    font-size:15.5px;
-    line-height:1.42;
-    margin-bottom:20px;
-    max-width:330px;
-  }
-
-  .choice-grid{
-    gap:7px;
-    margin-bottom:18px;
-  }
-
-  .choice-grid.cols-2{
-    grid-template-columns:1fr;
-  }
-
-  .choice{
-    min-height:54px;
-    padding:12px 14px;
-    gap:12px;
-    background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
-    border:1px solid rgba(255,255,255,.10);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
-  }
-
-  .choice-icon{
-    width:34px;
-    height:34px;
-  }
-
-  .choice-label{
-    font-size:14px;
-  }
-
-  .choice-sub{
-    font-size:11.5px;
-    line-height:1.35;
-  }
-
-  .choice-check{
-    width:18px;
-    height:18px;
-  }
-
-  .q-input-wrap{
-    margin-top:22px;
-    margin-bottom:22px;
-  }
-
-  .q-label{
-    font-size:10.5px;
-    margin-bottom:8px;
-  }
-
-  .q-input{
-    font-size:clamp(24px,7vw,32px);
-    padding:11px 0;
-  }
-
-  .cta-row{
-    width:100%;
-    margin-top:14px;
-    gap:8px;
-  }
-
-  .cta{
-    width:100%;
-    height:52px;
-    min-width:0;
-    justify-content:space-between;
-    padding:0 20px;
-    font-size:14px;
-  }
-
-  .skip-link{
-    width:100%;
-    text-align:center;
-    font-size:13px;
-    padding:8px 0;
-  }
-
-  .upload-zone{
-    padding:30px 18px;
-    margin-top:18px;
-    margin-bottom:16px;
-  }
-
-  .upload-icon{
-    width:42px;
-    height:42px;
-    margin-bottom:12px;
-  }
-
-  .upload-title{
-    font-size:18px;
-  }
-
-  .upload-sub{
-    font-size:13px;
-  }
-
-  .upload-formats{
-    font-size:10px;
-    margin-top:8px;
-  }
-
-  .otp-digits{
-    gap:6px;
-    justify-content:space-between;
-  }
-
-  .otp-digit{
-    width:42px;
-    height:54px;
-    font-size:23px;
-  }
-
-  .status-msg{
-    font-size:12.5px;
-    margin-top:8px;
-  }
-
-  .review-row{
-    padding:10px 0;
-  }
-
-  .confirm-step{
-    padding:12px 0;
-  }
-
-  .back-btn{
-    left:28px;
-    bottom:calc(20px + env(safe-area-inset-bottom));
-    padding:8px 14px;
-    border-radius:0;
-    background:rgba(15,18,24,.82);
-  }
-
-  .key-hint{
-    display:none !important;
-  }
+@media (prefers-reduced-motion:reduce) {
+*, *::before, *::after { animation-duration:0.001ms !important; transition-duration:0.12s !important; }
+.loading-ring { animation:spin 1s linear infinite; }
 }
 
-@media (max-width:480px){
+/* ── Mobile ── */
+@media (max-width:760px) {
+html, body { height:100%; overflow:hidden; background:var(–bg); }
+body::before, body::after { content:””; position:fixed; top:0; bottom:0; width:1px; background:rgba(230,235,246,.08); z-index:999; pointer-events:none; }
+body::before { left:14px; } body::after { right:14px; }
+.chrome { height:74px; background:var(–bg); backdrop-filter:none; -webkit-backdrop-filter:none; }
+.chrome-inner { width:calc(100% - 28px); height:74px; padding:0 22px; border-left:1px solid rgba(230,235,246,.08); border-right:1px solid rgba(230,235,246,.08); border-bottom:1px solid rgba(230,235,246,.08); }
+.acceptor-word { font-size:23px; }
+.acceptor-mark { width:28px; height:26px; }
+.acceptor-mark span { width:9px; height:26px; border-radius:2.5px; }
+.acceptor-mark span:first-child { left:5px; } .acceptor-mark span:last-child { right:5px; height:19px; }
+.logo-full { height:34px; width:auto; display:block; }
+.progress-wrap { min-width:82px; max-width:90px; }
+.progress-label { display:none; }
+.stage { align-items:flex-start; padding-top:calc(104px + env(safe-area-inset-top)); padding-bottom:calc(70px + env(safe-area-inset-bottom)); padding-left:0; padding-right:0; }
+.screen { –fit:1 !important; width:calc(100% - 28px); max-width:none; max-height:calc(100dvh - 128px); margin:0 auto; padding:0 26px 24px; overflow-y:auto; overflow-x:hidden; }
+.q-text { font-size:clamp(32px,8.7vw,42px); line-height:1.08; letter-spacing:-0.055em; margin-bottom:14px; }
+.q-sub { font-size:15.5px; line-height:1.42; margin-bottom:20px; max-width:330px; }
+.choice-grid { gap:7px; margin-bottom:18px; }
+.choice-grid.cols-2 { grid-template-columns:1fr; }
 
-  .screen{
-    padding-left:24px;
-    padding-right:24px;
-  }
-
-  .q-text{
-    font-size:clamp(30px,8.9vw,39px);
-  }
-
-  .q-sub{
-    font-size:14.5px;
-  }
-
-  .choice{
-    min-height:50px;
-    padding:10px 13px;
-  }
-
-  .choice-icon{
-    width:31px;
-    height:31px;
-  }
-
-  .otp-digit{
-    width:39px;
-    height:52px;
-  }
+/* Choice cards on mobile — flat, square, no gradient */
+.choice {
+min-height:54px; padding:12px 14px; gap:12px;
+background:rgba(224,233,246,0.03);
+border:1px solid rgba(224,233,246,0.10);
+border-radius:0 !important;
+box-shadow:none;
+}
+.choice::before { display:none; }
+.choice.selected {
+background:rgba(224,233,246,0.07) !important;
+border-color:rgba(224,233,246,0.28) !important;
+border-radius:0 !important;
+box-shadow:none !important;
+}
+.choice.selected::before {
+display:block;
+background:var(–cream);
 }
 
-/* DESKTOP REFINEMENT — keeps analyser visually consistent with the refined site scale */
-@media (min-width:901px){
-
-  .chrome{
-    height:64px;
-  }
-
-  .chrome-inner{
-    height:64px;
-    padding:0 24px;
-  }
-
-  .logo-full{
-    height:30px;
-  }
-
-  .progress-wrap{
-    min-width:180px;
-  }
-
-  .stage{
-    padding-top:calc(70px + env(safe-area-inset-top));
-    padding-bottom:calc(70px + env(safe-area-inset-bottom));
-  }
-
-  .screen{
-    max-width:560px;
-  }
-
-  .q-text{
-    font-size:clamp(30px,3.6vw,46px);
-    line-height:1.06;
-    margin-bottom:9px;
-  }
-
-  .q-sub{
-    font-size:14px;
-    line-height:1.58;
-    margin-bottom:30px;
-    max-width:450px;
-  }
-
-  .q-input-wrap{
-    margin-bottom:20px;
-  }
-
-  .q-label{
-    font-size:10px;
-  }
-
-  .q-input{
-    font-size:clamp(22px,2.5vw,32px);
-    padding:10px 0;
-  }
-
-  .choice-grid{
-    gap:6px;
-    margin-bottom:24px;
-  }
-
-  .choice{
-    padding:12px 16px;
-    gap:12px;
-  }
-
-  .choice-icon{
-    width:34px;
-    height:34px;
-  }
-
-  .choice-label{
-    font-size:13.5px;
-  }
-
-  .choice-sub{
-    font-size:11.5px;
-  }
-
-  .upload-zone{
-    padding:40px 28px;
-  }
-
-  .upload-icon{
-    width:42px;
-    height:42px;
-    margin-bottom:14px;
-  }
-
-  .upload-title{
-    font-size:17px;
-  }
-
-  .upload-sub{
-    font-size:12.5px;
-  }
-
-  .cta{
-    height:50px;
-    min-width:190px;
-    padding:0 22px;
-    font-size:14px;
-  }
-
-  .back-btn{
-    bottom:calc(30px + env(safe-area-inset-bottom));
-    padding:8px 16px;
-    font-size:12px;
-  }
-
-  .key-hint{
-    bottom:calc(30px + env(safe-area-inset-bottom));
-  }
-
-  .loading-ring{
-    width:40px;
-    height:40px;
-    margin-bottom:24px;
-  }
-
-  .loading-label{
-    font-size:22px;
-  }
-
-  .loading-sub{
-    font-size:13px;
-  }
-
-  .review-list{
-    margin-bottom:24px;
-  }
-
-  .review-row{
-    padding:10px 0;
-  }
-
-  .confirm-step{
-    padding:14px 0;
-  }
-
-  .confirm-reveal-stat{
-    font-size:clamp(30px,3.2vw,40px);
-  }
+.choice-icon { width:34px; height:34px; }
+.choice-label { font-size:14px; }
+.choice-sub { font-size:11.5px; line-height:1.35; }
+.choice-check { width:18px; height:18px; }
+.q-input-wrap { margin-top:22px; margin-bottom:22px; }
+.q-label { font-size:10.5px; margin-bottom:8px; }
+.q-input { font-size:clamp(24px,7vw,32px); padding:11px 0; }
+.cta-row { width:100%; margin-top:14px; gap:8px; }
+.cta { width:100%; height:52px; min-width:0; justify-content:space-between; padding:0 20px; font-size:14px; }
+.skip-link { width:100%; text-align:center; font-size:13px; padding:8px 0; }
+.upload-zone { padding:30px 18px; margin-top:18px; margin-bottom:16px; }
+.upload-icon { width:42px; height:42px; margin-bottom:12px; }
+.upload-title { font-size:18px; }
+.upload-sub { font-size:13px; }
+.upload-formats { font-size:10px; margin-top:8px; }
+.otp-digits { gap:6px; justify-content:space-between; }
+.otp-digit { width:42px; height:54px; font-size:23px; }
+.status-msg { font-size:12.5px; margin-top:8px; }
+.review-row { padding:10px 0; }
+.confirm-step { padding:12px 0; }
+.back-btn { left:28px; bottom:calc(20px + env(safe-area-inset-bottom)); padding:8px 14px; border-radius:0; background:rgba(15,18,24,.82); }
+.key-hint { display:none !important; }
 }
 
+@media (max-width:480px) {
+.screen { padding-left:24px; padding-right:24px; }
+.q-text { font-size:clamp(30px,8.9vw,39px); }
+.q-sub { font-size:14.5px; }
+.choice { min-height:50px; padding:10px 13px; }
+.choice-icon { width:31px; height:31px; }
+.otp-digit { width:39px; height:52px; }
+}
+
+/* ── Desktop refinement ── */
+@media (min-width:901px) {
+.chrome { height:64px; }
+.chrome-inner { height:64px; padding:0 24px; }
+.logo-full { height:30px; }
+.progress-wrap { min-width:180px; }
+.stage { padding-top:calc(70px + env(safe-area-inset-top)); padding-bottom:calc(70px + env(safe-area-inset-bottom)); }
+.screen { max-width:560px; }
+.q-text { font-size:clamp(30px,3.6vw,46px); line-height:1.06; margin-bottom:9px; }
+.q-sub { font-size:14px; line-height:1.58; margin-bottom:30px; max-width:450px; }
+.q-input-wrap { margin-bottom:20px; }
+.q-label { font-size:10px; }
+.q-input { font-size:clamp(22px,2.5vw,32px); padding:10px 0; }
+.choice-grid { gap:6px; margin-bottom:24px; }
+.choice { padding:12px 16px; gap:12px; }
+.choice-icon { width:34px; height:34px; }
+.choice-label { font-size:13.5px; }
+.choice-sub { font-size:11.5px; }
+.upload-zone { padding:40px 28px; }
+.upload-icon { width:42px; height:42px; margin-bottom:14px; }
+.upload-title { font-size:17px; }
+.upload-sub { font-size:12.5px; }
+.cta { height:50px; min-width:190px; padding:0 22px; font-size:14px; }
+.back-btn { bottom:calc(30px + env(safe-area-inset-bottom)); padding:8px 16px; font-size:12px; }
+.key-hint { bottom:calc(30px + env(safe-area-inset-bottom)); }
+.loading-ring { width:40px; height:40px; margin-bottom:24px; }
+.loading-label { font-size:22px; }
+.loading-sub { font-size:13px; }
+.review-list { margin-bottom:24px; }
+.review-row { padding:10px 0; }
+.confirm-step { padding:14px 0; }
+.confirm-reveal-stat { font-size:clamp(30px,3.2vw,40px); }
+}
 </style>
+
 </head>
 <body>
 
@@ -1067,6 +592,7 @@ input#fileInput { display: none; }
 <div class="stage">
 
   <!-- s5: Industry -->
+
   <div class="screen active" id="s5">
     <div class="q-text">What kind of<br>business are you?</div>
     <div class="choice-grid cols-2">
@@ -1082,6 +608,7 @@ input#fileInput { display: none; }
   </div>
 
   <!-- s6: Channels -->
+
   <div class="screen" id="s6">
     <div class="q-text">How do you<br>take payments?</div>
     <div class="q-sub">Select all that apply.</div>
@@ -1093,55 +620,35 @@ input#fileInput { display: none; }
       <div class="choice multi" tabindex="0" role="checkbox" aria-checked="false" onclick="toggle(this,'channels','phone')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div class="choice-text"><div class="choice-label">Phone / MOTO</div><div class="choice-sub">Card not present, over the phone</div></div><div class="choice-check"></div></div>
     </div>
     <div class="cta-row" style="margin-top:8px">
-      <button class="cta" id="ctaS6" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
+      <button class="cta" id="ctaS6" onclick="next()" disabled>Continue<svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg></button>
     </div>
   </div>
 
   <!-- s1: Name -->
+
   <div class="screen" id="s1">
     <div class="q-text">Let's start with<br>the basics.</div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-name">Full name</label>
-      <input class="q-input" type="text" id="inp-name" placeholder="Jane Smith" autocomplete="name" aria-label="Your full name" oninput="validateContact1()">
-    </div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-company">Company name</label>
-      <input class="q-input" type="text" id="inp-company" placeholder="Riverside Hospitality Group" autocomplete="organization" aria-label="Your company name" oninput="validateContact1()">
-    </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaS1" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
+    <div class="q-input-wrap"><label class="q-label" for="inp-name">Full name</label><input class="q-input" type="text" id="inp-name" placeholder="Jane Smith" autocomplete="name" aria-label="Your full name" oninput="validateContact1()"></div>
+    <div class="q-input-wrap"><label class="q-label" for="inp-company">Company name</label><input class="q-input" type="text" id="inp-company" placeholder="Riverside Hospitality Group" autocomplete="organization" aria-label="Your company name" oninput="validateContact1()"></div>
+    <div class="cta-row"><button class="cta" id="ctaS1" onclick="next()" disabled>Continue<svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg></button></div>
   </div>
 
   <!-- s2: Email + Mobile -->
+
   <div class="screen" id="s2">
     <div class="q-text">How can we<br>reach you?</div>
     <div class="q-sub">We'll email your completed review here once it's verified, and use your mobile if we need to follow up.</div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-email">Email</label>
-      <input class="q-input" type="email" id="inp-email" placeholder="you@company.com" autocomplete="email" aria-label="Your email address" oninput="validateContact2()">
-    </div>
-    <div class="q-input-wrap">
-      <label class="q-label" for="inp-phone">Mobile</label>
-      <input class="q-input" type="tel" id="inp-phone" placeholder="04XX XXX XXX" autocomplete="tel" aria-label="Your mobile number" oninput="validateContact2()">
-    </div>
+    <div class="q-input-wrap"><label class="q-label" for="inp-email">Email</label><input class="q-input" type="email" id="inp-email" placeholder="you@company.com" autocomplete="email" aria-label="Your email address" oninput="validateContact2()"></div>
+    <div class="q-input-wrap"><label class="q-label" for="inp-phone">Mobile</label><input class="q-input" type="tel" id="inp-phone" placeholder="04XX XXX XXX" autocomplete="tel" aria-label="Your mobile number" oninput="validateContact2()"></div>
     <div class="cta-row">
-      <button class="cta" id="ctaS2" onclick="sendOtp()" disabled>
-        Send verification code
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
+      <button class="cta" id="ctaS2" onclick="sendOtp()" disabled>Send verification code<svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg></button>
       <button class="skip-link" onclick="skipEmail()">Skip for now</button>
     </div>
     <div class="status-msg" id="statusS2"></div>
   </div>
 
   <!-- s3: OTP -->
+
   <div class="screen" id="s3">
     <div class="q-text">Check your<br>inbox.</div>
     <div class="q-sub" id="otpSub">We sent a 6-digit code to your email.</div>
@@ -1155,15 +662,13 @@ input#fileInput { display: none; }
     </div>
     <div class="status-msg" id="statusS3"></div>
     <div class="cta-row" style="margin-top:24px">
-      <button class="cta" id="ctaS3" onclick="verifyOtp()" disabled>
-        Verify code
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
+      <button class="cta" id="ctaS3" onclick="verifyOtp()" disabled>Verify code<svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg></button>
       <button class="skip-link" onclick="sendOtp(true)">Resend code</button>
     </div>
   </div>
 
   <!-- s0: Upload -->
+
   <div class="screen" id="s0">
     <div class="q-text">Upload your<br>merchant statements.</div>
     <div class="q-sub">The last 3 months gives the clearest picture — upload a PDF statement, or a clear photo of each.</div>
@@ -1172,9 +677,7 @@ input#fileInput { display: none; }
          onclick="document.getElementById('fileInput').click()"
          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('fileInput').click();}"
          ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
-      <div class="upload-icon">
-        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      </div>
+      <div class="upload-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
       <div class="upload-title">Drop files here</div>
       <div class="upload-sub">PDF statements or photos · Up to 10 files</div>
       <div class="upload-formats">PDF · PNG · JPG</div>
@@ -1182,15 +685,13 @@ input#fileInput { display: none; }
     <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,application/pdf,image/png,image/jpeg,image/webp,image/gif" multiple onchange="onFileSelect(event)">
     <div class="status-msg" id="statusS0"></div>
     <div class="cta-row">
-      <button class="cta" id="ctaS0" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
+      <button class="cta" id="ctaS0" onclick="next()" disabled>Continue<svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg></button>
       <button class="skip-link" onclick="skipUpload()">I don't have statements handy</button>
     </div>
   </div>
 
-  <!-- sOtherVolume: catches volume not captured in the uploaded statement(s) — only shown when a statement WAS uploaded -->
+  <!-- sOtherVolume -->
+
   <div class="screen" id="sOtherVolume">
     <div class="q-text">Does this cover<br>all your card payments?</div>
     <div class="q-sub">If another provider handles payments this statement doesn't show — a separate online gateway, for example — let us know so your report reflects your whole business.</div>
@@ -1211,6 +712,7 @@ input#fileInput { display: none; }
   </div>
 
   <!-- s6b: eCommerce platform -->
+
   <div class="screen" id="s6b">
     <div class="q-text">Which eCommerce<br>platform do you use?</div>
     <div class="choice-grid cols-1">
@@ -1224,6 +726,7 @@ input#fileInput { display: none; }
   </div>
 
   <!-- s6c: Terminal setup -->
+
   <div class="screen" id="s6c">
     <div class="q-text">How are your<br>terminals set up?</div>
     <div class="choice-grid cols-1">
@@ -1233,6 +736,7 @@ input#fileInput { display: none; }
   </div>
 
   <!-- s6g: Surcharge -->
+
   <div class="screen" id="s6g">
     <div class="q-text">Do you pass on<br>the card surcharge?</div>
     <div class="q-sub">Whether you add a card fee at checkout, or absorb the cost yourself.</div>
@@ -1244,97 +748,47 @@ input#fileInput { display: none; }
     </div>
   </div>
 
-  <!-- sMoreDetails: combined fallback questions — only shown when no statement was uploaded, since a
-       statement gives the AI all of these facts directly and far more accurately than a self-reported guess -->
+  <!-- sMoreDetails -->
+
   <div class="screen" id="sMoreDetails">
     <div class="q-text">A few more<br>details.</div>
     <div class="q-sub">With no statement to read this from, a quick best guess on each helps us frame your review.</div>
-
-    <div class="q-select-wrap">
-      <label class="q-label" for="sel-provider">Current provider</label>
+    <div class="q-select-wrap"><label class="q-label" for="sel-provider">Current provider</label>
       <select class="q-select" id="sel-provider" aria-label="Current payments provider" onchange="onMoreDetailsChange()">
-        <option value="">Select…</option>
-        <option value="tyro">Tyro</option>
-        <option value="square">Square</option>
-        <option value="stripe">Stripe</option>
-        <option value="zeller">Zeller</option>
-        <option value="major_bank">A major bank (CBA / NAB / Westpac / ANZ)</option>
-        <option value="fatzebra">Fat Zebra</option>
-        <option value="not_sure">Not sure</option>
-        <option value="other">Other</option>
+        <option value="">Select…</option><option value="tyro">Tyro</option><option value="square">Square</option><option value="stripe">Stripe</option><option value="zeller">Zeller</option><option value="major_bank">A major bank (CBA / NAB / Westpac / ANZ)</option><option value="fatzebra">Fat Zebra</option><option value="not_sure">Not sure</option><option value="other">Other</option>
       </select>
     </div>
-    <div class="q-select-wrap" id="providerOtherWrap" style="display:none">
-      <label class="q-label" for="inp-provider-other">Provider name</label>
-      <input class="q-input" style="font-size:18px" type="text" id="inp-provider-other" placeholder="Type the provider…" aria-label="Other provider" oninput="onMoreDetailsChange()">
-    </div>
-
-    <div class="q-select-wrap">
-      <label class="q-label" for="sel-pricing">Pricing model</label>
+    <div class="q-select-wrap" id="providerOtherWrap" style="display:none"><label class="q-label" for="inp-provider-other">Provider name</label><input class="q-input" style="font-size:18px" type="text" id="inp-provider-other" placeholder="Type the provider…" aria-label="Other provider" oninput="onMoreDetailsChange()"></div>
+    <div class="q-select-wrap"><label class="q-label" for="sel-pricing">Pricing model</label>
       <select class="q-select" id="sel-pricing" aria-label="Pricing model" onchange="onMoreDetailsChange()">
-        <option value="">Select…</option>
-        <option value="blended">Blended — one flat rate for all cards</option>
-        <option value="ic_plus">Interchange Plus (IC+)</option>
-        <option value="ic_plusplus">Interchange++ (IC++)</option>
-        <option value="unknown">I don't know</option>
+        <option value="">Select…</option><option value="blended">Blended — one flat rate for all cards</option><option value="ic_plus">Interchange Plus (IC+)</option><option value="ic_plusplus">Interchange++ (IC++)</option><option value="unknown">I don't know</option>
       </select>
     </div>
-
-    <div class="q-select-wrap" id="lcrWrap">
-      <label class="q-label" for="sel-lcr">Least cost routing</label>
+    <div class="q-select-wrap" id="lcrWrap"><label class="q-label" for="sel-lcr">Least cost routing</label>
       <select class="q-select" id="sel-lcr" aria-label="Least cost routing status" onchange="onMoreDetailsChange()">
-        <option value="">Select…</option>
-        <option value="on">Yes, it's on</option>
-        <option value="off">No, it's off</option>
-        <option value="unknown">I don't know</option>
+        <option value="">Select…</option><option value="on">Yes, it's on</option><option value="off">No, it's off</option><option value="unknown">I don't know</option>
       </select>
     </div>
-
-    <div class="q-select-wrap">
-      <label class="q-label" for="sel-volume">Monthly card volume</label>
+    <div class="q-select-wrap"><label class="q-label" for="sel-volume">Monthly card volume</label>
       <select class="q-select" id="sel-volume" aria-label="Monthly card volume" onchange="onMoreDetailsChange()">
-        <option value="">Select…</option>
-        <option value="under50k">Under $50k / month</option>
-        <option value="50to250k">$50k – $250k / month</option>
-        <option value="250kto1m">$250k – $1M / month</option>
-        <option value="1mto5m">$1M – $5M / month</option>
-        <option value="over5m">$5M+ / month</option>
+        <option value="">Select…</option><option value="under50k">Under $50k / month</option><option value="50to250k">$50k – $250k / month</option><option value="250kto1m">$250k – $1M / month</option><option value="1mto5m">$1M – $5M / month</option><option value="over5m">$5M+ / month</option>
       </select>
     </div>
-
-    <div class="q-select-wrap">
-      <label class="q-label" for="sel-atv">Average transaction value</label>
+    <div class="q-select-wrap"><label class="q-label" for="sel-atv">Average transaction value</label>
       <select class="q-select" id="sel-atv" aria-label="Average transaction value" onchange="onMoreDetailsChange()">
-        <option value="">Select…</option>
-        <option value="under20">Under $20</option>
-        <option value="20to75">$20 – $75</option>
-        <option value="75to250">$75 – $250</option>
-        <option value="250to1000">$250 – $1,000</option>
-        <option value="over1000">$1,000+</option>
+        <option value="">Select…</option><option value="under20">Under $20</option><option value="20to75">$20 – $75</option><option value="75to250">$75 – $250</option><option value="250to1000">$250 – $1,000</option><option value="over1000">$1,000+</option>
       </select>
     </div>
-
-    <div class="q-select-wrap">
-      <label class="q-label" for="sel-mix">Card mix</label>
+    <div class="q-select-wrap"><label class="q-label" for="sel-mix">Card mix</label>
       <select class="q-select" id="sel-mix" aria-label="Card mix" onchange="onMoreDetailsChange()">
-        <option value="">Select…</option>
-        <option value="mostly_debit">Mostly debit</option>
-        <option value="mostly_credit">Mostly credit</option>
-        <option value="even">Fairly even split</option>
-        <option value="lots_intl">A lot of international / Amex</option>
-        <option value="unknown">Not sure</option>
+        <option value="">Select…</option><option value="mostly_debit">Mostly debit</option><option value="mostly_credit">Mostly credit</option><option value="even">Fairly even split</option><option value="lots_intl">A lot of international / Amex</option><option value="unknown">Not sure</option>
       </select>
     </div>
-
-    <div class="cta-row" style="margin-top:8px">
-      <button class="cta" id="ctaMoreDetails" onclick="next()" disabled>
-        Continue
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
+    <div class="cta-row" style="margin-top:8px"><button class="cta" id="ctaMoreDetails" onclick="next()" disabled>Continue<svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg></button></div>
   </div>
 
-  <!-- sGoal: Goals -->
+  <!-- sGoal -->
+
   <div class="screen" id="sGoal">
     <div class="q-text">What would make<br>this a win for you?</div>
     <div class="q-sub">Pick everything that matters, and tell us what's prompting the switch. This shapes what your report prioritises.</div>
@@ -1349,28 +803,20 @@ input#fileInput { display: none; }
       <label class="q-label" for="inp-pain">Anything else frustrating you? (optional)</label>
       <textarea class="q-input" id="inp-pain" aria-label="Anything else frustrating you" placeholder="e.g. fees feel too high, chargebacks I can't explain, clunky hardware…" rows="2" style="resize:none;font-size:18px;line-height:1.55;padding-top:8px" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';data.pain=this.value.trim();updateGoalCta();refit()"></textarea>
     </div>
-    <div class="cta-row">
-      <button class="cta" id="ctaGoal" onclick="next()" disabled>
-        Review my answers
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
+    <div class="cta-row"><button class="cta" id="ctaGoal" onclick="next()" disabled>Review my answers<svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg></button></div>
   </div>
 
-  <!-- sReview: Summary -->
+  <!-- sReview -->
+
   <div class="screen" id="sReview">
     <div class="q-text" style="font-size:clamp(28px,3.6vw,44px)">One last look<br>before we run it.</div>
     <div class="q-sub">Check anything looks right. Tap edit to fix a detail.</div>
     <div class="review-list" id="reviewList"></div>
-    <div class="cta-row">
-      <button class="cta" id="ctaReview" onclick="submitAll()">
-        Submit for review
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </button>
-    </div>
+    <div class="cta-row"><button class="cta" id="ctaReview" onclick="submitAll()">Submit for review<svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg></button></div>
   </div>
 
   <!-- Loading -->
+
   <div class="screen" id="sLoading">
     <div class="loading-screen">
       <div class="loading-ring"></div>
@@ -1386,6 +832,7 @@ input#fileInput { display: none; }
   </div>
 
   <!-- Confirm -->
+
   <div class="screen" id="sConfirm">
     <div class="q-text" style="font-size:clamp(28px,3.5vw,42px);margin-bottom:12px">Your report's<br>already done.</div>
     <div class="q-sub" style="margin-bottom:24px">Here's what happens between now and when it lands in your inbox.</div>
@@ -1393,37 +840,23 @@ input#fileInput { display: none; }
     <div style="display:flex;flex-direction:column;gap:0;max-width:520px">
       <div class="confirm-step">
         <div class="confirm-num">1</div>
-        <div>
-          <div class="confirm-title" id="confirmStep1Title">AI analysis complete</div>
-          <div class="confirm-body" id="confirmStep1Body">Our payments AI has reviewed your statement and merchant profile, benchmarked your rates against current market data, and produced a report specific to your setup.</div>
-        </div>
+        <div><div class="confirm-title" id="confirmStep1Title">AI analysis complete</div><div class="confirm-body" id="confirmStep1Body">Our payments AI has reviewed your statement and merchant profile, benchmarked your rates against current market data, and produced a report specific to your setup.</div></div>
       </div>
       <div class="confirm-step">
         <div class="confirm-num">2</div>
-        <div>
-          <div class="confirm-title">Human review in progress. <div class="beta-badge">⊕ Beta review</div></div>
-          <div class="confirm-body">While we're in beta, a payments specialist checks the AI report for accuracy before it reaches you. So what you receive is verified, not just generated.</div>
-        </div>
+        <div><div class="confirm-title">Human review in progress. <div class="beta-badge">⊕ Beta review</div></div><div class="confirm-body">While we're in beta, a payments specialist checks the AI report for accuracy before it reaches you. So what you receive is verified, not just generated.</div></div>
       </div>
       <div class="confirm-step">
         <div class="confirm-num">3</div>
-        <div>
-          <div class="confirm-title">Report delivered within 24 hours</div>
-          <div class="confirm-body">Once reviewed, it lands in your inbox. Simple.</div>
-        </div>
+        <div><div class="confirm-title">Report delivered within 24 hours</div><div class="confirm-body">Once reviewed, it lands in your inbox. Simple.</div></div>
       </div>
     </div>
     <div class="cta-row" style="margin-top:32px">
-      <a class="cta" href="https://www.acceptorIQ.com.au/">
-        Back to homepage
-        <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg>
-      </a>
+      <a class="cta" href="https://www.acceptorIQ.com.au/">Back to homepage<svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><path d="M6 12h12"/></svg></a>
     </div>
   </div>
 
 </div><!-- /stage -->
-
-<!-- All JS is identical to the original — zero logic changes -->
 <script>
 const data = {
   files: [], parsedTabular: [], skippedUpload: false,
@@ -1436,618 +869,608 @@ const data = {
   lcrStatus: '', pricingModel: '', surcharge: '', goals: [], pain: ''
 };
 let otp = { sent: false };
-
 let currentId = 's5';
 let history = [];
 let busy = false;
 
 function computePath() {
-  const p = ['s5','s6','s1','s2'];
-  if (!data.skippedEmail) p.push('s3');
-  p.push('s0');
-  if (data.skippedUpload) p.push('sMoreDetails');
-  if (!data.skippedUpload) p.push('sOtherVolume');
-  if (data.channels.includes('online'))  p.push('s6b');
-  if (data.channels.includes('instore')) p.push('s6c');
-  p.push('s6g','sGoal','sReview');
-  return p;
+const p = [‘s5’,‘s6’,‘s1’,‘s2’];
+if (!data.skippedEmail) p.push(‘s3’);
+p.push(‘s0’);
+if (data.skippedUpload) p.push(‘sMoreDetails’);
+if (!data.skippedUpload) p.push(‘sOtherVolume’);
+if (data.channels.includes(‘online’))  p.push(‘s6b’);
+if (data.channels.includes(‘instore’)) p.push(‘s6c’);
+p.push(‘s6g’,‘sGoal’,‘sReview’);
+return p;
 }
 
 function renderProgress() {
-  const path = computePath();
-  const idx = Math.max(0, path.indexOf(currentId));
-  const pct = path.length > 1 ? (idx / (path.length - 1)) * 100 : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
+const path = computePath();
+const idx = Math.max(0, path.indexOf(currentId));
+const pct = path.length > 1 ? (idx / (path.length - 1)) * 100 : 0;
+document.getElementById(‘progressFill’).style.width = pct + ‘%’;
 }
 
-const KEYHINT_SCREENS = ['s1','s2','s3'];
+const KEYHINT_SCREENS = [‘s1’,‘s2’,‘s3’];
 function updateChrome() {
-  document.getElementById('backBtn').style.display = history.length ? 'flex' : 'none';
-  document.getElementById('keyHint').style.display = KEYHINT_SCREENS.includes(currentId) ? 'flex' : 'none';
+document.getElementById(‘backBtn’).style.display = history.length ? ‘flex’ : ‘none’;
+document.getElementById(‘keyHint’).style.display = KEYHINT_SCREENS.includes(currentId) ? ‘flex’ : ‘none’;
 }
 
 const FIT_FLOOR = 0.62;
 function stageAvailable() {
-  const stage = document.querySelector('.stage');
-  const cs = getComputedStyle(stage);
-  return stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+const stage = document.querySelector(’.stage’);
+const cs = getComputedStyle(stage);
+return stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
 }
 function applyFit(screen) {
-  if (!screen) return;
-  if (window.innerWidth <= 600) { screen.style.removeProperty('--fit'); return; }
-  screen.style.setProperty('--fit', '1');
-  screen.style.maxHeight = 'none';
-  screen.style.overflowY = 'visible';
-  const avail = stageAvailable();
-  const natural = screen.scrollHeight;
-  let scale = natural > 0 ? Math.min(1, avail / natural) : 1;
-  if (scale < FIT_FLOOR) {
-    scale = FIT_FLOOR;
-    screen.style.maxHeight = (avail / scale) + 'px';
-    screen.style.overflowY = 'auto';
-  }
-  screen.style.setProperty('--fit', scale.toFixed(4));
+if (!screen) return;
+if (window.innerWidth <= 600) { screen.style.removeProperty(’–fit’); return; }
+screen.style.setProperty(’–fit’, ‘1’);
+screen.style.maxHeight = ‘none’;
+screen.style.overflowY = ‘visible’;
+const avail = stageAvailable();
+const natural = screen.scrollHeight;
+let scale = natural > 0 ? Math.min(1, avail / natural) : 1;
+if (scale < FIT_FLOOR) {
+scale = FIT_FLOOR;
+screen.style.maxHeight = (avail / scale) + ‘px’;
+screen.style.overflowY = ‘auto’;
+}
+screen.style.setProperty(’–fit’, scale.toFixed(4));
 }
 function refit() { applyFit(document.getElementById(currentId)); }
 
 let resizeTimer;
-window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(refit, 120); });
+window.addEventListener(‘resize’, () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(refit, 120); });
 
 function show(id, reverse) {
-  if (busy || id === currentId) return;
-  const from = document.getElementById(currentId);
-  const to   = document.getElementById(id);
-  if (!to) return;
-  busy = true;
-  if (id === 'sReview') renderReview();
-  if (id === 'sMoreDetails') initMoreDetails();
-  to.scrollTop = 0;
-  to.classList.remove('active','exit','exit-back','enter-back');
-  applyFit(to);
-  if (reverse) to.classList.add('enter-back');
-  void to.offsetWidth;
-  from.classList.remove('active');
-  from.classList.add(reverse ? 'exit-back' : 'exit');
-  to.classList.remove('enter-back');
-  to.classList.add('active');
-  currentId = id;
-  renderProgress();
-  updateChrome();
-  setTimeout(() => {
-    from.classList.remove('exit','exit-back');
-    busy = false;
-    const inp = to.querySelector('.q-input, .otp-digit');
-    if (inp) inp.focus();
-  }, 480);
+if (busy || id === currentId) return;
+const from = document.getElementById(currentId);
+const to   = document.getElementById(id);
+if (!to) return;
+busy = true;
+if (id === ‘sReview’) renderReview();
+if (id === ‘sMoreDetails’) initMoreDetails();
+to.scrollTop = 0;
+to.classList.remove(‘active’,‘exit’,‘exit-back’,‘enter-back’);
+applyFit(to);
+if (reverse) to.classList.add(‘enter-back’);
+void to.offsetWidth;
+from.classList.remove(‘active’);
+from.classList.add(reverse ? ‘exit-back’ : ‘exit’);
+to.classList.remove(‘enter-back’);
+to.classList.add(‘active’);
+currentId = id;
+renderProgress();
+updateChrome();
+setTimeout(() => {
+from.classList.remove(‘exit’,‘exit-back’);
+busy = false;
+const inp = to.querySelector(’.q-input, .otp-digit’);
+if (inp) inp.focus();
+}, 480);
 }
 
 function next() {
-  if (busy) return;
-  const path = computePath();
-  const idx = path.indexOf(currentId);
-  if (idx === -1 || idx >= path.length - 1) return;
-  history.push(currentId);
-  show(path[idx + 1]);
+if (busy) return;
+const path = computePath();
+const idx = path.indexOf(currentId);
+if (idx === -1 || idx >= path.length - 1) return;
+history.push(currentId);
+show(path[idx + 1]);
 }
 function back() {
-  if (busy || !history.length) return;
-  show(history.pop(), true);
+if (busy || !history.length) return;
+show(history.pop(), true);
 }
 function goEdit(id) {
-  if (busy) return;
-  history.push(currentId);
-  show(id);
+if (busy) return;
+history.push(currentId);
+show(id);
 }
 
-document.addEventListener('keydown', e => {
-  if (e.key !== 'Enter') return;
-  if (e.target.tagName === 'TEXTAREA') return;
-  if (!KEYHINT_SCREENS.includes(currentId) && currentId !== 'sReview') return;
-  const btn = document.querySelector('#' + currentId + ' .cta:not(:disabled)');
-  if (btn) btn.click();
+document.addEventListener(‘keydown’, e => {
+if (e.key !== ‘Enter’) return;
+if (e.target.tagName === ‘TEXTAREA’) return;
+if (!KEYHINT_SCREENS.includes(currentId) && currentId !== ‘sReview’) return;
+const btn = document.querySelector(’#’ + currentId + ’ .cta:not(:disabled)’);
+if (btn) btn.click();
 });
 
 function selectSingle(el, key, val) {
-  el.closest('.choice-grid').querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  data[key] = val;
+el.closest(’.choice-grid’).querySelectorAll(’.choice’).forEach(c => c.classList.remove(‘selected’));
+el.classList.add(‘selected’);
+data[key] = val;
 }
 function pick(el, key, val) {
-  selectSingle(el, key, val);
-  setTimeout(next, 300);
+selectSingle(el, key, val);
+setTimeout(next, 300);
 }
 function toggle(el, key, val) {
-  el.classList.toggle('selected');
-  const on = el.classList.contains('selected');
-  el.setAttribute('aria-checked', on ? 'true' : 'false');
-  if (on) { if (!data[key].includes(val)) data[key].push(val); }
-  else    { data[key] = data[key].filter(v => v !== val); }
-  const cta = el.closest('.screen').querySelector('.cta');
-  if (cta) cta.disabled = data[key].length === 0;
+el.classList.toggle(‘selected’);
+const on = el.classList.contains(‘selected’);
+el.setAttribute(‘aria-checked’, on ? ‘true’ : ‘false’);
+if (on) { if (!data[key].includes(val)) data[key].push(val); }
+else    { data[key] = data[key].filter(v => v !== val); }
+const cta = el.closest(’.screen’).querySelector(’.cta’);
+if (cta) cta.disabled = data[key].length === 0;
 }
 function kbd(e) {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); }
+if (e.key === ‘Enter’ || e.key === ’ ’) { e.preventDefault(); e.currentTarget.click(); }
 }
 
 function pickOtherVolume(el, val) {
-  el.closest('.choice-grid').querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  data.hasOtherVolume = val;
-  const followup = document.getElementById('totalVolumeFollowup');
-  if (val === 'yes') {
-    data.totalBusinessVolume = '';
-    followup.style.display = 'block';
-    refit();
-  } else {
-    followup.style.display = 'none';
-    data.totalBusinessVolume = '';
-    refit();
-    setTimeout(next, 300);
-  }
+el.closest(’.choice-grid’).querySelectorAll(’.choice’).forEach(c => c.classList.remove(‘selected’));
+el.classList.add(‘selected’);
+data.hasOtherVolume = val;
+const followup = document.getElementById(‘totalVolumeFollowup’);
+if (val === ‘yes’) {
+data.totalBusinessVolume = ‘’;
+followup.style.display = ‘block’;
+refit();
+} else {
+followup.style.display = ‘none’;
+data.totalBusinessVolume = ‘’;
+refit();
+setTimeout(next, 300);
+}
 }
 function pickTotalVolume(el, val) {
-  el.closest('.choice-grid').querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  data.totalBusinessVolume = val;
-  setTimeout(next, 300);
+el.closest(’.choice-grid’).querySelectorAll(’.choice’).forEach(c => c.classList.remove(‘selected’));
+el.classList.add(‘selected’);
+data.totalBusinessVolume = val;
+setTimeout(next, 300);
 }
 
-// sMoreDetails: combined dropdown screen shown only when no statement was
-// uploaded. LCR is only relevant in-store, so its row is hidden (and excluded
-// from validation) when the merchant hasn't said they take in-store payments.
 function initMoreDetails() {
-  const showLcr = data.channels.includes('instore');
-  document.getElementById('lcrWrap').style.display = showLcr ? 'block' : 'none';
-  if (!showLcr) data.lcrStatus = '';
-  onMoreDetailsChange();
+const showLcr = data.channels.includes(‘instore’);
+document.getElementById(‘lcrWrap’).style.display = showLcr ? ‘block’ : ‘none’;
+if (!showLcr) data.lcrStatus = ‘’;
+onMoreDetailsChange();
 }
 function onMoreDetailsChange() {
-  const providerSel = document.getElementById('sel-provider').value;
-  document.getElementById('providerOtherWrap').style.display = providerSel === 'other' ? 'block' : 'none';
-  data.provider = providerSel === 'other'
-    ? document.getElementById('inp-provider-other').value.trim()
-    : providerSel;
-  data.pricingModel  = document.getElementById('sel-pricing').value;
-  data.lcrStatus      = document.getElementById('lcrWrap').style.display === 'none' ? '' : document.getElementById('sel-lcr').value;
-  data.monthlyVolume = document.getElementById('sel-volume').value;
-  data.atv            = document.getElementById('sel-atv').value;
-  data.cardMix        = document.getElementById('sel-mix').value;
-
-  const lcrRequired = document.getElementById('lcrWrap').style.display !== 'none';
-  const required = [data.provider, data.pricingModel, data.monthlyVolume, data.atv, data.cardMix];
-  if (lcrRequired) required.push(data.lcrStatus);
-  document.getElementById('ctaMoreDetails').disabled = required.some(v => !v);
-  refit();
+const providerSel = document.getElementById(‘sel-provider’).value;
+document.getElementById(‘providerOtherWrap’).style.display = providerSel === ‘other’ ? ‘block’ : ‘none’;
+data.provider = providerSel === ‘other’ ? document.getElementById(‘inp-provider-other’).value.trim() : providerSel;
+data.pricingModel  = document.getElementById(‘sel-pricing’).value;
+data.lcrStatus      = document.getElementById(‘lcrWrap’).style.display === ‘none’ ? ‘’ : document.getElementById(‘sel-lcr’).value;
+data.monthlyVolume = document.getElementById(‘sel-volume’).value;
+data.atv            = document.getElementById(‘sel-atv’).value;
+data.cardMix        = document.getElementById(‘sel-mix’).value;
+const lcrRequired = document.getElementById(‘lcrWrap’).style.display !== ‘none’;
+const required = [data.provider, data.pricingModel, data.monthlyVolume, data.atv, data.cardMix];
+if (lcrRequired) required.push(data.lcrStatus);
+document.getElementById(‘ctaMoreDetails’).disabled = required.some(v => !v);
+refit();
 }
 
 function toggleGoal(el, val) {
-  el.classList.toggle('selected');
-  const on = el.classList.contains('selected');
-  el.setAttribute('aria-checked', on ? 'true' : 'false');
-  if (on) { if (!data.goals.includes(val)) data.goals.push(val); }
-  else    { data.goals = data.goals.filter(v => v !== val); }
-  updateGoalCta();
+el.classList.toggle(‘selected’);
+const on = el.classList.contains(‘selected’);
+el.setAttribute(‘aria-checked’, on ? ‘true’ : ‘false’);
+if (on) { if (!data.goals.includes(val)) data.goals.push(val); }
+else    { data.goals = data.goals.filter(v => v !== val); }
+updateGoalCta();
 }
 function updateGoalCta() {
-  document.getElementById('ctaGoal').disabled = !(data.goals.length || data.pain);
+document.getElementById(‘ctaGoal’).disabled = !(data.goals.length || data.pain);
 }
 
 function validateContact1() {
-  data.name = document.getElementById('inp-name').value.trim();
-  data.companyName = document.getElementById('inp-company').value.trim();
-  document.getElementById('ctaS1').disabled = data.name.length < 2 || data.companyName.length < 2;
+data.name = document.getElementById(‘inp-name’).value.trim();
+data.companyName = document.getElementById(‘inp-company’).value.trim();
+document.getElementById(‘ctaS1’).disabled = data.name.length < 2 || data.companyName.length < 2;
 }
 function validateContact2() {
-  data.email = document.getElementById('inp-email').value.trim();
-  data.phone = document.getElementById('inp-phone').value.trim();
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email);
-  const phoneOk = data.phone.replace(/\D/g,'').length >= 8;
-  document.getElementById('ctaS2').disabled = !(emailOk && phoneOk);
+data.email = document.getElementById(‘inp-email’).value.trim();
+data.phone = document.getElementById(‘inp-phone’).value.trim();
+const emailOk = /^[^\s@]+@[^\s@]+.[^\s@]+$/.test(data.email);
+const phoneOk = data.phone.replace(/\D/g,’’).length >= 8;
+document.getElementById(‘ctaS2’).disabled = !(emailOk && phoneOk);
 }
-function firstName() { return (data.name.split(' ')[0] || data.name); }
+function firstName() { return (data.name.split(’ ’)[0] || data.name); }
 
-function onDragOver(e){ e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
-function onDragLeave(){ document.getElementById('uploadZone').classList.remove('drag-over'); }
-function onDrop(e){ e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag-over'); Array.from(e.dataTransfer.files).forEach(addFile); }
-function onFileSelect(e){ Array.from(e.target.files).forEach(addFile); e.target.value=''; }
+function onDragOver(e){ e.preventDefault(); document.getElementById(‘uploadZone’).classList.add(‘drag-over’); }
+function onDragLeave(){ document.getElementById(‘uploadZone’).classList.remove(‘drag-over’); }
+function onDrop(e){ e.preventDefault(); document.getElementById(‘uploadZone’).classList.remove(‘drag-over’); Array.from(e.dataTransfer.files).forEach(addFile); }
+function onFileSelect(e){ Array.from(e.target.files).forEach(addFile); e.target.value=’’; }
 
-function uploadError(msg){ const s=document.getElementById('statusS0'); s.className='status-msg error'; s.textContent=msg; }
-function uploadClear(){ const s=document.getElementById('statusS0'); s.className='status-msg'; s.textContent=''; }
+function uploadError(msg){ const s=document.getElementById(‘statusS0’); s.className=‘status-msg error’; s.textContent=msg; }
+function uploadClear(){ const s=document.getElementById(‘statusS0’); s.className=‘status-msg’; s.textContent=’’; }
 
 function addFile(f) {
-  uploadClear();
-  if (data.files.length >= 10) { uploadError('That\'s the 10-file limit — remove one to add another.'); return; }
-  if (data.files.some(x => x.name === f.name)) return;
-  const ext = (f.name.split('.').pop() || '').toLowerCase();
-  if (ext === 'heic' || ext === 'heif' || /heic|heif/.test(f.type)) {
-    uploadError('HEIC images aren\'t supported. On iPhone, take a screenshot of the statement or save it as JPG, or upload the PDF.'); return;
-  }
-  const ALLOWED_EXT = ['pdf', 'png', 'jpg', 'jpeg', 'webp', 'gif'];
-  const isAllowed = ALLOWED_EXT.includes(ext) || f.type === 'application/pdf' || (f.type || '').startsWith('image/');
-  if (!isAllowed) {
-    uploadError('Please upload your card processing statement as a PDF or image (PNG/JPG). Spreadsheets and other files aren\'t supported.'); return;
-  }
-  data.files.push(f);
-  renderChips();
-  document.getElementById('ctaS0').disabled = false;
+uploadClear();
+if (data.files.length >= 10) { uploadError(‘That's the 10-file limit — remove one to add another.’); return; }
+if (data.files.some(x => x.name === f.name)) return;
+const ext = (f.name.split(’.’).pop() || ‘’).toLowerCase();
+if (ext === ‘heic’ || ext === ‘heif’ || /heic|heif/.test(f.type)) {
+uploadError(‘HEIC images aren't supported. On iPhone, take a screenshot of the statement or save it as JPG, or upload the PDF.’); return;
+}
+const ALLOWED_EXT = [‘pdf’, ‘png’, ‘jpg’, ‘jpeg’, ‘webp’, ‘gif’];
+const isAllowed = ALLOWED_EXT.includes(ext) || f.type === ‘application/pdf’ || (f.type || ‘’).startsWith(‘image/’);
+if (!isAllowed) {
+uploadError(‘Please upload your card processing statement as a PDF or image (PNG/JPG). Spreadsheets and other files aren't supported.’); return;
+}
+data.files.push(f);
+renderChips();
+document.getElementById(‘ctaS0’).disabled = false;
 }
 function removeFile(i) {
-  const removed = data.files.splice(i, 1)[0];
-  if (removed) data.parsedTabular = data.parsedTabular.filter(t => t.name !== removed.name);
-  renderChips();
-  if (!data.files.length) document.getElementById('ctaS0').disabled = true;
+const removed = data.files.splice(i, 1)[0];
+if (removed) data.parsedTabular = data.parsedTabular.filter(t => t.name !== removed.name);
+renderChips();
+if (!data.files.length) document.getElementById(‘ctaS0’).disabled = true;
 }
 function renderChips() {
-  document.getElementById('fileChips').innerHTML = data.files.map((f, i) => {
-    const parsed = data.parsedTabular.some(t => t.name === f.name);
-    const label = f.name.length > 28 ? f.name.slice(0,26)+'…' : f.name;
-    return '<div class="file-chip' + (parsed ? ' parsed' : '') + '">' +
-      '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
-      label +
-      '<button class="file-chip-remove" aria-label="Remove file" onclick="removeFile(' + i + ')">×</button></div>';
-  }).join('');
-  refit();
+document.getElementById(‘fileChips’).innerHTML = data.files.map((f, i) => {
+const parsed = data.parsedTabular.some(t => t.name === f.name);
+const label = f.name.length > 28 ? f.name.slice(0,26)+’…’ : f.name;
+return ‘<div class="file-chip' + (parsed ? ' parsed' : '') + '">’ +
+‘<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>’ +
+label +
+‘<button class="file-chip-remove" aria-label="Remove file" onclick="removeFile(' + i + ')">×</button></div>’;
+}).join(’’);
+refit();
 }
 function skipUpload(){ data.skippedUpload = true; next(); }
-
 function skipEmail() { data.skippedEmail = true; data.emailVerified = false; next(); }
 
 async function sendOtp(isResend) {
-  const btn = document.getElementById('ctaS2');
-  const status = document.getElementById('statusS2');
-  btn.disabled = true; btn.textContent = 'Sending…';
-  status.className = 'status-msg info'; status.textContent = '';
-  try {
-    const res = await fetch('/api/send-otp', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: data.email, firstName: firstName() })
-    });
-    const d = await res.json();
-    if (!res.ok) throw new Error(d.error || 'Failed to send');
-    otp.sent = true;
-    document.getElementById('otpSub').textContent = 'We sent a 6-digit code to ' + data.email + '.';
-    btn.textContent = 'Send verification code'; btn.disabled = false;
-    if (!isResend) next();
-  } catch (err) {
-    status.className = 'status-msg error';
-    status.textContent = 'We couldn\'t send the code: ' + err.message + '. Check the address and try again.';
-    btn.textContent = 'Send verification code'; btn.disabled = false;
-  }
+const btn = document.getElementById(‘ctaS2’);
+const status = document.getElementById(‘statusS2’);
+btn.disabled = true; btn.textContent = ‘Sending…’;
+status.className = ‘status-msg info’; status.textContent = ‘’;
+try {
+const res = await fetch(’/api/send-otp’, {
+method: ‘POST’, headers: { ‘Content-Type’: ‘application/json’ },
+body: JSON.stringify({ email: data.email, firstName: firstName() })
+});
+const d = await res.json();
+if (!res.ok) throw new Error(d.error || ‘Failed to send’);
+otp.sent = true;
+document.getElementById(‘otpSub’).textContent = ‘We sent a 6-digit code to ’ + data.email + ‘.’;
+btn.textContent = ‘Send verification code’; btn.disabled = false;
+if (!isResend) next();
+} catch (err) {
+status.className = ‘status-msg error’;
+status.textContent = ‘We couldn't send the code: ’ + err.message + ‘. Check the address and try again.’;
+btn.textContent = ‘Send verification code’; btn.disabled = false;
+}
 }
 function otpKey(e, idx) {
-  const digits = document.querySelectorAll('.otp-digit');
-  if (e.key === 'Backspace') { if (!digits[idx].value && idx > 0) { digits[idx-1].value=''; digits[idx-1].classList.remove('filled'); digits[idx-1].focus(); } validateOtp(); }
-  if (e.key === 'ArrowLeft'  && idx > 0) digits[idx-1].focus();
-  if (e.key === 'ArrowRight' && idx < 5) digits[idx+1].focus();
+const digits = document.querySelectorAll(’.otp-digit’);
+if (e.key === ‘Backspace’) { if (!digits[idx].value && idx > 0) { digits[idx-1].value=’’; digits[idx-1].classList.remove(‘filled’); digits[idx-1].focus(); } validateOtp(); }
+if (e.key === ‘ArrowLeft’  && idx > 0) digits[idx-1].focus();
+if (e.key === ‘ArrowRight’ && idx < 5) digits[idx+1].focus();
 }
 function otpInput(e, idx) {
-  const digits = document.querySelectorAll('.otp-digit');
-  const val = e.target.value.replace(/[^0-9]/g,'');
-  if (val.length > 1) {
-    val.split('').slice(0,6).forEach((c,i)=>{ if (digits[i]){ digits[i].value=c; digits[i].classList.add('filled'); } });
-    digits[Math.min(5, val.length-1)].focus();
-  } else {
-    e.target.value = val.slice(-1);
-    if (val && idx < 5) digits[idx+1].focus();
-  }
-  digits[idx].classList.toggle('filled', !!digits[idx].value);
-  validateOtp();
+const digits = document.querySelectorAll(’.otp-digit’);
+const val = e.target.value.replace(/[^0-9]/g,’’);
+if (val.length > 1) {
+val.split(’’).slice(0,6).forEach((c,i)=>{ if (digits[i]){ digits[i].value=c; digits[i].classList.add(‘filled’); } });
+digits[Math.min(5, val.length-1)].focus();
+} else {
+e.target.value = val.slice(-1);
+if (val && idx < 5) digits[idx+1].focus();
+}
+digits[idx].classList.toggle(‘filled’, !!digits[idx].value);
+validateOtp();
 }
 function validateOtp() {
-  const code = Array.from(document.querySelectorAll('.otp-digit')).map(d=>d.value).join('');
-  document.getElementById('ctaS3').disabled = code.length < 6;
+const code = Array.from(document.querySelectorAll(’.otp-digit’)).map(d=>d.value).join(’’);
+document.getElementById(‘ctaS3’).disabled = code.length < 6;
 }
 async function verifyOtp() {
-  const code = Array.from(document.querySelectorAll('.otp-digit')).map(d=>d.value).join('');
-  const btn = document.getElementById('ctaS3');
-  const status = document.getElementById('statusS3');
-  btn.disabled = true; btn.textContent = 'Verifying…'; status.textContent = '';
-  try {
-    const res = await fetch('/api/send-otp', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: data.email, verify: code })
-    });
-    const d = await res.json();
-    if (!res.ok || !d.valid) {
-      status.className = 'status-msg error'; status.textContent = 'That code didn\'t match. Check it and try again.';
-      btn.disabled = false; btn.textContent = 'Verify code'; return;
-    }
-    data.emailVerified = true;
-    status.className = 'status-msg success';
-    status.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Email verified';
-    setTimeout(next, 600);
-  } catch (err) {
-    status.className = 'status-msg error'; status.textContent = 'Verification failed. Please try again.';
-    btn.disabled = false; btn.textContent = 'Verify code';
-  }
+const code = Array.from(document.querySelectorAll(’.otp-digit’)).map(d=>d.value).join(’’);
+const btn = document.getElementById(‘ctaS3’);
+const status = document.getElementById(‘statusS3’);
+btn.disabled = true; btn.textContent = ‘Verifying…’; status.textContent = ‘’;
+try {
+const res = await fetch(’/api/send-otp’, {
+method: ‘POST’, headers: { ‘Content-Type’: ‘application/json’ },
+body: JSON.stringify({ email: data.email, verify: code })
+});
+const d = await res.json();
+if (!res.ok || !d.valid) {
+status.className = ‘status-msg error’; status.textContent = ‘That code didn't match. Check it and try again.’;
+btn.disabled = false; btn.textContent = ‘Verify code’; return;
+}
+data.emailVerified = true;
+status.className = ‘status-msg success’;
+status.innerHTML = ‘<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Email verified’;
+setTimeout(next, 600);
+} catch (err) {
+status.className = ‘status-msg error’; status.textContent = ‘Verification failed. Please try again.’;
+btn.disabled = false; btn.textContent = ‘Verify code’;
+}
 }
 
 const LABELS = {
-  industry:{retail:'Retail',food:'Food & Hospitality',ecommerce:'eCommerce',health:'Healthcare',professional:'Professional Services',trades:'Trades & Construction',accommodation:'Accommodation',other:'Other'},
-  provider:{tyro:'Tyro',square:'Square',stripe:'Stripe',zeller:'Zeller',major_bank:'A major bank (CBA/NAB/Westpac/ANZ)',fatzebra:'Fat Zebra',not_sure:'Not sure'},
-  monthlyVolume:{under50k:'Under $50k/mo','50to250k':'$50k–$250k/mo','250kto1m':'$250k–$1M/mo','1mto5m':'$1M–$5M/mo',over5m:'$5M+/mo'},
-  atv:{under20:'Under $20','20to75':'$20–$75','75to250':'$75–$250','250to1000':'$250–$1,000',over1000:'$1,000+'},
-  cardMix:{mostly_debit:'Mostly debit',mostly_credit:'Mostly credit',even:'Even split',lots_intl:'Lots of intl/Amex',unknown:'Not sure'},
-  pricingModel:{blended:'Blended',ic_plus:'Interchange Plus',ic_plusplus:'Interchange++',unknown:'Not sure'},
-  lcrStatus:{on:'On',off:'Off',unknown:'Not sure'},
-  surcharge:{yes:'Passes it on',no:'Absorbs it',partial:'Sometimes',unsure:'Not sure'},
-  hasOtherVolume:{yes:'Yes, there\'s more', no:'No, that\'s everything'},
-  goal:{lower_fees:'Lower fees',better_tech:'Better tech',consolidate:'Consolidate',leave_provider:'Leave provider',benchmark:'Honest benchmark'}
+industry:{retail:‘Retail’,food:‘Food & Hospitality’,ecommerce:‘eCommerce’,health:‘Healthcare’,professional:‘Professional Services’,trades:‘Trades & Construction’,accommodation:‘Accommodation’,other:‘Other’},
+provider:{tyro:‘Tyro’,square:‘Square’,stripe:‘Stripe’,zeller:‘Zeller’,major_bank:‘A major bank (CBA/NAB/Westpac/ANZ)’,fatzebra:‘Fat Zebra’,not_sure:‘Not sure’},
+monthlyVolume:{under50k:‘Under $50k/mo’,‘50to250k’:’$50k–$250k/mo’,‘250kto1m’:’$250k–$1M/mo’,‘1mto5m’:’$1M–$5M/mo’,over5m:’$5M+/mo’},
+atv:{under20:‘Under $20’,‘20to75’:’$20–$75’,‘75to250’:’$75–$250’,‘250to1000’:’$250–$1,000’,over1000:’$1,000+’},
+cardMix:{mostly_debit:‘Mostly debit’,mostly_credit:‘Mostly credit’,even:‘Even split’,lots_intl:‘Lots of intl/Amex’,unknown:‘Not sure’},
+pricingModel:{blended:‘Blended’,ic_plus:‘Interchange Plus’,ic_plusplus:‘Interchange++’,unknown:‘Not sure’},
+lcrStatus:{on:‘On’,off:‘Off’,unknown:‘Not sure’},
+surcharge:{yes:‘Passes it on’,no:‘Absorbs it’,partial:‘Sometimes’,unsure:‘Not sure’},
+hasOtherVolume:{yes:‘Yes, there's more’, no:‘No, that's everything’},
+goal:{lower_fees:‘Lower fees’,better_tech:‘Better tech’,consolidate:‘Consolidate’,leave_provider:‘Leave provider’,benchmark:‘Honest benchmark’}
 };
 function lbl(key, val){ return (LABELS[key] && LABELS[key][val]) || val; }
-function providerSummary() {
-  return data.provider ? (LABELS.provider[data.provider] || data.provider) : '';
-}
-function goalSummary() { return data.goals.map(g => lbl('goal', g)).join(', '); }
+function providerSummary() { return data.provider ? (LABELS.provider[data.provider] || data.provider) : ‘’; }
+function goalSummary() { return data.goals.map(g => lbl(‘goal’, g)).join(’, ’); }
 
 function renderReview() {
-  const channelNames = {instore:'In-store',online:'Online',invoice:'Invoices',recurring:'Recurring',phone:'Phone/MOTO'};
-  const rows = [];
-  const add = (label, value, editId) => { if (value) rows.push({label, value, editId}); };
-  add('Statements', data.skippedUpload ? 'None uploaded' : (data.files.length + ' file' + (data.files.length===1?'':'s')), 's0');
-  add('Name', data.name, 's1');
-  add('Company', data.companyName, 's1');
-  add('Email', data.email + (data.emailVerified ? ' \u2713' : ''), 's2');
-  add('Mobile', data.phone, 's2');
-  add('Industry', lbl('industry', data.industry), 's5');
-  add('Channels', data.channels.map(c=>channelNames[c]).join(', '), 's6');
-  if (data.hasOtherVolume) add('Other payment volume?', lbl('hasOtherVolume', data.hasOtherVolume), 'sOtherVolume');
-  if (data.totalBusinessVolume) add('Total business volume', lbl('monthlyVolume', data.totalBusinessVolume), 'sOtherVolume');
-  add('Current provider', providerSummary(), 'sMoreDetails');
-  add('Pricing model', lbl('pricingModel', data.pricingModel), 'sMoreDetails');
-  if (data.lcrStatus) add('LCR', lbl('lcrStatus', data.lcrStatus), 'sMoreDetails');
-  add('Surcharging', lbl('surcharge', data.surcharge), 's6g');
-  add('Monthly card volume', lbl('monthlyVolume', data.monthlyVolume), 'sMoreDetails');
-  add('Avg transaction', lbl('atv', data.atv), 'sMoreDetails');
-  add('Card mix', lbl('cardMix', data.cardMix), 'sMoreDetails');
-  add('Goal', goalSummary(), 'sGoal');
-  document.getElementById('reviewList').innerHTML = rows.map(r =>
-    '<div class="review-row"><span class="review-key">' + r.label + '</span>' +
-    '<span style="display:flex;align-items:baseline"><span class="review-val">' + r.value + '</span>' +
-    '<button class="review-edit" onclick="goEdit(\'' + r.editId + '\')">edit</button></span></div>'
-  ).join('');
+const channelNames = {instore:‘In-store’,online:‘Online’,invoice:‘Invoices’,recurring:‘Recurring’,phone:‘Phone/MOTO’};
+const rows = [];
+const add = (label, value, editId) => { if (value) rows.push({label, value, editId}); };
+add(‘Statements’, data.skippedUpload ? ‘None uploaded’ : (data.files.length + ’ file’ + (data.files.length===1?’’:‘s’)), ‘s0’);
+add(‘Name’, data.name, ‘s1’);
+add(‘Company’, data.companyName, ‘s1’);
+add(‘Email’, data.email + (data.emailVerified ? ’ \u2713’ : ‘’), ‘s2’);
+add(‘Mobile’, data.phone, ‘s2’);
+add(‘Industry’, lbl(‘industry’, data.industry), ‘s5’);
+add(‘Channels’, data.channels.map(c=>channelNames[c]).join(’, ‘), ‘s6’);
+if (data.hasOtherVolume) add(‘Other payment volume?’, lbl(‘hasOtherVolume’, data.hasOtherVolume), ‘sOtherVolume’);
+if (data.totalBusinessVolume) add(‘Total business volume’, lbl(‘monthlyVolume’, data.totalBusinessVolume), ‘sOtherVolume’);
+add(‘Current provider’, providerSummary(), ‘sMoreDetails’);
+add(‘Pricing model’, lbl(‘pricingModel’, data.pricingModel), ‘sMoreDetails’);
+if (data.lcrStatus) add(‘LCR’, lbl(‘lcrStatus’, data.lcrStatus), ‘sMoreDetails’);
+add(‘Surcharging’, lbl(‘surcharge’, data.surcharge), ‘s6g’);
+add(‘Monthly card volume’, lbl(‘monthlyVolume’, data.monthlyVolume), ‘sMoreDetails’);
+add(‘Avg transaction’, lbl(‘atv’, data.atv), ‘sMoreDetails’);
+add(‘Card mix’, lbl(‘cardMix’, data.cardMix), ‘sMoreDetails’);
+add(‘Goal’, goalSummary(), ‘sGoal’);
+document.getElementById(‘reviewList’).innerHTML = rows.map(r =>
+‘<div class="review-row"><span class="review-key">’ + r.label + ‘</span>’ +
+‘<span style="display:flex;align-items:baseline"><span class="review-val">’ + r.value + ‘</span>’ +
+‘<button class="review-edit" onclick="goEdit(\'' + r.editId + '\')">edit</button></span></div>’
+).join(’’);
 }
 
 function fetchWithTimeout(url, opts, ms) {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), ms);
-  return fetch(url, Object.assign({}, opts, { signal: ctrl.signal })).finally(() => clearTimeout(t));
+const ctrl = new AbortController();
+const t = setTimeout(() => ctrl.abort(), ms);
+return fetch(url, Object.assign({}, opts, { signal: ctrl.signal })).finally(() => clearTimeout(t));
 }
 
-function stripTrailingCommas(s) { return s.replace(/,(\s*[}\]])/g, '$1'); }
+function stripTrailingCommas(s) { return s.replace(/,(\s*[}]])/g, ‘$1’); }
 
 function balancedSlice(t, start) {
-  const stack = []; let inStr = false, esc = false;
-  for (let i = start; i < t.length; i++) {
-    const c = t[i];
-    if (inStr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') inStr = false; continue; }
-    if (c === '"') inStr = true;
-    else if (c === '{' || c === '[') stack.push(c);
-    else if (c === '}' || c === ']') { stack.pop(); if (!stack.length) return t.slice(start, i + 1); }
-  }
-  return null;
+const stack = []; let inStr = false, esc = false;
+for (let i = start; i < t.length; i++) {
+const c = t[i];
+if (inStr) { if (esc) esc = false; else if (c === ‘\’) esc = true; else if (c === ‘”’) inStr = false; continue; }
+if (c === ‘”’) inStr = true;
+else if (c === ‘{’ || c === ‘[’) stack.push(c);
+else if (c === ‘}’ || c === ‘]’) { stack.pop(); if (!stack.length) return t.slice(start, i + 1); }
+}
+return null;
 }
 
 function balanceAndClose(s) {
-  const stack = []; let inStr = false, esc = false;
-  for (let i = 0; i < s.length; i++) {
-    const c = s[i];
-    if (inStr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') inStr = false; continue; }
-    if (c === '"') inStr = true;
-    else if (c === '{' || c === '[') stack.push(c);
-    else if (c === '}' || c === ']') stack.pop();
-  }
-  if (inStr) return null;
-  let out = s.replace(/[\s,:]+$/, '');
-  for (let i = stack.length - 1; i >= 0; i--) out += (stack[i] === '{' ? '}' : ']');
-  return out;
+const stack = []; let inStr = false, esc = false;
+for (let i = 0; i < s.length; i++) {
+const c = s[i];
+if (inStr) { if (esc) esc = false; else if (c === ‘\’) esc = true; else if (c === ‘”’) inStr = false; continue; }
+if (c === ‘”’) inStr = true;
+else if (c === ‘{’ || c === ‘[’) stack.push(c);
+else if (c === ‘}’ || c === ‘]’) stack.pop();
+}
+if (inStr) return null;
+let out = s.replace(/[\s,:]+$/, ‘’);
+for (let i = stack.length - 1; i >= 0; i–) out += (stack[i] === ‘{’ ? ‘}’ : ‘]’);
+return out;
 }
 
 function parseModelJson(raw) {
-  let t = String(raw || '').trim();
-  t = t.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '');
-  const start = t.indexOf('{');
-  if (start === -1) throw new Error('No JSON object found in the response.');
-  const sliced = balancedSlice(t, start) || t.slice(start);
-  try { return JSON.parse(stripTrailingCommas(sliced)); } catch (e) { /* fall through */ }
-  const limit = Math.max(1, sliced.length - 6000);
-  for (let cut = sliced.length; cut > limit; cut--) {
-    const candidate = balanceAndClose(sliced.slice(0, cut));
-    if (candidate == null) continue;
-    try { return JSON.parse(stripTrailingCommas(candidate)); } catch (e) { /* keep trimming */ }
-  }
-  throw new Error('The report was cut off by the server and couldn\'t be recovered.');
+let t = String(raw || ‘’).trim();
+t = t.replace(/^`(?:json)?\s*/i, '').replace(/\s*`\s*$/i, ‘’);
+const start = t.indexOf(’{’);
+if (start === -1) throw new Error(‘No JSON object found in the response.’);
+const sliced = balancedSlice(t, start) || t.slice(start);
+try { return JSON.parse(stripTrailingCommas(sliced)); } catch (e) { /* fall through */ }
+const limit = Math.max(1, sliced.length - 6000);
+for (let cut = sliced.length; cut > limit; cut–) {
+const candidate = balanceAndClose(sliced.slice(0, cut));
+if (candidate == null) continue;
+try { return JSON.parse(stripTrailingCommas(candidate)); } catch (e) { /* keep trimming */ }
+}
+throw new Error(‘The report was cut off by the server and couldn't be recovered.’);
 }
 
 function renderConfirmReveal(effectiveRate) {
-  const el = document.getElementById('confirmReveal');
-  const stepTitle = document.getElementById('confirmStep1Title');
-  const stepBody = document.getElementById('confirmStep1Body');
-  if (!el) return;
-  const rate = Number(effectiveRate);
-  if (effectiveRate != null && !Number.isNaN(rate)) {
-    const rateStr = rate.toFixed(2);
-    const scale = v => Math.min(100, Math.max(4, (v / 2) * 100));
-    el.innerHTML =
-      '<div class="confirm-reveal">' +
-        '<div class="confirm-reveal-eyebrow">From your report</div>' +
-        '<div class="confirm-reveal-stat">' + rateStr + '%</div>' +
-        '<div class="confirm-reveal-sub">your effective rate, already pulled from the statement you uploaded</div>' +
-        '<div class="confirm-reveal-bars">' +
-          '<div class="cr-bar-row"><span class="cr-bar-label you">You</span><div class="cr-bar-track"><div class="cr-bar-fill you" style="width:' + scale(rate) + '%"></div></div><span class="cr-bar-val">' + rateStr + '%</span></div>' +
-          '<div class="cr-bar-row"><span class="cr-bar-label">Typical SMB</span><div class="cr-bar-track"><div class="cr-bar-fill typical" style="width:' + scale(1.4) + '%"></div></div><span class="cr-bar-val">1.40%</span></div>' +
-        '</div>' +
-        '<div class="confirm-reveal-note">Your full report already breaks down exactly where this comes from, and where the savings are.</div>' +
-      '</div>';
-    if (stepTitle) stepTitle.textContent = 'Your report is ready';
-    if (stepBody) stepBody.textContent = 'Our AI has read your statement and merchant profile and already produced your full report, personalised to your setup.';
-  } else {
-    el.innerHTML =
-      '<div class="confirm-reveal">' +
-        '<div class="confirm-reveal-eyebrow">Worth knowing</div>' +
-        '<div class="confirm-reveal-stat">2x</div>' +
-        '<div class="confirm-reveal-sub">small businesses often pay roughly double what large businesses pay, for the exact same card transaction</div>' +
-        '<div class="confirm-reveal-note">No statement this time, so we could not include your own number - but your report still covers where you likely sit, based on what you told us.</div>' +
-      '</div>';
-    if (stepTitle) stepTitle.textContent = 'Your report is ready';
-    if (stepBody) stepBody.textContent = 'Our AI has already put together your report based on what you told us. Add a statement any time for an even sharper picture.';
-  }
+const el = document.getElementById(‘confirmReveal’);
+const stepTitle = document.getElementById(‘confirmStep1Title’);
+const stepBody = document.getElementById(‘confirmStep1Body’);
+if (!el) return;
+const rate = Number(effectiveRate);
+if (effectiveRate != null && !Number.isNaN(rate)) {
+const rateStr = rate.toFixed(2);
+const scale = v => Math.min(100, Math.max(4, (v / 2) * 100));
+el.innerHTML =
+‘<div class="confirm-reveal">’ +
+‘<div class="confirm-reveal-eyebrow">From your report</div>’ +
+‘<div class="confirm-reveal-stat">’ + rateStr + ‘%</div>’ +
+‘<div class="confirm-reveal-sub">your effective rate, already pulled from the statement you uploaded</div>’ +
+‘<div class="confirm-reveal-bars">’ +
+‘<div class="cr-bar-row"><span class="cr-bar-label you">You</span><div class="cr-bar-track"><div class="cr-bar-fill you" style="width:' + scale(rate) + '%"></div></div><span class="cr-bar-val">’ + rateStr + ‘%</span></div>’ +
+‘<div class="cr-bar-row"><span class="cr-bar-label">Typical SMB</span><div class="cr-bar-track"><div class="cr-bar-fill typical" style="width:' + scale(1.4) + '%"></div></div><span class="cr-bar-val">1.40%</span></div>’ +
+‘</div>’ +
+‘<div class="confirm-reveal-note">Your full report already breaks down exactly where this comes from, and where the savings are.</div>’ +
+‘</div>’;
+if (stepTitle) stepTitle.textContent = ‘Your report is ready’;
+if (stepBody) stepBody.textContent = ‘Our AI has read your statement and merchant profile and already produced your full report, personalised to your setup.’;
+} else {
+el.innerHTML =
+‘<div class="confirm-reveal">’ +
+‘<div class="confirm-reveal-eyebrow">Worth knowing</div>’ +
+‘<div class="confirm-reveal-stat">2x</div>’ +
+‘<div class="confirm-reveal-sub">small businesses often pay roughly double what large businesses pay, for the exact same card transaction</div>’ +
+‘<div class="confirm-reveal-note">No statement this time, so we could not include your own number - but your report still covers where you likely sit, based on what you told us.</div>’ +
+‘</div>’;
+if (stepTitle) stepTitle.textContent = ‘Your report is ready’;
+if (stepBody) stepBody.textContent = ‘Our AI has already put together your report based on what you told us. Add a statement any time for an even sharper picture.’;
+}
 }
 
 async function submitAll() {
-  const loading = document.getElementById('sLoading');
-  document.getElementById('sReview').classList.remove('active');
-  loading.classList.add('active');
-  applyFit(loading);
-  document.getElementById('backBtn').style.display = 'none';
-  document.getElementById('keyHint').style.display = 'none';
-  document.getElementById('progressFill').style.width = '100%';
+const loading = document.getElementById(‘sLoading’);
+document.getElementById(‘sReview’).classList.remove(‘active’);
+loading.classList.add(‘active’);
+applyFit(loading);
+document.getElementById(‘backBtn’).style.display = ‘none’;
+document.getElementById(‘keyHint’).style.display = ‘none’;
+document.getElementById(‘progressFill’).style.width = ‘100%’;
 
-  const steps = ['ls0','ls1','ls2','ls3'];
-  let si = 0;
-  document.getElementById(steps[0]).className = 'loading-step active';
-  const iv = setInterval(() => {
-    if (si < 3) {
-      document.getElementById(steps[si]).className = 'loading-step done';
-      si++;
-      document.getElementById(steps[si]).className = 'loading-step active';
-      if (si === 3) clearInterval(iv);
-    }
-  }, 4000);
+const steps = [‘ls0’,‘ls1’,‘ls2’,‘ls3’];
+let si = 0;
+document.getElementById(steps[0]).className = ‘loading-step active’;
+const iv = setInterval(() => {
+if (si < 3) {
+document.getElementById(steps[si]).className = ‘loading-step done’;
+si++;
+document.getElementById(steps[si]).className = ‘loading-step active’;
+if (si === 3) clearInterval(iv);
+}
+}, 4000);
 
-  const providerStr = providerSummary();
-  const goalStr = goalSummary();
+const providerStr = providerSummary();
+const goalStr = goalSummary();
 
-  const programContext = [
-    'Name: ' + data.name,
-    'Company: ' + data.companyName,
-    'Email: ' + data.email + (data.emailVerified ? ' (verified)' : data.skippedEmail ? ' (skipped)' : ''),
-    'Phone: ' + data.phone,
-    data.industry        ? 'Industry: ' + data.industry : '',
-    data.channels.length ? 'Payment channels: ' + data.channels.join(', ') : '',
-    data.ecomPlatform    ? 'eCommerce platform: ' + data.ecomPlatform : '',
-    data.terminalSetup   ? 'Terminal setup: ' + data.terminalSetup : '',
-    providerStr          ? 'Current provider: ' + providerStr : '',
-    data.monthlyVolume   ? 'Monthly card volume: ' + (LABELS.monthlyVolume[data.monthlyVolume]||data.monthlyVolume) : '',
-    data.atv             ? 'Average transaction value: ' + (LABELS.atv[data.atv]||data.atv) : '',
-    data.cardMix         ? 'Card mix: ' + (LABELS.cardMix[data.cardMix]||data.cardMix) : '',
-    data.lcrStatus       ? 'LCR status: ' + data.lcrStatus : '',
-    data.pricingModel    ? 'Current pricing model: ' + data.pricingModel : '',
-    data.surcharge       ? 'Surcharges customers: ' + (LABELS.surcharge[data.surcharge]||data.surcharge) : '',
-    goalStr              ? 'Primary goal(s): ' + goalStr : '',
-    data.pain            ? 'Biggest frustration: ' + data.pain : '',
-    data.skippedUpload   ? 'Statements: not uploaded' : 'Statements uploaded: ' + data.files.length + ' file(s)',
-    data.hasOtherVolume === 'yes'
-      ? 'IMPORTANT: merchant says this statement does NOT capture all their card volume. Total business card volume (self-reported, including what is not shown on the statement): ' + (LABELS.monthlyVolume[data.totalBusinessVolume] || data.totalBusinessVolume || 'not specified') + '. Treat the volume and effective-rate figures on the statement as understating the full picture.'
-      : ''
-  ].filter(Boolean).join('\n');
+const programContext = [
+’Name: ’ + data.name, ‘Company: ’ + data.companyName,
+‘Email: ’ + data.email + (data.emailVerified ? ’ (verified)’ : data.skippedEmail ? ’ (skipped)’ : ‘’),
+’Phone: ’ + data.phone,
+data.industry        ? ’Industry: ’ + data.industry : ‘’,
+data.channels.length ? ‘Payment channels: ’ + data.channels.join(’, ’) : ‘’,
+data.ecomPlatform    ? ’eCommerce platform: ’ + data.ecomPlatform : ‘’,
+data.terminalSetup   ? ’Terminal setup: ’ + data.terminalSetup : ‘’,
+providerStr          ? ’Current provider: ’ + providerStr : ‘’,
+data.monthlyVolume   ? ’Monthly card volume: ’ + (LABELS.monthlyVolume[data.monthlyVolume]||data.monthlyVolume) : ‘’,
+data.atv             ? ’Average transaction value: ’ + (LABELS.atv[data.atv]||data.atv) : ‘’,
+data.cardMix         ? ’Card mix: ’ + (LABELS.cardMix[data.cardMix]||data.cardMix) : ‘’,
+data.lcrStatus       ? ’LCR status: ’ + data.lcrStatus : ‘’,
+data.pricingModel    ? ’Current pricing model: ’ + data.pricingModel : ‘’,
+data.surcharge       ? ’Surcharges customers: ’ + (LABELS.surcharge[data.surcharge]||data.surcharge) : ‘’,
+goalStr              ? ’Primary goal(s): ’ + goalStr : ‘’,
+data.pain            ? ‘Biggest frustration: ’ + data.pain : ‘’,
+data.skippedUpload   ? ‘Statements: not uploaded’ : ‘Statements uploaded: ’ + data.files.length + ’ file(s)’,
+data.hasOtherVolume === ‘yes’
+? ‘IMPORTANT: merchant says this statement does NOT capture all their card volume. Total business card volume (self-reported, including what is not shown on the statement): ’ + (LABELS.monthlyVolume[data.totalBusinessVolume] || data.totalBusinessVolume || ‘not specified’) + ‘. Treat the volume and effective-rate figures on the statement as understating the full picture.’
+: ‘’
+].filter(Boolean).join(’\n’);
 
-  const system = `You are a payments statement analyser for acceptorIQ. Read the merchant's payment statement(s) and extract or compute ONLY factual information from them.
+const system = `You are a payments statement analyser for acceptorIQ. Read the merchant’s payment statement(s) and extract or compute ONLY factual information from them.
 
 Do NOT write narrative, opinions, recommendations, benchmarks, marketing language or advice — interpretation happens in a later step. Be precise, terse and strictly grounded in what the statements actually show. A merchant profile may also be provided for context, but your job is to extract the statement facts. If a value is not present in the statements, use null — never guess or estimate.
 
 Return ONLY valid JSON. No markdown, no backticks, no preamble. Use this EXACT structure:
-{\"provider\":null,\"period\":null,\"volume\":null,\"totalFees\":null,\"effectiveRate\":null,\"transactions\":null,\"averageTransactionValue\":null,\"monthlyFee\":null,\"terminalFees\":null,\"perTransactionFee\":null,\"pricingModel\":null,\"providerRate\":null,\"lcrStatus\":null,\"cardMix\":{\"debit\":null,\"credit\":null,\"amex\":null,\"foreign\":null},\"feeBreakdown\":[{\"label\":\"string\",\"amount\":0}],\"setup\":[{\"label\":\"string\",\"value\":\"string\"}],\"chargebacks\":{\"count\":null,\"amount\":null,\"fees\":null,\"ratio\":null},\"observations\":[\"string\"]}
+{“provider”:null,“period”:null,“volume”:null,“totalFees”:null,“effectiveRate”:null,“transactions”:null,“averageTransactionValue”:null,“monthlyFee”:null,“terminalFees”:null,“perTransactionFee”:null,“pricingModel”:null,“providerRate”:null,“lcrStatus”:null,“cardMix”:{“debit”:null,“credit”:null,“amex”:null,“foreign”:null},“feeBreakdown”:[{“label”:“string”,“amount”:0}],“setup”:[{“label”:“string”,“value”:“string”}],“chargebacks”:{“count”:null,“amount”:null,“fees”:null,“ratio”:null},“observations”:[“string”]}
 
 RULES:
-- MULTIPLE STATEMENTS: if more than one statement or month is provided, CONSOLIDATE them into ONE combined result — do NOT return an array or per-statement objects, and do NOT nest statements inside a field. Sum volume, totalFees, transactions, monthlyFee, terminalFees, chargebacks.count, chargebacks.amount, chargebacks.fees and each matching feeBreakdown line item across all statements; recompute effectiveRate, averageTransactionValue and chargebacks.ratio from the combined totals; volume-weight the cardMix percentages; keep provider, pricingModel, providerRate, perTransactionFee and lcrStatus (which are constant across months); and set period to the full range covered (e.g. "January-February 2026").
+
+- MULTIPLE STATEMENTS: if more than one statement or month is provided, CONSOLIDATE them into ONE combined result.
 - Numeric fields contain numbers only — no currency symbols, no percent signs, no commas.
-- All fee figures are GST-INCLUSIVE. Use the statement's headline total, which normally includes GST. Do NOT take fees from a GST-exclusive "average cost" / "cost of acceptance" summary table.
-- totalFees: if the statement shows a stated total fees figure (e.g. "Total card fees", "Total fees", "Total amount payable", "Total merchant fees"), use THAT figure (GST-inclusive). Only if no stated total exists, sum the individual fee components.
-- volume and totalFees are in AUD. effectiveRate = totalFees / volume * 100 (a number, percent). averageTransactionValue = volume / transactions (AUD). Compute these when the inputs are present, otherwise null.
-- perTransactionFee is a fixed per-transaction fee in CENTS if the statement states one; do not convert it.
-- pricingModel: one of "Single-rate", "Blended", "Interchange-plus", "Interchange-plus-plus", "Subscription", "Unknown" — only what the statement evidences.
-- providerRate (string): the rate the merchant's PROVIDER charges them — their own margin/markup — stated as printed, separate from interchange and scheme fees. For Interchange-plus / Interchange-plus-plus statements this is the acquirer margin or "merchant service fee" rate (e.g. "0.12%"), and it is typically the SAME rate for debit and credit. For Blended or Single-rate this is the blended rate(s) (e.g. "1.50% credit, 0.55% debit" or "1.50% all cards"). Use null if not determinable. This is DISTINCT from effectiveRate (the all-in cost of acceptance).
-- lcrStatus: one of "On", "Off", "Partial", "Unknown" — only if evident from how debit is routed.
-- cardMix: derive the debit-vs-credit split from the INTERCHANGE-fee or SCHEME-fee breakdown by card category (these separate "Debit/Prepaid" from "Credit"/"Consumer"/"Commercial"), NOT from a deposit or sales-summary section, which may report all volume under a single "credit" column. NEVER conclude there is no debit volume from such a summary. Express each as a percentage of turnover by type; include only what is evident, else null.
-- feeBreakdown: the statement's fee component sections (e.g. merchant service fee, scheme fees, interchange fees) as printed, on the same GST-inclusive basis; where the statement provides them they should sum to totalFees.
-- setup: factual stack components observed (e.g. terminal model, gateway, POS) with NO status or judgement.
-- chargebacks: only populate fields that are explicitly evidenced on the statement — most statements will NOT show this and it should remain null, not zero. "count" is the number of chargebacks in the period; "amount" is the total AUD value of disputed transactions (GST-inclusive, as printed); "fees" is the total AUD chargeback/dispute fees charged by the acquirer (a SEPARATE line item from "amount" — do not conflate a chargeback fee with the disputed transaction value); "ratio" is chargebacks as a percentage of transaction count, compute as count/transactions*100 only if both are known, otherwise null. Never estimate or assume zero when the statement is simply silent on chargebacks — null means "not shown here", not "none occurred."
-- observations: SHORT, purely factual, data-grounded notes about what the statements show — never whether something is good, bad, expensive, or what to do about it. No benchmarks, no advice.
-- Keep everything compact. No paragraphs, no prose.`;
-
+- All fee figures are GST-INCLUSIVE.
+- totalFees: use the statement’s stated total fees figure (GST-inclusive) if present; only sum components if no stated total exists.
+- volume and totalFees are in AUD. effectiveRate = totalFees / volume * 100. averageTransactionValue = volume / transactions.
+- perTransactionFee is a fixed per-transaction fee in CENTS if stated.
+- pricingModel: one of “Single-rate”, “Blended”, “Interchange-plus”, “Interchange-plus-plus”, “Subscription”, “Unknown”.
+- providerRate: the rate the merchant’s provider charges them as printed; null if not determinable.
+- lcrStatus: one of “On”, “Off”, “Partial”, “Unknown”.
+- cardMix: derive from interchange/scheme fee breakdown by card category, NOT from deposit/sales summary.
+- feeBreakdown: fee component sections as printed, GST-inclusive.
+- setup: factual stack components observed with NO status or judgement.
+- chargebacks: only populate fields explicitly evidenced on the statement; null means not shown, not zero.
+- observations: SHORT, purely factual, data-grounded notes — never advice or benchmarks.`;
+  
   try {
-    let content = [];
-    const suffix = '\n\nMERCHANT PROFILE:\n' + programContext;
-    if (data.files.length > 0) {
-      for (const file of data.files) {
-        const mt = file.type || '';
-        if (mt === 'application/pdf' || /\.pdf$/i.test(file.name)) {
-          const b64 = await fileToB64(file);
-          content.push({ type:'document', source:{ type:'base64', media_type:'application/pdf', data:b64 } });
-        } else if (mt.startsWith('image/')) {
-          const b64 = await fileToB64(file);
-          content.push({ type:'image', source:{ type:'base64', media_type:mt, data:b64 } });
-        }
-      }
-      content.push({ type:'text', text:'Analyse these merchant statements.' + suffix });
-    } else {
-      content = [{ type:'text', text:'No statements uploaded. Analyse based on the merchant profile only.' + suffix }];
-    }
-
-    const res = await fetchWithTimeout('/api/analyse', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ system, messages: [{ role: 'user', content }] })
-    }, 90000);
-    if (!res.ok) {
-      const e = await res.json().catch(() => ({}));
-      const msg = e.detail || (e.error && e.error.message) || e.error || ('API error ' + res.status);
-      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
-    }
-    const apiData = await res.json();
-    const rawText = (apiData.content.find(b => b.type === 'text')?.text || '');
-    const report = parseModelJson(rawText);
-    const filesPayload = await Promise.all(data.files.map(async f => ({
-      name: f.name, type: f.type, size: f.size, data: await fileToB64(f)
-    })));
-    await fetchWithTimeout('/api/submit', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        report, programContext, files: filesPayload,
-        submission: { name: data.name, companyName: data.companyName, email: data.email, phone: data.phone, submittedAt: new Date().toISOString() }
-      })
-    }, 30000).catch(() => null);
-    clearInterval(iv);
-    steps.forEach(id => document.getElementById(id).className = 'loading-step done');
-    renderConfirmReveal(report.effectiveRate);
-    setTimeout(() => {
-      loading.classList.remove('active');
-      const c = document.getElementById('sConfirm');
-      c.classList.add('active');
-      applyFit(c);
-    }, 500);
-  } catch (err) {
-    clearInterval(iv);
-    loading.classList.remove('active');
-    document.getElementById('sReview').classList.add('active');
-    const msg = err && err.name === 'AbortError'
-      ? 'The server didn\'t respond in time. Your answers are saved — please try submitting again.'
-      : 'Something went wrong: ' + (err && err.message ? err.message : err) + '\n\nYour answers are saved — please try submitting again.';
-    alert(msg);
+  let content = [];
+  const suffix = ‘\n\nMERCHANT PROFILE:\n’ + programContext;
+  if (data.files.length > 0) {
+  for (const file of data.files) {
+  const mt = file.type || ‘’;
+  if (mt === ‘application/pdf’ || /.pdf$/i.test(file.name)) {
+  const b64 = await fileToB64(file);
+  content.push({ type:‘document’, source:{ type:‘base64’, media_type:‘application/pdf’, data:b64 } });
+  } else if (mt.startsWith(‘image/’)) {
+  const b64 = await fileToB64(file);
+  content.push({ type:‘image’, source:{ type:‘base64’, media_type:mt, data:b64 } });
   }
-}
+  }
+  content.push({ type:‘text’, text:‘Analyse these merchant statements.’ + suffix });
+  } else {
+  content = [{ type:‘text’, text:‘No statements uploaded. Analyse based on the merchant profile only.’ + suffix }];
+  }
+  
+  const res = await fetchWithTimeout(’/api/analyse’, {
+  method: ‘POST’, headers: { ‘Content-Type’: ‘application/json’ },
+  body: JSON.stringify({ system, messages: [{ role: ‘user’, content }] })
+  }, 90000);
+  if (!res.ok) {
+  const e = await res.json().catch(() => ({}));
+  const msg = e.detail || (e.error && e.error.message) || e.error || (‘API error ’ + res.status);
+  throw new Error(typeof msg === ‘string’ ? msg : JSON.stringify(msg));
+  }
+  const apiData = await res.json();
+  const rawText = (apiData.content.find(b => b.type === ‘text’)?.text || ‘’);
+  const report = parseModelJson(rawText);
+  const filesPayload = await Promise.all(data.files.map(async f => ({
+  name: f.name, type: f.type, size: f.size, data: await fileToB64(f)
+  })));
+  await fetchWithTimeout(’/api/submit’, {
+  method: ‘POST’, headers: { ‘Content-Type’: ‘application/json’ },
+  body: JSON.stringify({
+  report, programContext, files: filesPayload,
+  submission: { name: data.name, companyName: data.companyName, email: data.email, phone: data.phone, submittedAt: new Date().toISOString() }
+  })
+  }, 30000).catch(() => null);
+  clearInterval(iv);
+  steps.forEach(id => document.getElementById(id).className = ‘loading-step done’);
+  renderConfirmReveal(report.effectiveRate);
+  setTimeout(() => {
+  loading.classList.remove(‘active’);
+  const c = document.getElementById(‘sConfirm’);
+  c.classList.add(‘active’);
+  applyFit(c);
+  }, 500);
+  } catch (err) {
+  clearInterval(iv);
+  loading.classList.remove(‘active’);
+  document.getElementById(‘sReview’).classList.add(‘active’);
+  const msg = err && err.name === ‘AbortError’
+  ? ‘The server didn't respond in time. Your answers are saved — please try submitting again.’
+  : ’Something went wrong: ’ + (err && err.message ? err.message : err) + ‘\n\nYour answers are saved — please try submitting again.’;
+  alert(msg);
+  }
+  }
 
 function fileToB64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
+return new Promise((res, rej) => {
+const r = new FileReader();
+r.onload = () => res(r.result.split(’,’)[1]);
+r.onerror = rej;
+r.readAsDataURL(file);
+});
 }
 
 renderProgress();
 updateChrome();
 refit();
-window.addEventListener('load', refit);
+window.addEventListener(‘load’, refit);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(refit);
 
 window.previewSuccess = function () {
-  const cur = document.getElementById(currentId);
-  if (cur) cur.classList.remove('active');
-  const c = document.getElementById('sConfirm');
-  c.classList.add('active'); currentId = 'sConfirm'; applyFit(c);
+const cur = document.getElementById(currentId);
+if (cur) cur.classList.remove(‘active’);
+const c = document.getElementById(‘sConfirm’);
+c.classList.add(‘active’); currentId = ‘sConfirm’; applyFit(c);
 };
 </script>
+
 </body>
 </html>
