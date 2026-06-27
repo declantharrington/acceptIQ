@@ -102,7 +102,7 @@
     overflow:hidden;
   }
 
-  /* Circular icon button instead of a hard-edged square Ã¢â‚¬â€ sits inset
+  /* Circular icon button instead of a hard-edged square â€” sits inset
      from the edge by the same 20px the rest of the nav content uses
      (an absolutely-positioned right:0 here would sit flush against the
      true screen edge, ignoring the parent's own padding). */
@@ -199,7 +199,7 @@
     margin-left:14px;
   }
 
-  /* Optional: give one link in the dropdown a stand-out pill treatment instead of the plain arrow row Ã¢â‚¬â€ add class="mm-cta" to that <a>
+  /* Optional: give one link in the dropdown a stand-out pill treatment instead of the plain arrow row â€” add class="mm-cta" to that <a>
      (e.g. the homepage's "Get my review" link). No-op if unused. */
   .mobile-menu a.mm-cta{
     margin:14px 0;
@@ -207,7 +207,7 @@
     padding:15px 18px;
     border-top:none;
     border-radius:0;
-    background:var(--btn);
+    background:rgba(230,235,246,.84);
     color:var(--ink);
     font-weight:600;
     justify-content:center;
