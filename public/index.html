@@ -1660,6 +1660,236 @@ section{position:relative}
   .logo-full{height:34px;}
 }
 
+
+/* DESKTOP REFINEMENT — makes the desktop layout feel like the 80–85% zoom view without using CSS zoom */
+@media (min-width: 901px){
+
+  .wrap{
+    max-width:1440px;
+  }
+
+  .nav{
+    height:64px;
+  }
+
+  .logo-full{
+    height:30px;
+  }
+
+  .nav-right .lnk{
+    font-size:14px;
+  }
+
+  .nav-cta{
+    height:40px;
+    min-width:138px;
+    padding:0 16px;
+    font-size:13px;
+  }
+
+  .hero{
+    padding:58px 0 0;
+  }
+
+  .hero h1{
+    font-size:clamp(34px,3.35vw,50px);
+    line-height:1.06;
+  }
+
+  .hero .sub{
+    font-size:clamp(13px,1vw,15.5px);
+    max-width:500px;
+    margin-top:20px;
+  }
+
+  .hero .cta{
+    margin-top:28px;
+  }
+
+  .btn{
+    min-width:190px;
+    padding:15px 22px;
+    font-size:14px;
+  }
+
+  .btn-lg{
+    padding:15px 22px;
+    font-size:14px;
+  }
+
+  .hero-stage{
+    min-height:620px;
+    margin-top:12px;
+  }
+
+  .hero-band{
+    top:42px;
+    height:365px;
+  }
+
+  .hero .phone{
+    width:238px;
+    margin-top:26px;
+  }
+
+  .phone{
+    width:286px;
+  }
+
+  .chat{
+    gap:12px;
+    padding:16px 15px;
+  }
+
+  .msg-you,
+  .msg-them{
+    font-size:12.5px;
+  }
+
+  .twoup{
+    padding:120px 0 96px;
+  }
+
+  .twoup .col{
+    padding:0 56px;
+  }
+
+  .twoup h2{
+    font-size:clamp(28px,2.6vw,39px);
+  }
+
+  .twoup p{
+    font-size:15.5px;
+    max-width:360px;
+  }
+
+  .vis{
+    margin-top:40px;
+    min-height:230px;
+  }
+
+  .statement-analyser{
+    max-width:310px;
+  }
+
+  .payment-web{
+    width:370px;
+    height:370px;
+  }
+
+  .partner-web-image{
+    width:min(370px,100%);
+  }
+
+  .bleed .copy{
+    padding:96px 56px;
+  }
+
+  .bleed h2{
+    font-size:clamp(30px,2.8vw,41px);
+  }
+
+  .bleed p{
+    font-size:15.5px;
+  }
+
+  .bleed .stage{
+    min-height:540px;
+  }
+
+  .glass{
+    width:310px;
+    padding:20px;
+  }
+
+  .plan-total strong{
+    font-size:34px;
+  }
+
+  .plan-row{
+    padding:15px 0;
+  }
+
+  .control{
+    padding:96px 0 0;
+  }
+
+  .control h2,
+  .final h2{
+    font-size:clamp(32px,3.2vw,48px);
+  }
+
+  .control p,
+  .advisor-section .sub,
+  .final p{
+    font-size:15.5px;
+  }
+
+  .advisor-section{
+    padding:96px 0 112px;
+  }
+
+  .advisor-stack{
+    width:min(900px,88vw);
+    height:390px;
+    margin-top:58px;
+  }
+
+  .advisor-card{
+    width:380px;
+    min-height:300px;
+    padding:30px;
+  }
+
+  .advisor-card[data-card="0"],
+  .advisor-card[data-card="0"].is-back,
+  .advisor-card[data-card="0"].is-active{
+    transform:translateX(calc(-50% - 220px)) scale(.88);
+  }
+
+  .advisor-card[data-card="2"],
+  .advisor-card[data-card="2"].is-back,
+  .advisor-card[data-card="2"].is-active{
+    transform:translateX(calc(-50% + 220px)) scale(.88);
+  }
+
+  .advisor-card[data-card="1"],
+  .advisor-card[data-card="1"].is-active{
+    transform:translateX(-50%) scale(.96);
+  }
+
+  .card-icon{
+    width:68px;
+    height:68px;
+    margin-bottom:28px;
+  }
+
+  .card-icon svg{
+    width:30px;
+    height:30px;
+  }
+
+  .advisor-card .step{
+    font-size:19px;
+  }
+
+  .advisor-card h3{
+    font-size:27px;
+  }
+
+  .advisor-card p{
+    font-size:14.5px;
+  }
+
+  .final{
+    padding:76px 0 94px;
+  }
+
+  .fcols{
+    padding:42px 0 34px;
+  }
+}
+
 </style>  
 <link rel="stylesheet" href="mobile.css">  
 </head>
