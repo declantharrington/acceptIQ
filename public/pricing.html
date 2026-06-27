@@ -255,8 +255,9 @@ footer{position:relative;z-index:2;color:var(--cream)}
 </header>
 
 <div class="mobile-menu">
-  <a href="https://www.acceptorIQ.com.au/">Home</a>
-  <a href="https://www.acceptorIQ.com.au/analyser.html" class="mm-cta">Get started</a>
+  <a href="https://www.acceptoriq.com.au/">Home</a>
+  <a href="mailto:hello@acceptoriq.com.au">Contact</a>
+  <a href="https://www.acceptoriq.com.au/analyser.html" class="mm-cta">Get started</a>
 </div>
 
 
@@ -520,20 +521,38 @@ window.addEventListener('DOMContentLoaded', () => {
   right: 28px;
   bottom: 28px;
   z-index: 9998;
-  width: 58px;
+  width: auto;
   height: 58px;
-  border-radius: 50%;
+  padding: 0 22px;
+  border-radius: 0;
   border: 1px solid var(--abi-frame);
   background: var(--abi-btn);
   color: var(--abi-ink);
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   cursor: pointer;
-  box-shadow: 0 14px 36px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.02);
+  box-shadow: 0 18px 44px -12px rgba(0,0,0,0.58);
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
-#abi-launcher:hover { transform: translateY(-2px); opacity: 0.92; }
-#abi-launcher svg { width: 24px; height: 24px; }
+
+#abi-launcher::after {
+  content: "Chat to our Analyst Bot";
+  font-family: var(--abi-sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+#abi-launcher:hover {
+  transform: translateY(-2px);
+  opacity: 0.94;
+}
+#abi-launcher svg {
+  width: 23px;
+  height: 23px;
+}
 #abi-icon-close { display: none; }
 #abi-root.abi-open #abi-icon-chat { display: none; }
 #abi-root.abi-open #abi-icon-close { display: block; }
@@ -751,7 +770,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
 /* ── Mobile ── */
 @media (max-width: 480px) {
-  #abi-launcher { right: 16px; bottom: 16px; width: 52px; height: 52px; }
+  #abi-launcher {
+    right: 16px;
+    bottom: 16px;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  #abi-launcher::after {
+    content: none;
+  }
+
   #abi-panel {
     right: 10px;
     bottom: 82px;
