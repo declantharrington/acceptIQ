@@ -1615,10 +1615,35 @@ section{position:relative}
     border-top:1px solid rgba(230,235,246,.08);
   }
 
-  #abi-launcher{
-    right:26px;
-    bottom:26px;
-  }
+  #abi-launcher {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 9998;
+  width: auto;
+  height: 58px;
+  padding: 0 22px;
+  border-radius: 0;
+  border: 1px solid var(--abi-frame);
+  background: var(--abi-btn);
+  color: var(--abi-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  box-shadow: 0 18px 44px -12px rgba(0,0,0,0.58);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+#abi-launcher::after {
+  content: "Chat to our Analyst Bot";
+  font-family: var(--abi-sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
 }
 
 @media (max-width:480px){
@@ -1767,9 +1792,9 @@ section{position:relative}
 </header>
 
 <div class="mobile-menu">
-  <a href="https://www.acceptorIQ.com.au/pricing.html">Pricing</a>
-  <a href="https://www.acceptorIQ.com.au/analyser.html" class="mm-cta">Get my review</a>
-  <a href="mailto:hello@acceptorIQ.com.au">Contact</a>
+  <a href="https://www.acceptoriq.com.au/pricing.html">Pricing</a>
+  <a href="mailto:hello@acceptoriq.com.au">Contact</a>
+  <a href="https://www.acceptoriq.com.au/analyser.html" class="mm-cta">Get my review</a>
 </div>
   
 <!-- HERO -->
@@ -2468,8 +2493,14 @@ initMG('hero-mg');
   box-shadow: 0 14px 36px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.02);
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
-#abi-launcher:hover { transform: translateY(-2px); opacity: 0.92; }
-#abi-launcher svg { width: 24px; height: 24px; }
+#abi-launcher:hover {
+  transform: translateY(-2px);
+  opacity: 0.94;
+}
+#abi-launcher svg {
+  width: 23px;
+  height: 23px;
+}
 #abi-icon-close { display: none; }
 #abi-root.abi-open #abi-icon-chat { display: none; }
 #abi-root.abi-open #abi-icon-close { display: block; }
@@ -2687,7 +2718,19 @@ initMG('hero-mg');
 
 /* ── Mobile ── */
 @media (max-width: 480px) {
-  #abi-launcher { right: 16px; bottom: 16px; width: 52px; height: 52px; }
+  #abi-launcher {
+    right: 16px;
+    bottom: 16px;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  #abi-launcher::after {
+    content: none;
+  }
+
   #abi-panel {
     right: 10px;
     bottom: 82px;
