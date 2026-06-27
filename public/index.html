@@ -1661,8 +1661,9 @@ section{position:relative}
 }
 
 
-/* DESKTOP REFINEMENT — makes the desktop layout feel like the 80–85% zoom view without using CSS zoom */
-@media (min-width: 901px){
+
+/* DESKTOP REFINEMENT — premium 80–85% scale effect without browser zoom */
+@media (min-width:901px){
 
   .wrap{
     max-width:1440px;
@@ -1687,6 +1688,17 @@ section{position:relative}
     font-size:13px;
   }
 
+  .btn{
+    min-width:190px;
+    padding:15px 22px;
+    font-size:14px;
+  }
+
+  .btn-lg{
+    padding:15px 22px;
+    font-size:14px;
+  }
+
   .hero{
     padding:58px 0 0;
   }
@@ -1704,17 +1716,6 @@ section{position:relative}
 
   .hero .cta{
     margin-top:28px;
-  }
-
-  .btn{
-    min-width:190px;
-    padding:15px 22px;
-    font-size:14px;
-  }
-
-  .btn-lg{
-    padding:15px 22px;
-    font-size:14px;
   }
 
   .hero-stage{
