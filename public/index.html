@@ -845,7 +845,68 @@ initMG('hero-mg');
     var text=input.value.trim();if(!text||isSending)return;
     history.push({role:'user',content:text});addMessage('user',text,{silent:true});saveSession();
     input.value='';input.style.height='auto';sendBtn.disabled=true;isSending=true;showTyping();
+    input.value='';input.style.height='auto';sendBtn.disabled=true;isSending=true;showTyping();
     try{
       var res=await fetch('/api/abi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})});
       hideTyping();
-      if(!res.ok){var err=await res.json().catch(function(){return{};});throw n
+      if(!res.ok){var err=await res.json().catch(function(){return{};});throw new Error(err.error||'Something went wrong');}
+      var data=await res.json();var reply=data.reply||"Sorry, I didn't quite catch that — could you try rephrasing?";
+      history.push({role:'assistant',content:reply});addMessage('assistant',reply,{silent:true});saveSession();
+    }catch(err){hideTyping();addSystemNote("Abi's having trouble connecting right now. Please try again, or book a consultation / upload your statement directly.");}
+    finally{isSending=false;sendBtn.disabled=!input.value.trim();input.focus();}
+  }
+  var savedSession=loadSession();
+  if(savedSession&&Array.isArray(savedSession.history)&&savedSession.history.length){history=savedSession.history;hasOpenedOnce=true;restoreMessagesFromHistory();if(savedSession.wasOpen){root.classList.add('abi-open');launcher.setAttribute('aria-expanded','true');panel.setAttribute('aria-hidden','false');}}
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&root.classList.contains('abi-open'))closePanel();});
+})();
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var body = document.body;
+  var scrollLockY = 0;
+
+  function openMenu() {
+    scrollLockY = window.scrollY;
+    body.style.top = '-' + scrollLockY + 'px';
+    body.classList.add("mobile-menu-open");
+  }
+
+  function closeMenu() {
+    body.classList.remove("mobile-menu-open");
+    body.style.top = "";
+    window.scrollTo(0, scrollLockY);
+  }
+
+  var menuBtn = document.querySelector(".mobile-menu-btn");
+  if (menuBtn) {
+    menuBtn.addEventListener("click", function() {
+      body.classList.contains("mobile-menu-open") ? closeMenu() : openMenu();
+    });
+  }
+
+  document.querySelectorAll(".mobile-menu a").forEach(function(link) {
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.querySelectorAll(".fcol").forEach(function(section) {
+    var h4 = section.querySelector("h4");
+    if (h4) h4.addEventListener("click", function() {
+      section.classList.toggle("is-open");
+    });
+  });
+
+  document.querySelectorAll(".advisor-card h3 br").forEach(function(br) {
+    br.replaceWith(" ");
+  });
+
+  document.querySelectorAll(".advisor-card").forEach(function(card) {
+    card.addEventListener("click", function() {
+      card.classList.toggle("is-open");
+    });
+  });
+});
+</script>
+
+</body>
+</html>
