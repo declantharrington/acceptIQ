@@ -159,7 +159,7 @@
     backdrop-filter:saturate(160%) blur(22px);
     -webkit-backdrop-filter:saturate(160%) blur(22px);
     border:1px solid rgba(230,235,246,.10);
-    border-radius:22px;
+    border-radius:0;
     box-shadow:0 30px 70px -22px rgba(0,0,0,.6);
     opacity:0;
     transform:translateY(-10px);
