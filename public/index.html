@@ -326,7 +326,7 @@ footer{position:relative;z-index:2;color:var(--cream)}
   .bleed .stage{min-height:640px;}
   .glass{width:calc(100% - 54px);max-width:340px;}
   .final{padding:100px 0 110px;border-top:1px solid rgba(230,235,246,.08);}
-  .footer-section{}
+
 }
 
 .logo-full{height:34px;width:auto;display:block;}
@@ -337,9 +337,7 @@ footer{position:relative;z-index:2;color:var(--cream)}
 @media(max-width:760px){.logo-full{height:36px;}}
 @media(max-width:480px){.logo-full{height:34px;}}
 
-@media (min-width:901px){
-  .wrap{max-width:1440px;}
-  .nav{height:64px;}
+
   .logo-full{height:30px;}
   .nav-right .lnk{font-size:14px;}
   .btn{min-width:190px;padding:15px 22px;font-size:14px;}
@@ -385,6 +383,9 @@ footer{position:relative;z-index:2;color:var(--cream)}
   .advisor-card p{font-size:14.5px;}
   .final{padding:76px 0 94px;}
   .fcols{padding:42px 0 34px;}
+}
+@media (max-width:760px){
+  .footer-section{border-top:none !important;}
 }
 </style>
 <link rel="stylesheet" href="mobile.css">
