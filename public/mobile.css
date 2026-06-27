@@ -55,6 +55,7 @@
   .logo-full{
     height:34px !important;
     width:auto;
+    object-fit:contain;
   }
 
   .logo-phone{
@@ -101,7 +102,7 @@
     overflow:hidden;
   }
 
-  /* Circular icon button instead of a hard-edged square â€” sits inset
+  /* Circular icon button instead of a hard-edged square Ã¢â‚¬â€ sits inset
      from the edge by the same 20px the rest of the nav content uses
      (an absolutely-positioned right:0 here would sit flush against the
      true screen edge, ignoring the parent's own padding). */
@@ -145,8 +146,7 @@
     transform:translateY(-3.25px) rotate(-45deg);
   }
 
-  /* Floating rounded panel (detached from the header with a gap) with
-     blur + shadow, instead of a flush hard-bordered rectangle. */
+  /* Floating rounded panel with a header gap, blur and shadow, instead of a flush hard-bordered rectangle. */
   .mobile-menu{
     display:block;
     position:fixed;
@@ -189,13 +189,17 @@
   }
 
   .mobile-menu a::after{
-    content:"â†’";
-    color:rgba(230,235,246,.38);
-    font-size:15px;
+    content:"";
+    width:8px;
+    height:8px;
+    border-right:1.8px solid rgba(230,235,246,.38);
+    border-top:1.8px solid rgba(230,235,246,.38);
+    transform:rotate(45deg);
+    flex-shrink:0;
+    margin-left:14px;
   }
 
-  /* Optional: give one link in the dropdown a stand-out pill treatment
-     instead of the plain arrow row â€” add class="mm-cta" to that <a>
+  /* Optional: give one link in the dropdown a stand-out pill treatment instead of the plain arrow row Ã¢â‚¬â€ add class="mm-cta" to that <a>
      (e.g. the homepage's "Get my review" link). No-op if unused. */
   .mobile-menu a.mm-cta{
     margin:14px 0;
@@ -211,6 +215,7 @@
 
   .mobile-menu a.mm-cta::after{
     content:none;
+    display:none;
   }
 
   /* whatever directly follows the pill shouldn't carry a stray divider */
