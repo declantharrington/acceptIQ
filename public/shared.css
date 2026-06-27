@@ -1,9 +1,15 @@
 :root{
-  --site-frame:clamp(24px,5vw,140px);
-  --shell-width:1440px;
+  /* Overall page width */
+  --shell-width:1500px;
+
+  /* Distance from browser edge to page frame */
+  --site-frame:clamp(20px,4.2vw,120px);
+
+  /* Shared frame colour */
   --frame:rgba(224,233,246,0.15);
 }
 
+/* Main page shell */
 .shell{
   position:relative;
   width:calc(100vw - (var(--site-frame) * 2));
@@ -13,6 +19,7 @@
   border-right:1px solid var(--frame);
 }
 
+/* Fixed vertical frame lines */
 .shell-frame{
   position:fixed;
   inset:0;
@@ -25,12 +32,51 @@
   border-right:1px solid var(--frame);
 }
 
+/* Inner shell helper */
 .shell-inner{
   width:calc(100vw - (var(--site-frame) * 2));
   max-width:var(--shell-width);
   margin:0 auto;
 }
 
+/* Desktop refinement */
+@media (min-width:901px){
+  .wrap{
+    max-width:1440px;
+  }
+
+  .nav{
+    height:64px;
+  }
+
+  .logo-full{
+    height:30px;
+  }
+
+  .nav-right .lnk{
+    font-size:14px;
+  }
+
+  .nav-cta{
+    height:40px;
+    min-width:138px;
+    padding:0 16px;
+    font-size:13px;
+  }
+
+  .btn{
+    min-width:190px;
+    padding:15px 22px;
+    font-size:14px;
+  }
+
+  .btn-lg{
+    padding:15px 22px;
+    font-size:14px;
+  }
+}
+
+/* Mobile */
 @media(max-width:600px){
   .shell{
     width:100%;
