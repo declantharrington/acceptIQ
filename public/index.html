@@ -217,7 +217,7 @@ section{position:relative}
 .qcard .qa span{color:var(--cream-faint)}
 
 /* ── Footer ── */
-.footer-section{position:relative;background:var(--bg);border-top:1px solid var(--frame);overflow:hidden;min-height:320px;}
+.footer-section{position:relative;background:var(--bg);overflow:hidden;min-height:320px;}
 #footer-mg{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;}
 footer{position:relative;z-index:2;color:var(--cream)}
 .fcols{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;gap:30px;padding:48px 0 40px}
@@ -326,7 +326,7 @@ footer{position:relative;z-index:2;color:var(--cream)}
   .bleed .stage{min-height:640px;}
   .glass{width:calc(100% - 54px);max-width:340px;}
   .final{padding:100px 0 110px;border-top:1px solid rgba(230,235,246,.08);}
-  .footer-section{border-top:1px solid rgba(230,235,246,.08);}
+  .footer-section{}
 }
 
 .logo-full{height:34px;width:auto;display:block;}
@@ -623,10 +623,10 @@ footer{position:relative;z-index:2;color:var(--cream)}
     'float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*sn(p);p=p*2.+vec2(5.2,1.3);a*=.5;}return v;}',
     'void main(){',
     '  vec2 uv=gl_FragCoord.xy/u_res; uv.y=1.-uv.y;',
-    '  float t=u_time*0.07;',
-    '  vec2 w1=vec2(fbm(uv*1.8+vec2(t*.8,0.)),fbm(uv*1.8+vec2(0.,t*.6)+3.7));',
-    '  vec2 w2=vec2(fbm(uv*2.4+1.5*w1+vec2(t*.5,.3)),fbm(uv*2.4+1.5*w1+vec2(.3,t*.4)+9.2));',
-    '  vec2 q=uv+0.55*w2;',
+    '  float t=u_time*0.28;',
+    '  vec2 w1=vec2(fbm(uv*1.8+vec2(t*.9,0.)),fbm(uv*1.8+vec2(0.,t*.7)+3.7));',
+    '  vec2 w2=vec2(fbm(uv*2.4+2.2*w1+vec2(t*.6,.3)),fbm(uv*2.4+2.2*w1+vec2(.3,t*.5)+9.2));',
+    '  vec2 q=uv+0.85*w2;',
     '  vec2 cen=q-.5; float ang=length(cen)*4.*.06+t*.4; float cs=cos(ang),sn2=sin(ang);',
     '  vec2 sw=vec2(cs*cen.x-sn2*cen.y,sn2*cen.x+cs*cen.y)+.5;',
     '  float n1=smoothstep(.30,.72,fbm(sw*2.1+t*.5));',
@@ -637,8 +637,8 @@ footer{position:relative;z-index:2;color:var(--cream)}
     '  col=mix(col,vec3(.62,.42,.42),n3*.30);',
     '  float fade=smoothstep(.42,1.,uv.y);',
     '  col=mix(col,vec3(.902,.922,.965),fade*fade*1.05);',
-    '  float topDark=smoothstep(.18,0.,uv.y);',
-    '  col=mix(col,vec3(.059,.071,.094),topDark*.85);',
+    '  float topDark=smoothstep(.55,0.,uv.y);',
+    '  col=mix(col,vec3(.059,.071,.094),topDark);',
     '  float grain=fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453);',
     '  col+=(grain-.5)*.018;',
     '  gl_FragColor=vec4(clamp(col,0.,1.),1.);',
