@@ -1422,6 +1422,7 @@ section{position:relative}
     z-index:1;
   }
 }
+
 /* MOBILE OPTIMISATION — desktop unchanged */
 @media (max-width: 760px){
 
@@ -1615,104 +1616,9 @@ section{position:relative}
     border-top:1px solid rgba(230,235,246,.08);
   }
 
-  #abi-launcher {
-  position: fixed;
-  right: 28px;
-  bottom: 28px;
-  z-index: 9998;
-  width: auto;
-  height: 58px;
-  padding: 0 22px;
-  border-radius: 0;
-  border: 1px solid var(--abi-frame);
-  background: var(--abi-btn);
-  color: var(--abi-ink);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  cursor: pointer;
-  box-shadow: 0 18px 44px -12px rgba(0,0,0,0.58);
-  transition: transform 0.2s ease, opacity 0.2s ease;
 }
+/* ── END mobile block — Abi launcher pill styles live here at top level ── */
 
-#abi-launcher::after {
-  content: "Chat to our Analyst Bot";
-  font-family: var(--abi-sans);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-}
-}
-
-@media (max-width:480px){
-
-  .shell{
-    width:calc(100% - 28px);
-  }
-
-  .wrap{
-    padding:0 28px;
-  }
-
-  .nav-wrap{
-    padding:0 22px;
-  }
-
-  .nav{
-    height:78px;
-  }
-
-  .acceptor-word{
-    font-size:24px;
-  }
-
-  .nav-right .lnk{
-    font-size:14px;
-  }
-
-  .nav-cta{
-    height:42px;
-    padding:0 15px;
-  }
-
-  .hero h1,
-  .twoup h2,
-  .bleed h2,
-  .control h2,
-  .final h2{
-    font-size:clamp(40px,11.5vw,54px);
-  }
-
-  .hero .sub,
-  .twoup p,
-  .bleed p,
-  .control p,
-  .advisor-section .sub,
-  .final p{
-    font-size:18px;
-  }
-
-  .twoup .col{
-    padding-left:28px;
-    padding-right:28px;
-  }
-
-  .payment-web{
-    transform:scale(.76);
-    margin-left:-8px;
-  }
-
-  .statement-analyser{
-    max-width:300px;
-  }
-
-  .glass{
-    width:calc(100% - 44px);
-  }
-}
-    
 /* Logo image assets */
 .logo-full{
   height:34px;
@@ -2481,18 +2387,31 @@ initMG('hero-mg');
   right: 28px;
   bottom: 28px;
   z-index: 9998;
-  width: 58px;
+  width: auto;
   height: 58px;
-  border-radius: 50%;
+  padding: 0 22px;
+  border-radius: 0;
   border: 1px solid var(--abi-frame);
   background: var(--abi-btn);
   color: var(--abi-ink);
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   cursor: pointer;
-  box-shadow: 0 14px 36px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.02);
+  box-shadow: 0 18px 44px -12px rgba(0,0,0,0.58);
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
+
+#abi-launcher::after {
+  content: "Chat to our Analyst Bot";
+  font-family: var(--abi-sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
 #abi-launcher:hover {
   transform: translateY(-2px);
   opacity: 0.94;
@@ -2716,7 +2635,7 @@ initMG('hero-mg');
   flex-shrink: 0;
 }
 
-/* ── Mobile ── */
+/* ── Mobile — collapses to icon-only circle on small screens ── */
 @media (max-width: 480px) {
   #abi-launcher {
     right: 16px;
@@ -2754,19 +2673,14 @@ initMG('hero-mg');
   const sendBtn   = document.getElementById('abi-send');
   const qaButtons = document.querySelectorAll('[data-abi-cta]');
 
-  // Conversation history sent to the API (role/content pairs only).
-  // Persisted to sessionStorage so the conversation survives navigating
-  // between pages in the same tab, and clears when the tab is closed.
   const ABI_STORAGE_KEY = 'abi_conversation_v1';
   let history = [];
   let isSending = false;
   let hasOpenedOnce = false;
 
-  // ---- CTA destinations -----------------------------------------------
-  // Adjust these to your actual booking + analyser URLs.
   const ABI_CTA_LINKS = {
-    consult: '/book.html',      // booking/consultation page
-    upload:  '/analyser.html',  // statement analyser
+    consult: '/book.html',
+    upload:  '/analyser.html',
   };
 
   function saveSession() {
@@ -2776,8 +2690,6 @@ initMG('hero-mg');
         wasOpen: root.classList.contains('abi-open'),
       }));
     } catch (e) {
-      // sessionStorage can fail in private browsing / storage-full edge cases —
-      // chat still works for the current page, it just won't persist.
       console.warn('Abi: could not save session', e.message);
     }
   }
@@ -2836,16 +2748,13 @@ initMG('hero-mg');
   }
 
   function greet() {
-    if (messagesEl.children.length) return; // already greeted
+    if (messagesEl.children.length) return;
     addMessage('assistant',
       "Hey, I'm Abi 👋 Ask me anything about merchant fees — or skip ahead and upload your statement to see your actual numbers.",
-      { silent: true } // greeting isn't part of the API history, don't re-save it as such
+      { silent: true }
     );
   }
 
-  // Rebuild the visible message list from saved history (used on page load
-  // when a prior session exists). The greeting is skipped since it isn't
-  // part of `history` (it's never sent to the API).
   function restoreMessagesFromHistory() {
     history.forEach(msg => {
       addMessage(msg.role === 'user' ? 'user' : 'assistant', msg.content, { silent: true });
@@ -2871,7 +2780,6 @@ initMG('hero-mg');
     saveSession();
   }
 
-
   function togglePanel() {
     root.classList.contains('abi-open') ? closePanel() : openPanel();
   }
@@ -2879,7 +2787,6 @@ initMG('hero-mg');
   launcher.addEventListener('click', togglePanel);
   minimize.addEventListener('click', closePanel);
 
-  // Auto-resize the textarea up to its max-height.
   input.addEventListener('input', () => {
     input.style.height = 'auto';
     input.style.height = Math.min(input.scrollHeight, 90) + 'px';
@@ -2949,22 +2856,18 @@ initMG('hero-mg');
     }
   }
 
-  // ---- Restore prior session on page load (same tab, e.g. navigated from
-  // homepage to pricing) ------------------------------------------------
   const savedSession = loadSession();
   if (savedSession && Array.isArray(savedSession.history) && savedSession.history.length) {
     history = savedSession.history;
     hasOpenedOnce = true;
     restoreMessagesFromHistory();
     if (savedSession.wasOpen) {
-      // Re-open without re-triggering the greeting or a redundant save.
       root.classList.add('abi-open');
       launcher.setAttribute('aria-expanded', 'true');
       panel.setAttribute('aria-hidden', 'true');
     }
   }
 
-  // Close on Escape.
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && root.classList.contains('abi-open')) closePanel();
   });
@@ -3003,11 +2906,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Desktop keeps the <br> for its two-line title treatment; on mobile
-  // the collapsed accordion row needs the title on one line, so swap
-  // the <br> for a real space instead of just hiding it (hiding it
-  // alone removes the only thing separating the words, with nothing
-  // left to take its place — that's what caused "Understandthe report").
   document.querySelectorAll(".advisor-card h3 br").forEach(br => {
     br.replaceWith(" ");
   });
