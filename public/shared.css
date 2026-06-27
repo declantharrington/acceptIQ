@@ -39,6 +39,32 @@
   margin:0 auto;
 }
 
+/* Shared navbar CTA */
+.nav-cta{
+  min-width:150px;
+  height:44px;
+  padding:0 18px;
+  font-size:14px;
+  gap:16px;
+}
+
+/* Slightly softened navbar CTA so it feels less dominant than the page CTA */
+.nav-cta.btn-cream{
+  background:rgba(230,235,246,.82);
+  color:#0F1218;
+}
+
+.nav-cta.btn-cream:hover{
+  background:rgba(230,235,246,.92);
+  opacity:1;
+}
+
+.nav-cta .arr{
+  width:18px;
+  height:18px;
+  flex-shrink:0;
+}
+
 /* Desktop refinement */
 @media (min-width:901px){
   .wrap{
@@ -62,6 +88,11 @@
     min-width:138px;
     padding:0 16px;
     font-size:13px;
+  }
+
+  .nav-cta .arr{
+    width:18px;
+    height:18px;
   }
 
   .btn{
