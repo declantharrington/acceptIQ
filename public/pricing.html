@@ -228,6 +228,105 @@ footer{position:relative;z-index:2;color:var(--cream)}
   .fcols{grid-template-columns:1fr 1fr;gap:28px}
   .fbrand{grid-column:1/-1}
 }
+
+/* DESKTOP REFINEMENT — keeps pricing visually consistent with the homepage */
+@media (min-width:901px){
+
+  .wrap{
+    max-width:1440px;
+  }
+
+  .nav{
+    height:64px;
+  }
+
+  .logo-full{
+    height:30px;
+  }
+
+  .nav-right .lnk{
+    font-size:14px;
+  }
+
+  .nav-cta{
+    height:40px;
+    min-width:138px;
+    padding:0 16px;
+    font-size:13px;
+  }
+
+  .btn{
+    min-width:190px;
+    height:50px;
+    padding:0 22px;
+    font-size:14px;
+  }
+
+  .pricing{
+    padding:64px 26px 84px;
+  }
+
+  .pricing-head{
+    margin:0 auto 82px;
+    max-width:720px;
+  }
+
+  .pricing-head h1{
+    font-size:clamp(38px,4vw,58px);
+    line-height:1.03;
+  }
+
+  .pricing-head p{
+    font-size:15.5px;
+    max-width:560px;
+  }
+
+  .pricing-grid{
+    grid-template-columns:repeat(3, 270px);
+    gap:92px;
+    max-width:1180px;
+  }
+
+  .price-col{
+    min-height:460px;
+  }
+
+  .price-col h2{
+    font-size:22px;
+  }
+
+  .price-intro{
+    min-height:96px;
+    font-size:13.5px;
+  }
+
+  .price{
+    margin-top:36px;
+    padding-bottom:24px;
+  }
+
+  .price strong{
+    font-size:50px;
+  }
+
+  .details{
+    margin-top:42px;
+  }
+
+  .features{
+    gap:14px;
+    margin-bottom:34px;
+  }
+
+  .features li{
+    font-size:13.5px;
+  }
+
+  .fcols{
+    padding:42px 0 34px;
+  }
+}
+
 </style>
   <link rel="stylesheet" href="mobile.css">
 </head>
