@@ -606,7 +606,7 @@ input#fileInput { display:none; }
 <div class="stage">
 
   <!-- s5: Industry -->
-  <div class="screen active" id="s5">
+  <div class="screen" id="s5">
     <div class="q-text">What kind of<br>business are you?</div>
     <div class="choice-grid cols-2">
       <div class="choice" tabindex="0" role="button" onclick="pick(this,'industry','retail')" onkeydown="kbd(event)"><div class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div><div class="choice-text"><div class="choice-label">Retail</div></div><div class="choice-check"></div></div>
@@ -637,7 +637,7 @@ input#fileInput { display:none; }
   </div>
 
   <!-- s1: Name -->
-  <div class="screen" id="s1">
+  <div class="screen active" id="s1">
     <div class="q-text">Let's start with<br>the basics.</div>
     <div class="q-input-wrap"><label class="q-label" for="inp-name">Full name</label><input class="q-input" type="text" id="inp-name" placeholder="Jane Smith" autocomplete="name" aria-label="Your full name" oninput="validateContact1()"></div>
     <div class="q-input-wrap"><label class="q-label" for="inp-company">Company name</label><input class="q-input" type="text" id="inp-company" placeholder="Riverside Hospitality Group" autocomplete="organization" aria-label="Your company name" oninput="validateContact1()"></div>
@@ -868,12 +868,12 @@ const data = {
   lcrStatus: '', pricingModel: '', surcharge: '', goals: [], pain: ''
 };
 let otp = { sent: false };
-let currentId = 's5';
+let currentId = 's1';
 let history = [];
 let busy = false;
 
 function computePath() {
-  const p = ['s5','s6','s1','s2'];
+  const p = ['s1','s5','s6','s2'];
   if (!data.skippedEmail) p.push('s3');
   p.push('s0');
   if (data.skippedUpload) p.push('sMoreDetails');
