@@ -119,7 +119,7 @@ body {
   display:flex; align-items:center; justify-content:center;
   padding-top:calc(80px + env(safe-area-inset-top));
   padding-bottom:calc(80px + env(safe-area-inset-bottom));
-  padding-left:max(40px, env(safe-area-inset-left));
+  padding-left:calc(max(((100vw - var(--shell-width)) / 2), var(--site-frame)) + 26px);
   padding-right:max(40px, env(safe-area-inset-right));
 }
 .screen {
@@ -361,7 +361,7 @@ input#fileInput { display:none; }
 .back-btn {
   position:fixed;
   bottom:calc(36px + env(safe-area-inset-bottom));
-  left:max(40px, env(safe-area-inset-left));
+  left:calc(max(((100vw - var(--shell-width)) / 2), var(--site-frame)) + 26px);
   z-index:100;
   background:rgba(15,18,24,0.7); backdrop-filter:blur(8px);
   border:1px solid var(--line); border-radius:0;
@@ -372,19 +372,7 @@ input#fileInput { display:none; }
 .back-btn:hover { border-color:var(--frame); color:var(--cream); }
 .back-btn:focus-visible { outline:2px solid var(--peach); outline-offset:2px; }
 .back-btn svg { width:13px; height:13px; stroke:currentColor; stroke-width:2; fill:none; }
-.key-hint {
-  position:fixed;
-  bottom:calc(36px + env(safe-area-inset-bottom));
-  right:max(40px, env(safe-area-inset-right));
-  z-index:100;
-  font-family:var(--sans); font-size:12px; color:var(--cream-faint);
-  display:flex; align-items:center; gap:6px;
-}
-.key {
-  display:inline-flex; align-items:center; justify-content:center;
-  background:rgba(224,233,246,0.05); border:1px solid var(--line);
-  border-radius:0; padding:2px 7px; font-size:11px;
-}
+
 
 /* ── Confirm screen numbered steps ── */
 .confirm-step { display:flex; gap:16px; align-items:flex-start; padding:16px 0; border-bottom:1px solid var(--line); }
@@ -457,7 +445,6 @@ input#fileInput { display:none; }
   .cta-row { width:100%; margin-top:4px; }
   .cta { width:100%; justify-content:center; padding:14px 22px; min-width:0; }
   .back-btn { left:max(22px, env(safe-area-inset-left)); bottom:calc(16px + env(safe-area-inset-bottom)); }
-  .key-hint { display:none; }
   .choice-grid.cols-2 { grid-template-columns:1fr; }
   .otp-digit { width:44px; height:56px; font-size:24px; }
   .upload-zone { padding:28px 16px; }
@@ -529,8 +516,7 @@ input#fileInput { display:none; }
   .status-msg { font-size:12.5px; margin-top:8px; }
   .review-row { padding:10px 0; }
   .confirm-step { padding:12px 0; }
-  .back-btn { left:28px; bottom:calc(20px + env(safe-area-inset-bottom)); padding:8px 14px; border-radius:0; background:rgba(15,18,24,.82); }
-  .key-hint { display:none !important; }
+  .back-btn { left:calc(var(--site-frame) + 20px); bottom:calc(20px + env(safe-area-inset-bottom)); padding:8px 14px; border-radius:0; background:rgba(15,18,24,.82); }
 }
 
 @media (max-width:480px) {
@@ -566,7 +552,6 @@ input#fileInput { display:none; }
   .upload-sub { font-size:12.5px; }
   .cta { height:50px; min-width:190px; padding:0 22px; font-size:14px; }
   .back-btn { bottom:calc(30px + env(safe-area-inset-bottom)); padding:8px 16px; font-size:12px; }
-  .key-hint { bottom:calc(30px + env(safe-area-inset-bottom)); }
   .loading-ring { width:40px; height:40px; margin-bottom:24px; }
   .loading-label { font-size:22px; }
   .loading-sub { font-size:13px; }
@@ -599,9 +584,6 @@ input#fileInput { display:none; }
   Back
 </button>
 
-<div class="key-hint" id="keyHint" style="display:none">
-  Press <span class="key">Enter ↵</span> to continue
-</div>
 
 <div class="stage">
 
@@ -891,10 +873,10 @@ function renderProgress() {
   document.getElementById('progressFill').style.width = pct + '%';
 }
 
-const KEYHINT_SCREENS = ['s1','s2','s3'];
+
 function updateChrome() {
   document.getElementById('backBtn').style.display = history.length ? 'flex' : 'none';
-  document.getElementById('keyHint').style.display = KEYHINT_SCREENS.includes(currentId) ? 'flex' : 'none';
+
 }
 
 const FIT_FLOOR = 0.62;
@@ -973,7 +955,7 @@ function goEdit(id) {
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   if (e.target.tagName === 'TEXTAREA') return;
-  if (!KEYHINT_SCREENS.includes(currentId) && currentId !== 'sReview') return;
+  if (currentId !== 'sReview') return;
   const btn = document.querySelector('#' + currentId + ' .cta:not(:disabled)');
   if (btn) btn.click();
 });
@@ -1322,7 +1304,6 @@ async function submitAll() {
   loading.classList.add('active');
   applyFit(loading);
   document.getElementById('backBtn').style.display = 'none';
-  document.getElementById('keyHint').style.display = 'none';
   document.getElementById('progressFill').style.width = '100%';
 
   const steps = ['ls0','ls1','ls2','ls3'];
