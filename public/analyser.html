@@ -65,6 +65,19 @@ body {
 /* No ambient glows — keep consistent with the rest of the site */
 .ambient { display: none; }
 
+/* ── Shell frame — fixed vertical border lines matching the rest of the site ── */
+.shell-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  pointer-events: none;
+  width: calc(100vw - (var(--site-frame) * 2));
+  max-width: var(--shell-width);
+  margin: 0 auto;
+  border-left: 1px solid var(--frame);
+  border-right: 1px solid var(--frame);
+}
+
 /* ── Nav / Chrome ── */
 .chrome {
   position:fixed; top:0; left:0; right:0; z-index:500;
