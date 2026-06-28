@@ -1324,10 +1324,10 @@ body {
 <div class="page">
 <div class="content-page">
   <div class="page-header">
-    <div class="page-header-logo">
-      <span class="page-header-mark"><span></span><span></span></span>
-      acceptor<span>IQ</span>
+<div class="page-header-logo">
+      <img src="https://www.acceptoriq.com.au/acceptorIQ-full-black.png" alt="acceptorIQ" style="height:18px;width:auto;display:block;">
     </div>
+</div>
     <div class="page-header-meta">Payments Stack Analysis &middot; Confidential &middot; {{report_date}}</div>
   </div>
   <div class="page-content">
@@ -1378,9 +1378,8 @@ body {
 <div class="page">
 <div class="content-page">
   <div class="page-header">
-    <div class="page-header-logo">
-      <span class="page-header-mark"><span></span><span></span></span>
-      acceptor<span>IQ</span>
+<div class="page-header-logo">
+      <img src="https://www.acceptoriq.com.au/acceptorIQ-full-black.png" alt="acceptorIQ" style="height:18px;width:auto;display:block;">
     </div>
     <div class="page-header-meta">Payments Stack Analysis &middot; Confidential &middot; {{report_date}}</div>
   </div>
@@ -1410,9 +1409,8 @@ body {
 <div class="page">
 <div class="content-page">
   <div class="page-header">
-    <div class="page-header-logo">
-      <span class="page-header-mark"><span></span><span></span></span>
-      acceptor<span>IQ</span>
+<div class="page-header-logo">
+      <img src="https://www.acceptoriq.com.au/acceptorIQ-full-black.png" alt="acceptorIQ" style="height:18px;width:auto;display:block;">
     </div>
     <div class="page-header-meta">Payments Stack Analysis &middot; Confidential &middot; {{report_date}}</div>
   </div>
