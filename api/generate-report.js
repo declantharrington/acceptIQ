@@ -13,6 +13,7 @@
 import { PAYMENTS_KB } from './_lib/payments-knowledge-base.js';
 import { buildSystemPrompt } from './_lib/report/prompt/reportSystemPrompt.js';
 import { buildTemplate } from './_lib/report/template/reportTemplate.js';
+import { buildOpportunities, selectModules, topOpportunities } from './_lib/report/engine/opportunityEngine.js';
 
 export const config = {
   // Sonnet can take 20-40s+ on a long report; match analyse.js so the function
@@ -267,11 +268,19 @@ export default async function handler(req, res) {
       return { debitTurnover, estDebitFees, monthly, annual: monthly * 12 };
     })();
 
-    // -- 3. Call Claude to write personalised narrative ------------
+    // -- 3. Payments Intelligence Engine: opportunity ranking + module selection ---
+    // This layer chooses which report modules are relevant before the LLM writes.
+    // No arbitrary scores are used; opportunities are ranked by estimated value,
+    // urgency, confidence and relevance.
+    const opportunities = buildOpportunities({ report, reformSavings, lcrSavings });
+    const selectedModules = selectModules({ report, opportunities, feeComposition, benchmarkBars });
+    const priorityOpportunities = topOpportunities(opportunities, 4);
+
+    // -- 4. Call Claude to write personalised narrative ------------
     // The acceptorIQ Knowledge Base is prepended as authoritative reference for
     // all Australian payments facts, benchmarks and the report philosophy. The
     // condensed instructions that follow it are the operative rules for THIS task.
-    const systemPrompt = buildSystemPrompt({ paymentsKb: PAYMENTS_KB, toneGuide });
+    const systemPrompt = buildSystemPrompt({ paymentsKb: PAYMENTS_KB, toneGuide, selectedModules });
 
     const facts = report; // the analyser now returns facts only
 
@@ -366,6 +375,12 @@ ${setupStr}
 FACTUAL OBSERVATIONS FROM THE STATEMENT:
 ${observationsStr}
 
+MODULES SELECTED BY ACCEPTORIQ RULES ENGINE:
+${selectedModules.join(', ')}
+
+RANKED OPPORTUNITIES FROM ACCEPTORIQ RULES ENGINE:
+${priorityOpportunities.map((o, i) => `${i + 1}. ${o.title} | Category: ${o.category} | Estimated annual value: ${o.estimatedAnnualValue ? fmtD(o.estimatedAnnualValue) : 'Strategic / to be validated'} | Confidence: ${o.confidence} | Urgency: ${o.urgency} | Evidence: ${(o.evidence || []).join('; ')}`).join('\n') || '-'}
+
 MERCHANT PROFILE:
 ${programContext}${adminNotes ? `
 
@@ -410,10 +425,19 @@ ${adminNotes}` : ''}`;
       throw new Error('Failed to parse narrative from model output');
     }
 
-    // -- 4. Load the HTML template ---------------------------------
-    let html = buildTemplate();
+    // -- 5. Load the modular HTML template --------------------------
+    let html = buildTemplate({ modules: selectedModules });
 
     // -- 5. Helper to convert narrative text to HTML ---------------
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     function renderText(text) {
       if (!text) return '';
       return text
@@ -514,6 +538,24 @@ ${adminNotes}` : ''}`;
     const totalAnnualOpportunity = (Number(lcrAnnualOpportunity) || 0) + (Number(reformAnnualOpportunity) || 0);
     const totalMonthlyOpportunity = totalAnnualOpportunity / 12;
 
+    const priorityOpportunityHtml = priorityOpportunities.length
+      ? priorityOpportunities.map((o, idx) => `
+        <div class="priority-card">
+          <div class="priority-num">${idx + 1}</div>
+          <div>
+            <div class="priority-title">${escapeHtml(o.title)}</div>
+            <div class="priority-meta">${escapeHtml(o.category)} · ${escapeHtml(o.urgency)} urgency</div>
+            <div class="priority-evidence">${escapeHtml((o.evidence || []).join(' · ') || 'Evidence to be validated')}</div>
+            <span class="confidence-pill">${escapeHtml(o.confidence)}</span>
+          </div>
+          <div class="priority-impact">Impact<strong>${o.estimatedAnnualValue ? fmtD0(o.estimatedAnnualValue) + '/yr' : escapeHtml(o.valueBand || 'Strategic')}</strong></div>
+        </div>`).join('')
+      : '<div class="note-box">No material quantified opportunities were detected from the available statement data. A fuller review may still identify provider, gateway or contract opportunities.</div>';
+
+    const highestPriorityLabel = priorityOpportunities[0]
+      ? priorityOpportunities[0].title.replace(/^(October 2026 |Debit routing \/ |Surcharge strategy before )/i, '').slice(0, 26)
+      : 'To validate';
+
     // -- 10. Build full replacement map -----------------------------
     const replacements = {
       '{{provider}}':               report.provider || '-',
@@ -523,6 +565,7 @@ ${adminNotes}` : ''}`;
       '{{total_fees}}':             fmtD(report.totalFees),
       '{{volume}}':                 fmtD(report.volume),
       '{{potential_savings_annual}}': totalAnnualOpportunity > 0 ? fmtD0(totalAnnualOpportunity) : 'To be confirmed',
+      '{{highest_priority_label}}':  highestPriorityLabel,
       '{{potential_savings_monthly}}': totalMonthlyOpportunity > 0 ? fmtD(totalMonthlyOpportunity) : '-',
       '{{reform_savings_annual}}':  reformSavings ? fmtD0(reformSavings.annual) : 'Not calculable',
       '{{lcr_savings_annual}}':     (!lcrIsConfirmedOn && lcrSavings) ? fmtD0(lcrSavings.annual) : 'Not applicable',
@@ -549,12 +592,14 @@ ${adminNotes}` : ''}`;
       '{{savings_opportunity}}':    renderText(narrative.savingsOpportunity   || ''),
       '{{lcr_analysis}}':           renderText(narrative.lcrAnalysis          || ''),
       '{{chargeback_analysis}}':    renderText(narrative.chargebackAnalysis   || ''),
+      '{{surcharge_analysis}}':      renderText(narrative.surchargeAnalysis     || ''),
       '{{benchmark_comment}}':      renderText(narrative.benchmarkComment     || ''),
       '{{stack_assessment}}':       renderText(narrative.stackAssessment      || ''),
       '{{next_step_1}}':            narrative.nextStep1         || '',
       '{{next_step_2}}':            narrative.nextStep2         || '',
       '{{next_step_3}}':            narrative.nextStep3         || '',
       '{{key_recommendation}}':     narrative.keyRecommendation || '',
+      '{{priority_opportunities}}':  priorityOpportunityHtml,
       ...alertReplacements,
       ...stackReplacements,
     };
