@@ -216,3 +216,52 @@ body {
 .priority-impact{text-align:right;font-size:11px;color:#7c8db0;text-transform:uppercase;letter-spacing:.08em;font-weight:700;}
 .priority-impact strong{display:block;font-size:13px;color:#0F1218;letter-spacing:0;text-transform:none;margin-top:4px;}
 .confidence-pill{display:inline-block;border-radius:99px;padding:4px 8px;background:#eef3ff;color:#1a3a8a;font-weight:700;font-size:10px;margin-top:6px;}
+
+/* -- REPORT ENGINE V2 FLOW UPDATES -- */
+.section-title.large{font-size:30px;max-width:700px;margin-bottom:18px;}
+.landscape-page .page-content{display:flex;flex-direction:column;}
+.landscape-copy{font-size:14px;line-height:1.7;max-width:78ch;color:#35405d;}
+.landscape-copy p{margin-bottom:12px;}
+.landscape-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0 18px;}
+.landscape-card{border:1px solid #e4eaf6;background:#fff;padding:18px 18px;min-height:116px;box-shadow:0 4px 18px rgba(15,18,24,.025);display:flex;flex-direction:column;justify-content:center;}
+.landscape-val{display:block;font-size:27px;line-height:1.05;font-weight:700;letter-spacing:-.04em;color:#3F77D6;margin-bottom:9px;}
+.landscape-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.10em;color:#7c8db0;line-height:1.45;}
+.landscape-note{margin-top:auto;}
+.takeaway-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:18px;}
+.takeaway-card{border:1px solid #e4eaf6;background:#fff;padding:16px 18px;border-left:4px solid #3F77D6;min-height:104px;}
+.takeaway-card.alert-good{border-left-color:#0a7a52;background:#f7fbf8;}
+.takeaway-card.alert-warn{border-left-color:#c8960c;background:#fffaf0;}
+.takeaway-card.alert-info{border-left-color:#3F77D6;background:#f7f9ff;}
+.takeaway-kicker{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#7c8db0;margin-bottom:6px;}
+.takeaway-card .alert-heading{font-size:15px;color:#0F1218;margin-bottom:6px;}
+.takeaway-card .alert-body{font-size:12.3px;line-height:1.55;color:#3d4663;}
+.compact-snapshot{gap:9px;margin-top:12px;}
+.compact-snapshot .snapshot-card{min-height:78px;padding:13px 15px;}
+.compact-snapshot .snapshot-val{font-size:19px;margin-bottom:4px;}
+.fee-mini-section{margin-top:22px;}
+.fee-mini-section .section-title{font-size:21px;margin-bottom:10px;}
+.fee-mini-section .composition-bar{height:24px;}
+.fee-mini-section .insight-box{font-size:11.3px;padding:11px 13px;margin-top:12px;}
+.diagnostic-page .page-content{overflow:hidden;}
+.diagnostic-page .section{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #eef1f6;}
+.diagnostic-page .section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.diagnostic-page .section-title{font-size:21px;margin-bottom:10px;}
+.diagnostic-page .section-label{font-size:8.5px;margin-bottom:6px;}
+.diagnostic-page .section-body{font-size:11.5px;line-height:1.52;}
+.diagnostic-page .section-body p{margin-bottom:7px;}
+.diagnostic-page .section-body strong{font-size:11.8px;margin-bottom:2px;}
+.diagnostic-page .benchmark-wrap{margin-top:4px;margin-bottom:10px;}
+.diagnostic-page .bench-row{margin-bottom:6px;grid-template-columns:126px 1fr 48px;}
+.diagnostic-page .bench-track{height:8px;}
+.dark-callout{margin-top:18px;background:#0F1218;color:#fff;padding:18px 20px;font-size:13px;line-height:1.55;}
+.dark-callout-label{font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#A9CCF2;margin-bottom:8px;}
+.cta-copy{font-size:15px;color:#56607e;line-height:1.6;max-width:620px;margin-bottom:26px;}
+.cta-contact{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;}
+.cta-contact div{background:#fff;border:1px solid #e4eaf6;padding:14px 16px;}
+.cta-contact span{display:block;font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8a96ae;margin-bottom:4px;}
+.cta-contact strong{display:block;font-size:15px;color:#0F1218;font-weight:600;}
+.cta-footer{font-size:9px;color:#8a96ae;letter-spacing:.08em;text-transform:uppercase;border-top:1px solid #e5eaf4;padding-top:13px;line-height:1.55;margin-top:28px;}
+.priority-card{grid-template-columns:30px 1fr 100px;padding:12px 14px;}
+.priority-title{font-size:13px;}
+.priority-meta{font-size:9.5px;}
+.priority-evidence{font-size:11.3px;}

@@ -67,7 +67,16 @@ export function buildPriorityOpportunitiesHtml(priorityOpportunities) {
 }
 
 export function highestPriorityLabel(priorityOpportunities) {
-  return priorityOpportunities[0]
-    ? priorityOpportunities[0].title.replace(/^(October 2026 |Debit routing \/ |Surcharge strategy before )/i, '').slice(0, 26)
-    : 'To validate';
+  if (!priorityOpportunities[0]) return 'To validate';
+  const id = priorityOpportunities[0].id || '';
+  const labels = {
+    'least-cost-routing': 'Least-cost routing',
+    'october-reform': 'October reform',
+    'surcharge-reform': 'Surcharge planning',
+    'pricing-structure': 'Pricing review',
+    'chargebacks': 'Chargebacks',
+    'chargeback-visibility': 'Chargeback visibility',
+    'gateway-cost-visibility': 'Gateway visibility'
+  };
+  return labels[id] || priorityOpportunities[0].title;
 }

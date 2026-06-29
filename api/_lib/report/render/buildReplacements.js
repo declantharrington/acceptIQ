@@ -15,7 +15,7 @@ export function buildReplacements({ report, metrics, narrative, identity, priori
     '{{provider}}': report.provider || '-',
     '{{period}}': report.period || '-',
     '{{effective_rate}}': fmtP(report.effectiveRate),
-    '{{provider_rate}}': report.providerRate || '-',
+    '{{provider_rate}}': formatProviderRate(report.providerRate),
     '{{total_fees}}': fmtD(report.totalFees),
     '{{volume}}': fmtD(report.volume),
     '{{potential_savings_annual}}': snapshot.totalAnnualOpportunity > 0 ? fmtD0(snapshot.totalAnnualOpportunity) : 'To be confirmed',
@@ -57,6 +57,16 @@ export function buildReplacements({ report, metrics, narrative, identity, priori
     ...alertReplacements,
     ...stackReplacements,
   };
+}
+
+
+function formatProviderRate(value) {
+  if (value == null || value === '') return '-';
+  const raw = String(value).trim();
+  if (raw.includes('%')) return raw;
+  const n = Number(raw);
+  if (!Number.isNaN(n)) return `${n}%`;
+  return raw;
 }
 
 function buildAlertReplacements(narrative) {

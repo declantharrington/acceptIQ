@@ -1,6 +1,6 @@
 // api/_lib/report/template/reportTemplate.js
-// Modular report composer. The rules engine passes selected module ids; this
-// file assembles the report from reusable page modules.
+// Report Engine v2: builds a commercial narrative that moves from market context
+// to merchant facts, then into selected diagnostic modules and opportunities.
 
 import { readFileSync } from 'node:fs';
 
@@ -23,8 +23,8 @@ const pageFooter = page => `<div class="page-footer">
   <div class="page-footer-right">Page ${page}</div>
 </div>`;
 
-function contentPage(pageNo, inner) {
-  return `<div class="page"><div class="content-page">${pageHeader}<main class="page-content">${inner}</main>${pageFooter(pageNo)}</div></div>`;
+function contentPage(pageNo, inner, extraClass = '') {
+  return `<div class="page"><div class="content-page ${extraClass}">${pageHeader}<main class="page-content">${inner}</main>${pageFooter(pageNo)}</div></div>`;
 }
 
 function coverPage() {
@@ -54,47 +54,49 @@ function coverPage() {
 </div>`;
 }
 
-function executivePage(pageNo) {
+function landscapePage(pageNo) {
+  return contentPage(pageNo, `
+    <section class="section no-split landscape-hero">
+      <div class="section-label">Australian Payments Landscape</div>
+      <h2 class="section-title large">Payments have changed. Most merchant pricing has not.</h2>
+      <div class="section-body landscape-copy">{{landscape_preamble}}</div>
+    </section>
+    <section class="landscape-grid no-split">
+      <div class="landscape-card"><span class="landscape-val">70% &rarr; 15%</span><span class="landscape-lbl">Cash share of in-person payments, 2007 to 2025</span></div>
+      <div class="landscape-card"><span class="landscape-val">$1.8B</span><span class="landscape-lbl">Estimated card surcharges paid by Australians each year</span></div>
+      <div class="landscape-card"><span class="landscape-val">1 Oct 2026</span><span class="landscape-lbl">Major surcharge and interchange reforms begin</span></div>
+      <div class="landscape-card"><span class="landscape-val">~20%</span><span class="landscape-lbl">Typical debit cost reduction available from least-cost routing</span></div>
+    </section>
+    <section class="note-box landscape-note no-split"><strong>Why this matters:</strong> payments costs are recurring, complex and often set once then left alone. The merchants that understand their stack are better positioned to protect margin as regulation, customer behaviour and provider pricing change.</section>
+  `, 'landscape-page');
+}
+
+function takeawaysPage(pageNo) {
   return contentPage(pageNo, `
     <section class="section no-split">
-      <div class="section-label">Executive Summary</div>
-      <h2 class="section-title">Key takeaways</h2>
-      <div class="section-body executive-copy">{{executive_summary}}</div>
+      <div class="section-label">Key Takeaways From Your Data</div>
+      <h2 class="section-title">What stands out</h2>
+      <p class="lead-in">These are the headline observations from the statement and questionnaire responses. The detailed evidence follows in the diagnostic sections.</p>
+      <div class="takeaway-grid">
+        <div class="takeaway-card {{key_finding_1_class}}"><div class="takeaway-kicker">Takeaway 1</div><div class="alert-heading">{{key_finding_1_heading}}</div><div class="alert-body">{{key_finding_1_body}}</div></div>
+        <div class="takeaway-card {{key_finding_2_class}}"><div class="takeaway-kicker">Takeaway 2</div><div class="alert-heading">{{key_finding_2_heading}}</div><div class="alert-body">{{key_finding_2_body}}</div></div>
+        <div class="takeaway-card {{key_finding_3_class}}"><div class="takeaway-kicker">Takeaway 3</div><div class="alert-heading">{{key_finding_3_heading}}</div><div class="alert-body">{{key_finding_3_body}}</div></div>
+      </div>
     </section>
     <section class="insight-strip no-split">
       <div class="insight-card"><span class="insight-val">{{potential_savings_annual}}</span><span class="insight-lbl">Potential annual opportunity</span></div>
       <div class="insight-card"><span class="insight-val">{{highest_priority_label}}</span><span class="insight-lbl">Highest-priority validation</span></div>
       <div class="insight-card"><span class="insight-val">{{debit_volume_pct}}</span><span class="insight-lbl">Debit mix to review</span></div>
     </section>
-    <section class="section no-split">
-      <div class="landscape-strip">
-        <div class="ls-item"><span class="ls-val">$1.8B</span><span class="ls-lbl">Surcharges paid/year</span></div>
-        <div class="ls-item"><span class="ls-val">70%&rarr;15%</span><span class="ls-lbl">Cash use, 2007-2025</span></div>
-        <div class="ls-item"><span class="ls-val">1 Oct 2026</span><span class="ls-lbl">RBA reforms begin</span></div>
-      </div>
-      <div class="section-body compact">{{landscape_preamble}}</div>
-    </section>`);
-}
-
-function findingsPage(pageNo) {
-  return contentPage(pageNo, `
-    <section class="section">
-      <div class="section-label">Key Findings</div>
-      <h2 class="section-title">What stands out</h2>
-      <div class="alerts large-alerts">
-        <div class="alert {{key_finding_1_class}}"><div class="alert-heading">{{key_finding_1_heading}}</div><div class="alert-body">{{key_finding_1_body}}</div></div>
-        <div class="alert {{key_finding_2_class}}"><div class="alert-heading">{{key_finding_2_heading}}</div><div class="alert-body">{{key_finding_2_body}}</div></div>
-        <div class="alert {{key_finding_3_class}}"><div class="alert-heading">{{key_finding_3_heading}}</div><div class="alert-body">{{key_finding_3_body}}</div></div>
-      </div>
-    </section>`);
+  `);
 }
 
 function snapshotPage(pageNo) {
   return contentPage(pageNo, `
-    <section class="section">
+    <section class="section no-split">
       <div class="section-label">Operating Snapshot</div>
       <h2 class="section-title">What shapes the opportunity</h2>
-      <div class="snapshot-grid">
+      <div class="snapshot-grid compact-snapshot">
         <div class="snapshot-card"><span class="snapshot-val">{{transactions}}</span><span class="snapshot-lbl">Transactions reviewed</span></div>
         <div class="snapshot-card"><span class="snapshot-val">{{avg_fee_per_txn}}</span><span class="snapshot-lbl">Average fee per transaction</span></div>
         <div class="snapshot-card"><span class="snapshot-val">{{provider_rate}}</span><span class="snapshot-lbl">Provider margin observed</span></div>
@@ -102,39 +104,19 @@ function snapshotPage(pageNo) {
         <div class="snapshot-card"><span class="snapshot-val">{{debit_volume_pct}}</span><span class="snapshot-lbl">Debit mix ({{debit_volume_amount}})</span></div>
         <div class="snapshot-card"><span class="snapshot-val">{{credit_volume_pct}}</span><span class="snapshot-lbl">Credit mix ({{credit_volume_amount}})</span></div>
       </div>
-      <div class="note-box"><strong>Why these numbers matter:</strong> this page focuses on the drivers behind the cost picture rather than repeating the headline rate, fees and volume from the cover.</div>
-    </section>`);
-}
-
-function feePage(pageNo) {
-  return contentPage(pageNo, `
-    <section class="section">
+    </section>
+    <section class="section no-split fee-mini-section">
       <div class="section-label">Fee Analysis</div>
       <h2 class="section-title">Where your costs come from</h2>
       {{fee_composition}}
       <div class="insight-box"><strong>Largest cost driver:</strong> interchange is the wholesale cost layer passed through to the bank that issued your customer's card. When this line is the largest share of the bill, reform and pass-through become especially important.</div>
-      <table class="data-table compact-table">
-        <thead><tr><th style="width:42%">Component</th><th>Value</th></tr></thead>
-        <tbody>
-          <tr><td class="td-label">Effective rate</td><td class="td-value">{{effective_rate}}</td></tr>
-          <tr><td class="td-label">Provider rate / margin</td><td class="td-value">{{provider_rate}}</td></tr>
-          <tr><td class="td-label">Total fees paid</td><td class="td-value">{{total_fees}}</td></tr>
-          <tr><td class="td-label">Card volume processed</td><td class="td-value">{{volume}}</td></tr>
-          <tr><td class="td-label">Total transactions</td><td class="td-value">{{transactions}}</td></tr>
-          <tr><td class="td-label">Average fee per transaction</td><td class="td-value">{{avg_fee_per_txn}}</td></tr>
-          <tr><td class="td-label">Monthly account fee</td><td class="td-value">{{monthly_fee}}</td></tr>
-          <tr><td class="td-label">Terminal fees</td><td class="td-value">{{terminal_fees}}</td></tr>
-          <tr><td class="td-label">Pricing model</td><td class="td-value">{{pricing_model}}</td></tr>
-          <tr><td class="td-label">LCR status</td><td class="td-value">{{lcr_status}}</td></tr>
-          <tr><td class="td-label">Chargeback ratio</td><td class="td-value">{{chargeback_ratio}}</td></tr>
-        </tbody>
-      </table>
-    </section>`);
+    </section>
+  `);
 }
 
 function stackPage(pageNo) {
   return contentPage(pageNo, `
-    <section class="section">
+    <section class="section no-split">
       <div class="section-label">Stack Component Review</div>
       <h2 class="section-title">How your stack is performing</h2>
       <table class="data-table stack-table">
@@ -143,69 +125,67 @@ function stackPage(pageNo) {
           ${[1,2,3,4,5].map(i => `<tr><td class="td-label">{{stack_item_${i}_label}}</td><td>{{stack_item_${i}_value}}</td><td class="{{stack_item_${i}_status_class}}">{{stack_item_${i}_status}}</td></tr>`).join('')}
         </tbody>
       </table>
-    </section>`);
+    </section>
+  `);
 }
 
-function pricingPage(pageNo) {
-  return contentPage(pageNo, `
-    <section class="section">
-      <div class="section-label">Pricing Model Assessment</div>
-      <h2 class="section-title">How you're currently charged</h2>
-      <div class="section-body">{{pricing_model_analysis}}</div>
-    </section>`);
+const moduleDefinitions = {
+  pricing: {
+    label: 'Pricing Model Assessment',
+    title: "How you're currently charged",
+    body: '{{pricing_model_analysis}}'
+  },
+  reform: {
+    label: 'Reform Opportunity',
+    title: 'The October 2026 upside',
+    body: '{{savings_opportunity}}'
+  },
+  lcr: {
+    label: 'Least-Cost Routing',
+    title: 'Debit routing and estimated impact',
+    body: '{{lcr_analysis}}'
+  },
+  surcharge: {
+    label: 'Surcharge Planning',
+    title: 'Preparing for October 2026',
+    body: '{{surcharge_analysis}}'
+  },
+  chargebacks: {
+    label: 'Chargebacks',
+    title: 'Visibility and risk',
+    body: '{{chargeback_analysis}}'
+  },
+  benchmark: {
+    label: 'Market Benchmark',
+    title: 'Your position against the market',
+    body: '{{benchmark_bars}}<div class="section-body">{{benchmark_comment}}</div>'
+  }
+};
+
+function moduleSection(id) {
+  const m = moduleDefinitions[id];
+  if (!m) return '';
+  return `<section class="section diagnostic-section module-${id}">
+    <div class="section-label">${m.label}</div>
+    <h2 class="section-title">${m.title}</h2>
+    <div class="section-body module-body">${m.body}</div>
+  </section>`;
 }
 
-function reformPage(pageNo) {
-  return contentPage(pageNo, `
-    <section class="section">
-      <div class="section-label">Reform Opportunity</div>
-      <h2 class="section-title">The October 2026 upside</h2>
-      <div class="section-body">{{savings_opportunity}}</div>
-    </section>`);
-}
-
-function lcrPage(pageNo) {
-  return contentPage(pageNo, `
-    <section class="section">
-      <div class="section-label">Least-Cost Routing</div>
-      <h2 class="section-title">Debit routing and estimated impact</h2>
-      <div class="section-body">{{lcr_analysis}}</div>
-    </section>`);
-}
-
-function surchargePage(pageNo) {
-  return contentPage(pageNo, `
-    <section class="section">
-      <div class="section-label">Surcharge Planning</div>
-      <h2 class="section-title">Preparing for October 2026</h2>
-      <div class="section-body">{{surcharge_analysis}}</div>
-    </section>`);
-}
-
-function chargebacksPage(pageNo) {
-  return contentPage(pageNo, `
-    <section class="section">
-      <div class="section-label">Chargebacks</div>
-      <h2 class="section-title">Visibility and risk</h2>
-      <div class="section-body">{{chargeback_analysis}}</div>
-    </section>`);
-}
-
-function benchmarkPage(pageNo) {
-  return contentPage(pageNo, `
-    <section class="section">
-      <div class="section-label">Market Benchmark</div>
-      <h2 class="section-title">Your position against the market</h2>
-      {{benchmark_bars}}
-      <div class="section-body">{{benchmark_comment}}</div>
-    </section>`);
+function diagnosticPages(moduleIds) {
+  const ids = moduleIds.filter(id => moduleDefinitions[id]);
+  const pages = [];
+  for (let i = 0; i < ids.length; i += 2) {
+    pages.push(ids.slice(i, i + 2).map(moduleSection).join('\n'));
+  }
+  return pages;
 }
 
 function prioritiesPage(pageNo) {
   return contentPage(pageNo, `
-    <section class="section">
-      <div class="section-label">Priority Opportunities</div>
-      <h2 class="section-title">Recommended next actions</h2>
+    <section class="section no-split">
+      <div class="section-label">Opportunity Summary</div>
+      <h2 class="section-title">Where the value appears to be</h2>
       <p class="lead-in">These are the highest-impact areas to validate in a payments review. They are starting points for a conversation, not prescribed changes.</p>
       <div class="priority-list">{{priority_opportunities}}</div>
       <div class="dark-callout"><div class="dark-callout-label">Priority area to discuss</div><div>{{key_recommendation}}</div></div>
@@ -217,8 +197,8 @@ function ctaPage() {
   <div class="cta-logo-row">${logo}</div>
   <div class="cta-body">
     <div class="cta-eyebrow">Next Steps</div>
-    <h1 class="cta-title">Let's turn insight<br><span>into savings.</span></h1>
-    <p class="cta-copy">The report shows where the opportunities appear to be. A Payments Review turns those findings into a clear, practical action plan for your business.</p>
+    <h1 class="cta-title">Turn the review<br><span>into action.</span></h1>
+    <p class="cta-copy">The report has identified the areas that appear most worth validating. A Payments Review turns those findings into a clear action plan for your business.</p>
     <div class="cta-steps">
       <div><strong>Discuss this report</strong><span>A short conversation to walk through the findings and opportunities.</span></div>
       <div><strong>Validate and quantify</strong><span>We confirm the data, provider terms and implementation path.</span></div>
@@ -233,21 +213,20 @@ function ctaPage() {
 export function buildTemplate({ modules = [] } = {}) {
   let pageNo = 1;
   const pages = [coverPage()];
-  const add = (id, fn) => { if (modules.includes(id)) pages.push(fn(pageNo++)); };
+  const has = id => modules.includes(id);
 
-  add('executive', executivePage);
-  add('findings', findingsPage);
-  add('snapshot', snapshotPage);
-  add('fee', feePage);
-  add('stack', stackPage);
-  add('pricing', pricingPage);
-  add('reform', reformPage);
-  add('lcr', lcrPage);
-  add('surcharge', surchargePage);
-  add('chargebacks', chargebacksPage);
-  add('benchmark', benchmarkPage);
-  add('priorities', prioritiesPage);
-  if (modules.includes('cta')) pages.push(ctaPage());
+  if (has('landscape')) pages.push(landscapePage(pageNo++));
+  if (has('takeaways')) pages.push(takeawaysPage(pageNo++));
+  if (has('snapshot')) pages.push(snapshotPage(pageNo++));
+  if (has('stack')) pages.push(stackPage(pageNo++));
+
+  const diagnosticIds = ['pricing', 'reform', 'lcr', 'surcharge', 'chargebacks', 'benchmark'].filter(has);
+  for (const inner of diagnosticPages(diagnosticIds)) {
+    pages.push(contentPage(pageNo++, inner, 'diagnostic-page'));
+  }
+
+  if (has('priorities')) pages.push(prioritiesPage(pageNo++));
+  if (has('cta')) pages.push(ctaPage());
 
   return `<!DOCTYPE html>
 <html lang="en">

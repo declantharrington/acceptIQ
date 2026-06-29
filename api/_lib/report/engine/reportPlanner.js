@@ -6,10 +6,7 @@ import { selectReportModules, topOpportunities } from '../../pit/selectModules.j
 
 export function planReport({ report, metrics }) {
   const merchantProfile = { rawProgramContext: '', channel: report.channel || report.businessType || null };
-  const paymentsStack = {
-    gatewayDetected: false,
-    sourceCoverage: { gatewayInvoice: false }
-  };
+  const paymentsStack = { gatewayDetected: false, sourceCoverage: { gatewayInvoice: false } };
   const opportunities = identifyOpportunities({ facts: report, metrics, merchantProfile, paymentsStack, findings: [] });
   const selectedModules = selectReportModules({ facts: report, metrics, opportunities });
   const priorityOpportunities = topOpportunities(opportunities, 4);
