@@ -502,7 +502,19 @@ ${adminNotes}` : ''}`;
         </div>
       </div>` : '';
 
-    // -- 9. Build full replacement map -----------------------------
+    // -- 9. Build report snapshot metrics -------------------------
+    const fmtD0 = n => n != null ? `$${Number(n).toLocaleString('en-AU', { maximumFractionDigits: 0 })}` : '-';
+    const debitPct = report.cardMix && report.cardMix.debit != null ? Number(report.cardMix.debit) : null;
+    const creditPct = report.cardMix && report.cardMix.credit != null ? Number(report.cardMix.credit) : null;
+    const debitVolume = report.volume && debitPct != null && !Number.isNaN(debitPct) ? Number(report.volume) * (debitPct / 100) : null;
+    const creditVolume = report.volume && creditPct != null && !Number.isNaN(creditPct) ? Number(report.volume) * (creditPct / 100) : null;
+    const lcrIsConfirmedOn = String(report.lcrStatus || '').trim().toLowerCase() === 'on';
+    const lcrAnnualOpportunity = (!lcrIsConfirmedOn && lcrSavings) ? lcrSavings.annual : 0;
+    const reformAnnualOpportunity = reformSavings ? reformSavings.annual : 0;
+    const totalAnnualOpportunity = (Number(lcrAnnualOpportunity) || 0) + (Number(reformAnnualOpportunity) || 0);
+    const totalMonthlyOpportunity = totalAnnualOpportunity / 12;
+
+    // -- 10. Build full replacement map -----------------------------
     const replacements = {
       '{{provider}}':               report.provider || '-',
       '{{period}}':                 report.period || '-',
@@ -510,6 +522,14 @@ ${adminNotes}` : ''}`;
       '{{provider_rate}}':          report.providerRate || '-',
       '{{total_fees}}':             fmtD(report.totalFees),
       '{{volume}}':                 fmtD(report.volume),
+      '{{potential_savings_annual}}': totalAnnualOpportunity > 0 ? fmtD0(totalAnnualOpportunity) : 'To be confirmed',
+      '{{potential_savings_monthly}}': totalMonthlyOpportunity > 0 ? fmtD(totalMonthlyOpportunity) : '-',
+      '{{reform_savings_annual}}':  reformSavings ? fmtD0(reformSavings.annual) : 'Not calculable',
+      '{{lcr_savings_annual}}':     (!lcrIsConfirmedOn && lcrSavings) ? fmtD0(lcrSavings.annual) : 'Not applicable',
+      '{{debit_volume_pct}}':       debitPct != null && !Number.isNaN(debitPct) ? `${debitPct.toFixed(1)}%` : '-',
+      '{{debit_volume_amount}}':    debitVolume != null ? fmtD0(debitVolume) : '-',
+      '{{credit_volume_pct}}':      creditPct != null && !Number.isNaN(creditPct) ? `${creditPct.toFixed(1)}%` : '-',
+      '{{credit_volume_amount}}':   creditVolume != null ? fmtD0(creditVolume) : '-',
       '{{merchant_name}}':          companyName,
       '{{contact_name}}':           contactName,
       '{{merchant_email}}':         merchantEmail,
