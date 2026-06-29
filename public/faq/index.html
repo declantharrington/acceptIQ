@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/shared.css">
+<link rel="stylesheet" href="/css/shared.css">
 <style>
 :root{
   --bg:#0F1218;--bg2:#171C26;--cream:#E6EBF6;--cream-soft:rgba(224,233,246,0.60);
@@ -75,30 +75,11 @@ footer{position:relative;z-index:2;color:var(--cream)}
 @media(min-width:901px){.wrap{max-width:1440px}.nav{height:64px}.logo-full{height:30px}.nav-right .lnk{font-size:14px}.btn{min-width:190px;padding:15px 22px;font-size:14px}.fcols{padding:42px 0 34px}}
 @media(max-width:760px){.footer-section{border-top:none !important}}
 </style>
-<link rel="stylesheet" href="/mobile.css">
+<link rel="stylesheet" href="/css/mobile.css">
 </head>
 <body>
 <div class="shell">
-<header>
-  <div class="nav nav-wrap">
-    <a href="/" class="acceptor-logo" aria-label="acceptorIQ home">
-      <img src="/images/acceptorIQ-full.png" alt="acceptorIQ" class="logo-full">
-    </a>
-    <button class="mobile-menu-btn" aria-label="Open menu"><span></span><span></span></button>
-    <div class="nav-right">
-      <a href="/pricing" class="lnk">Pricing</a>
-      <a href="/analyser" class="btn btn-cream nav-cta">Get my review
-        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-    </div>
-  </div>
-</header>
-<div class="mobile-menu">
-  <a href="/pricing">Pricing</a>
-  <a href="/contact">Contact</a>
-  <a href="/analyser" class="mm-cta">Get my review</a>
-</div>
-
+<div data-include="header"></div>
 <main>
   <div class="page-hero">
     <div class="wrap">
@@ -177,46 +158,8 @@ footer{position:relative;z-index:2;color:var(--cream)}
   </section>
 </main>
 
-<div class="footer-section">
-  <canvas id="footer-mg"></canvas>
-  <footer class="wrap">
-    <div class="fcols">
-      <div class="fbrand">
-        <a href="/" class="acceptor-logo" aria-label="acceptorIQ home">
-          <img src="/images/acceptorIQ-full.png" alt="acceptorIQ" class="logo-full">
-        </a>
-      </div>
-      <div class="fcol">
-        <h4>Product</h4>
-        <a href="/#how-it-works">How it works</a>
-        <a href="/#results">Results</a>
-        <a href="/pricing">Pricing</a>
-        <a href="/faq">FAQ</a>
-      </div>
-      <div class="fcol">
-        <h4>Company</h4>
-        <a href="/">About</a>
-        <a href="/careers">Careers</a>
-        <a href="/contact">Contact</a>
-      </div>
-      <div class="fcol">
-        <h4>Resources</h4>
-        <a href="/faq">FAQ</a>
-        <a href="/privacy-terms">Privacy</a>
-        <a href="/privacy-terms">Terms</a>
-      </div>
-      <div class="fcol">
-        <h4>Connect</h4>
-        <a href="#">X (Twitter)</a>
-        <a href="#">LinkedIn</a>
-        <a href="mailto:hello@acceptorIQ.com.au?subject=Support%20request">Support</a>
-      </div>
-    </div>
-    <div class="fcopy">© 2026 acceptorIQ. All rights reserved.</div>
-  </footer>
+<div data-include="footer"></div>
 </div>
-</div>
-
 <script>
 (function initFooterMG(){var canvas=document.getElementById('footer-mg');if(!canvas)return;var gl=canvas.getContext('webgl')||canvas.getContext('experimental-webgl');if(!gl)return;var VS='attribute vec2 a_pos; void main(){ gl_Position=vec4(a_pos,0,1); }';var FS=['precision highp float;','uniform float u_time; uniform vec2 u_res;','vec2 h2(vec2 p){p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));return fract(sin(p)*43758.5453);}','float sn(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);float a=dot(h2(i)-.5,f),b=dot(h2(i+vec2(1,0))-.5,f-vec2(1,0)),c=dot(h2(i+vec2(0,1))-.5,f-vec2(0,1)),d=dot(h2(i+vec2(1))-.5,f-vec2(1));return .5+dot(vec2(mix(a,b,u.x),mix(c,d,u.x)),mix(vec2(1,0),vec2(0,1),u.y));}','float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*sn(p);p=p*2.+vec2(5.2,1.3);a*=.5;}return v;}','void main(){','  vec2 uv=gl_FragCoord.xy/u_res; uv.y=1.-uv.y;','  float t=u_time*0.18;','  vec2 w1=vec2(fbm(uv*1.8+vec2(t*.9,0.)),fbm(uv*1.8+vec2(0.,t*.7)+3.7));','  vec2 w2=vec2(fbm(uv*2.4+2.2*w1+vec2(t*.6,.3)),fbm(uv*2.4+2.2*w1+vec2(.3,t*.5)+9.2));','  vec2 q=uv+0.85*w2;','  vec2 cen=q-.5; float ang=length(cen)*4.*.06+t*.4; float cs=cos(ang),sn2=sin(ang);','  vec2 sw=vec2(cs*cen.x-sn2*cen.y,sn2*cen.x+cs*cen.y)+.5;','  float n1=smoothstep(.30,.72,fbm(sw*2.1+t*.5));','  float n2=smoothstep(.28,.70,fbm(sw*1.6-t*.4+2.3));','  float n3=smoothstep(.32,.68,fbm(sw*3.+t*.3+5.9));','  vec3 col=mix(vec3(.059,.071,.094),vec3(.290,.357,.659),n1);','  col=mix(col,vec3(.498,.651,.902),n2*.75);','  col=mix(col,vec3(.663,.800,.949),n3*.30);','  float fade=smoothstep(.42,1.,uv.y);','  col=mix(col,vec3(.902,.922,.965),fade*fade*1.05);','  float topDark=smoothstep(.55,0.,uv.y);','  col=mix(col,vec3(.059,.071,.094),topDark);','  float grain=fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453);','  col+=(grain-.5)*.018;','  gl_FragColor=vec4(clamp(col,0.,1.),1.);','}'].join('\n');function mk(t,s){var sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);return sh;}var prog=gl.createProgram();gl.attachShader(prog,mk(gl.VERTEX_SHADER,VS));gl.attachShader(prog,mk(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);gl.useProgram(prog);var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);var ap=gl.getAttribLocation(prog,'a_pos');gl.enableVertexAttribArray(ap);gl.vertexAttribPointer(ap,2,gl.FLOAT,false,0,0);var uT=gl.getUniformLocation(prog,'u_time'),uR=gl.getUniformLocation(prog,'u_res');function resize(){var dpr=Math.min(devicePixelRatio||1,2),w=canvas.clientWidth,h=canvas.clientHeight,pw=Math.round(w*dpr),ph=Math.round(h*dpr);if(canvas.width!==pw||canvas.height!==ph){canvas.width=pw;canvas.height=ph;gl.viewport(0,0,pw,ph);}gl.uniform2f(uR,pw,ph);}new ResizeObserver(resize).observe(canvas.parentElement||canvas);resize();var t0=performance.now();(function frame(){requestAnimationFrame(frame);resize();gl.uniform1f(uT,(performance.now()-t0)/1e3);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);})();})();
 </script>
@@ -242,5 +185,9 @@ document.addEventListener('DOMContentLoaded',function(){
   document.querySelectorAll('.fcol').forEach(function(s){var h4=s.querySelector('h4');if(h4)h4.addEventListener('click',function(){s.classList.toggle('is-open');});});
 });
 </script>
+
+<script src="/js/includes.js"></script>
+<script src="/js/mobile-menu.js"></script>
+<script src="/js/footer-bg.js"></script>
 </body>
 </html>
