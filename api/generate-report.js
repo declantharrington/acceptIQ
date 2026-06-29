@@ -1204,20 +1204,23 @@ body {
 }
 .key-rec-text { font-size: 14px; font-weight: 600; color: #E6EBF6; line-height: 1.45; letter-spacing: -0.01em; }
 
-/* -- CTA PAGE -- */
+/* ------------------------------------------------------------------
+   CTA PAGE
+-------------------------------------------------------------------*/
+
 .cta-page {
   background:
     radial-gradient(circle at 85% 12%, rgba(63,119,214,0.10), transparent 34%),
     radial-gradient(circle at 12% 92%, rgba(169,204,242,0.10), transparent 38%),
     linear-gradient(180deg,#ffffff 0%,#f7f9fc 100%);
-  min-height: 297mm;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  padding: 16mm 18mm;
+  min-height:297mm;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  padding:16mm 18mm;
 }
 
-.cta-page-logo-row {
+.cta-page-logo-row{
   display:flex;
   align-items:center;
   gap:10px;
@@ -1230,7 +1233,7 @@ body {
 
 .cta-eyebrow{
   font-size:10px;
-  font-weight:600;
+  font-weight:700;
   letter-spacing:.18em;
   text-transform:uppercase;
   color:#3F77D6;
@@ -1243,30 +1246,91 @@ body {
   color:#0F1218;
   letter-spacing:-0.05em;
   line-height:1.08;
-  margin-bottom:16px;
-  max-width:480px;
+  margin-bottom:18px;
+  max-width:500px;
 }
 
 .cta-sub{
   font-size:14px;
   font-weight:300;
-  color:#56607e;
-  line-height:1.75;
-  max-width:460px;
-  margin-bottom:36px;
+  color:#56607E;
+  line-height:1.8;
+  max-width:520px;
+  margin-bottom:34px;
 }
 
 .cta-divider{
   height:1px;
   background:#E5EAF4;
-  margin-bottom:28px;
+  margin:28px 0;
 }
+
+/* ------------------------------------------------------------------
+   PAYMENTS REVIEW CARD
+-------------------------------------------------------------------*/
+
+.cta-review-card{
+  background:#ffffff;
+  border:1px solid #DCE5F5;
+  box-shadow:0 8px 26px rgba(15,18,24,.05);
+  padding:28px 32px;
+  margin-bottom:8px;
+}
+
+.cta-review-label{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#3F77D6;
+  margin-bottom:12px;
+}
+
+.cta-review-title{
+  font-size:28px;
+  font-weight:300;
+  color:#0F1218;
+  letter-spacing:-0.045em;
+  line-height:1.2;
+  margin-bottom:14px;
+}
+
+.cta-review-text{
+  font-size:14px;
+  color:#56607E;
+  line-height:1.7;
+  margin-bottom:18px;
+}
+
+.cta-review-list{
+  margin:0 0 24px 22px;
+  padding:0;
+}
+
+.cta-review-list li{
+  margin-bottom:10px;
+  font-size:14px;
+  color:#374151;
+  line-height:1.7;
+}
+
+.cta-review-url{
+  margin-top:6px;
+  font-size:18px;
+  font-weight:600;
+  color:#3F77D6;
+  letter-spacing:-0.02em;
+}
+
+/* ------------------------------------------------------------------
+   CONTACT DETAILS
+-------------------------------------------------------------------*/
 
 .cta-contacts{
   display:flex;
   flex-wrap:wrap;
-  gap:36px;
-  margin-bottom:28px;
+  gap:40px;
+  margin-bottom:6px;
 }
 
 .cta-contact-label{
@@ -1280,8 +1344,8 @@ body {
 
 .cta-contact-value{
   font-size:13px;
-  color:#3F77D6;
   font-weight:600;
+  color:#0F1218;
 }
 
 .cta-prepared{
@@ -1289,6 +1353,12 @@ body {
   color:#6B7280;
   border-top:1px solid #E5EAF4;
   padding-top:16px;
+  line-height:1.7;
+}
+
+.cta-prepared strong{
+  color:#0F1218;
+  font-weight:600;
 }
 
 .cta-confidential{
@@ -1535,28 +1605,77 @@ body {
 
 <!-- === PAGE 6 - NEXT STEPS & CONTACT === -->
 <div class="page">
-<div class="cta-page">
-<div class="cta-page-logo-row">
-    <img src="https://www.acceptoriq.com.au/acceptorIQ-full.png" alt="acceptorIQ" style="height:28px;width:auto;display:block;filter:brightness(0) invert(1);">
-  </div>
-  <div class="cta-body">
-    <div class="cta-eyebrow">Next Steps</div>
-    <div class="cta-title">Let's turn these findings<br>into real savings.</div>
-    <div class="cta-sub">This report shows where the opportunities appear to be. The next step is a conversation: your acceptorIQ advisor will walk you through what each area means for your business and handle the specifics - what to change and how - at no cost to you. No lock-in contracts. No upfront fees.</div>
-    <div class="cta-divider"></div>
-    <div class="cta-contacts">
-      <div><div class="cta-contact-label">Website</div><div class="cta-contact-value">acceptoriq.com.au</div></div>
-      <div><div class="cta-contact-label">Email</div><div class="cta-contact-value">hello@acceptoriq.com.au</div></div>
+  <div class="cta-page">
+    <div class="cta-page-logo-row">
+      <img src="https://www.acceptoriq.com.au/acceptorIQ-full-black.png" alt="acceptorIQ" style="height:28px;width:auto;display:block;">
     </div>
-    <div class="cta-divider"></div>
-    <div class="cta-prepared">
-      Prepared for <strong style="color:rgba(224,233,246,0.55)">{{merchant_name}}</strong>
-      &nbsp;&middot;&nbsp; Attn: {{contact_name}}
-      &nbsp;&middot;&nbsp; {{merchant_email}} &nbsp;&middot;&nbsp; {{report_date}}
-    </div>
-    <div class="cta-confidential">Confidential &middot; acceptorIQ Advisory &middot; Not for distribution</div>
+
+    <div class="cta-body">
+      <div class="cta-eyebrow">Next Steps</div>
+
+      <div class="cta-title">Let's turn these findings<br>into real savings.</div>
+
+      <div class="cta-sub">
+        This report highlights where opportunities appear to exist within your payments environment. An acceptorIQ advisor can walk you through the findings, explain what they mean for your business and answer any questions arising from the report.
+      </div>
+
+      <div class="cta-divider"></div>
+<div class="cta-review-card">
+
+  <div class="cta-review-label">NEXT STEP</div>
+
+<div class="cta-review-card">
+
+  <div class="cta-review-label">
+    NEXT STEP
   </div>
+
+  <div class="cta-review-title">
+    Book your acceptorIQ Payments Review
+  </div>
+
+  <div class="cta-review-text">
+    During your Payments Review, an acceptorIQ advisor will:
+  </div>
+
+  <ul class="cta-review-list">
+    <li>Walk you through the findings in this report.</li>
+    <li>Explain what each opportunity means for your business.</li>
+    <li>Quantify the potential commercial impact.</li>
+    <li>Discuss practical options tailored to your payments environment.</li>
+  </ul>
+
+  <div class="cta-review-url">
+    www.acceptoriq.com.au/book
+  </div>
+
 </div>
+
+<div class="cta-divider"></div>
+
+
+      <div class="cta-contacts">
+        <div>
+          <div class="cta-contact-label">Website</div>
+          <div class="cta-contact-value">acceptoriq.com.au</div>
+        </div>
+        <div>
+          <div class="cta-contact-label">Email</div>
+          <div class="cta-contact-value">hello@acceptoriq.com.au</div>
+        </div>
+      </div>
+
+      <div class="cta-divider"></div>
+
+      <div class="cta-prepared">
+        Prepared for <strong>{{merchant_name}}</strong>
+        &nbsp;&middot;&nbsp; Attn: {{contact_name}}
+        &nbsp;&middot;&nbsp; {{merchant_email}} &nbsp;&middot;&nbsp; {{report_date}}
+      </div>
+
+      <div class="cta-confidential">Confidential &middot; acceptorIQ Advisory &middot; Not for distribution</div>
+    </div>
+  </div>
 </div>
 
 </body>
