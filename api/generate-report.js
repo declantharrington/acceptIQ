@@ -1616,48 +1616,15 @@ body {
       <div class="cta-title">Let's turn these findings<br>into real savings.</div>
 
       <div class="cta-sub">
-        This report highlights where opportunities appear to exist within your payments environment. An acceptorIQ advisor can walk you through the findings, explain what they mean for your business and answer any questions arising from the report.
+        This report shows where the opportunities appear to be. The next step is a Payments Review: your acceptorIQ advisor will walk you through the findings, explain what each area means for your business and discuss the practical options available to you.
       </div>
 
       <div class="cta-divider"></div>
-<div class="cta-review-card">
-
-  <div class="cta-review-label">NEXT STEP</div>
-
-<div class="cta-review-card">
-
-  <div class="cta-review-label">
-    NEXT STEP
-  </div>
-
-  <div class="cta-review-title">
-    Book your acceptorIQ Payments Review
-  </div>
-
-  <div class="cta-review-text">
-    During your Payments Review, an acceptorIQ advisor will:
-  </div>
-
-  <ul class="cta-review-list">
-    <li>Walk you through the findings in this report.</li>
-    <li>Explain what each opportunity means for your business.</li>
-    <li>Quantify the potential commercial impact.</li>
-    <li>Discuss practical options tailored to your payments environment.</li>
-  </ul>
-
-  <div class="cta-review-url">
-    www.acceptoriq.com.au/book
-  </div>
-
-</div>
-
-<div class="cta-divider"></div>
-
 
       <div class="cta-contacts">
         <div>
-          <div class="cta-contact-label">Website</div>
-          <div class="cta-contact-value">acceptoriq.com.au</div>
+          <div class="cta-contact-label">Book your Payments Review</div>
+          <div class="cta-contact-value">acceptoriq.com.au/book</div>
         </div>
         <div>
           <div class="cta-contact-label">Email</div>
