@@ -1,0 +1,667 @@
+/* -- RESET & BASE -- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #1a1a2e;
+  background: #fff;
+  font-size: 13px;
+  line-height: 1.6;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* -- PAGE LAYOUT --
+   IMPORTANT: \`.page\` uses min-height (a floor), not height (a ceiling) - by
+   design, since narrative length varies per report and we cannot pre-measure
+   it. If a page's content is too long for 297mm, the element grows taller
+   and pushes the next page's content down the document; the browser/PDF
+   engine then paginates the WHOLE flowing document using the page-break
+   rules below, rather than us trying to hard-clip content (which silently
+   eats text) or hard-fix one page's height (which breaks for shorter
+   reports). \`overflow\` is intentionally not \`hidden\` here so a long page
+   reflows instead of clipping its own text. */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  position: relative;
+  page-break-after: always;
+  break-after: page;
+}
+.page:last-child { page-break-after: avoid; break-after: avoid; }
+/* -- COVER PAGE -- */
+.cover {
+  background:
+    radial-gradient(circle at 85% 12%, rgba(63,119,214,0.10), transparent 34%),
+    radial-gradient(circle at 12% 92%, rgba(169,204,242,0.10), transparent 38%),
+    linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+  color: #0F1218;
+  min-height: 297mm;
+  display: flex;
+  flex-direction: column;
+  padding: 16mm 18mm;
+  box-sizing: border-box;
+}
+
+.cover-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: auto;
+}
+
+.cover-acceptor-mark span {
+  background: #0F1218;
+}
+
+.cover-acceptor-word {
+  font-size: 19px;
+  font-weight: 300;
+  letter-spacing: -0.055em;
+  color: #0F1218;
+}
+
+.cover-acceptor-word span {
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: #3F77D6;
+}
+
+.cover-body { margin-top: auto; }
+
+.cover-eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #3F77D6;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cover-eyebrow::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #d8e3f7;
+}
+
+.cover-title {
+  font-size: 40px;
+  font-weight: 300;
+  color: #0F1218;
+  letter-spacing: -0.05em;
+  line-height: 1.08;
+  margin-bottom: 8px;
+}
+
+.cover-title span {
+  font-weight: 500;
+  color: #3F77D6;
+}
+
+.cover-subtitle {
+  font-size: 16px;
+  font-weight: 300;
+  color: #56607e;
+  margin-bottom: 36px;
+}
+
+.cover-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+  margin-bottom: 36px;
+}
+
+.cover-stat {
+  background: #ffffff;
+  border: 1px solid #e4eaf6;
+  padding: 16px 18px;
+  box-shadow: 0 6px 22px rgba(15,18,24,0.04);
+}
+
+.cover-stat-val {
+  font-size: 26px;
+  font-weight: 500;
+  color: #0F1218;
+  letter-spacing: -0.04em;
+  display: block;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.cover-stat-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #7c8db0;
+}
+
+.cover-divider {
+  height: 1px;
+  background: #e5eaf4;
+  margin-bottom: 24px;
+}
+
+.cover-meta {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.cover-meta > div {
+  margin-right: 40px;
+  margin-bottom: 12px;
+}
+
+.cover-meta > div:last-child { margin-right: 0; }
+
+.cover-meta-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a96ae;
+  margin-bottom: 4px;
+}
+
+.cover-meta-value {
+  font-size: 13px;
+  color: #374151;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.cover-confidential {
+  font-size: 9px;
+  color: #8a96ae;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-top: 1px solid #e5eaf4;
+  padding-top: 14px;
+  line-height: 1.6;
+}
+/* -- CONTENT PAGES --
+   box-sizing:border-box so the 14mm/16mm padding is INSIDE the 297mm height
+   budget rather than added on top of it (the latter was silently pushing
+   real content past the page boundary on every single content page). */
+.content-page {
+  background: #fff;
+  padding: 16mm 18mm 16mm;
+  min-height: 297mm;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f0f2f7;
+  margin-bottom: 26px;
+  flex-shrink: 0;
+}
+.page-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 300;
+  color: #0F1218;
+  letter-spacing: -0.05em;
+  flex-shrink: 0;
+}
+.page-header-logo span { font-weight: 500; color: #3F77D6; }
+.page-header-mark {
+  position: relative;
+  width: 16px;
+  height: 14px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.page-header-mark span {
+  position: absolute;
+  bottom: 0;
+  width: 5px;
+  height: 14px;
+  border-radius: 1px;
+  background: #0F1218;
+}
+.page-header-mark span:first-child { left: 2px; transform: skewX(-30deg); }
+.page-header-mark span:last-child  { right: 2px; height: 10px; transform: skewX(30deg); }
+.page-header-meta { font-size: 10px; color: #aab0c4; letter-spacing: 0.04em; }
+
+.page-content { flex: 1; }
+
+.page-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #f0f2f7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.page-footer-left {
+  font-size: 9px;
+  color: #aab0c4;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.page-footer-right { font-size: 9px; color: #aab0c4; }
+
+/* -- SECTIONS --
+   page-break-inside:avoid keeps each section as one block where possible -
+   without this, a section starting near the bottom of a page can have its
+   heading on one page and its body on the next. Standard property +
+   break-inside (the modern equivalent) for cross-engine support. */
+.section { margin-bottom: 28px; page-break-inside: avoid; break-inside: avoid; }
+.section:last-child { margin-bottom: 0; }
+
+.section-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #3F77D6;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: #e8ecf4; }
+
+.section-title {
+  font-size: 20px;
+  font-weight: 300;
+  color: #0F1218;
+  letter-spacing: -0.045em;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.section-body { font-size: 13px; color: #3d4663; line-height: 1.75; }
+.section-body p { margin-bottom: 12px; page-break-inside: avoid; break-inside: avoid; }
+.section-body p:last-child { margin-bottom: 0; }
+.section-body.compact p { margin-bottom: 8px; font-size: 12.5px; }
+
+.lead-in {
+  font-size: 14px;
+  color: #56607e;
+  line-height: 1.7;
+  margin-bottom: 22px;
+  max-width: 60ch;
+}
+
+/* -- LANDSCAPE STRIP (compact stat row used on the merged exec-summary page) -- */
+.landscape-strip {
+  display: flex;
+  background: #e4e8f0;
+  margin-bottom: 14px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.ls-item {
+  flex: 1;
+  background: #f7f9fc;
+  padding: 9px 12px;
+  box-sizing: border-box;
+  border-right: 1px solid #e4e8f0;
+}
+.ls-item:last-child { border-right: none; }
+.ls-val {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0F1218;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+.ls-lbl {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #7c8db0;
+}
+
+/* -- FEE COMPOSITION BAR (visual breakdown of where the fee dollar goes) -- */
+.composition-wrap { margin: 16px 0 22px; page-break-inside: avoid; break-inside: avoid; }
+.composition-bar {
+  display: flex;
+  width: 100%;
+  height: 28px;
+  border-radius: 0;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.composition-seg { height: 100%; }
+.composition-seg.interchange { background: #3F77D6; }
+.composition-seg.scheme      { background: #8BAEE8; }
+.composition-seg.margin      { background: #C9D8F2; }
+.composition-legend { display: flex; flex-wrap: wrap; }
+.cl-item {
+  display: flex; align-items: center;
+  font-size: 11.5px; color: #56607e;
+  margin-right: 18px; margin-bottom: 4px;
+}
+.cl-item:last-child { margin-right: 0; }
+.cl-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; margin-right: 6px; }
+.cl-dot.interchange { background: #3F77D6; }
+.cl-dot.scheme      { background: #8BAEE8; }
+.cl-dot.margin      { background: #C9D8F2; }
+.cl-item strong { color: #0F1218; margin: 0 4px; }
+
+/* -- BENCHMARK COMPARISON BAR (visual rate-vs-typical comparison) -- */
+.benchmark-wrap { margin: 14px 0 20px; page-break-inside: avoid; break-inside: avoid; }
+.bench-row { display: grid; grid-template-columns: 130px 1fr 60px; align-items: center; gap: 10px; margin-bottom: 9px; }
+.bench-row:last-child { margin-bottom: 0; }
+.bench-row-label { font-size: 11.5px; color: #56607e; }
+.bench-row-label.is-you { font-weight: 700; color: #0F1218; }
+.bench-track { height: 9px; background: #eef1f6; border-radius: 0; overflow: hidden; }
+.bench-fill { height: 100%; border-radius: 0; }
+.bench-fill.you      { background: #3F77D6; }
+.bench-fill.typical  { background: #c5d4f8; }
+.bench-fill.strong   { background: #9FD9B4; }
+.bench-row-val { font-size: 12px; font-weight: 700; color: #0F1218; text-align: right; }
+
+/* -- STAT CARDS -- */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.stat-card { background: #f7f9fc; border: 1px solid #e4e8f0; border-radius: 0; padding: 16px 18px; box-sizing: border-box; }
+.stat-card.dark { background: #0F1218; border-color: #0F1218; }
+.stat-card.accent { background: #eef3ff; border-color: #c5d4f8; }
+.stat-val {
+  font-size: 24px;
+  font-weight: 500;
+  color: #0F1218;
+  letter-spacing: -0.04em;
+  display: block;
+  margin-bottom: 3px;
+  word-break: break-word;
+}
+.stat-card.dark .stat-val { color: #E6EBF6; }
+.stat-val.high { color: #c0392b; }
+.stat-val.mid  { color: #c8960c; }
+.stat-val.low  { color: #0a7a52; }
+.stat-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #7c8db0;
+}
+.stat-card.dark .stat-lbl { color: rgba(224,233,246,0.4); }
+
+/* -- DATA TABLE -- */
+.data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
+.data-table thead { display: table-header-group; } /* repeat header if a table spans a break */
+.data-table tr { page-break-inside: avoid; break-inside: avoid; }
+.data-table th {
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7c8db0;
+  border-bottom: 2px solid #e4e8f0;
+  background: #f7f9fc;
+}
+.data-table td { padding: 10px 12px; border-bottom: 1px solid #f0f2f7; vertical-align: top; color: #3d4663; word-break: break-word; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table .td-label { color: #7c8db0; font-weight: 500; width: 42%; }
+.data-table .td-value { font-weight: 600; color: #0F1218; }
+.data-table .td-status-ok   { color: #0a7a52; font-weight: 700; text-align: center; }
+.data-table .td-status-warn { color: #c8960c; font-weight: 700; text-align: center; }
+.data-table .td-status-gap  { color: #c0392b; font-weight: 700; text-align: center; }
+
+/* -- ALERT BOXES -- */
+.alerts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.alert { padding: 12px 14px; border-radius: 0; border-left: 4px solid; font-size: 12px; box-sizing: border-box; page-break-inside: avoid; break-inside: avoid; }
+.alert-warn { background: #fdf6e3; border-color: #c8960c; }
+.alert-good { background: #e8f5e9; border-color: #0a7a52; }
+.alert-info { background: #eef3ff; border-color: #3F77D6; }
+.alert-heading { font-weight: 700; margin-bottom: 3px; font-size: 12px; }
+.alert-warn .alert-heading { color: #92650a; }
+.alert-good .alert-heading { color: #0a5c3e; }
+.alert-info .alert-heading { color: #1a3a8a; }
+.alert-body { color: #444; line-height: 1.55; }
+
+/* -- OPPORTUNITIES -- */
+.rec-list { display: flex; flex-direction: column; gap: 14px; }
+.rec-item { display: flex; gap: 14px; align-items: flex-start; page-break-inside: avoid; break-inside: avoid; }
+.rec-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #3F77D6;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.rec-body { flex: 1; font-size: 13px; color: #3d4663; line-height: 1.65; }
+.rec-body strong { color: #0F1218; font-weight: 600; display: block; margin-bottom: 2px; }
+
+.key-rec-box {
+  background: #0F1218;
+  border-radius: 0;
+  padding: 20px 22px;
+  margin-top: 20px;
+  box-sizing: border-box;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.key-rec-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #A9CCF2;
+  margin-bottom: 8px;
+}
+.key-rec-text { font-size: 14px; font-weight: 600; color: #E6EBF6; line-height: 1.45; letter-spacing: -0.01em; }
+
+/* ------------------------------------------------------------------
+   CTA PAGE
+-------------------------------------------------------------------*/
+
+.cta-page {
+  background:
+    radial-gradient(circle at 85% 12%, rgba(63,119,214,0.10), transparent 34%),
+    radial-gradient(circle at 12% 92%, rgba(169,204,242,0.10), transparent 38%),
+    linear-gradient(180deg,#ffffff 0%,#f7f9fc 100%);
+  min-height:297mm;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  padding:16mm 18mm;
+}
+
+.cta-page-logo-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:auto;
+}
+
+.cta-body{
+  margin-top:auto;
+}
+
+.cta-eyebrow{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#3F77D6;
+  margin-bottom:18px;
+}
+
+.cta-title{
+  font-size:36px;
+  font-weight:300;
+  color:#0F1218;
+  letter-spacing:-0.05em;
+  line-height:1.08;
+  margin-bottom:18px;
+  max-width:500px;
+}
+
+.cta-sub{
+  font-size:14px;
+  font-weight:300;
+  color:#56607E;
+  line-height:1.8;
+  max-width:520px;
+  margin-bottom:34px;
+}
+
+.cta-divider{
+  height:1px;
+  background:#E5EAF4;
+  margin:28px 0;
+}
+
+/* ------------------------------------------------------------------
+   PAYMENTS REVIEW CARD
+-------------------------------------------------------------------*/
+
+.cta-review-card{
+  background:#ffffff;
+  border:1px solid #DCE5F5;
+  box-shadow:0 8px 26px rgba(15,18,24,.05);
+  padding:28px 32px;
+  margin-bottom:8px;
+}
+
+.cta-review-label{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#3F77D6;
+  margin-bottom:12px;
+}
+
+.cta-review-title{
+  font-size:28px;
+  font-weight:300;
+  color:#0F1218;
+  letter-spacing:-0.045em;
+  line-height:1.2;
+  margin-bottom:14px;
+}
+
+.cta-review-text{
+  font-size:14px;
+  color:#56607E;
+  line-height:1.7;
+  margin-bottom:18px;
+}
+
+.cta-review-list{
+  margin:0 0 24px 22px;
+  padding:0;
+}
+
+.cta-review-list li{
+  margin-bottom:10px;
+  font-size:14px;
+  color:#374151;
+  line-height:1.7;
+}
+
+.cta-review-url{
+  margin-top:6px;
+  font-size:18px;
+  font-weight:600;
+  color:#3F77D6;
+  letter-spacing:-0.02em;
+}
+
+/* ------------------------------------------------------------------
+   CONTACT DETAILS
+-------------------------------------------------------------------*/
+
+.cta-contacts{
+  display:flex;
+  flex-wrap:wrap;
+  gap:40px;
+  margin-bottom:6px;
+}
+
+.cta-contact-label{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:#8A96AE;
+  margin-bottom:4px;
+}
+
+.cta-contact-value{
+  font-size:13px;
+  font-weight:600;
+  color:#0F1218;
+}
+
+.cta-prepared{
+  font-size:11px;
+  color:#6B7280;
+  border-top:1px solid #E5EAF4;
+  padding-top:16px;
+  line-height:1.7;
+}
+
+.cta-prepared strong{
+  color:#0F1218;
+  font-weight:600;
+}
+
+.cta-confidential{
+  font-size:9px;
+  color:#8A96AE;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  margin-top:10px;
+}
+/* -- PRINT --
+   Explicitly zero out the screen-preview body padding/background here too -
+   relying on @media screen alone to "not apply" during print is what was
+   producing the stray blank trailing page (that grey 20px top/bottom
+   padding was bleeding into the print layout and overflowing onto its own
+   page after the last real content page). */
+@media print {
+  @page { size: A4; margin: 0; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  .page { page-break-after: always; break-after: page; width: 210mm; box-shadow: none; margin: 0; }
+  .page:last-child { page-break-after: avoid; break-after: avoid; }
+}
+
+/* -- SCREEN PREVIEW -- */
+@media screen {
+  body { background: #e8ecf4; padding: 20px 0; }
+  .page { box-shadow: 0 4px 32px rgba(0,0,0,0.15); margin-bottom: 20px; border-radius: 0; }
+}
