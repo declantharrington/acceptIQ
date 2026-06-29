@@ -751,46 +751,43 @@ body {
   break-after: page;
 }
 .page:last-child { page-break-after: avoid; break-after: avoid; }
-
 /* -- COVER PAGE -- */
 .cover {
-  background: #0F1218;
+  background:
+    radial-gradient(circle at 85% 12%, rgba(63,119,214,0.10), transparent 34%),
+    radial-gradient(circle at 12% 92%, rgba(169,204,242,0.10), transparent 38%),
+    linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+  color: #0F1218;
   min-height: 297mm;
   display: flex;
   flex-direction: column;
   padding: 16mm 18mm;
   box-sizing: border-box;
 }
+
 .cover-logo-row {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: auto;
 }
-.cover-acceptor-mark {
-  position: relative;
-  width: 26px;
-  height: 23px;
-  display: inline-block;
-  flex-shrink: 0;
-}
+
 .cover-acceptor-mark span {
-  position: absolute;
-  bottom: 0;
-  width: 9px;
-  height: 23px;
-  border-radius: 2px;
-  background: #E6EBF6;
+  background: #0F1218;
 }
-.cover-acceptor-mark span:first-child { left: 4px; transform: skewX(-30deg); }
-.cover-acceptor-mark span:last-child  { right: 4px; height: 16px; transform: skewX(30deg); }
+
 .cover-acceptor-word {
   font-size: 19px;
   font-weight: 300;
   letter-spacing: -0.055em;
-  color: rgba(230,235,246,0.92);
+  color: #0F1218;
 }
-.cover-acceptor-word span { font-weight: 500; letter-spacing: -0.04em; color: #A9CCF2; }
+
+.cover-acceptor-word span {
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: #3F77D6;
+}
 
 .cover-body { margin-top: auto; }
 
@@ -799,88 +796,120 @@ body {
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(169,204,242,0.8);
+  color: #3F77D6;
   margin-bottom: 16px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
 .cover-eyebrow::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(169,204,242,0.3);
+  background: #d8e3f7;
 }
 
 .cover-title {
   font-size: 40px;
   font-weight: 300;
-  color: #E6EBF6;
+  color: #0F1218;
   letter-spacing: -0.05em;
   line-height: 1.08;
   margin-bottom: 8px;
 }
-.cover-title span { font-weight: 500; color: #A9CCF2; }
+
+.cover-title span {
+  font-weight: 500;
+  color: #3F77D6;
+}
 
 .cover-subtitle {
   font-size: 16px;
   font-weight: 300;
-  color: rgba(224,233,246,0.55);
+  color: #56607e;
   margin-bottom: 36px;
 }
 
 .cover-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: rgba(224,233,246,0.08);
+  gap: 12px;
+  background: transparent;
   border-radius: 0;
-  overflow: hidden;
+  overflow: visible;
   margin-bottom: 36px;
 }
-.cover-stat { background: rgba(224,233,246,0.04); padding: 16px 18px; }
+
+.cover-stat {
+  background: #ffffff;
+  border: 1px solid #e4eaf6;
+  padding: 16px 18px;
+  box-shadow: 0 6px 22px rgba(15,18,24,0.04);
+}
+
 .cover-stat-val {
   font-size: 26px;
   font-weight: 500;
-  color: #E6EBF6;
+  color: #0F1218;
   letter-spacing: -0.04em;
   display: block;
   margin-bottom: 4px;
   word-break: break-word;
 }
+
 .cover-stat-lbl {
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: rgba(224,233,246,0.35);
+  color: #7c8db0;
 }
 
-.cover-divider { height: 1px; background: rgba(224,233,246,0.08); margin-bottom: 24px; }
+.cover-divider {
+  height: 1px;
+  background: #e5eaf4;
+  margin-bottom: 24px;
+}
 
-.cover-meta { display: flex; flex-wrap: wrap; margin-bottom: 24px; }
-.cover-meta > div { margin-right: 40px; margin-bottom: 12px; }
+.cover-meta {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.cover-meta > div {
+  margin-right: 40px;
+  margin-bottom: 12px;
+}
+
 .cover-meta > div:last-child { margin-right: 0; }
+
 .cover-meta-label {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(224,233,246,0.28);
+  color: #8a96ae;
   margin-bottom: 4px;
 }
-.cover-meta-value { font-size: 13px; color: rgba(224,233,246,0.65); font-weight: 400; word-break: break-word; }
+
+.cover-meta-value {
+  font-size: 13px;
+  color: #374151;
+  font-weight: 400;
+  word-break: break-word;
+}
 
 .cover-confidential {
   font-size: 9px;
-  color: rgba(224,233,246,0.2);
+  color: #8a96ae;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  border-top: 1px solid rgba(224,233,246,0.06);
+  border-top: 1px solid #e5eaf4;
   padding-top: 14px;
   line-height: 1.6;
 }
-
 /* -- CONTENT PAGES --
    box-sizing:border-box so the 14mm/16mm padding is INSIDE the 297mm height
    budget rather than added on top of it (the latter was silently pushing
@@ -1177,41 +1206,98 @@ body {
 
 /* -- CTA PAGE -- */
 .cta-page {
-  background: #0F1218;
+  background:
+    radial-gradient(circle at 85% 12%, rgba(63,119,214,0.10), transparent 34%),
+    radial-gradient(circle at 12% 92%, rgba(169,204,242,0.10), transparent 38%),
+    linear-gradient(180deg,#ffffff 0%,#f7f9fc 100%);
   min-height: 297mm;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   padding: 16mm 18mm;
 }
-.cta-page-logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: auto; }
-.cta-body { margin-top: auto; }
-.cta-eyebrow {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(169,204,242,0.7);
-  margin-bottom: 18px;
-}
-.cta-title { font-size: 36px; font-weight: 300; color: #E6EBF6; letter-spacing: -0.05em; line-height: 1.08; margin-bottom: 16px; max-width: 480px; }
-.cta-sub { font-size: 14px; font-weight: 300; color: rgba(224,233,246,0.55); line-height: 1.7; max-width: 440px; margin-bottom: 36px; }
-.cta-divider { height: 1px; background: rgba(224,233,246,0.08); margin-bottom: 28px; }
-.cta-contacts { display: flex; flex-wrap: wrap; margin-bottom: 28px; }
-.cta-contacts > div { margin-right: 40px; }
-.cta-contacts > div:last-child { margin-right: 0; }
-.cta-contact-label {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(224,233,246,0.28);
-  margin-bottom: 4px;
-}
-.cta-contact-value { font-size: 13px; color: #A9CCF2; font-weight: 500; }
-.cta-prepared { font-size: 11px; color: rgba(224,233,246,0.3); border-top: 1px solid rgba(224,233,246,0.06); padding-top: 16px; }
-.cta-confidential { font-size: 9px; color: rgba(224,233,246,0.15); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 10px; }
 
+.cta-page-logo-row {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:auto;
+}
+
+.cta-body{
+  margin-top:auto;
+}
+
+.cta-eyebrow{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#3F77D6;
+  margin-bottom:18px;
+}
+
+.cta-title{
+  font-size:36px;
+  font-weight:300;
+  color:#0F1218;
+  letter-spacing:-0.05em;
+  line-height:1.08;
+  margin-bottom:16px;
+  max-width:480px;
+}
+
+.cta-sub{
+  font-size:14px;
+  font-weight:300;
+  color:#56607e;
+  line-height:1.75;
+  max-width:460px;
+  margin-bottom:36px;
+}
+
+.cta-divider{
+  height:1px;
+  background:#E5EAF4;
+  margin-bottom:28px;
+}
+
+.cta-contacts{
+  display:flex;
+  flex-wrap:wrap;
+  gap:36px;
+  margin-bottom:28px;
+}
+
+.cta-contact-label{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:#8A96AE;
+  margin-bottom:4px;
+}
+
+.cta-contact-value{
+  font-size:13px;
+  color:#3F77D6;
+  font-weight:600;
+}
+
+.cta-prepared{
+  font-size:11px;
+  color:#6B7280;
+  border-top:1px solid #E5EAF4;
+  padding-top:16px;
+}
+
+.cta-confidential{
+  font-size:9px;
+  color:#8A96AE;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  margin-top:10px;
+}
 /* -- PRINT --
    Explicitly zero out the screen-preview body padding/background here too -
    relying on @media screen alone to "not apply" during print is what was
@@ -1239,8 +1325,8 @@ body {
 <div class="page">
 <div class="cover">
 <div class="cover-logo-row">
-    <img src="https://www.acceptoriq.com.au/acceptorIQ-full.png" alt="acceptorIQ" style="height:28px;width:auto;display:block;filter:brightness(0) invert(1);">
-  </div>
+<img src="https://www.acceptoriq.com.au/acceptorIQ-full-black.png" alt="acceptorIQ" style="height:28px;width:auto;display:block;">
+</div>
   <div class="cover-body">
     <div class="cover-eyebrow">Payments Review Report</div>
     <div class="cover-title">Payments Stack<br><span>Analysis</span></div>
@@ -1323,13 +1409,12 @@ body {
      a reader to act on, so they shouldn't be five pages deep. === -->
 <div class="page">
 <div class="content-page">
-  <div class="page-header">
-<div class="page-header-logo">
-      <img src="https://www.acceptoriq.com.au/acceptorIQ-full-black.png" alt="acceptorIQ" style="height:18px;width:auto;display:block;">
-    </div>
-</div>
-    <div class="page-header-meta">Payments Stack Analysis &middot; Confidential &middot; {{report_date}}</div>
+<div class="page-header">
+  <div class="page-header-logo">
+    <img src="https://www.acceptoriq.com.au/acceptorIQ-full-black.png" alt="acceptorIQ" style="height:18px;width:auto;display:block;">
   </div>
+  <div class="page-header-meta">Payments Stack Analysis &middot; Confidential &middot; {{report_date}}</div>
+</div>
   <div class="page-content">
     <div class="section">
       <div class="section-label">Fee Analysis</div>
