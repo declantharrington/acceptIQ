@@ -27,7 +27,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/shared.css">
+<link rel="stylesheet" href="/css/shared.css">
 <style>
 :root{
   --bg:#0F1218;
@@ -159,32 +159,12 @@ footer{position:relative;z-index:2;color:var(--cream)}
   }
 }
 </style>
-<link rel="stylesheet" href="/mobile.css">
+<link rel="stylesheet" href="/css/mobile.css">
 </head>
 <body>
 <div class="shell">
 
-<header>
-  <div class="nav nav-wrap">
-    <a href="/" class="acceptor-logo" aria-label="acceptorIQ home">
-      <img src="/images/acceptorIQ-full.png" alt="acceptorIQ" class="logo-full">
-    </a>
-    <button class="mobile-menu-btn" aria-label="Open menu"><span></span><span></span></button>
-    <div class="nav-right">
-      <a href="/" class="lnk">Home</a>
-      <a href="/analyser" class="btn btn-cream nav-cta">Get my review
-        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-    </div>
-  </div>
-</header>
-
-<div class="mobile-menu">
-  <a href="/">Home</a>
-  <a href="mailto:hello@acceptoriq.com.au">Contact</a>
-  <a href="/analyser" class="mm-cta">Get my review</a>
-</div>
-
+<div data-include="header"></div>
 <main class="pricing">
   <div class="pricing-head">
     <h1>Simple pricing. Smarter payments.</h1>
@@ -242,47 +222,8 @@ footer{position:relative;z-index:2;color:var(--cream)}
   </div>
 </main>
 
-<div class="footer-section">
-  <canvas id="footer-mg"></canvas>
-  <footer class="wrap">
-    <div class="fcols">
-      <div class="fbrand">
-        <a href="/" class="acceptor-logo" aria-label="acceptorIQ home">
-          <img src="/images/acceptorIQ-full.png" alt="acceptorIQ" class="logo-full">
-        </a>
-      </div>
-      <div class="fcol">
-        <h4>Product</h4>
-        <a href="/">How it works</a>
-        <a href="/">Results</a>
-        <a href="/pricing">Pricing</a>
-        <a href="/">FAQ</a>
-      </div>
-      <div class="fcol">
-        <h4>Company</h4>
-        <a href="/">About</a>
-        <a href="/">Careers</a>
-        <a href="mailto:hello@acceptorIQ.com.au">Contact</a>
-      </div>
-      <div class="fcol">
-        <h4>Resources</h4>
-        <a href="/">Guides</a>
-        <a href="/">Privacy</a>
-        <a href="/">Terms</a>
-      </div>
-      <div class="fcol">
-        <h4>Connect</h4>
-        <a href="/">X (Twitter)</a>
-        <a href="/">LinkedIn</a>
-        <a href="mailto:hello@acceptorIQ.com.au">Support</a>
-      </div>
-    </div>
-    <div class="fcopy">© 2026 acceptorIQ. All rights reserved.</div>
-  </footer>
+<div data-include="footer"></div>
 </div>
-
-</div>
-
 <script>
 (function initFooterMG() {
   var canvas = document.getElementById('footer-mg');
@@ -480,5 +421,9 @@ document.addEventListener("DOMContentLoaded",function(){
 });
 </script>
 
+
+<script src="/js/includes.js"></script>
+<script src="/js/mobile-menu.js"></script>
+<script src="/js/footer-bg.js"></script>
 </body>
 </html>
