@@ -319,9 +319,11 @@ export default async function handler(req, res) {
          </div>`
       : '<p style="font-size:13px;color:#999">No files uploaded</p>';
 
-    // ── Send internal triage email via Resend (non-fatal) ─────────
+// ── Send internal triage email via Resend (non-fatal) ─────────
     if (!resendKey) {
       console.warn('submit: RESEND_API_KEY not set — skipping admin notification email.');
+    } else if (!adminEmail) {
+      console.warn('submit: ADMIN_EMAIL not set — skipping admin notification email. Set ADMIN_EMAIL in the environment to receive submission notifications.');
     } else {
       const emailHtml = `<!DOCTYPE html>
 <html><head><meta charset="UTF-8">
