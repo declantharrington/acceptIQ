@@ -749,8 +749,7 @@ function buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportu
           ${confidenceDot(f.confidence)}
           <div>
             <div class="pit-finding-title">${esc(f.title||f.id)}</div>
-            ${f.summary ? `<div style="font-size:11px;color:rgba(224,233,246,0.35);margin-top:2px">${esc(f.summary)}</div>` : ''}
-          </div>
+${f.observation ? `<div style="font-size:11px;color:rgba(224,233,246,0.35);margin-top:2px">${esc(f.observation)}</div>` : ''}          </div>
         </div>`).join('')}
     </div>` : '';
 
