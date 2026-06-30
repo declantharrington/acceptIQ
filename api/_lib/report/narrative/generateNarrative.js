@@ -53,15 +53,28 @@ export async function generateNarrative({
     console.warn('generate-report: narrative hit max_tokens - JSON may be truncated. Raise max_tokens.');
   }
 
-  const rawText = claudeData.content?.find(b => b.type === 'text')?.text || '';
+const rawText = claudeData.content?.find(b => b.type === 'text')?.text || '';
+
+  // Primary path: strip markdown fences if present, then parse the whole
+  // trimmed response. This is the most reliable path when the model returns
+  // clean JSON (the expected case, per the system prompt's "no markdown
+  // fences" instruction) - it avoids the failure mode where a legitimate
+  // '{' or '}' inside a narrative string confuses bracket-slicing below.
+  const fenceStripped = rawText.trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
   try {
-    const jsonStart = rawText.indexOf('{');
-    const jsonEnd = rawText.lastIndexOf('}');
-    if (jsonStart === -1 || jsonEnd === -1) throw new Error('no JSON object found');
-    return JSON.parse(rawText.slice(jsonStart, jsonEnd + 1));
-  } catch (parseErr) {
-    console.error('generate-report: failed to parse narrative JSON:', parseErr.message);
-    console.error('Raw model output (first 500 chars):', rawText.slice(0, 500));
-    throw new Error('Failed to parse narrative from model output');
+    return JSON.parse(fenceStripped);
+  } catch (primaryErr) {
+    // Fallback path: naive outer-bracket slicing, for cases where the model
+    // added preamble/trailing text around the JSON object despite instructions.
+    try {
+      const jsonStart = rawText.indexOf('{');
+      const jsonEnd = rawText.lastIndexOf('}');
+      if (jsonStart === -1 || jsonEnd === -1) throw new Error('no JSON object found');
+      return JSON.parse(rawText.slice(jsonStart, jsonEnd + 1));
+    } catch (parseErr) {
+      console.error('generate-report: failed to parse narrative JSON:', parseErr.message);
+      console.error('Raw model output (first 500 chars):', rawText.slice(0, 500));
+      throw new Error('Failed to parse narrative from model output');
+    }
   }
 }
