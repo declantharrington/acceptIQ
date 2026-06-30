@@ -29,6 +29,12 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 @keyframes syspulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 .nav-badge-count { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(63,119,214,0.15); color: #A9CCF2; padding: 4px 10px; border-radius: 100px; }
 .nav-avatar { width: 28px; height: 28px; border-radius: 50%; background: rgba(63,119,214,0.2); border: 1px solid rgba(63,119,214,0.3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #A9CCF2; cursor: pointer; }
+.nav-avatar-wrap { position: relative; }
+.nav-avatar-menu { display: none; position: absolute; top: 38px; right: 0; min-width: 140px; background: #13161e; border: 1px solid rgba(224,233,246,0.1); z-index: 50; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.nav-avatar-menu.open { display: block; }
+.nav-avatar-menu-item { width: 100%; text-align: left; padding: 10px 14px; background: none; border: none; color: rgba(224,233,246,0.6); font-family: 'Inter', sans-serif; font-size: 12.5px; cursor: pointer; transition: background 0.12s, color 0.12s; }
+.nav-avatar-menu-item:hover { background: rgba(224,233,246,0.05); color: rgba(224,233,246,0.9); }
+.nav-avatar-menu-item.danger:hover { background: rgba(232,138,138,0.1); color: #E88A8A; }
 
 /* ── SIDEBAR ── */
 .sidebar { background: rgba(224,233,246,0.02); border-right: 1px solid rgba(224,233,246,0.08); display: flex; flex-direction: column; padding: 16px 12px; overflow-y: auto; gap: 2px; }
@@ -361,7 +367,12 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
     <div class="nav-right">
       <div class="nav-system"><div class="sys-dot"></div>All systems operational</div>
       <div class="nav-badge-count" id="nav-pending-count">— pending</div>
-      <div class="nav-avatar" onclick="handleLogout()" title="Sign out">DH</div>
+      <div class="nav-avatar-wrap">
+        <div class="nav-avatar" onclick="toggleAvatarMenu(event)" title="Account">DH</div>
+        <div class="nav-avatar-menu" id="nav-avatar-menu">
+          <button class="nav-avatar-menu-item danger" onclick="handleLogout()">Sign out</button>
+        </div>
+      </div>
     </div>
   </nav>
 
@@ -1152,7 +1163,17 @@ async function openReport(htmlPath){
 }
 function closeModal(e){if(e.target===document.getElementById('modal-overlay'))closeModalBtn();}
 function closeModalBtn(){document.getElementById('modal-overlay').classList.remove('open');document.body.style.overflow='';}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModalBtn();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModalBtn();closeAvatarMenu();}});
+
+/* ── AVATAR MENU ── */
+function toggleAvatarMenu(e){
+  e.stopPropagation();
+  document.getElementById('nav-avatar-menu').classList.toggle('open');
+}
+function closeAvatarMenu(){
+  document.getElementById('nav-avatar-menu').classList.remove('open');
+}
+document.addEventListener('click', () => closeAvatarMenu());
 
 /* ── EMPLOYEE TASKS — wired to server.py at localhost:5000 ── */
 const AGENT_SERVER = 'http://localhost:5000';
