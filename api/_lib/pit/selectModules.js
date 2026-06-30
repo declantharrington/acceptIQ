@@ -1,35 +1,14 @@
 // api/_lib/pit/selectModules.js
-// Selects which report modules should be composed from the PIT output.
-// Report Engine v2 separates the narrative flow from the diagnostic modules.
+// Module Selector: chooses report modules and assigns importance.
 
-export function selectReportModules({ facts, metrics, opportunities }) {
-  const moduleSet = new Set(['landscape', 'takeaways', 'snapshot', 'stack', 'priorities', 'cta']);
-
-  // Fee analysis is now integrated into the Operating Snapshot page.
-  if (metrics.feeComposition) moduleSet.add('snapshot');
-
-  for (const opp of opportunities || []) {
-    if (opp.module === 'pricing') moduleSet.add('pricing');
-    if (opp.module === 'reform') moduleSet.add('reform');
-    if (opp.module === 'lcr') moduleSet.add('lcr');
-    if (opp.module === 'chargebacks') moduleSet.add('chargebacks');
-    if (opp.module === 'surcharge') moduleSet.add('surcharge');
-    if (opp.module === 'stack') moduleSet.add('stack');
-  }
-
-  // Sensible defaults based on visible facts.
-  if (facts.pricingModel || facts.providerRate) moduleSet.add('pricing');
-  if (facts.cardMix?.credit != null && Number(facts.cardMix.credit) > 0) moduleSet.add('reform');
-  if (metrics.benchmarkBars) moduleSet.add('benchmark');
-
-  const preferredOrder = [
-    'landscape', 'takeaways', 'snapshot', 'stack',
-    'pricing', 'reform', 'lcr', 'surcharge', 'chargebacks', 'benchmark',
-    'priorities', 'cta'
-  ];
-  return preferredOrder.filter(id => moduleSet.has(id));
+export function selectModules({ metrics, opportunities, riskIntelligence, dataQuality }) {
+  const modules=[{id:'landscape',type:'foundation',priority:'major',reason:'Always sets market context.'},{id:'key-takeaways',type:'foundation',priority:'major',reason:'Always summarises the key observations.'},{id:'snapshot',type:'foundation',priority:'major',reason:'Always establishes the facts.'},{id:'fee-analysis',type:'foundation',priority:metrics.feeComposition?'major':'supporting',reason:'Shows what the merchant is paying.'}];
+  for(const opp of opportunities||[]){ const id=moduleIdForOpportunity(opp); if(!id||modules.some(m=>m.id===id))continue; modules.push({id,type:'diagnostic',priority:classifyPriority(opp),reason:opp.title,opportunityId:opp.id,confidence:opp.confidence}); }
+  if(!modules.some(m=>m.id==='benchmark'))modules.push({id:'benchmark',type:'diagnostic',priority:'supporting',reason:'Benchmarking provides market position.'});
+  if(riskIntelligence.risks?.length||dataQuality.gaps?.length)modules.push({id:'data-gaps-risk',type:'diagnostic',priority:'minor',reason:'Data gaps and risks should be captured compactly.'});
+  modules.push({id:'opportunity-summary',type:'summary',priority:'major',reason:'Always summarises opportunity value and validation priorities.'});
+  modules.push({id:'next-steps',type:'cta',priority:'major',reason:'Always closes with engagement path.'});
+  return modules;
 }
-
-export function topOpportunities(opportunities, max = 4) {
-  return (opportunities || []).slice(0, max);
-}
+function classifyPriority(opp){ if(Number(opp.estimatedAnnualValue)>=10000||opp.urgency==='High')return'major'; if(opp.confidence==='Confirmed'||opp.confidence==='Likely')return'supporting'; return'minor'; }
+function moduleIdForOpportunity(opp){ return {pricing:'pricing',reform:'reform',lcr:'lcr',surcharge:'surcharge',chargebacks:'chargebacks',stack:'stack'}[opp.module] || opp.module; }

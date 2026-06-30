@@ -1,42 +1,33 @@
 // api/_lib/pit/utils.js
-// Small helpers shared across the Payments Intelligence Engine.
+// Shared helpers for the Payments Intelligence Terminal (PIT).
 
-export const lower = v => String(v || '').trim().toLowerCase();
+export const lower = v => String(v ?? '').trim().toLowerCase();
 
-export function numberOrNull(value) {
-  if (value === null || value === undefined || value === '') return null;
-  const n = Number(value);
-  return Number.isNaN(n) ? null : n;
+export function toNumber(v, fallback = null) {
+  if (v === null || v === undefined || v === '') return fallback;
+  const n = Number(String(v).replace(/[$,%\s,]/g, ''));
+  return Number.isFinite(n) ? n : fallback;
 }
 
-export function includesAny(text, terms = []) {
-  const s = lower(text);
-  return terms.some(t => s.includes(lower(t)));
+export function round(n, places = 2) {
+  const x = Number(n);
+  if (!Number.isFinite(x)) return null;
+  const p = 10 ** places;
+  return Math.round(x * p) / p;
 }
 
-export function parseProgramContext(programContext = '') {
-  const get = label => {
-    const match = String(programContext).match(new RegExp(`${label}:\\s*(.+)`, 'i'));
-    return match?.[1]?.trim() || null;
-  };
-
-  return {
-    companyName: get('Company') || '-',
-    contactName: get('Name') || '-',
-    merchantEmail: get('Email') || '-',
-    phone: get('Phone'),
-    website: get('Website'),
-    revenueBandRaw: get('Revenue') || get('Revenue band') || get('Turnover'),
-    industry: get('Industry'),
-    businessType: get('Business type') || get('Business model'),
-    channel: get('Channel') || get('Sales channel'),
-    raw: programContext || ''
-  };
+export function moneyBand(value) {
+  const n = Number(value) || 0;
+  if (n >= 50000) return 'High';
+  if (n >= 10000) return 'Medium';
+  if (n > 0) return 'Low';
+  return 'Strategic';
 }
 
-export function confidenceLabel(value) {
-  const s = lower(value);
-  if (['on', 'off', 'enabled', 'disabled', 'active', 'yes', 'no'].includes(s)) return 'Confirmed';
-  if (s === 'unknown' || !s) return 'Needs validation';
-  return 'Likely';
+export function confidenceRank(value) {
+  return { Confirmed: 4, Likely: 3, Estimated: 2, 'Needs validation': 1, Unknown: 0 }[value] ?? 0;
+}
+
+export function urgencyRank(value) {
+  return { High: 3, Medium: 2, Low: 1 }[value] ?? 0;
 }

@@ -1,18 +1,15 @@
 // api/_lib/pit/dataQuality.js
-// Flags missing or incomplete inputs so the admin/report can treat unknowns honestly.
+// Data Quality Intelligence: describes confidence, missing inputs and quality constraints.
 
-export function identifyDataGaps({ facts, paymentsStack }) {
-  const gaps = [];
-  if (!facts.provider) gaps.push(gap('provider', 'Provider not identified', 'Needs validation'));
-  if (!facts.volume || !facts.totalFees) gaps.push(gap('core-fees', 'Volume or total fees missing', 'High'));
-  if (!facts.pricingModel || facts.pricingModel === 'Unknown') gaps.push(gap('pricing-model', 'Pricing model not clearly identified', 'Medium'));
-  if (facts.cardMix?.debit == null && facts.cardMix?.credit == null) gaps.push(gap('card-mix', 'Debit/credit card mix not available', 'Medium'));
-  if (!facts.lcrStatus || facts.lcrStatus === 'Unknown') gaps.push(gap('lcr-status', 'LCR status not confirmed', 'Medium'));
-  if (!facts.chargebacks) gaps.push(gap('chargebacks', 'Chargeback data not visible on the statement', 'Low'));
-  if (paymentsStack.gatewayDetected && !paymentsStack.sourceCoverage.gatewayInvoice) gaps.push(gap('gateway-fees', 'Gateway fees may sit on a separate invoice', 'Medium'));
-  return gaps;
-}
-
-function gap(id, title, priority) {
-  return { id, title, priority };
+export function assessDataQuality({ facts, paymentsStack, operationalIntelligence }) {
+  const gaps=[]; const add=(id,label,severity,reason,requestedData)=>gaps.push({id,label,severity,reason,requestedData});
+  if(!facts.volume)add('missing-volume','Card volume missing','High','Card volume is required for most metrics.','Merchant statement with total turnover.');
+  if(!facts.totalFees)add('missing-fees','Total fees missing','High','Total fees are required to calculate effective rate.','Statement page showing total merchant fees.');
+  if(!facts.feeBreakdown?.length)add('missing-fee-breakdown','Fee breakdown missing','Medium','Fee composition cannot be decomposed.','Detailed fee component page.');
+  if(!facts.cardMix?.debit&&!facts.cardMix?.credit)add('missing-card-mix','Card mix missing','Medium','Routing and reform calculations require debit/credit split.','Interchange or scheme fee breakdown by card category.');
+  if(!facts.lcrStatus||facts.lcrStatus==='Unknown')add('missing-lcr-status','LCR status unknown','Medium','Debit routing cannot be confirmed.','Provider confirmation of routing configuration.');
+  if(!facts.chargebacks)add('missing-chargebacks','Chargeback data not shown','Low','Dispute performance cannot be assessed.','Chargeback/dispute report.');
+  for(const g of operationalIntelligence.operationalGaps||[])if(!gaps.some(x=>x.id===g.id))add(g.id,g.missingData,g.severity,g.implication,g.requestedData);
+  const high=gaps.filter(g=>g.severity==='High').length, medium=gaps.filter(g=>g.severity==='Medium').length;
+  return { qualityLevel: high?'Low':medium>=2?'Medium':'High', gaps, confidenceByArea:{ merchantProfile:facts.context?.company?'High':'Medium', pricing:facts.pricingModel?'High':'Medium', fees:facts.feeBreakdown?.length?'High':'Medium', routing:facts.lcrStatus&&facts.lcrStatus!=='Unknown'?'High':'Low', chargebacks:facts.chargebacks?'High':'Low', gateway:paymentsStack.gateway?'Medium':'Low' } };
 }

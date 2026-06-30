@@ -1,28 +1,8 @@
 // api/_lib/pit/buildCaseSummary.js
-// Compact summary for admin/PIT console use. This is deterministic and safe to store.
+// Case Intelligence: synthesises the PIT output into a reusable case summary.
 
-export function buildCaseSummary({ merchantProfile, paymentsStack, metrics, findings, opportunities, dataGaps, selectedModules }) {
-  return {
-    merchant: merchantProfile.companyName,
-    contact: merchantProfile.contactName,
-    provider: paymentsStack.acquirer,
-    period: merchantProfile.statementPeriod,
-    headlineMetrics: {
-      volume: metrics?.snapshot?.creditVolume != null || metrics?.snapshot?.debitVolume != null ? null : undefined,
-      totalAnnualOpportunity: metrics?.snapshot?.totalAnnualOpportunity || 0,
-      debitMix: metrics?.snapshot?.debitPct ?? null,
-      creditMix: metrics?.snapshot?.creditPct ?? null
-    },
-    findingsCount: findings.length,
-    opportunities: opportunities.slice(0, 4).map(o => ({
-      id: o.id,
-      title: o.title,
-      category: o.category,
-      estimatedAnnualValue: o.estimatedAnnualValue,
-      confidence: o.confidence,
-      urgency: o.urgency
-    })),
-    dataGaps,
-    selectedModules
-  };
+export function buildCaseSummary({ merchantProfile, paymentsStack, metrics, findings, opportunities, risks, dataQuality, commercialReasoning }) {
+  const topOpps=(opportunities||[]).slice(0,4);
+  const totalQuantifiedAnnual=topOpps.reduce((sum,o)=>sum+(Number(o.estimatedAnnualValue)||0),0);
+  return { merchantName:merchantProfile.name, headline:commercialReasoning.primaryCommercialTheme, summary:commercialReasoning.whyItMatters, currentPosition:{ provider:paymentsStack.acquirerOrProvider, pricingModel:paymentsStack.pricingModel, effectiveRate:metrics.effectiveRate, volume:metrics.volume, totalFees:metrics.totalFees, debitMix:metrics.cardMix?.debitPct, creditMix:metrics.cardMix?.creditPct }, quantifiedAnnualOpportunity:totalQuantifiedAnnual||null, topOpportunities:topOpps.map(o=>({id:o.id,title:o.title,estimatedAnnualValue:o.estimatedAnnualValue||null,confidence:o.confidence,urgency:o.urgency,valueBand:o.valueBand})), keyFindings:(findings||[]).slice(0,5).map(f=>({id:f.id,title:f.title,confidence:f.confidence})), keyRisks:(risks||[]).slice(0,4).map(r=>({id:r.id,type:r.type,severity:r.severity})), dataQuality:{level:dataQuality.qualityLevel,gaps:(dataQuality.gaps||[]).slice(0,5)} };
 }
