@@ -135,7 +135,7 @@ export default async function handler(req, res) {
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_ANON_KEY;
   const resendKey   = process.env.RESEND_API_KEY;
-  const adminEmail  = process.env.ADMIN_EMAIL || 'declan.t.harrington@gmail.com';
+ const adminEmail  = process.env.ADMIN_EMAIL || null;
   const fromEmail   = process.env.RESEND_FROM || 'acceptorIQ Submissions <onboarding@resend.dev>';
 
   // Supabase is required to store the submission; without it the whole flow
