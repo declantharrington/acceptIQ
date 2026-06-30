@@ -8,6 +8,8 @@ import { applyAdminOverrides } from './_lib/report/core/applyOverrides.js';
 import { determineRevenueBand, toneGuideFor } from './_lib/report/core/audience.js';
 import { logFeeReconciliation } from './_lib/report/core/validation.js';
 import { buildPIT } from './_lib/pit/buildPIT.js';
+import { persistPIT } from './_lib/pit/persistPIT.js';
+import { upsertMerchant, linkSubmissionToMerchant } from './_lib/merchants.js';
 import { generateNarrative } from './_lib/report/narrative/generateNarrative.js';
 import { renderReport } from './_lib/report/render/renderReport.js';
 import { uploadReportHtml } from './_lib/report/storage/reportStorage.js';
@@ -37,7 +39,7 @@ export default async function handler(req, res) {
     const { submissionId, overrides = {} } = req.body || {};
     if (!submissionId) return res.status(400).json({ error: 'submissionId required' });
 
-const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseUrl = process.env.SUPABASE_URL;
     // Service role key bypasses RLS - see comment in api/submit.js for why.
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
@@ -59,6 +61,18 @@ const supabaseUrl = process.env.SUPABASE_URL;
 
     // 3. Build the Payments Intelligence Terminal.
     const pit = buildPIT({ report, programContext, overrides, adminNotes });
+
+    // 3a. Ensure the submission has a merchant_id (may be missing for submissions
+    //     created before this step was wired in), then persist the full PIT output.
+    //     Both are non-fatal if they fail - they don't affect report generation.
+    let merchantId = submission.merchant_id || null;
+    if (!merchantId) {
+      merchantId = await upsertMerchant({ supabaseUrl, supabaseKey, programContext });
+      if (merchantId) {
+        await linkSubmissionToMerchant({ supabaseUrl, supabaseKey, submissionId, merchantId });
+      }
+    }
+    await persistPIT({ supabaseUrl, supabaseKey, submissionId, merchantId, pit });
 
     const facts = pit.facts || report;
     const metrics = pit.metrics || {};
