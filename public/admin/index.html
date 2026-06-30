@@ -336,7 +336,21 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 </style>
 </head>
 <body>
-<div class="shell">
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="login-screen" style="position:fixed;inset:0;z-index:1000;background:#0F1218;display:none;align-items:center;justify-content:center;font-family:'Inter',sans-serif">
+  <form id="login-form" onsubmit="return handleLogin(event)" style="width:100%;max-width:340px;padding:0 24px">
+    <div style="display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:32px">
+      <div class="nav-mark"><span></span><span></span></div>
+      <span class="nav-word" style="font-size:17px">acceptor<b>IQ</b></span>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(224,233,246,0.28);text-align:center;margin-bottom:20px">Operations Portal</div>
+    <input type="password" id="login-password" class="edit-input" placeholder="Password" autocomplete="current-password" style="text-align:center;margin-bottom:12px" autofocus>
+    <button type="submit" id="login-submit-btn" class="save-btn" style="width:100%;padding:11px;text-align:center">Sign in</button>
+    <div id="login-error" style="margin-top:14px;font-size:12px;color:#E88A8A;text-align:center;min-height:16px"></div>
+  </form>
+</div>
+
+<div class="shell" id="app-shell" style="display:none">
 
   <!-- NAV -->
   <nav class="nav">
@@ -347,7 +361,7 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
     <div class="nav-right">
       <div class="nav-system"><div class="sys-dot"></div>All systems operational</div>
       <div class="nav-badge-count" id="nav-pending-count">— pending</div>
-      <div class="nav-avatar">DH</div>
+      <div class="nav-avatar" onclick="handleLogout()" title="Sign out">DH</div>
     </div>
   </nav>
 
@@ -684,12 +698,6 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 
 <script>
 /* ─────────────────────────────────────────────────────────────
-   SUPABASE CONFIG
-───────────────────────────────────────────────────────────── */
-const SUPABASE_URL = 'https://lnelbjisofzeufihtzlp.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuZWxiamlzb2Z6ZXVmaWh0emxwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MDIxNzMsImV4cCI6MjA5NjM3ODE3M30.BekqvtOv4S--6J-LyD9Pe4JgRBYUQImuuj5egyoKhhw';
-
-/* ─────────────────────────────────────────────────────────────
    STATE
 ───────────────────────────────────────────────────────────── */
 let allSubmissions = [];
@@ -708,6 +716,22 @@ const fmtD = n => (n != null && n !== '') ? '$' + Number(n).toLocaleString('en-A
 const fmtP = n => (n != null && n !== '') ? Number(n).toFixed(2) + '%' : '—';
 const esc  = v => (v == null ? '' : String(v)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const escA = v => esc(v).replace(/"/g,'&quot;');
+
+// Mirrors the reconciliation check in api/submit.js and
+// api/_lib/report/core/validation.js (same 5% tolerance). That check only
+// ever reached a server log or, at best, the one-time triage email - this
+// surfaces it again, visually, at the moment the admin is about to approve
+// and generate the client-facing report, so a stale/missed warning from
+// submission time doesn't slip through.
+function checkFeeReconciliation(f) {
+  const total = Number(f.totalFees);
+  const items = Array.isArray(f.feeBreakdown) ? f.feeBreakdown : [];
+  if (!total || !items.length) return null;
+  const sum = items.reduce((a, b) => a + (Number(b.amount) || 0), 0);
+  const pct = Math.abs(sum - total) / total * 100;
+  if (pct <= 5) return null;
+  return { total, sum, diff: sum - total, pct };
+}
 
 function parseMerchant(ctx) {
   ctx = ctx || '';
@@ -748,17 +772,27 @@ function showPage(id, btn) {
 ───────────────────────────────────────────────────────────── */
 async function loadSubmissions() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/submissions?order=submitted_at.desc&limit=200`, {
-      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    const res = await fetch('/api/admin-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'list' })
     });
-    allSubmissions = await res.json();
+    if (res.status === 401) { showLoginScreen(); return false; }
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.error || ('HTTP ' + res.status));
+    }
+    const data = await res.json();
+    allSubmissions = data.submissions || [];
     updateDashboard();
     populateProviderFilter();
     applyView();
     updateSidebarBadge();
+    return true;
   } catch(err) {
     document.getElementById('reports-tbody').innerHTML =
       `<tr><td colspan="8" class="empty-state-row">Could not load submissions: ${esc(err.message)}</td></tr>`;
+    return false;
   }
 }
 
@@ -939,8 +973,9 @@ function renderTable(submissions) {
     const timeStr=new Date(s.submitted_at).toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'});
     const sc=STATUS_CLASS[s.status]||'pending'; const sl=STATUS_LABEL[s.status]||'Pending';
     const reportBtn=hasReport(s)?`<button class="action-btn blue" onclick="event.stopPropagation();openReport('${escA(s.report_html_path)}')">Report ↗</button>`:'';
+    const reconFlag=checkFeeReconciliation(facts(s))?'<span title="Fee reconciliation mismatch - verify before approving" style="color:#E7B27A;margin-left:6px">⚠</span>':'';
     return `<tr onclick="openSubmission('${s.id}')">
-      <td class="primary">${esc(m.company)||'Unknown'}<br><span style="font-size:11px;color:rgba(224,233,246,0.3);font-weight:400">${esc(m.name)||''}</span></td>
+      <td class="primary">${esc(m.company)||'Unknown'}${reconFlag}<br><span style="font-size:11px;color:rgba(224,233,246,0.3);font-weight:400">${esc(m.name)||''}</span></td>
       <td style="color:rgba(224,233,246,0.4)">${dateStr}<br><span style="font-size:10px;color:rgba(224,233,246,0.25)">${timeStr}</span></td>
       <td>${esc(s.provider)||'—'}<br><span style="font-size:10px;color:rgba(224,233,246,0.3)">${esc(s.period)||''}</span></td>
       <td class="mono">${fmtD(s.volume)}</td>
@@ -968,6 +1003,11 @@ function openSubmission(id) {
     narrativeHtml=`${alertsHtml?`<div class="modal-section"><div class="modal-section-label">Key Findings</div>${alertsHtml}</div>`:''}${sec('Executive Summary',n.executiveSummary)}${sec('Savings Opportunity',n.savingsOpportunity)}${sec('Pricing Model Analysis',n.pricingModelAnalysis)}${sec('LCR Analysis',n.lcrAnalysis)}${sec('Market Benchmark',n.benchmarkComment)}${n.keyRecommendation?`<div class="modal-section"><div class="modal-section-label">Priority Area</div><div class="modal-section-text">${previewText(n.keyRecommendation)}</div></div>`:''}`;
   }
   const reportBanner=hasReport(s)?`<div class="modal-section"><div class="report-ready-banner"><span class="rb-text">✓ Report generated</span><button class="btn-open-report" onclick="openReport('${escA(s.report_html_path)}')"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Open report</button></div></div>`:'';
+  const feeCheck=checkFeeReconciliation(f);
+  const reconBanner=feeCheck?`<div class="modal-section"><div class="modal-alert warn">
+    <strong>⚠ Fee reconciliation mismatch</strong>
+    Extracted total fees (${fmtD(feeCheck.total)}) differ from the sum of the fee breakdown (${fmtD(feeCheck.sum)}) by ${fmtD(Math.abs(feeCheck.diff))} (${feeCheck.pct.toFixed(1)}%). This usually means an extraction error (e.g. a GST-exclusive figure was used, or a fee line was missed). Verify against the original statement before approving.
+  </div></div>`:'';
   const approveLabel=hasReport(s)?'Regenerate report':'Approve &amp; generate report';
   document.getElementById('modal-content').innerHTML=`
     <div class="modal-header">
@@ -983,6 +1023,7 @@ function openSubmission(id) {
     </div>
     <div class="modal-body">
       ${reportBanner}
+      ${reconBanner}
       <div class="modal-section"><div class="modal-section-label">Statement Data</div>
         <table class="modal-table">
           <tr><td>Card volume</td><td>${fmtD(f.volume??s.volume)}</td></tr>
@@ -1068,7 +1109,12 @@ function readEditOverrides(id){
 
 /* ── STATUS & REPORT GENERATION ── */
 async function updateStatus(id,status){
-  await fetch(`${SUPABASE_URL}/rest/v1/submissions?id=eq.${id}`,{method:'PATCH',headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`},body:JSON.stringify({status})});
+  const res = await fetch('/api/admin-data', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ action:'updateStatus', id, status })
+  });
+  if (res.status === 401) { showLoginScreen(); return; }
+  if (!res.ok) { const e=await res.json().catch(()=>({})); alert('Could not update status: ' + (e.error||res.status)); return; }
   const s=allSubmissions.find(x=>x.id==id); if(s) s.status=status;
   updateDashboard(); applyView(); updateSidebarBadge(); closeModalBtn();
 }
@@ -1080,6 +1126,7 @@ async function approveAndGenerate(id){
   if(statusEl) statusEl.textContent='Claude is writing the personalised report…';
   try{
     const res=await fetch('/api/generate-report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({submissionId:id,overrides})});
+    if (res.status === 401) { showLoginScreen(); return; }
     const data=await res.json();
     if(!res.ok) throw new Error(data.error||'Generation failed');
     const s=allSubmissions.find(x=>x.id==id); if(s){s.status='approved';s.report_html_path=data.htmlPath;}
@@ -1093,10 +1140,14 @@ async function approveAndGenerate(id){
 }
 async function openReport(htmlPath){
   try{
-    const res=await fetch(`${SUPABASE_URL}/storage/v1/object/public/statements/${htmlPath}`,{headers:{apikey:SUPABASE_KEY}});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const html=await res.text();
-    window.open(URL.createObjectURL(new Blob([html],{type:'text/html'})),'_blank');
+    const res = await fetch('/api/admin-data', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'getReportHtml', htmlPath })
+    });
+    if (res.status === 401) { showLoginScreen(); return; }
+    if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.error || ('HTTP '+res.status)); }
+    const data = await res.json();
+    window.open(URL.createObjectURL(new Blob([data.html],{type:'text/html'})),'_blank');
   }catch(err){alert('Could not open report: '+err.message);}
 }
 function closeModal(e){if(e.target===document.getElementById('modal-overlay'))closeModalBtn();}
@@ -1273,16 +1324,73 @@ function handleUpload(name,input){
   reader.readAsDataURL(file);
 }
 
+/* ─────────────────────────────────────────────────────────────
+   AUTH / LOGIN SCREEN
+───────────────────────────────────────────────────────────── */
+function showLoginScreen() {
+  document.getElementById('app-shell').style.display = 'none';
+  const login = document.getElementById('login-screen');
+  login.style.display = 'flex';
+  document.getElementById('login-password').focus();
+}
+function showAppShell() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-shell').style.display = 'grid';
+}
+async function handleLogin(e) {
+  e.preventDefault();
+  const pwInput = document.getElementById('login-password');
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-submit-btn');
+  errEl.textContent = '';
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try {
+    const res = await fetch('/api/admin-login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwInput.value })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Sign in failed');
+    pwInput.value = '';
+    showAppShell();
+    initDashboard();
+  } catch (err) {
+    errEl.textContent = err.message;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign in';
+  }
+  return false;
+}
+async function handleLogout() {
+  try { await fetch('/api/admin-logout', { method: 'POST' }); } catch {}
+  showLoginScreen();
+}
+
 /* ── INIT ── */
-loadSubmissions();
-setInterval(loadSubmissions, 60000);
-checkAgentServer();
-// Re-check server status whenever the tasks tab is opened
-const _origShowPage = showPage;
-window.showPage = function(id, btn) {
-  _origShowPage(id, btn);
-  if (id === 'tasks') checkAgentServer();
-};
+// loadSubmissions() doubles as the session check: a 401 response triggers
+// showLoginScreen(). Only on success do we wire up polling and the agent
+// server check, so a logged-out session doesn't keep firing background
+// requests against /api/admin-data.
+let dashboardInitialised = false;
+function initDashboard() {
+  if (dashboardInitialised) return;
+  dashboardInitialised = true;
+  setInterval(loadSubmissions, 60000);
+  checkAgentServer();
+  const _origShowPage = showPage;
+  window.showPage = function(id, btn) {
+    _origShowPage(id, btn);
+    if (id === 'tasks') checkAgentServer();
+  };
+}
+(async function start() {
+  const authenticated = await loadSubmissions();
+  if (authenticated) {
+    showAppShell();
+    initDashboard();
+  }
+  // If not authenticated, loadSubmissions() already called showLoginScreen().
+})();
 </script>
 </body>
 </html>
