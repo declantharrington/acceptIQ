@@ -11,12 +11,12 @@ export function buildFeeCompositionHtml(feeComposition) {
       <div class="composition-bar">
         ${feeComposition.interchangePct > 0 ? `<div class="composition-seg interchange" style="width:${feeComposition.interchangePct}%"></div>` : ''}
         ${feeComposition.schemePct > 0 ? `<div class="composition-seg scheme" style="width:${feeComposition.schemePct}%"></div>` : ''}
-        ${feeComposition.marginPct > 0 ? `<div class="composition-seg margin" style="width:${feeComposition.marginPct}%"></div>` : ''}
+        ${feeComposition.providerMarginPct > 0 ? `<div class="composition-seg margin" style="width:${feeComposition.providerMarginPct}%"></div>` : ''}
       </div>
       <div class="composition-legend">
-        <div class="cl-item"><span class="cl-dot interchange"></span>Interchange <strong>${feeComposition.interchangePct}%</strong> (${fmtD(feeComposition.interchangeAmt)})</div>
-        <div class="cl-item"><span class="cl-dot scheme"></span>Scheme fees <strong>${feeComposition.schemePct}%</strong> (${fmtD(feeComposition.schemeAmt)})</div>
-        <div class="cl-item"><span class="cl-dot margin"></span>Provider margin &amp; other <strong>${feeComposition.marginPct}%</strong> (${fmtD(feeComposition.marginAmt)})</div>
+        <div class="cl-item"><span class="cl-dot interchange"></span>Interchange <strong>${feeComposition.interchangePct}%</strong> (${fmtD(feeComposition.interchangeAmount)})</div>
+        <div class="cl-item"><span class="cl-dot scheme"></span>Scheme fees <strong>${feeComposition.schemePct}%</strong> (${fmtD(feeComposition.schemeAmount)})</div>
+        <div class="cl-item"><span class="cl-dot margin"></span>Provider margin &amp; other <strong>${feeComposition.providerMarginPct}%</strong> (${fmtD(feeComposition.providerMarginAmount)})</div>
       </div>
     </div>`;
 }
