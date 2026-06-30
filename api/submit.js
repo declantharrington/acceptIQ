@@ -7,7 +7,7 @@
 // report. It intentionally shows the raw AI findings (including recommendations)
 // so the admin can review before approving. The non-prescriptive report
 // philosophy applies to generate-report.js, NOT here.
-
+import { upsertMerchant, linkSubmissionToMerchant } from './_lib/merchants.js';
 export const config = {
   // File uploads (base64 statements) + DB insert + email can run long.
   maxDuration: 60,
@@ -238,8 +238,19 @@ const supabaseUrl = process.env.SUPABASE_URL;
       throw new Error(`Failed to store submission: ${dbRes.status}`);
     }
 
-    const dbData = await dbRes.json();
+const dbData = await dbRes.json();
     const submissionId = Array.isArray(dbData) && dbData[0] ? dbData[0].id : null;
+
+    // ── Create or find the merchant entity ────────────────────────
+    // Every submission must be linked to a merchant row so the PIT intelligence
+    // layer can be scoped per merchant rather than per submission. Non-fatal if
+    // it fails - the submission is already safely stored above.
+    if (submissionId) {
+      const merchantId = await upsertMerchant({ supabaseUrl, supabaseKey, programContext });
+      if (merchantId) {
+        await linkSubmissionToMerchant({ supabaseUrl, supabaseKey, submissionId, merchantId });
+      }
+    }
 
     // ── Format helpers ────────────────────────────────────────────
     const fmtD = n => n != null ? '$' + Number(n).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—';
