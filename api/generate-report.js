@@ -37,8 +37,9 @@ export default async function handler(req, res) {
     const { submissionId, overrides = {} } = req.body || {};
     if (!submissionId) return res.status(400).json({ error: 'submissionId required' });
 
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.SUPABASE_URL;
+    // Service role key bypasses RLS - see comment in api/submit.js for why.
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
     if (!supabaseUrl || !supabaseKey || !anthropicKey) {
