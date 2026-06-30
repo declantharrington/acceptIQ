@@ -17,6 +17,7 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 /* ── NAV ── */
 .nav { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding: 0 24px 0 0; background: rgba(224,233,246,0.02); border-bottom: 1px solid rgba(224,233,246,0.08); z-index: 10; }
 .nav-brand { display: flex; align-items: center; height: 56px; width: 220px; padding: 0 20px; border-right: 1px solid rgba(224,233,246,0.08); }
+.nav-logo { height: 24px; width: auto; display: block; }
 .nav-mark { position: relative; width: 18px; height: 16px; display: inline-block; flex-shrink: 0; margin-right: 10px; }
 .nav-mark span { position: absolute; bottom: 0; width: 6px; height: 16px; border-radius: 2px; background: #E6EBF6; }
 .nav-mark span:first-child { left: 3px; transform: skewX(-30deg); }
@@ -361,8 +362,7 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
   <!-- NAV -->
   <nav class="nav">
     <div class="nav-brand">
-      <div class="nav-mark"><span></span><span></span></div>
-      <span class="nav-word">acceptor<b>IQ</b></span>
+      <img src="/images/acceptorIQ-full.png" alt="acceptorIQ" class="nav-logo">
     </div>
     <div class="nav-right">
       <div class="nav-system"><div class="sys-dot"></div>All systems operational</div>
