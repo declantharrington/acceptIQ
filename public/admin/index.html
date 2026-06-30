@@ -57,7 +57,8 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 .content::-webkit-scrollbar-thumb { background: rgba(224,233,246,0.08); border-radius: 2px; }
 .page { display: none; padding: 32px 36px; min-height: 100%; }
 .page.active { display: block; }
-.page-head { margin-bottom: 28px; }
+.page-head { margin-bottom: 28px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.page-head-left { flex: 1; }
 .page-title { font-size: 22px; font-weight: 300; letter-spacing: -0.04em; color: rgba(230,235,246,.92); margin-bottom: 4px; }
 .page-sub { font-size: 13px; color: rgba(224,233,246,0.35); }
 
@@ -67,59 +68,31 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 .stat-card-val { font-size: 28px; font-weight: 300; letter-spacing: -0.04em; color: #E6EBF6; margin-bottom: 4px; }
 .stat-card-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(224,233,246,0.3); }
 .stat-card-delta { font-size: 11px; margin-top: 8px; color: rgba(159,217,180,0.8); }
-.stat-card-delta.neg { color: rgba(232,138,138,0.8); }
 
-/* ── CHARTS ── */
-.charts-row { display: grid; grid-template-columns: 1fr 1fr 340px; gap: 12px; margin-bottom: 24px; }
-.chart-card { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); padding: 20px; }
-.chart-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(224,233,246,0.28); margin-bottom: 16px; }
-.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; }
-.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
-.bar { width: 100%; background: rgba(63,119,214,0.25); border-top: 2px solid rgba(63,119,214,0.6); transition: background 0.2s; cursor: pointer; }
-.bar:hover { background: rgba(63,119,214,0.38); }
-.bar.accent { background: rgba(159,217,180,0.2); border-top-color: rgba(159,217,180,0.6); }
-.bar-lbl { font-size: 10px; color: rgba(224,233,246,0.25); }
-.funnel { display: flex; flex-direction: column; gap: 8px; }
-.funnel-bar-bg { height: 28px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.07); position: relative; overflow: hidden; }
-.funnel-bar-fill { height: 100%; background: rgba(63,119,214,0.2); border-right: 2px solid rgba(63,119,214,0.5); transition: width 1s ease; }
-.funnel-bar-fill.green { background: rgba(159,217,180,0.2); border-right-color: rgba(159,217,180,0.5); }
-.funnel-bar-fill.amber { background: rgba(231,178,122,0.2); border-right-color: rgba(231,178,122,0.5); }
-.funnel-label { position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 11px; font-weight: 500; color: rgba(224,233,246,0.6); }
-.funnel-val { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: rgba(224,233,246,0.7); font-family: 'JetBrains Mono', monospace; }
-.mini-list { display: flex; flex-direction: column; }
-.mini-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(224,233,246,0.05); }
-.mini-row:last-child { border-bottom: none; }
-.mini-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.mini-name { flex: 1; font-size: 12px; color: rgba(224,233,246,0.6); }
-.mini-val { font-size: 12px; font-weight: 600; color: rgba(224,233,246,0.8); font-family: 'JetBrains Mono', monospace; }
-.mini-pct { font-size: 10px; color: rgba(224,233,246,0.3); margin-left: 4px; }
+/* ── MERCHANTS TABLE ── */
+.toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.search-wrap { position: relative; flex: 1; min-width: 200px; }
+.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; color: rgba(224,233,246,0.3); pointer-events: none; }
+.search-input { width: 100%; font-family: 'Inter', sans-serif; font-size: 12.5px; padding: 8px 10px 8px 32px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.1); color: #E6EBF6; border-radius: 0; }
+.search-input::placeholder { color: rgba(224,233,246,0.3); }
+.search-input:focus { outline: none; border-color: rgba(63,119,214,0.4); background: rgba(63,119,214,0.04); }
+.filter-pills { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.fpill { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 100px; border: 1px solid rgba(224,233,246,0.1); background: none; color: rgba(224,233,246,0.4); cursor: pointer; transition: all 0.12s; }
+.fpill.active { background: rgba(63,119,214,0.12); border-color: rgba(63,119,214,0.35); color: #A9CCF2; }
+.fpill:hover:not(.active) { border-color: rgba(224,233,246,0.2); color: rgba(224,233,246,0.65); }
+.results-count { font-size: 12px; color: rgba(224,233,246,0.3); margin-bottom: 10px; }
+.table-wrap { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); overflow: hidden; }
+.rtable { width: 100%; border-collapse: collapse; }
+.rtable th { padding: 11px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(224,233,246,0.22); text-align: left; border-bottom: 1px solid rgba(224,233,246,0.07); white-space: nowrap; user-select: none; }
+.rtable td { padding: 13px 16px; border-top: 1px solid rgba(224,233,246,0.05); font-size: 12px; color: rgba(224,233,246,0.6); vertical-align: middle; }
+.rtable tr:hover td { background: rgba(224,233,246,0.02); cursor: pointer; }
+.rtable td.primary { font-weight: 500; color: rgba(224,233,246,0.85); }
+.rtable td.mono { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+.loading-row td { text-align: center; padding: 60px 20px; color: rgba(224,233,246,0.3); font-size: 13px; }
+.empty-row td { text-align: center; padding: 50px 20px; color: rgba(224,233,246,0.25); font-size: 13px; }
 
-/* ── ACTIVITY ROW ── */
-.activity-row { display: grid; grid-template-columns: 1fr 380px; gap: 12px; }
-.table-card { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); }
-.table-card-head { padding: 14px 18px; border-bottom: 1px solid rgba(224,233,246,0.06); display: flex; align-items: center; justify-content: space-between; }
-.table-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(224,233,246,0.28); }
-.view-all-btn { font-size: 11px; color: rgba(63,119,214,0.7); cursor: pointer; font-weight: 500; border: none; background: none; font-family: 'Inter', sans-serif; }
-.view-all-btn:hover { color: #A9CCF2; }
-.mini-table { width: 100%; border-collapse: collapse; }
-.mini-table th { padding: 8px 18px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(224,233,246,0.2); text-align: left; }
-.mini-table td { padding: 11px 18px; border-top: 1px solid rgba(224,233,246,0.05); font-size: 12px; color: rgba(224,233,246,0.65); }
-.mini-table tr:hover td { background: rgba(224,233,246,0.02); cursor: pointer; }
-.mini-table td.primary { font-weight: 500; color: rgba(224,233,246,0.85); }
-.feed-card { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); }
-.feed-item { display: flex; gap: 12px; padding: 12px 18px; border-bottom: 1px solid rgba(224,233,246,0.05); }
-.feed-item:last-child { border-bottom: none; }
-.feed-icon { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; margin-top: 1px; }
-.feed-icon.blue { background: rgba(63,119,214,0.12); }
-.feed-icon.green { background: rgba(159,217,180,0.12); }
-.feed-icon.amber { background: rgba(231,178,122,0.12); }
-.feed-body { flex: 1; min-width: 0; }
-.feed-text { font-size: 12px; color: rgba(224,233,246,0.6); line-height: 1.5; }
-.feed-text b { color: rgba(224,233,246,0.85); font-weight: 500; }
-.feed-time { font-size: 10px; color: rgba(224,233,246,0.25); margin-top: 3px; }
-
-/* ── STATUS PILLS (shared) ── */
-.status-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 100px; }
+/* ── STATUS PILLS ── */
+.status-badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 100px; }
 .status-badge.pending  { background: rgba(231,178,122,0.15); color: #E7B27A; }
 .status-badge.reviewed { background: rgba(224,233,246,0.08); color: rgba(224,233,246,0.5); }
 .status-badge.approved { background: rgba(159,217,180,0.15); color: #9FD9B4; }
@@ -129,53 +102,26 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 .rate-hi  { background: rgba(232,138,138,0.12); color: #E88A8A; }
 .rate-mid { background: rgba(231,178,122,0.12); color: #E7B27A; }
 .rate-lo  { background: rgba(159,217,180,0.12); color: #9FD9B4; }
+.opp-pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; background: rgba(63,119,214,0.12); color: #A9CCF2; font-family: 'JetBrains Mono', monospace; }
+.confidence-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; }
+.conf-confirmed { background: #9FD9B4; }
+.conf-likely    { background: #A9CCF2; }
+.conf-estimated { background: #E7B27A; }
 
-/* ── REPORTS PAGE ── */
-.reports-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
-.search-wrap { position: relative; flex: 1; min-width: 200px; }
-.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; color: rgba(224,233,246,0.3); pointer-events: none; }
-.search-input { width: 100%; font-family: 'Inter', sans-serif; font-size: 12.5px; padding: 8px 10px 8px 32px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.1); color: #E6EBF6; transition: border-color 0.15s; border-radius: 0; }
-.search-input::placeholder { color: rgba(224,233,246,0.3); }
-.search-input:focus { outline: none; border-color: rgba(63,119,214,0.4); background: rgba(63,119,214,0.04); }
-.toolbar-select { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; padding: 8px 28px 8px 10px; background: rgba(224,233,246,0.04) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A9CCF2' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center; border: 1px solid rgba(224,233,246,0.1); color: rgba(224,233,246,0.65); cursor: pointer; appearance: none; border-radius: 0; }
-.toolbar-select:focus { outline: none; border-color: rgba(63,119,214,0.4); }
-.date-range { display: flex; align-items: center; gap: 6px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.1); padding: 0 10px; }
-.toolbar-date { font-family: 'Inter', sans-serif; font-size: 12px; padding: 7px 2px; border: none; background: transparent; color: rgba(224,233,246,0.65); color-scheme: dark; cursor: pointer; }
-.toolbar-date:focus { outline: none; }
-.date-sep { color: rgba(224,233,246,0.25); font-size: 12px; }
-.clear-btn { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; padding: 8px 12px; border: 1px solid rgba(232,138,138,0.25); background: rgba(232,138,138,0.08); color: #E88A8A; cursor: pointer; border-radius: 0; white-space: nowrap; }
-.clear-btn:hover { background: rgba(232,138,138,0.16); }
-.filter-pills { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
-.fpill { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 100px; border: 1px solid rgba(224,233,246,0.1); background: none; color: rgba(224,233,246,0.4); cursor: pointer; transition: all 0.12s; }
-.fpill.active { background: rgba(63,119,214,0.12); border-color: rgba(63,119,214,0.35); color: #A9CCF2; }
-.fpill:hover:not(.active) { border-color: rgba(224,233,246,0.2); color: rgba(224,233,246,0.65); }
-.results-count { font-size: 12px; color: rgba(224,233,246,0.3); margin-bottom: 10px; }
-
-.reports-table-wrap { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); overflow: hidden; }
-.rtable { width: 100%; border-collapse: collapse; }
-.rtable th { padding: 11px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(224,233,246,0.22); text-align: left; border-bottom: 1px solid rgba(224,233,246,0.07); cursor: pointer; white-space: nowrap; user-select: none; }
-.rtable th:hover { color: rgba(224,233,246,0.45); }
-.rtable th.active-sort { color: #A9CCF2; }
-.sort-arrow { display: inline-block; width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent; border-bottom: 4px solid currentColor; margin-left: 4px; vertical-align: middle; opacity: 0; transition: opacity 0.15s, transform 0.15s; }
-.rtable th.active-sort .sort-arrow { opacity: 1; }
-.rtable th.active-sort.desc .sort-arrow { transform: rotate(180deg); }
-.rtable td { padding: 13px 16px; border-top: 1px solid rgba(224,233,246,0.05); font-size: 12px; color: rgba(224,233,246,0.6); vertical-align: middle; }
-.rtable tr:hover td { background: rgba(224,233,246,0.02); cursor: pointer; }
-.rtable td.primary { font-weight: 500; color: rgba(224,233,246,0.85); }
-.rtable td.mono { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+/* ── ACTION BUTTONS ── */
 .action-btn { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; padding: 5px 10px; border: none; cursor: pointer; transition: background 0.12s; border-radius: 0; }
 .action-btn.ghost { background: rgba(224,233,246,0.06); color: rgba(224,233,246,0.55); }
 .action-btn.ghost:hover { background: rgba(224,233,246,0.1); color: rgba(224,233,246,0.85); }
-.action-btn.blue { background: rgba(63,119,214,0.12); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.25); }
+.action-btn.blue  { background: rgba(63,119,214,0.12); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.25); }
 .action-btn.blue:hover { background: rgba(63,119,214,0.22); }
-.loading-spinner { text-align: center; padding: 60px 20px; color: rgba(224,233,246,0.3); font-size: 14px; }
-.empty-state-row td { text-align: center; padding: 50px 20px; color: rgba(224,233,246,0.25); font-size: 13px; }
+.action-btn.green { background: rgba(159,217,180,0.12); color: #9FD9B4; border: 1px solid rgba(159,217,180,0.25); }
+.action-btn.green:hover { background: rgba(159,217,180,0.22); }
 
 /* ── MODAL ── */
 .modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; }
 .modal-overlay.open { display: flex; }
-.modal { background: #13161e; border: 1px solid rgba(224,233,246,0.09); width: 100%; max-width: 720px; position: relative; margin: auto; border-radius: 0; }
-.modal-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; background: rgba(224,233,246,0.08); border: none; cursor: pointer; color: rgba(224,233,246,0.5); display: flex; align-items: center; justify-content: center; font-size: 14px; transition: background 0.15s; }
+.modal { background: #13161e; border: 1px solid rgba(224,233,246,0.09); width: 100%; max-width: 800px; position: relative; margin: auto; }
+.modal-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; background: rgba(224,233,246,0.08); border: none; cursor: pointer; color: rgba(224,233,246,0.5); display: flex; align-items: center; justify-content: center; font-size: 14px; }
 .modal-close:hover { background: rgba(224,233,246,0.14); }
 .modal-header { background: linear-gradient(135deg,#0F1218 0%,#171c26 100%); padding: 28px 32px; }
 .modal-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(224,233,246,0.28); margin-bottom: 8px; }
@@ -183,32 +129,63 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 .modal-meta { font-size: 12px; color: rgba(224,233,246,0.3); }
 .modal-contact { font-size: 12.5px; color: rgba(224,233,246,0.55); margin-top: 8px; line-height: 1.6; }
 .modal-contact a { color: #A9CCF2; text-decoration: none; }
-.modal-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; margin-top: 18px; background: rgba(224,233,246,0.07); overflow: hidden; }
+.modal-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; margin-top: 18px; background: rgba(224,233,246,0.07); overflow: hidden; }
 .modal-stat { padding: 12px; background: rgba(224,233,246,0.04); text-align: center; }
-.modal-stat-val { font-size: 16px; font-weight: 600; color: #E6EBF6; display: block; margin-bottom: 3px; }
+.modal-stat-val { font-size: 16px; font-weight: 600; color: #E6EBF6; display: block; margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; }
 .modal-stat-lbl { font-size: 10px; color: rgba(224,233,246,0.28); text-transform: uppercase; letter-spacing: 0.09em; }
+
+/* ── MODAL BODY TABS ── */
+.modal-tabs { display: flex; border-bottom: 1px solid rgba(224,233,246,0.08); padding: 0 32px; }
+.modal-tab { padding: 12px 0; margin-right: 24px; font-size: 12px; font-weight: 500; color: rgba(224,233,246,0.4); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.12s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Inter', sans-serif; }
+.modal-tab:hover { color: rgba(224,233,246,0.7); }
+.modal-tab.active { color: #A9CCF2; border-bottom-color: #A9CCF2; }
 .modal-body { padding: 24px 32px 32px; }
-.modal-section { padding: 18px 0; border-bottom: 1px solid rgba(224,233,246,0.06); }
+.modal-tab-pane { display: none; }
+.modal-tab-pane.active { display: block; }
+
+/* ── MODAL SECTIONS ── */
+.modal-section { padding: 16px 0; border-bottom: 1px solid rgba(224,233,246,0.06); }
 .modal-section:last-child { border-bottom: none; }
 .modal-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(224,233,246,0.28); margin-bottom: 10px; }
-.modal-section-text { font-size: 13px; line-height: 1.72; color: rgba(224,233,246,0.55); white-space: pre-line; }
+.modal-section-text { font-size: 13px; line-height: 1.72; color: rgba(224,233,246,0.55); }
 .modal-table { width: 100%; border-collapse: collapse; }
 .modal-table td { padding: 9px 0; border-bottom: 1px solid rgba(224,233,246,0.06); font-size: 13px; }
-.modal-table td:first-child { color: rgba(224,233,246,0.4); }
+.modal-table td:first-child { color: rgba(224,233,246,0.4); width: 50%; }
 .modal-table td:last-child { text-align: right; font-weight: 500; color: rgba(224,233,246,0.8); }
 .modal-table tr:last-child td { border-bottom: none; }
-.obs-list { margin: 0; padding-left: 18px; }
-.obs-list li { font-size: 13px; color: rgba(224,233,246,0.55); line-height: 1.7; margin-bottom: 4px; }
-.modal-alert { padding: 12px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; border-radius: 0; }
+.modal-alert { padding: 12px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
 .modal-alert.warn { background: rgba(231,178,122,0.1); border-left: 3px solid #E7B27A; color: rgba(224,233,246,0.65); }
 .modal-alert.good { background: rgba(159,217,180,0.1); border-left: 3px solid #9FD9B4; color: rgba(224,233,246,0.65); }
 .modal-alert.info { background: rgba(63,119,214,0.1); border-left: 3px solid #3F77D6; color: rgba(224,233,246,0.65); }
 .modal-alert strong { font-weight: 600; display: block; margin-bottom: 3px; color: rgba(224,233,246,0.85); }
+.obs-list { margin: 0; padding-left: 18px; }
+.obs-list li { font-size: 13px; color: rgba(224,233,246,0.55); line-height: 1.7; margin-bottom: 4px; }
 .program-box { background: rgba(224,233,246,0.04); padding: 14px; font-size: 13px; line-height: 1.7; color: rgba(224,233,246,0.5); }
-.report-ready-banner { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: rgba(159,217,180,0.1); border: 1px solid rgba(159,217,180,0.25); padding: 14px 16px; }
-.report-ready-banner .rb-text { font-size: 13px; color: #9FD9B4; font-weight: 500; }
 
-/* Modal action buttons */
+/* ── PIT INTELLIGENCE PANELS ── */
+.pit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.pit-panel { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); padding: 16px; }
+.pit-panel-title { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(224,233,246,0.28); margin-bottom: 12px; }
+.pit-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(224,233,246,0.05); font-size: 12.5px; }
+.pit-row:last-child { border-bottom: none; }
+.pit-row-label { color: rgba(224,233,246,0.45); flex: 1; }
+.pit-row-val { color: rgba(224,233,246,0.85); font-weight: 500; text-align: right; }
+.pit-opp-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(224,233,246,0.05); }
+.pit-opp-item:last-child { border-bottom: none; }
+.pit-opp-title { font-size: 12.5px; font-weight: 500; color: rgba(224,233,246,0.8); margin-bottom: 2px; }
+.pit-opp-meta { font-size: 11px; color: rgba(224,233,246,0.35); }
+.pit-opp-value { font-size: 13px; font-weight: 600; color: #9FD9B4; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+.pit-finding-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(224,233,246,0.05); }
+.pit-finding-item:last-child { border-bottom: none; }
+.pit-finding-title { font-size: 12.5px; color: rgba(224,233,246,0.7); }
+.pit-quality-bar { height: 4px; background: rgba(224,233,246,0.08); margin-top: 6px; }
+.pit-quality-fill { height: 100%; background: #9FD9B4; transition: width 0.4s ease; }
+.pit-quality-fill.med { background: #E7B27A; }
+.pit-quality-fill.low { background: #E88A8A; }
+
+/* ── REPORT BANNER + ACTIONS ── */
+.report-ready-banner { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: rgba(159,217,180,0.1); border: 1px solid rgba(159,217,180,0.25); padding: 14px 16px; margin-bottom: 16px; }
+.report-ready-banner .rb-text { font-size: 13px; color: #9FD9B4; font-weight: 500; }
 .modal-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
 .btn-mark-reviewed { background: rgba(159,217,180,0.15); color: #9FD9B4; border: 1px solid rgba(159,217,180,0.3); padding: 10px 18px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s; border-radius: 0; }
 .btn-mark-reviewed:hover { background: rgba(159,217,180,0.25); }
@@ -229,90 +206,14 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 .edit-panel.open { display: flex; }
 .edit-field { display: flex; flex-direction: column; gap: 6px; }
 .edit-field-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(224,233,246,0.3); }
-.edit-field-hint { font-size: 11px; color: rgba(224,233,246,0.2); margin-top: -3px; line-height: 1.5; }
-.edit-textarea { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.65; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.09); color: rgba(224,233,246,0.75); padding: 10px 12px; resize: vertical; min-height: 72px; transition: border-color 0.15s; border-radius: 0; }
-.edit-textarea:focus { outline: none; border-color: rgba(63,119,214,0.4); background: rgba(63,119,214,0.04); }
-.edit-input, .edit-select { font-family: 'Inter', sans-serif; font-size: 13px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.09); color: rgba(224,233,246,0.75); padding: 9px 12px; transition: border-color 0.15s; width: 100%; border-radius: 0; }
-.edit-input:focus, .edit-select:focus { outline: none; border-color: rgba(63,119,214,0.4); background: rgba(63,119,214,0.04); }
+.edit-field-hint { font-size: 11px; color: rgba(224,233,246,0.2); margin-top: -3px; }
+.edit-textarea { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.65; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.09); color: rgba(224,233,246,0.75); padding: 10px 12px; resize: vertical; min-height: 72px; border-radius: 0; }
+.edit-textarea:focus { outline: none; border-color: rgba(63,119,214,0.4); }
+.edit-input, .edit-select { font-family: 'Inter', sans-serif; font-size: 13px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.09); color: rgba(224,233,246,0.75); padding: 9px 12px; width: 100%; border-radius: 0; }
+.edit-input:focus, .edit-select:focus { outline: none; border-color: rgba(63,119,214,0.4); }
 .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .edit-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
 .edit-panel-note { font-size: 11px; color: rgba(224,233,246,0.2); line-height: 1.6; padding: 10px 12px; background: rgba(224,233,246,0.02); border: 1px solid rgba(224,233,246,0.05); }
-
-/* ── EMPLOYEES ── */
-.employees-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
-.emp-card { background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.08); transition: border-color 0.15s; }
-.emp-card:hover { border-color: rgba(224,233,246,0.15); }
-.emp-card-top { padding: 24px 24px 16px; display: flex; flex-direction: column; align-items: center; text-align: center; border-bottom: 1px solid rgba(224,233,246,0.06); }
-.emp-avatar { width: 64px; height: 64px; border-radius: 50%; background: rgba(63,119,214,0.12); border: 2px solid rgba(63,119,214,0.22); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 300; color: #A9CCF2; margin-bottom: 12px; overflow: hidden; position: relative; }
-.emp-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
-.emp-avatar-upload { position: absolute; inset: 0; background: rgba(15,18,24,0.65); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: rgba(224,233,246,0.8); font-family: 'Inter', sans-serif; font-weight: 500; opacity: 0; cursor: pointer; transition: opacity 0.15s; border: none; }
-.emp-avatar:hover .emp-avatar-upload { opacity: 1; }
-.emp-name { font-size: 15px; font-weight: 500; color: rgba(230,235,246,.9); letter-spacing: -0.02em; margin-bottom: 2px; }
-.emp-role { font-size: 11px; color: rgba(224,233,246,0.35); margin-bottom: 6px; }
-.emp-personality { font-size: 11.5px; font-style: italic; color: rgba(169,204,242,0.4); line-height: 1.5; max-width: 200px; }
-.emp-card-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; }
-.emp-stat { padding: 12px; text-align: center; border-right: 1px solid rgba(224,233,246,0.06); }
-.emp-stat:last-child { border-right: none; }
-.emp-stat-val { font-size: 16px; font-weight: 500; color: rgba(224,233,246,0.85); letter-spacing: -0.02em; display: block; margin-bottom: 2px; }
-.emp-stat-lbl { font-size: 10px; color: rgba(224,233,246,0.25); text-transform: uppercase; letter-spacing: 0.07em; }
-.emp-card-footer { padding: 12px 16px; border-top: 1px solid rgba(224,233,246,0.06); display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-.emp-tag { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 100px; background: rgba(224,233,246,0.06); color: rgba(224,233,246,0.35); }
-
-/* ── EMPLOYEE TASKS ── */
-.tasks-layout { display: grid; grid-template-columns: 280px 1fr; gap: 16px; min-height: 600px; }
-.pipeline-nav { display: flex; flex-direction: column; gap: 2px; }
-.pipeline-step { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid rgba(224,233,246,0.07); background: rgba(224,233,246,0.02); cursor: pointer; transition: all 0.12s; position: relative; border-radius: 0; }
-.pipeline-step:hover { background: rgba(224,233,246,0.04); border-color: rgba(224,233,246,0.12); }
-.pipeline-step.active { background: rgba(63,119,214,0.08); border-color: rgba(63,119,214,0.3); }
-.pipeline-step::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #3F77D6; opacity: 0; transition: opacity 0.15s; }
-.pipeline-step.active::before { opacity: 1; }
-.pipeline-step.done { border-color: rgba(159,217,180,0.2); }
-.pipeline-step.done::before { background: #9FD9B4; opacity: 1; }
-.step-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(224,233,246,0.06); border: 1px solid rgba(224,233,246,0.12); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: rgba(224,233,246,0.35); flex-shrink: 0; margin-top: 1px; }
-.pipeline-step.active .step-num { background: rgba(63,119,214,0.2); border-color: rgba(63,119,214,0.4); color: #A9CCF2; }
-.pipeline-step.done .step-num { background: rgba(159,217,180,0.15); border-color: rgba(159,217,180,0.3); color: #9FD9B4; }
-.step-info { flex: 1; min-width: 0; }
-.step-agent { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(224,233,246,0.25); margin-bottom: 2px; }
-.step-title { font-size: 13px; font-weight: 500; color: rgba(224,233,246,0.75); margin-bottom: 2px; }
-.step-desc { font-size: 11px; color: rgba(224,233,246,0.3); line-height: 1.4; }
-.step-status { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 100px; align-self: center; white-space: nowrap; }
-.step-status.idle    { background: rgba(224,233,246,0.06); color: rgba(224,233,246,0.3); }
-.step-status.running { background: rgba(231,178,122,0.12); color: #E7B27A; }
-.step-status.done    { background: rgba(159,217,180,0.12); color: #9FD9B4; }
-.task-runner { background: rgba(224,233,246,0.02); border: 1px solid rgba(224,233,246,0.08); display: flex; flex-direction: column; }
-.task-runner-head { padding: 18px 22px; border-bottom: 1px solid rgba(224,233,246,0.07); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-.task-runner-title { font-size: 15px; font-weight: 400; letter-spacing: -0.02em; color: rgba(224,233,246,0.85); }
-.task-runner-sub { font-size: 12px; color: rgba(224,233,246,0.3); margin-top: 2px; }
-.run-btn { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 9px 18px; background: rgba(63,119,214,0.2); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.35); cursor: pointer; transition: all 0.12s; display: flex; align-items: center; gap: 7px; border-radius: 0; }
-.run-btn:hover { background: rgba(63,119,214,0.3); color: #E6EBF6; }
-.run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.run-btn.running { background: rgba(231,178,122,0.12); color: #E7B27A; border-color: rgba(231,178,122,0.3); }
-.progress-track { height: 2px; background: rgba(224,233,246,0.06); flex-shrink: 0; }
-.progress-fill { height: 100%; background: #3F77D6; transition: width 0.4s ease; width: 0%; }
-.task-feed { flex: 1; overflow-y: auto; padding: 16px 22px; display: flex; flex-direction: column; gap: 6px; min-height: 320px; max-height: 420px; }
-.task-feed::-webkit-scrollbar { width: 4px; }
-.task-feed::-webkit-scrollbar-thumb { background: rgba(224,233,246,0.08); }
-.task-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: rgba(224,233,246,0.2); font-size: 12px; padding: 40px; }
-.tf-status { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: rgba(224,233,246,0.03); border: 1px solid rgba(224,233,246,0.07); font-size: 12px; color: rgba(224,233,246,0.45); font-family: 'JetBrains Mono', monospace; }
-.tf-spinner { width: 12px; height: 12px; border: 1.5px solid rgba(231,178,122,0.25); border-top-color: #E7B27A; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.tf-lead { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: rgba(224,233,246,0.02); border: 1px solid rgba(224,233,246,0.07); }
-.tf-lead-av { width: 32px; height: 32px; border-radius: 50%; background: rgba(63,119,214,0.12); border: 1px solid rgba(63,119,214,0.2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #A9CCF2; flex-shrink: 0; }
-.tf-lead-name { font-size: 12.5px; font-weight: 500; color: rgba(224,233,246,0.8); }
-.tf-lead-detail { font-size: 11px; color: rgba(224,233,246,0.35); margin-top: 1px; }
-.tf-tag { margin-left: auto; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 100px; background: rgba(63,119,214,0.1); color: rgba(169,204,242,0.7); white-space: nowrap; flex-shrink: 0; }
-.tf-email { padding: 10px 12px; background: rgba(224,233,246,0.02); border: 1px solid rgba(224,233,246,0.07); border-left: 2px solid rgba(159,217,180,0.4); }
-.tf-email-to { font-size: 11px; color: rgba(224,233,246,0.3); font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
-.tf-email-subject { font-size: 12.5px; font-weight: 500; color: rgba(224,233,246,0.8); margin-bottom: 3px; }
-.tf-email-preview { font-size: 11.5px; color: rgba(224,233,246,0.35); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.tf-sent { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: rgba(159,217,180,0.04); border: 1px solid rgba(159,217,180,0.12); }
-.tf-sent-check { width: 22px; height: 22px; border-radius: 50%; background: rgba(159,217,180,0.15); display: flex; align-items: center; justify-content: center; font-size: 11px; color: #9FD9B4; flex-shrink: 0; }
-.tf-sent-name { font-size: 12px; font-weight: 500; color: rgba(224,233,246,0.75); }
-.tf-sent-sub { font-size: 11px; color: rgba(224,233,246,0.35); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 360px; }
-.tf-done { padding: 12px 14px; background: rgba(159,217,180,0.07); border: 1px solid rgba(159,217,180,0.2); font-size: 12.5px; font-weight: 500; color: #9FD9B4; display: flex; align-items: center; gap: 10px; }
-.task-footer { padding: 14px 22px; border-top: 1px solid rgba(224,233,246,0.06); display: flex; gap: 20px; flex-shrink: 0; }
-.task-stat { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: rgba(224,233,246,0.35); }
-.task-stat b { font-size: 14px; font-weight: 600; color: rgba(224,233,246,0.75); font-family: 'JetBrains Mono', monospace; }
 
 /* ── SETTINGS ── */
 .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -324,12 +225,6 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 .settings-hint { font-size: 11px; color: rgba(224,233,246,0.25); margin-top: 2px; }
 .settings-input { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 10px; background: rgba(224,233,246,0.04); border: 1px solid rgba(224,233,246,0.1); color: rgba(224,233,246,0.7); width: 200px; border-radius: 0; }
 .settings-input:focus { outline: none; border-color: rgba(63,119,214,0.4); }
-.toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
-.toggle input { opacity: 0; width: 0; height: 0; }
-.toggle-slider { position: absolute; cursor: pointer; inset: 0; background: rgba(224,233,246,0.1); border: 1px solid rgba(224,233,246,0.15); transition: .2s; border-radius: 20px; }
-.toggle-slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background: rgba(224,233,246,0.4); transition: .2s; border-radius: 50%; }
-.toggle input:checked + .toggle-slider { background: rgba(63,119,214,0.3); border-color: rgba(63,119,214,0.5); }
-.toggle input:checked + .toggle-slider:before { transform: translateX(16px); background: #A9CCF2; }
 .save-btn { margin-top: 16px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; padding: 8px 16px; background: rgba(63,119,214,0.15); color: #A9CCF2; border: 1px solid rgba(63,119,214,0.3); cursor: pointer; transition: background 0.12s; border-radius: 0; }
 .save-btn:hover { background: rgba(63,119,214,0.25); }
 .int-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid rgba(224,233,246,0.05); }
@@ -343,6 +238,7 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 </style>
 </head>
 <body>
+
 <!-- ══ LOGIN SCREEN ══ -->
 <div id="login-screen" style="position:fixed;inset:0;z-index:1000;background:#0F1218;display:none;align-items:center;justify-content:center;font-family:'Inter',sans-serif">
   <form id="login-form" onsubmit="return handleLogin(event)" style="width:100%;max-width:340px;padding:0 24px">
@@ -352,7 +248,7 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
     </div>
     <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(224,233,246,0.28);text-align:center;margin-bottom:20px">Operations Portal</div>
     <input type="password" id="login-password" class="edit-input" placeholder="Password" autocomplete="current-password" style="text-align:center;margin-bottom:12px" autofocus>
-    <button type="submit" id="login-submit-btn" class="save-btn" style="width:100%;padding:11px;text-align:center">Sign in</button>
+    <button type="submit" id="login-submit-btn" class="save-btn" style="width:100%;padding:11px;text-align:center;margin-top:0">Sign in</button>
     <div id="login-error" style="margin-top:14px;font-size:12px;color:#E88A8A;text-align:center;min-height:16px"></div>
   </form>
 </div>
@@ -383,16 +279,9 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
       <span class="nav-item-icon">◈</span> Dashboard
     </button>
     <div class="sidebar-section-label">Operations</div>
-    <button class="nav-item" onclick="showPage('reports',this)">
-      <span class="nav-item-icon">⊞</span> Reports
+    <button class="nav-item" onclick="showPage('merchants',this)">
+      <span class="nav-item-icon">⊞</span> Merchants
       <span class="nav-item-badge" id="sidebar-pending">—</span>
-    </button>
-    <button class="nav-item" onclick="showPage('tasks',this)">
-      <span class="nav-item-icon">⚡</span> Employee Tasks
-    </button>
-    <div class="sidebar-section-label">Team</div>
-    <button class="nav-item" onclick="showPage('employees',this)">
-      <span class="nav-item-icon">◉</span> Employees
     </button>
     <div class="sidebar-section-label">System</div>
     <button class="nav-item" onclick="showPage('settings',this)">
@@ -408,290 +297,113 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
     <!-- ══ DASHBOARD ══ -->
     <div class="page active" id="page-dashboard">
       <div class="page-head">
-        <div class="page-title">Dashboard</div>
-        <div class="page-sub">Performance overview · Last 30 days</div>
+        <div class="page-head-left">
+          <div class="page-title">Dashboard</div>
+          <div class="page-sub">Intelligence overview across all merchants</div>
+        </div>
       </div>
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-card-val" id="dash-total">—</div>
-          <div class="stat-card-lbl">Total submissions</div>
+          <div class="stat-card-val" id="dash-merchants">—</div>
+          <div class="stat-card-lbl">Merchants</div>
         </div>
         <div class="stat-card">
           <div class="stat-card-val" style="color:#E7B27A" id="dash-pending">—</div>
           <div class="stat-card-lbl">Pending review</div>
-          <div class="stat-card-delta neg" id="dash-pending-note"></div>
+          <div class="stat-card-delta" id="dash-pending-note"></div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-val" style="color:#9FD9B4" id="dash-approved">—</div>
-          <div class="stat-card-lbl">Reports generated</div>
+          <div class="stat-card-val" style="color:#9FD9B4" id="dash-opportunity">—</div>
+          <div class="stat-card-lbl">Total opportunity identified</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-val" style="color:#A9CCF2" id="dash-sent">—</div>
-          <div class="stat-card-lbl">Sent to client</div>
+          <div class="stat-card-val" style="color:#A9CCF2" id="dash-pit-count">—</div>
+          <div class="stat-card-lbl">PIT analyses run</div>
         </div>
       </div>
-      <div class="charts-row">
-        <div class="chart-card">
-          <div class="chart-title">Submissions — last 8 weeks</div>
-          <div class="bar-chart" id="bar-chart"></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-title">Pipeline conversion</div>
-          <div class="funnel" id="dash-funnel"></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-title">Effective rate distribution</div>
-          <div class="mini-list" id="dash-rate-dist"></div>
-        </div>
-      </div>
-      <div class="activity-row">
-        <div class="table-card">
-          <div class="table-card-head">
-            <span class="table-card-title">Recent submissions</span>
-            <button class="view-all-btn" onclick="showPage('reports', document.querySelectorAll('.nav-item')[1])">View all →</button>
-          </div>
-          <table class="mini-table">
-            <thead><tr><th>Company</th><th>Provider</th><th>Rate</th><th>Status</th></tr></thead>
-            <tbody id="dash-recent"></tbody>
-          </table>
-        </div>
-        <div class="feed-card">
-          <div class="table-card-head"><span class="table-card-title">Activity</span></div>
-          <div id="dash-activity"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ REPORTS ══ -->
-    <div class="page" id="page-reports">
-      <div class="page-head">
-        <div class="page-title">Reports</div>
-        <div class="page-sub">Review extracted data, correct fields, and generate merchant reports.</div>
-      </div>
-      <div class="reports-toolbar">
-        <div class="search-wrap">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="search-input" class="search-input" placeholder="Search company, provider, contact or email…" oninput="onSearchInput()">
-        </div>
-        <select id="provider-filter" class="toolbar-select" onchange="onProviderChange()">
-          <option value="all">All providers</option>
-        </select>
-        <div class="date-range">
-          <input type="date" id="date-from" class="toolbar-date" onchange="onDateChange()">
-          <span class="date-sep">→</span>
-          <input type="date" id="date-to" class="toolbar-date" onchange="onDateChange()">
-        </div>
-        <button class="clear-btn" id="clear-filters-btn" onclick="clearAllFilters()" style="display:none">Clear filters</button>
-      </div>
-      <div class="filter-pills">
-        <button class="fpill active" data-status="all" onclick="filterStatus('all',this)">All</button>
-        <button class="fpill" data-status="pending_review" onclick="filterStatus('pending_review',this)">Pending review</button>
-        <button class="fpill" data-status="reviewed" onclick="filterStatus('reviewed',this)">Reviewed</button>
-        <button class="fpill" data-status="approved" onclick="filterStatus('approved',this)">Reports generated</button>
-        <button class="fpill" data-status="sent" onclick="filterStatus('sent',this)">Sent to client</button>
-      </div>
-      <div class="results-count" id="results-count"></div>
-      <div class="reports-table-wrap">
+      <!-- Recent merchants table on dashboard -->
+      <div class="table-wrap">
         <table class="rtable">
           <thead>
             <tr>
-              <th onclick="onSortClick('company')">Company<span class="sort-arrow"></span></th>
-              <th onclick="onSortClick('submitted_at')">Submitted<span class="sort-arrow"></span></th>
-              <th onclick="onSortClick('provider')">Provider<span class="sort-arrow"></span></th>
-              <th onclick="onSortClick('volume')">Volume<span class="sort-arrow"></span></th>
-              <th onclick="onSortClick('effective_rate')" class="active-sort">Eff. Rate<span class="sort-arrow"></span></th>
-              <th onclick="onSortClick('total_fees')">Fees<span class="sort-arrow"></span></th>
-              <th onclick="onSortClick('status')">Status<span class="sort-arrow"></span></th>
-              <th></th>
+              <th>Merchant</th>
+              <th>Provider</th>
+              <th>Eff. Rate</th>
+              <th>Annual Opportunity</th>
+              <th>Top Finding</th>
+              <th>Status</th>
             </tr>
           </thead>
-          <tbody id="reports-tbody">
-            <tr><td colspan="8"><div class="loading-spinner">Loading submissions…</div></td></tr>
+          <tbody id="dash-merchants-tbody">
+            <tr><td colspan="6"><div style="text-align:center;padding:40px;color:rgba(224,233,246,0.3)">Loading…</div></td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- ══ EMPLOYEES ══ -->
-    <div class="page" id="page-employees">
+    <!-- ══ MERCHANTS ══ -->
+    <div class="page" id="page-merchants">
       <div class="page-head">
-        <div class="page-title">Employees</div>
-        <div class="page-sub">Your AI agent team — each specialised for a stage of the acceptorIQ pipeline.</div>
-      </div>
-      <div class="employees-grid">
-        <div class="emp-card">
-          <div class="emp-card-top">
-            <div class="emp-avatar" id="emp-av-maya">
-              <span id="emp-init-maya">M</span>
-              <button class="emp-avatar-upload" onclick="triggerUpload('maya')">Photo</button>
-              <input type="file" id="emp-file-maya" accept="image/*" onchange="handleUpload('maya',this)" style="display:none">
-            </div>
-            <div class="emp-name" contenteditable="true" spellcheck="false">Maya</div>
-            <div class="emp-role">Lead Scout · Agent 1</div>
-            <div class="emp-personality">"Detail-oriented and methodical. Never misses a duplicate."</div>
-          </div>
-          <div class="emp-card-stats">
-            <div class="emp-stat"><span class="emp-stat-val">1,240</span><span class="emp-stat-lbl">Leads</span></div>
-            <div class="emp-stat"><span class="emp-stat-val">98%</span><span class="emp-stat-lbl">Accuracy</span></div>
-            <div class="emp-stat"><span class="emp-stat-val">14</span><span class="emp-stat-lbl">Runs</span></div>
-          </div>
-          <div class="emp-card-footer">
-            <span class="emp-tag">Apollo.io</span><span class="emp-tag">Google Sheets</span><span class="emp-tag">CSV</span>
-          </div>
-        </div>
-        <div class="emp-card">
-          <div class="emp-card-top">
-            <div class="emp-avatar" id="emp-av-leo">
-              <span id="emp-init-leo">L</span>
-              <button class="emp-avatar-upload" onclick="triggerUpload('leo')">Photo</button>
-              <input type="file" id="emp-file-leo" accept="image/*" onchange="handleUpload('leo',this)" style="display:none">
-            </div>
-            <div class="emp-name" contenteditable="true" spellcheck="false">Leo</div>
-            <div class="emp-role">Copywriter · Agent 3</div>
-            <div class="emp-personality">"Warm and creative. Writes emails that feel personal, not automated."</div>
-          </div>
-          <div class="emp-card-stats">
-            <div class="emp-stat"><span class="emp-stat-val">892</span><span class="emp-stat-lbl">Emails</span></div>
-            <div class="emp-stat"><span class="emp-stat-val">78%</span><span class="emp-stat-lbl">Approved</span></div>
-            <div class="emp-stat"><span class="emp-stat-val">11</span><span class="emp-stat-lbl">Runs</span></div>
-          </div>
-          <div class="emp-card-footer">
-            <span class="emp-tag">Claude AI</span><span class="emp-tag">Google Sheets</span>
-          </div>
-        </div>
-        <div class="emp-card">
-          <div class="emp-card-top">
-            <div class="emp-avatar" id="emp-av-zara">
-              <span id="emp-init-zara">Z</span>
-              <button class="emp-avatar-upload" onclick="triggerUpload('zara')">Photo</button>
-              <input type="file" id="emp-file-zara" accept="image/*" onchange="handleUpload('zara',this)" style="display:none">
-            </div>
-            <div class="emp-name" contenteditable="true" spellcheck="false">Zara</div>
-            <div class="emp-role">Dispatcher · Agent 4</div>
-            <div class="emp-personality">"Precise and punctual. Dry run by default until you say go."</div>
-          </div>
-          <div class="emp-card-stats">
-            <div class="emp-stat"><span class="emp-stat-val">697</span><span class="emp-stat-lbl">Sent</span></div>
-            <div class="emp-stat"><span class="emp-stat-val">0</span><span class="emp-stat-lbl">Bounced</span></div>
-            <div class="emp-stat"><span class="emp-stat-val">9</span><span class="emp-stat-lbl">Runs</span></div>
-          </div>
-          <div class="emp-card-footer">
-            <span class="emp-tag">SendGrid</span><span class="emp-tag">Google Sheets</span>
-          </div>
+        <div class="page-head-left">
+          <div class="page-title">Merchants</div>
+          <div class="page-sub">All merchants · click to view PIT intelligence and manage reports</div>
         </div>
       </div>
-    </div>
-
-    <!-- ══ EMPLOYEE TASKS ══ -->
-    <div class="page" id="page-tasks">
-      <div class="page-head" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
-        <div>
-          <div class="page-title">Employee Tasks</div>
-          <div class="page-sub">Run individual pipeline stages or execute the full outreach flow in sequence.</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;background:rgba(224,233,246,0.03);border:1px solid rgba(224,233,246,0.08);padding:8px 14px;flex-shrink:0;margin-top:4px">
-          <div id="agent-server-dot" style="width:7px;height:7px;border-radius:50%;background:#E88A8A;flex-shrink:0"></div>
-          <span id="agent-server-text" style="font-size:11px;color:rgba(224,233,246,0.4)">Checking agent server…</span>
-          <button onclick="checkAgentServer()" style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:3px 8px;background:rgba(224,233,246,0.06);border:1px solid rgba(224,233,246,0.1);color:rgba(224,233,246,0.4);cursor:pointer;border-radius:0;margin-left:4px">↺ Check</button>
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="merchant-search" class="search-input" placeholder="Search merchant, provider, email…" oninput="applyMerchantFilter()">
         </div>
       </div>
-      <div class="tasks-layout">
-        <div class="pipeline-nav">
-          <div class="pipeline-step active" id="pstep-leads" onclick="selectTask('leads')">
-            <div class="step-num" id="snum-leads">1</div>
-            <div class="step-info">
-              <div class="step-agent">Maya · Lead Scout</div>
-              <div class="step-title">Lead Identification</div>
-              <div class="step-desc">Apollo CSV → deduplicate → Google Sheets</div>
-            </div>
-            <span class="step-status idle" id="sstatus-leads">Idle</span>
-          </div>
-          <div class="pipeline-step" id="pstep-emails" onclick="selectTask('emails')">
-            <div class="step-num" id="snum-emails">2</div>
-            <div class="step-info">
-              <div class="step-agent">Leo · Copywriter</div>
-              <div class="step-title">Email Personalisation</div>
-              <div class="step-desc">Classify business → Claude AI → write email</div>
-            </div>
-            <span class="step-status idle" id="sstatus-emails">Idle</span>
-          </div>
-          <div class="pipeline-step" id="pstep-send" onclick="selectTask('send')">
-            <div class="step-num" id="snum-send">3</div>
-            <div class="step-info">
-              <div class="step-agent">Zara · Dispatcher</div>
-              <div class="step-title">Email Dispatch</div>
-              <div class="step-desc">Approved leads → SendGrid → mark sent</div>
-            </div>
-            <span class="step-status idle" id="sstatus-send">Idle</span>
-          </div>
-          <div style="height:12px"></div>
-          <div class="pipeline-step" id="pstep-all" onclick="selectTask('all')" style="background:rgba(63,119,214,0.04);border-color:rgba(63,119,214,0.18)">
-            <div class="step-num" style="background:rgba(63,119,214,0.15);border-color:rgba(63,119,214,0.3);color:#A9CCF2">⚡</div>
-            <div class="step-info">
-              <div class="step-agent">Full pipeline</div>
-              <div class="step-title">Run All Agents</div>
-              <div class="step-desc">Maya → Leo → Zara in sequence</div>
-            </div>
-          </div>
-        </div>
-        <div class="task-runner">
-          <div class="task-runner-head">
-            <div>
-              <div class="task-runner-title" id="task-title">Lead Identification</div>
-              <div class="task-runner-sub" id="task-sub">Maya reads the Apollo CSV and uploads new leads to Google Sheets.</div>
-            </div>
-            <button class="run-btn" id="task-run-btn" onclick="runCurrentTask()">▶ Run</button>
-          </div>
-          <div class="progress-track"><div class="progress-fill" id="task-progress"></div></div>
-          <div class="task-feed" id="task-feed">
-            <div class="task-empty">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-              <span>Click Run to start this agent</span>
-            </div>
-          </div>
-          <div class="task-footer" style="font-size:11px;color:rgba(224,233,246,0.25)">
-            Output streams live from <span style="font-family:'JetBrains Mono',monospace;color:rgba(169,204,242,0.4)">localhost:5000</span> — keep your terminal open while agents run.
-          </div>
-        </div>
+      <div class="filter-pills">
+        <button class="fpill active" data-mfilter="all" onclick="setMerchantFilter('all',this)">All</button>
+        <button class="fpill" data-mfilter="pending_review" onclick="setMerchantFilter('pending_review',this)">Pending review</button>
+        <button class="fpill" data-mfilter="approved" onclick="setMerchantFilter('approved',this)">Report generated</button>
+        <button class="fpill" data-mfilter="sent" onclick="setMerchantFilter('sent',this)">Sent to client</button>
+      </div>
+      <div class="results-count" id="merchant-count"></div>
+      <div class="table-wrap">
+        <table class="rtable">
+          <thead>
+            <tr>
+              <th>Merchant</th>
+              <th>Provider</th>
+              <th>Eff. Rate</th>
+              <th>Volume</th>
+              <th>Annual Opportunity</th>
+              <th>Submissions</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="merchants-tbody">
+            <tr class="loading-row"><td colspan="8">Loading merchants…</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
     <!-- ══ SETTINGS ══ -->
     <div class="page" id="page-settings">
       <div class="page-head">
-        <div class="page-title">Settings</div>
-        <div class="page-sub">API credentials, integrations, and pipeline configuration.</div>
+        <div class="page-head-left">
+          <div class="page-title">Settings</div>
+          <div class="page-sub">API credentials, integrations, and pipeline configuration.</div>
+        </div>
       </div>
       <div class="settings-grid">
         <div class="settings-card">
-          <div class="settings-card-title">API Credentials</div>
-          <div class="settings-row"><div><div class="settings-label">Anthropic API Key</div><div class="settings-hint">Used by Leo for email generation</div></div><input class="settings-input" type="password" placeholder="sk-ant-…"></div>
-          <div class="settings-row"><div><div class="settings-label">SendGrid API Key</div><div class="settings-hint">Used by Zara to send emails</div></div><input class="settings-input" type="password" placeholder="SG.…"></div>
-          <div class="settings-row"><div><div class="settings-label">Apollo API Key</div><div class="settings-hint">Used by Maya for lead enrichment</div></div><input class="settings-input" type="password" placeholder="API key…"></div>
-          <button class="save-btn">Save credentials</button>
-        </div>
-        <div class="settings-card">
-          <div class="settings-card-title">Sender Identity</div>
-          <div class="settings-row"><div class="settings-label">Your name</div><input class="settings-input" type="text" value="Declan Harrington" style="font-family:'Inter',sans-serif"></div>
-          <div class="settings-row"><div class="settings-label">Your email</div><input class="settings-input" type="email" value="declan.t.harrington@gmail.com" style="font-family:'Inter',sans-serif"></div>
-          <div class="settings-row"><div class="settings-label">Your website</div><input class="settings-input" type="text" value="www.paymentsiqtesttesttest.com.au" style="font-family:'Inter',sans-serif"></div>
-          <div class="settings-row"><div class="settings-label">Google Sheet name</div><input class="settings-input" type="text" value="Payments Agent Leads" style="font-family:'Inter',sans-serif"></div>
-          <button class="save-btn">Save identity</button>
-        </div>
-        <div class="settings-card">
-          <div class="settings-card-title">Pipeline Settings</div>
-          <div class="settings-row"><div><div class="settings-label">Zara dry run mode</div><div class="settings-hint">Preview emails without sending</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
-          <div class="settings-row"><div><div class="settings-label">Daily send limit</div><div class="settings-hint">Max emails per Zara run</div></div><input class="settings-input" type="number" value="50" style="width:80px"></div>
-          <div class="settings-row"><div><div class="settings-label">Send delay (seconds)</div><div class="settings-hint">Pause between each email</div></div><input class="settings-input" type="number" value="1" style="width:80px"></div>
-          <button class="save-btn">Save pipeline config</button>
-        </div>
-        <div class="settings-card">
           <div class="settings-card-title">Integrations</div>
-          <div class="int-row"><div class="int-icon">📊</div><div><div class="int-name">Google Sheets</div><div class="int-sub">payments-agent@trusty-force…</div></div><span class="int-badge connected">Connected</span></div>
-          <div class="int-row"><div class="int-icon">📨</div><div><div class="int-name">SendGrid</div><div class="int-sub">declan.t.harrington@gmail.com</div></div><span class="int-badge connected">Connected</span></div>
-          <div class="int-row"><div class="int-icon">🔍</div><div><div class="int-name">Apollo.io</div><div class="int-sub">tPqaVy054wPE…</div></div><span class="int-badge connected">Connected</span></div>
-          <div class="int-row"><div class="int-icon">🤖</div><div><div class="int-name">Anthropic / Claude</div><div class="int-sub">claude-haiku-4-5</div></div><span class="int-badge connected">Connected</span></div>
-          <div class="int-row"><div class="int-icon">✉️</div><div><div class="int-name">ZeroBounce</div><div class="int-sub">No key set</div></div><span class="int-badge error">Not connected</span></div>
+          <div class="int-row"><div class="int-icon">🤖</div><div><div class="int-name">Anthropic / Claude</div><div class="int-sub">Haiku (extraction) · Sonnet (reports)</div></div><span class="int-badge connected">Connected</span></div>
+          <div class="int-row"><div class="int-icon">🗄️</div><div><div class="int-name">Supabase</div><div class="int-sub">submissions · merchants · pit_results</div></div><span class="int-badge connected">Connected</span></div>
+          <div class="int-row"><div class="int-icon">📨</div><div><div class="int-name">Resend</div><div class="int-sub">Triage notifications</div></div><span class="int-badge connected">Connected</span></div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-title">Platform</div>
+          <div class="settings-row"><div><div class="settings-label">PIT Version</div><div class="settings-hint">Current intelligence engine</div></div><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#A9CCF2">PIT v2</span></div>
+          <div class="settings-row"><div><div class="settings-label">Report module</div><div class="settings-hint">PDF-style narrative report</div></div><span style="font-size:11px;color:#9FD9B4;font-weight:600">Active</span></div>
+          <div class="settings-row"><div><div class="settings-label">AI Analyst</div><div class="settings-hint">Chat interface — coming Step 5</div></div><span style="font-size:11px;color:rgba(224,233,246,0.25);font-weight:600">Not yet built</span></div>
+          <div class="settings-row"><div><div class="settings-label">Merchant dashboard</div><div class="settings-hint">Customer-facing — coming Step 6</div></div><span style="font-size:11px;color:rgba(224,233,246,0.25);font-weight:600">Not yet built</span></div>
         </div>
       </div>
     </div>
@@ -711,32 +423,32 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 /* ─────────────────────────────────────────────────────────────
    STATE
 ───────────────────────────────────────────────────────────── */
-let allSubmissions = [];
-let currentStatusFilter = 'all';
-let currentSearch = '';
-let currentProvider = 'all';
-let currentDateFrom = '';
-let currentDateTo = '';
-let sortField = 'submitted_at';
-let sortDir = 'desc';
+let allMerchants = [];
+let currentMerchantFilter = 'all';
+let currentMerchantSearch = '';
 
 /* ─────────────────────────────────────────────────────────────
    HELPERS
 ───────────────────────────────────────────────────────────── */
 const fmtD = n => (n != null && n !== '') ? '$' + Number(n).toLocaleString('en-AU', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
+const fmtK = n => { if (n == null || n === '') return '—'; const v = Number(n); return v >= 1000000 ? '$' + (v/1000000).toFixed(1) + 'M' : v >= 1000 ? '$' + (v/1000).toFixed(0) + 'k' : fmtD(v); };
 const fmtP = n => (n != null && n !== '') ? Number(n).toFixed(2) + '%' : '—';
 const esc  = v => (v == null ? '' : String(v)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const escA = v => esc(v).replace(/"/g,'&quot;');
+function parseJSON(str, fallback) { try { return str ? JSON.parse(str) : fallback; } catch { return fallback; } }
+function ratePillClass(r) { if (!r) return ''; return r > 1.7 ? 'rate-hi' : r > 1.3 ? 'rate-mid' : 'rate-lo'; }
 
-// Mirrors the reconciliation check in api/submit.js and
-// api/_lib/report/core/validation.js (same 5% tolerance). That check only
-// ever reached a server log or, at best, the one-time triage email - this
-// surfaces it again, visually, at the moment the admin is about to approve
-// and generate the client-facing report, so a stale/missed warning from
-// submission time doesn't slip through.
+const STATUS_LABEL = { pending_review:'Pending review', reviewed:'Reviewed', approved:'Report ready', sent:'Sent to client' };
+const STATUS_CLASS = { pending_review:'pending', reviewed:'reviewed', approved:'approved', sent:'sent' };
+
+function confidenceDot(c) {
+  const cls = c === 'Confirmed' ? 'conf-confirmed' : c === 'Likely' ? 'conf-likely' : 'conf-estimated';
+  return `<span class="confidence-dot ${cls}"></span>`;
+}
+
 function checkFeeReconciliation(f) {
-  const total = Number(f.totalFees);
-  const items = Array.isArray(f.feeBreakdown) ? f.feeBreakdown : [];
+  const total = Number(f?.totalFees);
+  const items = Array.isArray(f?.feeBreakdown) ? f.feeBreakdown : [];
   if (!total || !items.length) return null;
   const sum = items.reduce((a, b) => a + (Number(b.amount) || 0), 0);
   const pct = Math.abs(sum - total) / total * 100;
@@ -744,29 +456,22 @@ function checkFeeReconciliation(f) {
   return { total, sum, diff: sum - total, pct };
 }
 
-function parseMerchant(ctx) {
-  ctx = ctx || '';
-  const grab = re => { const m = ctx.match(re); return m && m[1] ? m[1].trim() : ''; };
-  const email = grab(/Email:\s*(.+)/).replace(/\s*\(.*\)\s*$/, '');
-  return { company: grab(/Company:\s*(.+)/), name: grab(/Name:\s*(.+)/), email, phone: grab(/Phone:\s*(.+)/), industry: grab(/Industry:\s*(.+)/) };
+/* ─────────────────────────────────────────────────────────────
+   API HELPER
+───────────────────────────────────────────────────────────── */
+async function api(action, params = {}) {
+  const res = await fetch('/api/admin-data', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, ...params })
+  });
+  if (res.status === 401) { showLoginScreen(); return null; }
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error || ('HTTP ' + res.status));
+  }
+  return res.json();
 }
-function parseJSON(str, fallback) { try { return str ? JSON.parse(str) : fallback; } catch { return fallback; } }
-function facts(s)    { return parseJSON(s.report_json, {}) || {}; }
-function narrative(s){ return parseJSON(s.report_narrative, null); }
-function hasReport(s){ return !!s.report_html_path; }
-function ratePillClass(r) { if (!r) return ''; return r > 1.7 ? 'rate-hi' : r > 1.3 ? 'rate-mid' : 'rate-lo'; }
-function initials(name) { return (name || '').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() || '?'; }
-
-const STATUS_ORDER = { pending_review:0, reviewed:1, approved:2, sent:3 };
-const STATUS_LABEL = { pending_review:'Pending review', reviewed:'Reviewed', approved:'Report ready', sent:'Sent to client' };
-const STATUS_CLASS = { pending_review:'pending', reviewed:'reviewed', approved:'approved', sent:'sent' };
-
-function cardMixStr(cm) {
-  if (!cm || typeof cm !== 'object') return '—';
-  const parts = Object.entries(cm).filter(([,v]) => v != null && v !== '').map(([k,v]) => `${k} ${v}%`);
-  return parts.length ? parts.join(' · ') : '—';
-}
-function previewText(t) { return esc(t).replace(/\*\*(.+?)\*\*/g,'$1'); }
 
 /* ─────────────────────────────────────────────────────────────
    NAVIGATION
@@ -779,30 +484,20 @@ function showPage(id, btn) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   LOAD SUPABASE DATA
+   LOAD DATA
 ───────────────────────────────────────────────────────────── */
-async function loadSubmissions() {
+async function loadMerchants() {
   try {
-    const res = await fetch('/api/admin-data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'list' })
-    });
-    if (res.status === 401) { showLoginScreen(); return false; }
-    if (!res.ok) {
-      const e = await res.json().catch(() => ({}));
-      throw new Error(e.error || ('HTTP ' + res.status));
-    }
-    const data = await res.json();
-    allSubmissions = data.submissions || [];
+    const data = await api('listMerchants');
+    if (!data) return false;
+    allMerchants = data.merchants || [];
     updateDashboard();
-    populateProviderFilter();
-    applyView();
+    applyMerchantFilter();
     updateSidebarBadge();
     return true;
   } catch(err) {
-    document.getElementById('reports-tbody').innerHTML =
-      `<tr><td colspan="8" class="empty-state-row">Could not load submissions: ${esc(err.message)}</td></tr>`;
+    document.getElementById('merchants-tbody').innerHTML =
+      `<tr class="empty-row"><td colspan="8">Could not load merchants: ${esc(err.message)}</td></tr>`;
     return false;
   }
 }
@@ -811,274 +506,383 @@ async function loadSubmissions() {
    DASHBOARD
 ───────────────────────────────────────────────────────────── */
 function updateDashboard() {
-  const total    = allSubmissions.length;
-  const pending  = allSubmissions.filter(s => s.status === 'pending_review').length;
-  const approved = allSubmissions.filter(s => s.status === 'approved').length;
-  const sent     = allSubmissions.filter(s => s.status === 'sent').length;
-  const reviewed = allSubmissions.filter(s => s.status === 'reviewed').length;
+  const total   = allMerchants.length;
+  const pending = allMerchants.filter(m => m.latest_status === 'pending_review').length;
+  const pitCount = allMerchants.filter(m => m.latest_pit_id).length;
+  const totalOpp = allMerchants.reduce((sum, m) => sum + (m.quantified_annual_opportunity || 0), 0);
 
-  document.getElementById('dash-total').textContent   = total;
-  document.getElementById('dash-pending').textContent  = pending;
-  document.getElementById('dash-approved').textContent = approved;
-  document.getElementById('dash-sent').textContent     = sent;
-  if (pending > 0) { document.getElementById('dash-pending-note').textContent = 'Needs attention'; }
+  document.getElementById('dash-merchants').textContent = total;
+  document.getElementById('dash-pending').textContent   = pending;
+  document.getElementById('dash-pit-count').textContent = pitCount;
+  document.getElementById('dash-opportunity').textContent = totalOpp > 0 ? fmtK(totalOpp) : '—';
+  if (pending > 0) document.getElementById('dash-pending-note').textContent = 'Needs attention';
 
-  // Funnel
-  const funnelEl = document.getElementById('dash-funnel');
-  const steps = [
-    { label:'Submitted', val:total, pct:100, cls:'' },
-    { label:'Reviewed', val:reviewed+approved+sent, pct:total?Math.round((reviewed+approved+sent)/total*100):0, cls:'amber' },
-    { label:'Report generated', val:approved+sent, pct:total?Math.round((approved+sent)/total*100):0, cls:'green' },
-    { label:'Sent to client', val:sent, pct:total?Math.round(sent/total*100):0, cls:'green' },
-  ];
-  funnelEl.innerHTML = steps.map(s => `
-    <div style="position:relative">
-      <div class="funnel-bar-bg">
-        <div class="funnel-bar-fill ${s.cls}" style="width:${s.pct}%"></div>
-        <span class="funnel-label">${s.label}</span>
-        <span class="funnel-val">${s.val}</span>
-      </div>
-    </div>`).join('');
-
-  // Rate distribution
-  const rates = allSubmissions.map(s => s.effective_rate).filter(r => r != null && r !== '');
-  const hi  = rates.filter(r => r > 1.7).length;
-  const mid = rates.filter(r => r > 1.3 && r <= 1.7).length;
-  const lo  = rates.filter(r => r <= 1.3).length;
-  const avgRate = rates.length ? (rates.reduce((a,b)=>a+b,0)/rates.length).toFixed(2)+'%' : '—';
-  const avgFees = allSubmissions.filter(s=>s.total_fees).length
-    ? fmtD(allSubmissions.reduce((a,s)=>a+(+s.total_fees||0),0)/allSubmissions.filter(s=>s.total_fees).length) : '—';
-  const avgVol = allSubmissions.filter(s=>s.volume).length
-    ? fmtD(allSubmissions.reduce((a,s)=>a+(+s.volume||0),0)/allSubmissions.filter(s=>s.volume).length) : '—';
-  document.getElementById('dash-rate-dist').innerHTML = `
-    <div class="mini-row"><div class="mini-dot" style="background:#E88A8A"></div><div class="mini-name">Above 1.7%</div><div class="mini-val">${hi}<span class="mini-pct">${rates.length?Math.round(hi/rates.length*100):0}%</span></div></div>
-    <div class="mini-row"><div class="mini-dot" style="background:#E7B27A"></div><div class="mini-name">1.3% – 1.7%</div><div class="mini-val">${mid}<span class="mini-pct">${rates.length?Math.round(mid/rates.length*100):0}%</span></div></div>
-    <div class="mini-row"><div class="mini-dot" style="background:#9FD9B4"></div><div class="mini-name">Below 1.3%</div><div class="mini-val">${lo}<span class="mini-pct">${rates.length?Math.round(lo/rates.length*100):0}%</span></div></div>
-    <div class="mini-row" style="padding-top:14px;margin-top:4px;border-top:1px solid rgba(224,233,246,0.07);border-bottom:none"><div class="mini-name" style="color:rgba(224,233,246,0.35)">Avg. effective rate</div><div class="mini-val">${avgRate}</div></div>
-    <div class="mini-row"><div class="mini-name" style="color:rgba(224,233,246,0.35)">Avg. monthly fees</div><div class="mini-val">${avgFees}</div></div>
-    <div class="mini-row"><div class="mini-name" style="color:rgba(224,233,246,0.35)">Avg. card volume</div><div class="mini-val">${avgVol}</div></div>`;
-
-  // Bar chart — group by week (last 8 weeks)
-  const weekBuckets = new Array(8).fill(0);
-  const now = Date.now();
-  allSubmissions.forEach(s => {
-    const age = (now - new Date(s.submitted_at).getTime()) / (7*24*60*60*1000);
-    const w = Math.floor(age);
-    if (w < 8) weekBuckets[7-w]++;
-  });
-  const maxB = Math.max(...weekBuckets, 1);
-  const weekLabels = ['W1','W2','W3','W4','W5','W6','W7','W8'];
-  document.getElementById('bar-chart').innerHTML = weekBuckets.map((v,i) =>
-    `<div class="bar-col"><div class="bar${i===7?' accent':''}" style="height:${Math.round(v/maxB*100)}%" title="${v}"></div><div class="bar-lbl">${weekLabels[i]}</div></div>`
-  ).join('');
-
-  // Recent submissions table
-  const recent = allSubmissions.slice(0,5);
-  document.getElementById('dash-recent').innerHTML = recent.map(s => {
-    const m = parseMerchant(s.program_context);
-
-    return `<tr onclick="openSubmission('${s.id}'); showPage('reports', document.querySelectorAll('.nav-item')[1])">
-      <td class="primary">${esc(m.company)||'Unknown'}</td>
-      <td>${esc(s.provider)||'—'}</td>
-      <td>${s.effective_rate ? `<span class="rate-pill ${ratePillClass(s.effective_rate)}">${fmtP(s.effective_rate)}</span>` : '—'}</td>
-      <td><span class="status-badge ${STATUS_CLASS[s.status]||'pending'}">${STATUS_LABEL[s.status]||'Pending'}</span></td>
-    </tr>`;
-  }).join('');
-
-  // Activity feed
-  const feedItems = allSubmissions.slice(0,5).map(s => {
-    const m = parseMerchant(s.program_context);
-    const company = esc(m.company) || 'Unknown';
-    const timeStr = new Date(s.submitted_at).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
-    const icon = (s.status === 'sent' || s.status === 'approved') ? {cls:'green',char:'✓'} : {cls:'blue',char:'↓'};
-    const text = s.status === 'sent' ? `Report sent to <b>${company}</b>` :
-                 s.status === 'approved' ? `Report generated for <b>${company}</b>` :
-                 `New submission from <b>${company}</b>`;
-    return `<div class="feed-item"><div class="feed-icon ${icon.cls}">${icon.char}</div><div class="feed-body"><div class="feed-text">${text}</div><div class="feed-time">${timeStr}</div></div></div>`;
-  }).join('');
-  document.getElementById('dash-activity').innerHTML = feedItems ||
-    '<div class="feed-item"><div class="feed-body"><div class="feed-text" style="color:rgba(224,233,246,0.25)">No recent activity</div></div></div>';
+  // Recent merchants table on dashboard
+  const recent = allMerchants.slice(0, 8);
+  document.getElementById('dash-merchants-tbody').innerHTML = recent.length
+    ? recent.map(m => {
+        const topOpp = m.top_opportunities?.[0];
+        const topFind = m.key_findings?.[0];
+        const sc = STATUS_CLASS[m.latest_status] || 'pending';
+        const sl = STATUS_LABEL[m.latest_status] || 'No submissions';
+        return `<tr onclick="openMerchant(${m.id}); showPage('merchants', document.querySelectorAll('.nav-item')[1])">
+          <td class="primary">${esc(m.company_name)}<br><span style="font-size:11px;color:rgba(224,233,246,0.3);font-weight:400">${esc(m.industry||'')}</span></td>
+          <td>${esc(m.latest_provider||'—')}</td>
+          <td>${m.latest_effective_rate ? `<span class="rate-pill ${ratePillClass(m.latest_effective_rate)}">${fmtP(m.latest_effective_rate)}</span>` : '—'}</td>
+          <td>${m.quantified_annual_opportunity ? `<span class="opp-pill">${fmtK(m.quantified_annual_opportunity)}</span>` : '—'}</td>
+          <td style="font-size:11.5px;color:rgba(224,233,246,0.55)">${topFind ? esc(topFind.title) : '—'}</td>
+          <td><span class="status-badge ${sc}">${sl}</span></td>
+        </tr>`;
+      }).join('')
+    : `<tr class="empty-row"><td colspan="6">No merchants yet. Submit a statement to get started.</td></tr>`;
 }
 
 function updateSidebarBadge() {
-  const n = allSubmissions.filter(s => s.status === 'pending_review').length;
-  document.getElementById('sidebar-pending').textContent = n;
+  const n = allMerchants.filter(m => m.latest_status === 'pending_review').length;
+  document.getElementById('sidebar-pending').textContent = n || '';
   document.getElementById('nav-pending-count').textContent = n + ' pending';
 }
 
-/* ── REPORTS FILTERS & SORT ── */
-function populateProviderFilter() {
-  const sel = document.getElementById('provider-filter');
-  const providers = [...new Set(allSubmissions.map(s=>(s.provider||'').trim()).filter(Boolean))].sort();
-  const prev = sel.value || 'all';
-  sel.innerHTML = '<option value="all">All providers</option>' +
-    providers.map(p => `<option value="${escA(p)}">${esc(p)}</option>`).join('');
-  sel.value = providers.includes(prev) ? prev : 'all';
+/* ─────────────────────────────────────────────────────────────
+   MERCHANT LIST
+───────────────────────────────────────────────────────────── */
+function setMerchantFilter(filter, btn) {
+  currentMerchantFilter = filter;
+  document.querySelectorAll('.fpill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyMerchantFilter();
 }
 
-let searchDebounce;
-function onSearchInput() {
-  clearTimeout(searchDebounce);
-  searchDebounce = setTimeout(() => { currentSearch = document.getElementById('search-input').value.trim().toLowerCase(); applyView(); }, 180);
-}
-function onProviderChange() { currentProvider = document.getElementById('provider-filter').value; applyView(); }
-function onDateChange() { currentDateFrom = document.getElementById('date-from').value; currentDateTo = document.getElementById('date-to').value; applyView(); }
-function filterStatus(status, btn) {
-  currentStatusFilter = status;
-  document.querySelectorAll('.fpill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); applyView();
-}
-function clearAllFilters() {
-  currentStatusFilter='all'; currentSearch=''; currentProvider='all'; currentDateFrom=''; currentDateTo='';
-  document.getElementById('search-input').value=''; document.getElementById('provider-filter').value='all';
-  document.getElementById('date-from').value=''; document.getElementById('date-to').value='';
-  document.querySelectorAll('.fpill').forEach(b=>b.classList.remove('active'));
-  document.querySelector('.fpill[data-status="all"]').classList.add('active'); applyView();
-}
-function anyFilterActive() { return currentStatusFilter!=='all'||currentSearch!==''||currentProvider!=='all'||currentDateFrom!==''||currentDateTo!==''; }
+function applyMerchantFilter() {
+  currentMerchantSearch = document.getElementById('merchant-search').value.trim().toLowerCase();
+  let list = allMerchants;
 
-function sortValue(s, field) {
-  if (field==='company') return (parseMerchant(s.program_context).company||'').toLowerCase();
-  if (field==='provider') return (s.provider||'').toLowerCase();
-  if (field==='status') return STATUS_ORDER[s.status]??99;
-  if (field==='submitted_at') return new Date(s.submitted_at).getTime();
-  return s[field];
-}
-function onSortClick(field) {
-  sortDir = (sortField===field) ? (sortDir==='asc'?'desc':'asc') : (['company','provider','status'].includes(field)?'asc':'desc');
-  sortField = field;
-  document.querySelectorAll('.rtable th').forEach(th=>th.classList.remove('active-sort','desc'));
-  const fieldMap=['company','submitted_at','provider','volume','effective_rate','total_fees','status'];
-  const idx=fieldMap.indexOf(field);
-  if(idx>=0){ const th=document.querySelectorAll('.rtable th')[idx]; th.classList.add('active-sort'); if(sortDir==='desc') th.classList.add('desc'); }
-  applyView();
+  if (currentMerchantFilter !== 'all') {
+    list = list.filter(m => m.latest_status === currentMerchantFilter);
+  }
+  if (currentMerchantSearch) {
+    list = list.filter(m =>
+      [m.company_name, m.contact_name, m.contact_email, m.latest_provider, m.industry]
+        .filter(Boolean).join(' ').toLowerCase().includes(currentMerchantSearch)
+    );
+  }
+
+  document.getElementById('merchant-count').textContent =
+    `${list.length} merchant${list.length === 1 ? '' : 's'}${currentMerchantSearch || currentMerchantFilter !== 'all' ? ' (filtered)' : ''}`;
+
+  renderMerchants(list);
 }
 
-function applyView() {
-  let list = allSubmissions;
-  if (currentStatusFilter!=='all') list=list.filter(s=>s.status===currentStatusFilter);
-  if (currentProvider!=='all') list=list.filter(s=>(s.provider||'')===currentProvider);
-  if (currentDateFrom) { const from=new Date(currentDateFrom+'T00:00:00'); list=list.filter(s=>new Date(s.submitted_at)>=from); }
-  if (currentDateTo)   { const to=new Date(currentDateTo+'T23:59:59');   list=list.filter(s=>new Date(s.submitted_at)<=to); }
-  if (currentSearch)   { list=list.filter(s=>{const m=parseMerchant(s.program_context);return[m.company,m.name,m.email,s.provider,s.period].filter(Boolean).join(' ').toLowerCase().includes(currentSearch);}); }
-  list=list.slice().sort((a,b)=>{
-    let va=sortValue(a,sortField),vb=sortValue(b,sortField);
-    if(va==null&&vb==null)return 0; if(va==null)return 1; if(vb==null)return -1;
-    let cmp=typeof va==='string'?va.localeCompare(vb):va<vb?-1:va>vb?1:0;
-    return sortDir==='asc'?cmp:-cmp;
-  });
-  document.getElementById('clear-filters-btn').style.display=anyFilterActive()?'inline-block':'none';
-  document.getElementById('results-count').textContent=anyFilterActive()
-    ?`Showing ${list.length} of ${allSubmissions.length} submissions`
-    :`${allSubmissions.length} submission${allSubmissions.length===1?'':'s'}`;
-  renderTable(list);
-}
-
-function renderTable(submissions) {
-  if (!submissions.length) {
-    document.getElementById('reports-tbody').innerHTML=`<tr><td colspan="8" class="empty-state-row">${allSubmissions.length?'No matching submissions.':'No submissions yet.'}</td></tr>`;
+function renderMerchants(merchants) {
+  if (!merchants.length) {
+    document.getElementById('merchants-tbody').innerHTML =
+      `<tr class="empty-row"><td colspan="8">${allMerchants.length ? 'No matching merchants.' : 'No merchants yet.'}</td></tr>`;
     return;
   }
-  document.getElementById('reports-tbody').innerHTML=submissions.map(s=>{
-    const m=parseMerchant(s.program_context);
-    const dateStr=new Date(s.submitted_at).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
-    const timeStr=new Date(s.submitted_at).toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'});
-    const sc=STATUS_CLASS[s.status]||'pending'; const sl=STATUS_LABEL[s.status]||'Pending';
-    const reportBtn=hasReport(s)?`<button class="action-btn blue" onclick="event.stopPropagation();openReport('${escA(s.report_html_path)}')">Report ↗</button>`:'';
-    const reconFlag=checkFeeReconciliation(facts(s))?'<span title="Fee reconciliation mismatch - verify before approving" style="color:#E7B27A;margin-left:6px">⚠</span>':'';
-    return `<tr onclick="openSubmission('${s.id}')">
-      <td class="primary">${esc(m.company)||'Unknown'}${reconFlag}<br><span style="font-size:11px;color:rgba(224,233,246,0.3);font-weight:400">${esc(m.name)||''}</span></td>
-      <td style="color:rgba(224,233,246,0.4)">${dateStr}<br><span style="font-size:10px;color:rgba(224,233,246,0.25)">${timeStr}</span></td>
-      <td>${esc(s.provider)||'—'}<br><span style="font-size:10px;color:rgba(224,233,246,0.3)">${esc(s.period)||''}</span></td>
-      <td class="mono">${fmtD(s.volume)}</td>
-      <td>${s.effective_rate?`<span class="rate-pill ${ratePillClass(s.effective_rate)}">${fmtP(s.effective_rate)}</span>`:'—'}</td>
-      <td class="mono">${fmtD(s.total_fees)}</td>
-      <td><span class="status-badge ${sc}">${sl}</span>${hasReport(s)?'<span class="report-dot"></span>':''}</td>
-      <td style="text-align:right"><div style="display:flex;gap:6px;justify-content:flex-end">${reportBtn}<button class="action-btn ghost" onclick="event.stopPropagation();openSubmission('${s.id}')">View →</button></div></td>
+
+  document.getElementById('merchants-tbody').innerHTML = merchants.map(m => {
+    const sc = STATUS_CLASS[m.latest_status] || 'pending';
+    const sl = STATUS_LABEL[m.latest_status] || 'No submissions';
+    const reconFlag = ''; // checked inside modal
+    const hasPit = !!m.latest_pit_id;
+
+    return `<tr onclick="openMerchant(${m.id})">
+      <td class="primary">
+        ${esc(m.company_name)}${reconFlag}
+        <br><span style="font-size:11px;color:rgba(224,233,246,0.3);font-weight:400">${esc(m.contact_name||'')}${m.contact_email ? ' · ' + esc(m.contact_email) : ''}</span>
+      </td>
+      <td>${esc(m.latest_provider||'—')}<br><span style="font-size:10px;color:rgba(224,233,246,0.3)">${esc(m.latest_period||'')}</span></td>
+      <td>${m.latest_effective_rate ? `<span class="rate-pill ${ratePillClass(m.latest_effective_rate)}">${fmtP(m.latest_effective_rate)}</span>` : '—'}</td>
+      <td class="mono">${fmtK(m.latest_volume)}</td>
+      <td>${m.quantified_annual_opportunity ? `<span class="opp-pill">${fmtK(m.quantified_annual_opportunity)}</span>` : hasPit ? '<span style="color:rgba(224,233,246,0.25);font-size:11px">No opportunity quantified</span>' : '—'}</td>
+      <td style="color:rgba(224,233,246,0.5)">${m.submission_count}</td>
+      <td><span class="status-badge ${sc}">${sl}</span>${m.latest_report_html_path ? '<span class="report-dot"></span>' : ''}</td>
+      <td style="text-align:right">
+        <div style="display:flex;gap:6px;justify-content:flex-end">
+          ${m.latest_report_html_path ? `<button class="action-btn blue" onclick="event.stopPropagation();openReport('${escA(m.latest_report_html_path)}')">Report ↗</button>` : ''}
+          <button class="action-btn ghost" onclick="event.stopPropagation();openMerchant(${m.id})">View →</button>
+        </div>
+      </td>
     </tr>`;
   }).join('');
 }
 
-/* ── MODAL ── */
-function openSubmission(id) {
-  const s=allSubmissions.find(x=>x.id==id); if(!s) return;
-  const f=facts(s); const n=narrative(s); const m=parseMerchant(s.program_context);
-  const dateStr=new Date(s.submitted_at).toLocaleString('en-AU',{dateStyle:'long',timeStyle:'short'});
-  const sl=STATUS_LABEL[s.status]||s.status||'pending_review';
-  const contactBits=[m.name?esc(m.name):'',m.email?`<a href="mailto:${escA(m.email)}">${esc(m.email)}</a>`:'',m.phone?esc(m.phone):'',m.industry?esc(m.industry):''].filter(Boolean).join(' &nbsp;·&nbsp; ');
-  const obsHtml=Array.isArray(f.observations)&&f.observations.length?`<ul class="obs-list">${f.observations.map(o=>`<li>${esc(o)}</li>`).join('')}</ul>`:'<div class="modal-section-text">No observations recorded.</div>';
-  const setupHtml=Array.isArray(f.setup)&&f.setup.length?`<div class="modal-section"><div class="modal-section-label">Current Setup</div><table class="modal-table"><tbody>${f.setup.map(x=>`<tr><td>${esc(x.label)}</td><td>${esc(x.value)}</td></tr>`).join('')}</tbody></table></div>`:'';
-  let narrativeHtml='';
-  if(n){
-    const alertsHtml=Array.isArray(n.alerts)&&n.alerts.length?n.alerts.map(a=>`<div class="modal-alert ${esc(a.type)||'info'}"><strong>${esc(a.heading)}</strong>${esc(a.body)}</div>`).join(''):'';
-    const sec=(label,text)=>text?`<div class="modal-section"><div class="modal-section-label">${label}</div><div class="modal-section-text">${previewText(text)}</div></div>`:'';
-    narrativeHtml=`${alertsHtml?`<div class="modal-section"><div class="modal-section-label">Key Findings</div>${alertsHtml}</div>`:''}${sec('Executive Summary',n.executiveSummary)}${sec('Savings Opportunity',n.savingsOpportunity)}${sec('Pricing Model Analysis',n.pricingModelAnalysis)}${sec('LCR Analysis',n.lcrAnalysis)}${sec('Market Benchmark',n.benchmarkComment)}${n.keyRecommendation?`<div class="modal-section"><div class="modal-section-label">Priority Area</div><div class="modal-section-text">${previewText(n.keyRecommendation)}</div></div>`:''}`;
-  }
-  const reportBanner=hasReport(s)?`<div class="modal-section"><div class="report-ready-banner"><span class="rb-text">✓ Report generated</span><button class="btn-open-report" onclick="openReport('${escA(s.report_html_path)}')"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Open report</button></div></div>`:'';
-  const feeCheck=checkFeeReconciliation(f);
-  const reconBanner=feeCheck?`<div class="modal-section"><div class="modal-alert warn">
-    <strong>⚠ Fee reconciliation mismatch</strong>
-    Extracted total fees (${fmtD(feeCheck.total)}) differ from the sum of the fee breakdown (${fmtD(feeCheck.sum)}) by ${fmtD(Math.abs(feeCheck.diff))} (${feeCheck.pct.toFixed(1)}%). This usually means an extraction error (e.g. a GST-exclusive figure was used, or a fee line was missed). Verify against the original statement before approving.
-  </div></div>`:'';
-  const approveLabel=hasReport(s)?'Regenerate report':'Approve &amp; generate report';
-  document.getElementById('modal-content').innerHTML=`
-    <div class="modal-header">
-      <div class="modal-eyebrow">Submission #${esc(String(s.id))} · ${esc(dateStr)} · ${esc(sl)}</div>
-      <div class="modal-title">${esc(m.company)||'Unknown company'}</div>
-      <div class="modal-meta">${esc(s.provider)||'Unknown provider'} — ${esc(s.period)||'Review'}</div>
-      ${contactBits?`<div class="modal-contact">${contactBits}</div>`:''}
-      <div class="modal-stats">
-        <div class="modal-stat"><span class="modal-stat-val">${fmtP(f.effectiveRate??s.effective_rate)}</span><span class="modal-stat-lbl">Eff. rate</span></div>
-        <div class="modal-stat"><span class="modal-stat-val">${fmtD(f.totalFees??s.total_fees)}</span><span class="modal-stat-lbl">Total fees</span></div>
-        <div class="modal-stat"><span class="modal-stat-val">${esc(f.providerRate)||'—'}</span><span class="modal-stat-lbl">Provider rate</span></div>
-      </div>
-    </div>
-    <div class="modal-body">
-      ${reportBanner}
-      ${reconBanner}
-      <div class="modal-section"><div class="modal-section-label">Statement Data</div>
-        <table class="modal-table">
-          <tr><td>Card volume</td><td>${fmtD(f.volume??s.volume)}</td></tr>
-          <tr><td>Total fees (GST incl.)</td><td>${fmtD(f.totalFees??s.total_fees)}</td></tr>
-          <tr><td>Effective rate</td><td>${fmtP(f.effectiveRate??s.effective_rate)}</td></tr>
-          <tr><td>Provider rate / margin</td><td>${esc(f.providerRate)||'—'}</td></tr>
-          <tr><td>Transactions</td><td>${f.transactions!=null?Number(f.transactions).toLocaleString('en-AU'):'—'}</td></tr>
-          <tr><td>Avg transaction value</td><td>${fmtD(f.averageTransactionValue)}</td></tr>
-          <tr><td>Monthly fee</td><td>${fmtD(f.monthlyFee)}</td></tr>
-          <tr><td>Terminal fees</td><td>${fmtD(f.terminalFees)}</td></tr>
-          <tr><td>Pricing model</td><td>${esc(f.pricingModel??s.pricing_model)||'—'}</td></tr>
-          <tr><td>LCR status</td><td>${esc(f.lcrStatus??s.lcr_status)||'—'}</td></tr>
-          <tr><td>Card mix</td><td>${esc(cardMixStr(f.cardMix))}</td></tr>
-        </table>
-      </div>
-      <div class="modal-section"><div class="modal-section-label">Factual Observations</div>${obsHtml}</div>
-      ${setupHtml}
-      ${s.program_context?`<div class="modal-section"><div class="modal-section-label">Merchant Profile</div><div class="program-box">${esc(s.program_context).replace(/\n/g,'<br>')}</div></div>`:''}
-      ${narrativeHtml}
-      ${buildEditPanel(s.id,f)}
-      <div class="modal-section"><div class="modal-section-label">Actions</div>
-        <div class="modal-actions">
-          <button class="btn-mark-reviewed" onclick="updateStatus('${s.id}','reviewed')">✓ Mark as reviewed</button>
-          <button class="btn-approve" id="btn-approve-${s.id}" onclick="approveAndGenerate('${s.id}')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>${approveLabel}</button>
-          <button class="btn-mark-sent" onclick="updateStatus('${s.id}','sent')">→ Mark as sent to client</button>
-        </div>
-        <div id="report-status-${s.id}" style="margin-top:10px;font-size:12px;color:rgba(224,233,246,0.4)"></div>
-      </div>
+/* ─────────────────────────────────────────────────────────────
+   MERCHANT MODAL
+───────────────────────────────────────────────────────────── */
+async function openMerchant(merchantId) {
+  // Show loading state immediately
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header" style="padding:40px 32px;text-align:center">
+      <div style="color:rgba(224,233,246,0.3);font-size:13px">Loading merchant intelligence…</div>
     </div>`;
   document.getElementById('modal-overlay').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
+
+  try {
+    const data = await api('getMerchant', { merchantId });
+    if (!data) return;
+    renderMerchantModal(data.merchant, data.submissions, data.latestPit);
+  } catch(err) {
+    document.getElementById('modal-content').innerHTML = `
+      <div class="modal-header"><div class="modal-title" style="color:#E88A8A">Error loading merchant</div>
+      <div class="modal-meta">${esc(err.message)}</div></div>`;
+  }
 }
 
-/* ── EDIT PANEL ── */
+function renderMerchantModal(merchant, submissions, latestPit) {
+  const latestSub = submissions[0] || null;
+  const pit = latestPit?.pit_json || null;
+  const facts = pit?.facts || (latestSub ? parseJSON(latestSub.report_json, {}) : {});
+  const caseSummary = pit?.caseSummary || null;
+  const commercialIntel = pit?.commercialIntelligence || null;
+  const findings = pit?.findings || [];
+  const opportunities = pit?.opportunities || [];
+  const dataQuality = pit?.dataQuality || null;
+  const riskIntel = pit?.riskIntelligence || null;
+  const metrics = pit?.metrics || {};
+
+  const sl = STATUS_LABEL[latestSub?.status] || 'No submissions';
+  const sc = STATUS_CLASS[latestSub?.status] || 'pending';
+
+  // Fee reconciliation check
+  const feeCheck = checkFeeReconciliation(facts);
+  const reconBanner = feeCheck ? `
+    <div class="modal-alert warn" style="margin-bottom:16px">
+      <strong>⚠ Fee reconciliation mismatch</strong>
+      Extracted total fees (${fmtD(feeCheck.total)}) differ from the sum of the fee breakdown (${fmtD(feeCheck.sum)}) by ${fmtD(Math.abs(feeCheck.diff))} (${feeCheck.pct.toFixed(1)}%). Verify before generating report.
+    </div>` : '';
+
+  // Build the PIT intelligence tab
+  const pitTab = pit ? buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportunities, dataQuality, riskIntel, metrics) : `
+    <div style="padding:40px;text-align:center;color:rgba(224,233,246,0.25)">
+      No PIT analysis yet. Generate a report to run the intelligence engine.
+    </div>`;
+
+  // Build submissions history tab
+  const subsTab = buildSubmissionsTab(submissions, merchant);
+
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header">
+      <div class="modal-eyebrow">Merchant · ${esc(merchant.industry||'Unknown industry')} · <span class="status-badge ${sc}" style="font-size:10px">${sl}</span></div>
+      <div class="modal-title">${esc(merchant.company_name)}</div>
+      <div class="modal-meta">${esc(latestSub?.provider||'No submissions yet')}${latestSub?.period ? ' — ' + esc(latestSub.period) : ''}</div>
+      ${merchant.contact_name || merchant.contact_email ? `<div class="modal-contact">${[merchant.contact_name, merchant.contact_email ? `<a href="mailto:${escA(merchant.contact_email)}">${esc(merchant.contact_email)}</a>` : '', merchant.contact_phone].filter(Boolean).join(' &nbsp;·&nbsp; ')}</div>` : ''}
+      <div class="modal-stats">
+        <div class="modal-stat"><span class="modal-stat-val">${fmtP(latestSub?.effective_rate)}</span><span class="modal-stat-lbl">Eff. rate</span></div>
+        <div class="modal-stat"><span class="modal-stat-val">${fmtK(latestSub?.volume)}</span><span class="modal-stat-lbl">Card volume</span></div>
+        <div class="modal-stat"><span class="modal-stat-val">${caseSummary?.quantifiedAnnualOpportunity ? fmtK(caseSummary.quantifiedAnnualOpportunity) : '—'}</span><span class="modal-stat-lbl">Annual opportunity</span></div>
+        <div class="modal-stat"><span class="modal-stat-val">${submissions.length}</span><span class="modal-stat-lbl">Submissions</span></div>
+      </div>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchModalTab('intelligence',this)">Intelligence</button>
+      <button class="modal-tab" onclick="switchModalTab('submissions',this)">Submissions (${submissions.length})</button>
+      <button class="modal-tab" onclick="switchModalTab('report',this)">Report</button>
+    </div>
+    <div class="modal-body">
+      ${reconBanner}
+      <div class="modal-tab-pane active" id="mtab-intelligence">${pitTab}</div>
+      <div class="modal-tab-pane" id="mtab-submissions">${subsTab}</div>
+      <div class="modal-tab-pane" id="mtab-report">${buildReportTab(latestSub, facts, merchant)}</div>
+    </div>`;
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function switchModalTab(tab, btn) {
+  document.querySelectorAll('.modal-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.modal-tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('mtab-' + tab).classList.add('active');
+}
+
+function buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportunities, dataQuality, riskIntel, metrics) {
+  // Headline summary
+  const headlineSummary = caseSummary ? `
+    <div class="modal-section">
+      <div class="modal-section-label">Intelligence Summary</div>
+      <div style="font-size:14px;font-weight:500;color:rgba(224,233,246,0.85);margin-bottom:6px">${esc(caseSummary.headline||'')}</div>
+      <div class="modal-section-text">${esc(caseSummary.summary||'')}</div>
+    </div>` : '';
+
+  // Opportunities
+  const oppsHtml = opportunities.length ? `
+    <div class="modal-section">
+      <div class="modal-section-label">Quantified Opportunities</div>
+      ${opportunities.map(o => `
+        <div class="pit-opp-item">
+          <div style="flex:1">
+            <div class="pit-opp-title">${confidenceDot(o.confidence)}${esc(o.title||o.id)}</div>
+            <div class="pit-opp-meta">${esc(o.confidence)} · ${esc(o.urgency||'')} urgency</div>
+          </div>
+          <div class="pit-opp-value">${o.estimatedAnnualValue ? fmtK(o.estimatedAnnualValue) + '/yr' : 'Strategic'}</div>
+        </div>`).join('')}
+    </div>` : '';
+
+  // Commercial intelligence
+  const commercialHtml = commercialIntel ? `
+    <div class="pit-grid">
+      <div class="pit-panel">
+        <div class="pit-panel-title">Pricing Analysis</div>
+        <div class="pit-row"><span class="pit-row-label">Pricing model</span><span class="pit-row-val">${esc(commercialIntel.pricingModel?.model||'—')}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Transparency</span><span class="pit-row-val">${esc(commercialIntel.pricingModel?.transparency||'—')}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Provider margin</span><span class="pit-row-val">${esc(commercialIntel.providerMargin?.observed||'—')}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Margin position</span><span class="pit-row-val">${esc(commercialIntel.providerMargin?.position||'—')}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Benchmark position</span><span class="pit-row-val" style="font-size:11px">${esc(commercialIntel.benchmark?.position||'—')}</span></div>
+      </div>
+      <div class="pit-panel">
+        <div class="pit-panel-title">Cost Drivers</div>
+        ${(commercialIntel.costDrivers||[]).map(d => `
+          <div class="pit-row"><span class="pit-row-label">${esc(d.label)}</span><span class="pit-row-val">${d.pct}% · ${fmtK(d.amount)}</span></div>`).join('')}
+        ${commercialIntel.commercialRead?.length ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(224,233,246,0.06)">${commercialIntel.commercialRead.map(r => `<div style="font-size:11.5px;color:rgba(224,233,246,0.45);margin-bottom:6px">· ${esc(r)}</div>`).join('')}</div>` : ''}
+      </div>
+    </div>` : '';
+
+  // Findings
+  const findingsHtml = findings.length ? `
+    <div class="modal-section">
+      <div class="modal-section-label">Key Findings</div>
+      ${findings.filter(f => f.title || f.id).map(f => `
+        <div class="pit-finding-item">
+          ${confidenceDot(f.confidence)}
+          <div>
+            <div class="pit-finding-title">${esc(f.title||f.id)}</div>
+            ${f.summary ? `<div style="font-size:11px;color:rgba(224,233,246,0.35);margin-top:2px">${esc(f.summary)}</div>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>` : '';
+
+  // Risks
+  const risks = riskIntel?.risks || [];
+  const risksHtml = risks.length ? `
+    <div class="modal-section">
+      <div class="modal-section-label">Risk Flags</div>
+      ${risks.map(r => `
+        <div class="modal-alert warn" style="margin-bottom:6px">
+          <strong>${esc(r.title||r.id)}</strong>${r.detail ? esc(r.detail) : ''}
+        </div>`).join('')}
+    </div>` : '';
+
+  // Data quality
+  const dqHtml = dataQuality ? (() => {
+    const level = dataQuality.qualityLevel || dataQuality.level || 'Unknown';
+    const pct = level === 'High' ? 100 : level === 'Medium' ? 60 : 30;
+    const cls = level === 'High' ? '' : level === 'Medium' ? 'med' : 'low';
+    const gaps = dataQuality.gaps || [];
+    return `
+      <div class="modal-section">
+        <div class="modal-section-label">Data Quality</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="flex:1"><div class="pit-quality-bar"><div class="pit-quality-fill ${cls}" style="width:${pct}%"></div></div></div>
+          <div style="font-size:12px;font-weight:600;color:rgba(224,233,246,0.7);white-space:nowrap">${esc(level)}</div>
+        </div>
+        ${gaps.map(g => `<div style="font-size:12px;color:rgba(224,233,246,0.45);margin-bottom:4px">· ${esc(g.label)} — ${esc(g.reason||'')}</div>`).join('')}
+      </div>`;
+  })() : '';
+
+  // Raw facts
+  const factsHtml = `
+    <div class="modal-section">
+      <div class="modal-section-label">Statement Data</div>
+      <table class="modal-table">
+        <tr><td>Card volume</td><td>${fmtD(facts.volume)}</td></tr>
+        <tr><td>Total fees</td><td>${fmtD(facts.totalFees)}</td></tr>
+        <tr><td>Effective rate</td><td>${fmtP(facts.effectiveRate)}</td></tr>
+        <tr><td>Provider rate</td><td>${esc(facts.providerRate||'—')}</td></tr>
+        <tr><td>Transactions</td><td>${facts.transactions != null ? Number(facts.transactions).toLocaleString('en-AU') : '—'}</td></tr>
+        <tr><td>LCR status</td><td>${esc(facts.lcrStatus||'—')}</td></tr>
+        <tr><td>Pricing model</td><td>${esc(facts.pricingModel||'—')}</td></tr>
+        <tr><td>Debit mix</td><td>${facts.cardMix?.debit != null ? facts.cardMix.debit + '%' : '—'}</td></tr>
+        <tr><td>Credit mix</td><td>${facts.cardMix?.credit != null ? facts.cardMix.credit + '%' : '—'}</td></tr>
+      </table>
+      ${Array.isArray(facts.observations) && facts.observations.length ? `
+        <div style="margin-top:12px">
+          <div class="modal-section-label">Observations</div>
+          <ul class="obs-list">${facts.observations.map(o => `<li>${esc(o)}</li>`).join('')}</ul>
+        </div>` : ''}
+    </div>`;
+
+  return `${headlineSummary}${oppsHtml}${commercialHtml}${findingsHtml}${risksHtml}${dqHtml}${factsHtml}`;
+}
+
+function buildSubmissionsTab(submissions, merchant) {
+  if (!submissions.length) return '<div style="padding:40px;text-align:center;color:rgba(224,233,246,0.25)">No submissions yet.</div>';
+
+  return `<table class="modal-table" style="margin-top:8px">
+    <thead><tr style="border-bottom:1px solid rgba(224,233,246,0.08)">
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(224,233,246,0.28);text-align:left">Date</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(224,233,246,0.28);text-align:left">Provider</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(224,233,246,0.28);text-align:left">Period</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(224,233,246,0.28);text-align:right">Volume</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(224,233,246,0.28);text-align:right">Rate</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(224,233,246,0.28);text-align:left">Status</th>
+    </tr></thead>
+    <tbody>
+    ${submissions.map(s => {
+      const dateStr = new Date(s.submitted_at).toLocaleDateString('en-AU', {day:'numeric',month:'short',year:'numeric'});
+      const sc = STATUS_CLASS[s.status] || 'pending';
+      const sl = STATUS_LABEL[s.status] || 'Unknown';
+      return `<tr>
+        <td style="color:rgba(224,233,246,0.6)">${dateStr}</td>
+        <td style="color:rgba(224,233,246,0.6)">${esc(s.provider||'—')}</td>
+        <td style="color:rgba(224,233,246,0.6)">${esc(s.period||'—')}</td>
+        <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:11.5px">${fmtK(s.volume)}</td>
+        <td style="text-align:right">${s.effective_rate ? `<span class="rate-pill ${ratePillClass(s.effective_rate)}">${fmtP(s.effective_rate)}</span>` : '—'}</td>
+        <td><span class="status-badge ${sc}">${sl}</span></td>
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table>`;
+}
+
+function buildReportTab(latestSub, facts, merchant) {
+  if (!latestSub) return '<div style="padding:40px;text-align:center;color:rgba(224,233,246,0.25)">No submissions yet.</div>';
+
+  const hasReport = !!latestSub.report_html_path;
+  const approveLabel = hasReport ? 'Regenerate report' : 'Approve &amp; generate report';
+
+  const reportBanner = hasReport ? `
+    <div class="report-ready-banner">
+      <span class="rb-text">✓ Report generated</span>
+      <button class="btn-open-report" onclick="openReport('${escA(latestSub.report_html_path)}')">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Open report
+      </button>
+    </div>` : '';
+
+  return `
+    ${reportBanner}
+    ${buildEditPanel(latestSub.id, facts)}
+    <div class="modal-section">
+      <div class="modal-section-label">Actions</div>
+      <div class="modal-actions">
+        <button class="btn-mark-reviewed" onclick="updateStatus(${latestSub.id},'reviewed')">✓ Mark as reviewed</button>
+        <button class="btn-approve" id="btn-approve-${latestSub.id}" onclick="approveAndGenerate(${latestSub.id})">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          ${approveLabel}
+        </button>
+        <button class="btn-mark-sent" onclick="updateStatus(${latestSub.id},'sent')">→ Mark as sent to client</button>
+      </div>
+      <div id="report-status-${latestSub.id}" style="margin-top:10px;font-size:12px;color:rgba(224,233,246,0.4)"></div>
+    </div>`;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   EDIT PANEL (for report corrections)
+───────────────────────────────────────────────────────────── */
 const PRICING_OPTS=['','Single-rate','Blended','Interchange-plus','Interchange-plus-plus','Subscription','Unknown'];
 const LCR_OPTS=['','On','Off','Partial','Unknown'];
 function selectHtml(field,value,opts){return`<select class="edit-select" data-field="${field}">`+opts.map(o=>`<option value="${escA(o)}" ${String(value||'')=== o?'selected':''}>${esc(o)||'—'}</option>`).join('')+`</select>`;}
-function buildEditPanel(id,f){
-  const num=v=>(v==null||v==='')?'':v;
-  const obs=Array.isArray(f.observations)?f.observations.join('\n'):'';
-  return `<div class="modal-section" style="padding-top:20px">
+
+function buildEditPanel(id, f) {
+  const num = v => (v==null||v==='')?'':v;
+  const obs = Array.isArray(f.observations) ? f.observations.join('\n') : '';
+  return `<div class="modal-section" style="padding-top:16px">
     <button class="edit-panel-toggle" id="edit-toggle-${id}" onclick="toggleEditPanel('${id}')">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      Review &amp; correct the extracted data before generating
+      Review &amp; correct extracted data before generating
       <span class="toggle-icon">▼</span>
     </button>
     <div class="edit-panel" id="edit-panel-${id}">
@@ -1106,252 +910,92 @@ function buildEditPanel(id,f){
     </div>
   </div>`;
 }
-function toggleEditPanel(id){document.getElementById('edit-toggle-'+id).classList.toggle('open');document.getElementById('edit-panel-'+id).classList.toggle('open');}
-function readEditOverrides(id){
-  const panel=document.getElementById('edit-panel-'+id); if(!panel) return{};
-  const get=sel=>{const el=panel.querySelector(sel);return el?el.value.trim():'';};
-  const ov={};
-  ['provider','period','providerRate','pricingModel','lcrStatus'].forEach(k=>{const v=get(`[data-field="${k}"]`);if(v)ov[k]=v;});
-  ['volume','totalFees','transactions','monthlyFee','terminalFees'].forEach(k=>{const v=get(`[data-field="${k}"]`);if(v!=='')ov[k]=Number(v);});
-  const obs=get('[data-field="observations"]'); if(obs) ov.observations=obs.split('\n').map(l=>l.trim()).filter(Boolean);
-  const notes=get('[data-field="adminNotes"]'); if(notes) ov.adminNotes=notes;
+
+function toggleEditPanel(id) {
+  document.getElementById('edit-toggle-'+id).classList.toggle('open');
+  document.getElementById('edit-panel-'+id).classList.toggle('open');
+}
+
+function readEditOverrides(id) {
+  const panel = document.getElementById('edit-panel-'+id); if (!panel) return {};
+  const get = sel => { const el = panel.querySelector(sel); return el ? el.value.trim() : ''; };
+  const ov = {};
+  ['provider','period','providerRate','pricingModel','lcrStatus'].forEach(k => { const v = get(`[data-field="${k}"]`); if(v) ov[k]=v; });
+  ['volume','totalFees','transactions','monthlyFee','terminalFees'].forEach(k => { const v = get(`[data-field="${k}"]`); if(v!=='') ov[k]=Number(v); });
+  const obs = get('[data-field="observations"]'); if(obs) ov.observations = obs.split('\n').map(l=>l.trim()).filter(Boolean);
+  const notes = get('[data-field="adminNotes"]'); if(notes) ov.adminNotes = notes;
   return ov;
 }
 
-/* ── STATUS & REPORT GENERATION ── */
-async function updateStatus(id,status){
-  const res = await fetch('/api/admin-data', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ action:'updateStatus', id, status })
+/* ─────────────────────────────────────────────────────────────
+   STATUS & REPORT ACTIONS
+───────────────────────────────────────────────────────────── */
+async function updateStatus(id, status) {
+  const data = await api('updateStatus', { id, status });
+  if (!data) return;
+  // Update local state
+  allMerchants = allMerchants.map(m => {
+    if (m.latest_submission_id == id) return { ...m, latest_status: status };
+    return m;
   });
-  if (res.status === 401) { showLoginScreen(); return; }
-  if (!res.ok) { const e=await res.json().catch(()=>({})); alert('Could not update status: ' + (e.error||res.status)); return; }
-  const s=allSubmissions.find(x=>x.id==id); if(s) s.status=status;
-  updateDashboard(); applyView(); updateSidebarBadge(); closeModalBtn();
+  updateDashboard();
+  applyMerchantFilter();
+  updateSidebarBadge();
+  closeModalBtn();
 }
-async function approveAndGenerate(id){
-  const btn=document.getElementById('btn-approve-'+id);
-  const statusEl=document.getElementById('report-status-'+id);
-  const overrides=readEditOverrides(id);
-  if(btn){btn.disabled=true;btn.innerHTML='⏳ Generating report…';}
-  if(statusEl) statusEl.textContent='Claude is writing the personalised report…';
-  try{
-    const res=await fetch('/api/generate-report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({submissionId:id,overrides})});
-    if (res.status === 401) { showLoginScreen(); return; }
-    const data=await res.json();
-    if(!res.ok) throw new Error(data.error||'Generation failed');
-    const s=allSubmissions.find(x=>x.id==id); if(s){s.status='approved';s.report_html_path=data.htmlPath;}
-    if(statusEl) statusEl.innerHTML=`<span style="color:#9FD9B4;font-weight:600">✓ Report generated.</span> <button class="btn-open-report" style="padding:6px 14px;margin-left:8px" onclick="openReport('${escA(data.htmlPath)}')">Open report</button>`;
-    if(btn){btn.disabled=false;btn.innerHTML='Regenerate report';}
-    await loadSubmissions();
-  }catch(err){
-    if(statusEl) statusEl.innerHTML=`<span style="color:#E88A8A">Error: ${esc(err.message)}</span>`;
-    if(btn){btn.disabled=false;btn.innerHTML='Approve &amp; generate report';}
-  }
-}
-async function openReport(htmlPath){
-  try{
-    const res = await fetch('/api/admin-data', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ action:'getReportHtml', htmlPath })
+
+async function approveAndGenerate(id) {
+  const btn = document.getElementById('btn-approve-'+id);
+  const statusEl = document.getElementById('report-status-'+id);
+  const overrides = readEditOverrides(id);
+  if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Generating report…'; }
+  if (statusEl) statusEl.textContent = 'Claude is writing the personalised report…';
+  try {
+    const res = await fetch('/api/generate-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ submissionId: id, overrides })
     });
     if (res.status === 401) { showLoginScreen(); return; }
-    if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.error || ('HTTP '+res.status)); }
     const data = await res.json();
-    window.open(URL.createObjectURL(new Blob([data.html],{type:'text/html'})),'_blank');
-  }catch(err){alert('Could not open report: '+err.message);}
+    if (!res.ok) throw new Error(data.error || 'Generation failed');
+    if (statusEl) statusEl.innerHTML = `<span style="color:#9FD9B4;font-weight:600">✓ Report generated.</span> <button class="btn-open-report" style="padding:6px 14px;margin-left:8px" onclick="openReport('${escA(data.htmlPath)}')">Open report</button>`;
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Regenerate report'; }
+    await loadMerchants();
+  } catch(err) {
+    if (statusEl) statusEl.innerHTML = `<span style="color:#E88A8A">Error: ${esc(err.message)}</span>`;
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Approve &amp; generate report'; }
+  }
 }
-function closeModal(e){if(e.target===document.getElementById('modal-overlay'))closeModalBtn();}
-function closeModalBtn(){document.getElementById('modal-overlay').classList.remove('open');document.body.style.overflow='';}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModalBtn();closeAvatarMenu();}});
 
-/* ── AVATAR MENU ── */
-function toggleAvatarMenu(e){
-  e.stopPropagation();
-  document.getElementById('nav-avatar-menu').classList.toggle('open');
-}
-function closeAvatarMenu(){
-  document.getElementById('nav-avatar-menu').classList.remove('open');
-}
-document.addEventListener('click', () => closeAvatarMenu());
-
-/* ── EMPLOYEE TASKS — wired to server.py at localhost:5000 ── */
-const AGENT_SERVER = 'http://localhost:5000';
-
-// Maps pipeline step names to server.py agent IDs
-const TASK_CONFIG={
-  leads:  { title:'Lead Identification',   sub:'Maya reads the Apollo CSV and uploads new leads to Google Sheets, skipping duplicates.', agentId:'agent1' },
-  emails: { title:'Email Personalisation', sub:'Leo classifies each business with Claude AI and writes a tailored email for every lead.', agentId:'agent3' },
-  send:   { title:'Email Dispatch',        sub:'Zara sends approved emails via SendGrid. Dry run mode is on by default.',                agentId:'agent4' },
-  all:    { title:'Full Pipeline',         sub:'Runs Maya → Leo → Zara in sequence.',                                                    agentId:null },
-};
-let currentTask='leads', taskRunning=false, activeTaskSource=null;
-
-// Check whether server.py is running and update the status indicator
-async function checkAgentServer(){
-  const dot  = document.getElementById('agent-server-dot');
-  const text = document.getElementById('agent-server-text');
+async function openReport(htmlPath) {
   try {
-    const res = await fetch(`${AGENT_SERVER}/agents`, { signal: AbortSignal.timeout(2000) });
-    if (res.ok) {
-      dot.style.background  = '#9FD9B4';
-      text.textContent = 'Agent server online';
-      return true;
-    }
-  } catch(e) {}
-  dot.style.background  = '#E88A8A';
-  text.textContent = 'Agent server offline — run: python3 server.py';
-  return false;
-}
-
-function selectTask(task){
-  if(taskRunning)return; currentTask=task;
-  document.querySelectorAll('.pipeline-step').forEach(s=>s.classList.remove('active'));
-  document.getElementById('pstep-'+task)?.classList.add('active');
-  const cfg=TASK_CONFIG[task];
-  document.getElementById('task-title').textContent=cfg.title;
-  document.getElementById('task-sub').textContent=cfg.sub;
-  const btn=document.getElementById('task-run-btn');
-  btn.textContent=task==='all'?'⚡ Run all':'▶ Run'; btn.className='run-btn';
-  clearTaskFeed();
-}
-
-function clearTaskFeed(){
-  document.getElementById('task-feed').innerHTML='<div class="task-empty"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Click Run to start this agent</span></div>';
-  document.getElementById('task-progress').style.width='0%';
-  ['ts-leads','ts-emails','ts-sent'].forEach(id=>document.getElementById(id).textContent=0);
-}
-
-function appendFeedEl(html){
-  const feed=document.getElementById('task-feed');
-  const empty=feed.querySelector('.task-empty'); if(empty)empty.remove();
-  const d=document.createElement('div'); d.innerHTML=html;
-  feed.appendChild(d.firstChild); feed.scrollTop=feed.scrollHeight;
-}
-
-function classifyLine(line){
-  if(/===|---/.test(line)) return 'heading';
-  if(/error|ERROR|FAILED|failed/i.test(line)) return 'error';
-  if(/done\.|success|added|sent|generated/i.test(line)) return 'success';
-  if(/warning|REJECTED|WARNING|skip/i.test(line)) return 'warning';
-  return '';
-}
-
-function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-
-async function runCurrentTask(){
-  if(taskRunning) return;
-  const online = await checkAgentServer();
-  if(!online){
-    clearTaskFeed();
-    appendFeedEl(`<div class="tf-status" style="border-color:rgba(232,138,138,0.3);color:#E88A8A">Agent server is not running. Open your terminal and run: python3 server.py</div>`);
-    return;
-  }
-  if(currentTask==='all'){ runAllTasks(); return; }
-  const stage=currentTask;
-  const agentId=TASK_CONFIG[stage].agentId;
-  taskRunning=true;
-  const btn=document.getElementById('task-run-btn');
-  btn.disabled=true; btn.className='run-btn running'; btn.textContent='⏳ Running…';
-  clearTaskFeed();
-  const stEl=document.getElementById('sstatus-'+stage);
-  if(stEl){ stEl.textContent='Running'; stEl.className='step-status running'; }
-  streamAgent(agentId, ()=>{
-    taskRunning=false; btn.disabled=false; btn.className='run-btn'; btn.textContent='▶ Run';
-    if(stEl){ stEl.textContent='Done'; stEl.className='step-status done'; }
-    document.getElementById('pstep-'+stage)?.classList.add('done');
-    loadSubmissions(); // refresh reports after agent finishes
-  });
-}
-
-async function runAllTasks(){
-  taskRunning=true;
-  const btn=document.getElementById('task-run-btn');
-  btn.disabled=true; btn.className='run-btn running'; btn.textContent='⏳ Running pipeline…';
-  clearTaskFeed();
-  for(const stage of ['leads','emails','send']){
-    document.querySelectorAll('.pipeline-step').forEach(s=>s.classList.remove('active'));
-    document.getElementById('pstep-'+stage)?.classList.add('active');
-    document.getElementById('task-title').textContent=TASK_CONFIG[stage].title;
-    document.getElementById('sstatus-'+stage).textContent='Running';
-    document.getElementById('sstatus-'+stage).className='step-status running';
-    await new Promise(resolve=>streamAgent(TASK_CONFIG[stage].agentId, ()=>{
-      document.getElementById('sstatus-'+stage).textContent='Done';
-      document.getElementById('sstatus-'+stage).className='step-status done';
-      document.getElementById('pstep-'+stage)?.classList.add('done');
-      resolve();
-    }));
-    await sleep(600);
-  }
-  taskRunning=false; btn.disabled=false; btn.className='run-btn'; btn.textContent='⚡ Run all';
-  loadSubmissions();
-}
-
-// Streams raw terminal lines from server.py's /run/<agentId> endpoint
-function streamAgent(agentId, onDone){
-  if(activeTaskSource){ activeTaskSource.close(); activeTaskSource=null; }
-  const source = new EventSource(`${AGENT_SERVER}/run/${agentId}`);
-  activeTaskSource = source;
-
-  // Fake a simple progress bar that fills slowly then jumps on done
-  let progress = 0;
-  const progressTimer = setInterval(()=>{
-    progress = Math.min(progress + 1, 85);
-    document.getElementById('task-progress').style.width = progress + '%';
-  }, 800);
-
-  source.onmessage = e => {
-    const raw = e.data;
-
-    if(raw === '__SUCCESS__'){
-      clearInterval(progressTimer);
-      document.getElementById('task-progress').style.width = '100%';
-      appendFeedEl(`<div class="tf-done">✓ &nbsp;Agent finished successfully.</div>`);
-      source.close(); activeTaskSource=null; onDone(); return;
-    }
-    if(raw.startsWith('__ERROR__')){
-      clearInterval(progressTimer);
-      document.getElementById('task-progress').style.width = '100%';
-      const msg = raw.replace('__ERROR__:','').trim();
-      appendFeedEl(`<div class="tf-status" style="border-color:rgba(232,138,138,0.3);color:#E88A8A">✗ ${esc(msg)}</div>`);
-      source.close(); activeTaskSource=null; onDone(); return;
-    }
-
-    // Colour-code the raw terminal line
-    const cls = classifyLine(raw);
-    const colour = {heading:'color:#A9CCF2;font-weight:500', error:'color:#E88A8A', success:'color:#9FD9B4', warning:'color:#E7B27A'}[cls] || 'color:rgba(224,233,246,0.5)';
-    appendFeedEl(`<div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.7;padding:2px 0;${colour}">${esc(raw)}</div>`);
-  };
-
-  source.onerror = () => {
-    clearInterval(progressTimer);
-    if(activeTaskSource){ activeTaskSource.close(); activeTaskSource=null; }
-    onDone();
-  };
-}
-
-/* ── EMPLOYEE PHOTOS ── */
-function triggerUpload(name){document.getElementById('emp-file-'+name).click();}
-function handleUpload(name,input){
-  const file=input.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    const av=document.getElementById('emp-av-'+name);
-    const initEl=document.getElementById('emp-init-'+name); if(initEl)initEl.style.display='none';
-    const old=av.querySelector('img');if(old)old.remove();
-    const img=document.createElement('img');img.src=e.target.result;
-    av.insertBefore(img,av.querySelector('button'));
-  };
-  reader.readAsDataURL(file);
+    const data = await api('getReportHtml', { htmlPath });
+    if (!data) return;
+    window.open(URL.createObjectURL(new Blob([data.html], {type:'text/html'})), '_blank');
+  } catch(err) { alert('Could not open report: ' + err.message); }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   AUTH / LOGIN SCREEN
+   MODAL HELPERS
+───────────────────────────────────────────────────────────── */
+function closeModal(e) { if (e.target === document.getElementById('modal-overlay')) closeModalBtn(); }
+function closeModalBtn() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModalBtn(); closeAvatarMenu(); } });
+
+/* ─────────────────────────────────────────────────────────────
+   AVATAR MENU
+───────────────────────────────────────────────────────────── */
+function toggleAvatarMenu(e) { e.stopPropagation(); document.getElementById('nav-avatar-menu').classList.toggle('open'); }
+function closeAvatarMenu() { document.getElementById('nav-avatar-menu').classList.remove('open'); }
+document.addEventListener('click', () => closeAvatarMenu());
+
+/* ─────────────────────────────────────────────────────────────
+   AUTH / LOGIN
 ───────────────────────────────────────────────────────────── */
 function showLoginScreen() {
   document.getElementById('app-shell').style.display = 'none';
-  const login = document.getElementById('login-screen');
-  login.style.display = 'flex';
+  document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('login-password').focus();
 }
 function showAppShell() {
@@ -1375,7 +1019,7 @@ async function handleLogin(e) {
     pwInput.value = '';
     showAppShell();
     initDashboard();
-  } catch (err) {
+  } catch(err) {
     errEl.textContent = err.message;
   } finally {
     btn.disabled = false; btn.textContent = 'Sign in';
@@ -1387,30 +1031,21 @@ async function handleLogout() {
   showLoginScreen();
 }
 
-/* ── INIT ── */
-// loadSubmissions() doubles as the session check: a 401 response triggers
-// showLoginScreen(). Only on success do we wire up polling and the agent
-// server check, so a logged-out session doesn't keep firing background
-// requests against /api/admin-data.
+/* ─────────────────────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────────────────────── */
 let dashboardInitialised = false;
 function initDashboard() {
   if (dashboardInitialised) return;
   dashboardInitialised = true;
-  setInterval(loadSubmissions, 60000);
-  checkAgentServer();
-  const _origShowPage = showPage;
-  window.showPage = function(id, btn) {
-    _origShowPage(id, btn);
-    if (id === 'tasks') checkAgentServer();
-  };
+  setInterval(loadMerchants, 60000);
 }
 (async function start() {
-  const authenticated = await loadSubmissions();
+  const authenticated = await loadMerchants();
   if (authenticated) {
     showAppShell();
     initDashboard();
   }
-  // If not authenticated, loadSubmissions() already called showLoginScreen().
 })();
 </script>
 </body>
