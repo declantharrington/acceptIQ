@@ -11,6 +11,7 @@ import { buildPIT } from './_lib/pit/buildPIT.js';
 import { generateNarrative } from './_lib/report/narrative/generateNarrative.js';
 import { renderReport } from './_lib/report/render/renderReport.js';
 import { uploadReportHtml } from './_lib/report/storage/reportStorage.js';
+import { isAuthorizedAdminRequest } from './_lib/admin/session.js';
 
 export const config = { maxDuration: 120 };
 
@@ -24,6 +25,14 @@ export default async function handler(req, res) {
 
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+    // This is an admin-only action (approve + generate the client report).
+    // Previously anyone who knew or guessed a submissionId could call this
+    // directly with no auth at all, spending the Anthropic API budget and
+    // generating/storing a report outside the approval flow.
+    if (!isAuthorizedAdminRequest(req)) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
 
     const { submissionId, overrides = {} } = req.body || {};
     if (!submissionId) return res.status(400).json({ error: 'submissionId required' });
