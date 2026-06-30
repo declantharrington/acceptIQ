@@ -1358,7 +1358,7 @@ RULES:
 - totalFees: use the statement's stated total fees figure (GST-inclusive) if present; only sum components if no stated total exists.
 - volume and totalFees are in AUD. effectiveRate = totalFees / volume * 100. averageTransactionValue = volume / transactions.
 - perTransactionFee is a fixed per-transaction fee in CENTS if stated.
-- pricingModel: one of "Single-rate", "Blended", "Interchange-plus", "Interchange-plus-plus", "Subscription", "Unknown".
+- pricingModel: one of "Single-rate", "Blended", "Interchange-plus", "Interchange-plus-plus", "Subscription", "Unknown". Distinguish using the fee breakdown structure, not the label: Interchange-plus-plus shows interchange, scheme/assessment fees, AND provider margin as THREE separate line items (a "Scheme fee" or "Assessment fee" line separate from both interchange and the margin/service-fee line is the key signal). Interchange-plus shows only interchange separately, with scheme fees bundled into a single combined margin/service-fee line (TWO layers, not three).
 - providerRate: the rate the merchant's provider charges them as printed; null if not determinable.
 - lcrStatus: one of "On", "Off", "Partial", "Unknown".
 - cardMix: derive from interchange/scheme fee breakdown by card category, NOT from deposit/sales summary.
