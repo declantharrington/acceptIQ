@@ -1,8 +1,6 @@
 // api/generate-report.js
-// Payments Intelligence Layer + Report Engine endpoint.
-// This endpoint remains the same externally: the admin portal calls /api/generate-report
-// with { submissionId, overrides }. Internally it now builds a PIT object first,
-// then lets the Report Engine consume that PIT output.
+// Payments Intelligence Terminal (PIT) + Report Engine endpoint.
+// External contract remains unchanged: admin calls /api/generate-report with { submissionId, overrides }.
 
 import { PAYMENTS_KB } from './_lib/payments-knowledge-base.js';
 import { fetchSubmissionById, updateSubmissionAfterReport } from './_lib/report/data/submissions.js';
@@ -23,6 +21,7 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -32,6 +31,7 @@ export default async function handler(req, res) {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_ANON_KEY;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
+
     if (!supabaseUrl || !supabaseKey || !anthropicKey) {
       console.error('generate-report: missing required environment variables');
       return res.status(500).json({ error: 'Server configuration error' });
@@ -47,17 +47,25 @@ export default async function handler(req, res) {
     const { report, adminNotes } = applyAdminOverrides(JSON.parse(submission.report_json || '{}'), overrides);
     logFeeReconciliation(report);
 
-    // 3. Build the Payments Intelligence Layer.
-    //    This is the canonical object for downstream modules.
-    const pit = buildPIT({ report, programContext, adminNotes });
+    // 3. Build the Payments Intelligence Terminal.
+    const pit = buildPIT({ report, programContext, overrides, adminNotes });
 
-    // Keep the corrected/derived facts in the variable name existing report code expects.
-    const facts = pit.facts;
-    const metrics = pit.metrics;
-    const selectedModules = pit.reportPlan.selectedModules;
-    const priorityOpportunities = pit.reportPlan.priorityOpportunities;
+    const facts = pit.facts || report;
+    const metrics = pit.metrics || {};
 
-    // 4. Generate module narrative.
+    const selectedModules = Array.isArray(pit.selectedModules)
+      ? pit.selectedModules
+      : Array.isArray(pit.modulePlan)
+        ? pit.modulePlan.map(m => m.id)
+        : [];
+
+    const priorityOpportunities = Array.isArray(pit.priorityOpportunities)
+      ? pit.priorityOpportunities
+      : Array.isArray(pit.opportunities)
+        ? pit.opportunities.slice(0, 4)
+        : [];
+
+    // 4. Generate narrative.
     const revenueBand = determineRevenueBand(programContext);
     const toneGuide = toneGuideFor(revenueBand);
 
@@ -71,14 +79,15 @@ export default async function handler(req, res) {
       metrics,
       priorityOpportunities,
       programContext,
-      adminNotes
+      adminNotes,
+      pit
     });
 
     // 5. Compose report from PIT + narrative.
     const identity = {
-      companyName: pit.merchantProfile.companyName,
-      contactName: pit.merchantProfile.contactName,
-      merchantEmail: pit.merchantProfile.merchantEmail
+      companyName: pit.merchantProfile?.name || pit.merchantProfile?.companyName || 'Merchant',
+      contactName: pit.merchantProfile?.contactName || null,
+      merchantEmail: pit.merchantProfile?.contactEmail || pit.merchantProfile?.merchantEmail || null
     };
 
     const html = renderReport({
@@ -87,7 +96,8 @@ export default async function handler(req, res) {
       narrative,
       identity,
       selectedModules,
-      priorityOpportunities
+      priorityOpportunities,
+      pit
     });
 
     // 6. Persist generated report.
