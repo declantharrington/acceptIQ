@@ -4,9 +4,29 @@
 import { buildSystemPrompt } from '../prompt/reportSystemPrompt.js';
 import { buildUserMessage } from './buildUserMessage.js';
 
-export async function generateNarrative({ anthropicKey, model, paymentsKb, toneGuide, selectedModules, report, metrics, priorityOpportunities, programContext, adminNotes }) {
+export async function generateNarrative({
+  anthropicKey,
+  model,
+  paymentsKb,
+  toneGuide,
+  selectedModules,
+  report,
+  metrics,
+  priorityOpportunities,
+  programContext,
+  adminNotes,
+  pit
+}) {
   const systemPrompt = buildSystemPrompt({ paymentsKb, toneGuide, selectedModules });
-  const userMessage = buildUserMessage({ report, metrics, selectedModules, priorityOpportunities, programContext, adminNotes });
+  const userMessage = buildUserMessage({
+    report,
+    metrics,
+    selectedModules,
+    priorityOpportunities,
+    programContext,
+    adminNotes,
+    pit
+  });
 
   const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',

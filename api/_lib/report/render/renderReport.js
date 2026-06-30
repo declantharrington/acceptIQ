@@ -5,8 +5,15 @@ import { buildTemplate } from '../template/reportTemplate.js';
 import { buildReplacements } from './buildReplacements.js';
 import { replaceTokens } from './htmlHelpers.js';
 
-export function renderReport({ report, metrics, narrative, identity, selectedModules, priorityOpportunities }) {
+export function renderReport({ report, metrics, narrative, identity, selectedModules, priorityOpportunities, pit }) {
   const template = buildTemplate({ modules: selectedModules });
-  const replacements = buildReplacements({ report, metrics, narrative, identity, priorityOpportunities });
+  const replacements = buildReplacements({
+    report,
+    metrics,
+    narrative,
+    identity,
+    priorityOpportunities,
+    pit
+  });
   return replaceTokens(template, replacements);
 }
