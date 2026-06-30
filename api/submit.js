@@ -132,10 +132,14 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.SUPABASE_URL;
+  // Service role key bypasses RLS - required now that the submissions table
+  // and statements storage bucket are locked down against the anon key.
+  // This key must never be sent to the browser; it only ever lives here,
+  // server-side, in Vercel's environment variables.
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const resendKey   = process.env.RESEND_API_KEY;
- const adminEmail  = process.env.ADMIN_EMAIL || null;
+  const adminEmail  = process.env.ADMIN_EMAIL || null;
   const fromEmail   = process.env.RESEND_FROM || 'acceptorIQ Submissions <onboarding@resend.dev>';
 
   // Supabase is required to store the submission; without it the whole flow
