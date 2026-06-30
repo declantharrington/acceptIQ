@@ -29,7 +29,7 @@ export function buildPaymentsStack(facts, merchantProfile) {
   stack.completeness = stack.visibleComponents.length >= 5 && stack.missingComponents.length <= 1 ? 'High' : stack.visibleComponents.length >= 3 ? 'Medium' : 'Low';
   return stack;
 }
-function detectGateway(t){ return /fat zebra|securepay|stripe|adyen|braintree|pin payments|gateway/.test(t) ? 'Gateway indicated' : null; }
-function detectPOS(t){ return /pos|vend|lightspeed|shopify|woocommerce|magento|square/.test(t) ? 'POS/eCommerce platform indicated' : null; }
-function detectTerminal(t){ return /terminal|eftpos|ingenico|verifone|pax|card present|card-present/.test(t) ? 'Terminal estate indicated' : null; }
-function detectSurchargeStatus(t){ if(/sometimes.*surcharge|surcharge.*sometimes/.test(t))return'Sometimes applied'; if(/surcharge|surcharging/.test(t))return'Relevant / indicated'; return'Not indicated'; }
+function detectGateway(t){ return /\b(fat zebra|securepay|stripe|adyen|braintree|pin payments|gateway)\b/.test(t) ? 'Gateway indicated' : null; }
+function detectPOS(t){ return /\b(pos|vend|lightspeed|shopify|woocommerce|magento|square)\b/.test(t) ? 'POS/eCommerce platform indicated' : null; }
+function detectTerminal(t){ return /\b(terminal|eftpos|ingenico|verifone|pax|card present|card-present)\b/.test(t) ? 'Terminal estate indicated' : null; }
+function detectSurchargeStatus(t){ if(/sometimes.*surcharge|surcharge.*sometimes/.test(t))return'Sometimes applied'; if(/\b(surcharge|surcharging)\b/.test(t))return'Relevant / indicated'; return'Not indicated'; }
