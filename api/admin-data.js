@@ -29,11 +29,13 @@ export default async function handler(req, res) {
   const { action } = req.body || {};
 
   try {
-    if (action === 'list')          return await handleList(req, res, supabaseUrl, supabaseKey);
-    if (action === 'listMerchants') return await handleListMerchants(req, res, supabaseUrl, supabaseKey);
-    if (action === 'getMerchant')   return await handleGetMerchant(req, res, supabaseUrl, supabaseKey);
-    if (action === 'updateStatus')  return await handleUpdateStatus(req, res, supabaseUrl, supabaseKey);
-    if (action === 'getReportHtml') return await handleGetReportHtml(req, res, supabaseUrl, supabaseKey);
+    if (action === 'list')               return await handleList(req, res, supabaseUrl, supabaseKey);
+    if (action === 'listMerchants')      return await handleListMerchants(req, res, supabaseUrl, supabaseKey);
+    if (action === 'getMerchant')        return await handleGetMerchant(req, res, supabaseUrl, supabaseKey);
+    if (action === 'getModuleAccess')    return await handleGetModuleAccess(req, res, supabaseUrl, supabaseKey);
+    if (action === 'toggleModuleAccess') return await handleToggleModuleAccess(req, res, supabaseUrl, supabaseKey);
+    if (action === 'updateStatus')       return await handleUpdateStatus(req, res, supabaseUrl, supabaseKey);
+    if (action === 'getReportHtml')      return await handleGetReportHtml(req, res, supabaseUrl, supabaseKey);
     return res.status(400).json({ error: 'Unknown action' });
   } catch (err) {
     console.error('admin-data error:', err.message);
@@ -209,4 +211,77 @@ async function handleGetReportHtml(req, res, supabaseUrl, supabaseKey) {
   }
   const html = await sbRes.text();
   return res.status(200).json({ html });
+}
+
+// ── Get module access state for a merchant ────────────────────────────────────
+// Returns all modules from the catalogue, with enabled=true/false per merchant.
+async function handleGetModuleAccess(req, res, supabaseUrl, supabaseKey) {
+  const { merchantId } = req.body || {};
+  if (!merchantId) return res.status(400).json({ error: 'merchantId required' });
+
+  // All modules in the catalogue
+  const modules = await sb(supabaseUrl, supabaseKey, 'modules?order=created_at.asc');
+
+  // Which modules this merchant has access to
+  const access = await sb(supabaseUrl, supabaseKey,
+    `merchant_module_access?merchant_id=eq.${merchantId}&select=module_id,enabled_at,enabled_by`
+  );
+  const accessMap = {};
+  for (const a of access) accessMap[a.module_id] = a;
+
+  // Combine: one row per module with enabled state
+  const result = modules.map(m => ({
+    ...m,
+    enabled:    !!accessMap[m.id],
+    enabled_at: accessMap[m.id]?.enabled_at || null,
+    enabled_by: accessMap[m.id]?.enabled_by || null
+  }));
+
+  return res.status(200).json({ modules: result });
+}
+
+// ── Toggle module access for a merchant ───────────────────────────────────────
+// enable=true  → insert a row into merchant_module_access (idempotent)
+// enable=false → delete the row
+async function handleToggleModuleAccess(req, res, supabaseUrl, supabaseKey) {
+  const { merchantId, moduleId, enable } = req.body || {};
+  if (!merchantId || !moduleId) return res.status(400).json({ error: 'merchantId and moduleId required' });
+  if (typeof enable !== 'boolean') return res.status(400).json({ error: 'enable (boolean) required' });
+
+  if (enable) {
+    // INSERT, ignore if already exists
+    const insertRes = await fetch(`${supabaseUrl}/rest/v1/merchant_module_access`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        Prefer: 'resolution=ignore-duplicates'
+      },
+      body: JSON.stringify({
+        merchant_id: merchantId,
+        module_id:   moduleId,
+        enabled_by:  'admin'
+      })
+    });
+    if (!insertRes.ok) {
+      const detail = await insertRes.text();
+      return res.status(insertRes.status).json({ error: 'Failed to enable module', detail });
+    }
+  } else {
+    // DELETE the access row
+    const deleteRes = await fetch(
+      `${supabaseUrl}/rest/v1/merchant_module_access?merchant_id=eq.${merchantId}&module_id=eq.${encodeURIComponent(moduleId)}`,
+      {
+        method: 'DELETE',
+        headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` }
+      }
+    );
+    if (!deleteRes.ok) {
+      const detail = await deleteRes.text();
+      return res.status(deleteRes.status).json({ error: 'Failed to disable module', detail });
+    }
+  }
+
+  return res.status(200).json({ success: true, merchantId, moduleId, enabled: enable });
 }
