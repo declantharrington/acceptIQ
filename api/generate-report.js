@@ -28,10 +28,6 @@ export default async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    // This is an admin-only action (approve + generate the client report).
-    // Previously anyone who knew or guessed a submissionId could call this
-    // directly with no auth at all, spending the Anthropic API budget and
-    // generating/storing a report outside the approval flow.
     if (!isAuthorizedAdminRequest(req)) {
       return res.status(401).json({ error: 'Not authenticated' });
     }
@@ -40,7 +36,6 @@ export default async function handler(req, res) {
     if (!submissionId) return res.status(400).json({ error: 'submissionId required' });
 
     const supabaseUrl = process.env.SUPABASE_URL;
-    // Service role key bypasses RLS - see comment in api/submit.js for why.
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
@@ -49,22 +44,22 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Server configuration error' });
     }
 
-    // 1. Load the submission/case.
     const submission = await fetchSubmissionById({ supabaseUrl, supabaseKey, submissionId });
     if (!submission) return res.status(404).json({ error: 'Submission not found' });
 
     const programContext = submission.program_context || '';
 
-    // 2. Apply analyst/admin corrections before PIT runs.
-    const { report, adminNotes } = applyAdminOverrides(JSON.parse(submission.report_json || '{}'), overrides);
+    const { report, adminNotes } = applyAdminOverrides(
+      JSON.parse(submission.report_json || '{}'),
+      overrides
+    );
+
     logFeeReconciliation(report);
 
-    // 3. Build the Payments Intelligence Terminal.
+    // The PIT is now the canonical intelligence object for this case.
+    // Everything downstream should consume PIT rather than re-building intelligence.
     const pit = buildPIT({ report, programContext, overrides, adminNotes });
 
-    // 3a. Ensure the submission has a merchant_id (may be missing for submissions
-    //     created before this step was wired in), then persist the full PIT output.
-    //     Both are non-fatal if they fail - they don't affect report generation.
     let merchantId = submission.merchant_id || null;
     if (!merchantId) {
       merchantId = await upsertMerchant({ supabaseUrl, supabaseKey, programContext });
@@ -72,24 +67,12 @@ export default async function handler(req, res) {
         await linkSubmissionToMerchant({ supabaseUrl, supabaseKey, submissionId, merchantId });
       }
     }
+
     await persistPIT({ supabaseUrl, supabaseKey, submissionId, merchantId, pit });
 
-    const facts = pit.facts || report;
-    const metrics = pit.metrics || {};
+    const selectedModules = getSelectedModules(pit);
+    const priorityOpportunities = getPriorityOpportunities(pit);
 
-    const selectedModules = Array.isArray(pit.selectedModules)
-      ? pit.selectedModules
-      : Array.isArray(pit.modulePlan)
-        ? pit.modulePlan.map(m => m.id)
-        : [];
-
-    const priorityOpportunities = Array.isArray(pit.priorityOpportunities)
-      ? pit.priorityOpportunities
-      : Array.isArray(pit.opportunities)
-        ? pit.opportunities.slice(0, 4)
-        : [];
-
-    // 4. Generate narrative.
     const revenueBand = determineRevenueBand(programContext);
     const toneGuide = toneGuideFor(revenueBand);
 
@@ -99,45 +82,33 @@ export default async function handler(req, res) {
       paymentsKb: PAYMENTS_KB,
       toneGuide,
       selectedModules,
-      report: facts,
-      metrics,
       priorityOpportunities,
       programContext,
       adminNotes,
       pit
     });
 
-    // 5. Compose report from PIT + narrative.
     const identity = {
-      companyName: pit.merchantProfile?.name || pit.merchantProfile?.companyName || 'Merchant',
+      companyName: pit.merchantProfile?.name || 'Merchant',
       contactName: pit.merchantProfile?.contactName || null,
-      merchantEmail: pit.merchantProfile?.contactEmail || pit.merchantProfile?.merchantEmail || null
+      merchantEmail: pit.merchantProfile?.contactEmail || null
     };
 
-    const html = renderReport({
-      report: facts,
-      metrics,
-      narrative,
-      identity,
-      selectedModules,
-      priorityOpportunities,
-      pit
-    });
+    const html = renderReport({ pit, narrative, identity });
 
-    // 6. Persist generated report.
     const htmlPath = await uploadReportHtml({
       supabaseUrl,
       supabaseKey,
       html,
       companyName: identity.companyName,
-      provider: facts.provider || 'Unknown'
+      provider: pit.facts?.provider || 'Unknown'
     });
 
     await updateSubmissionAfterReport({
       supabaseUrl,
       supabaseKey,
       submissionId,
-      report: facts,
+      report: pit.facts,
       narrative,
       htmlPath
     });
@@ -149,4 +120,17 @@ export default async function handler(req, res) {
     if (err && err.stack) console.error(err.stack);
     return res.status(500).json({ error: message });
   }
+}
+
+function getSelectedModules(pit) {
+  if (Array.isArray(pit?.selectedModules)) return pit.selectedModules;
+  if (Array.isArray(pit?.modulePlan)) return pit.modulePlan.map(m => m.id).filter(Boolean);
+  return [];
+}
+
+function getPriorityOpportunities(pit) {
+  if (Array.isArray(pit?.priorityOpportunities)) return pit.priorityOpportunities;
+  if (Array.isArray(pit?.caseSummary?.topOpportunities)) return pit.caseSummary.topOpportunities;
+  if (Array.isArray(pit?.opportunities)) return pit.opportunities.slice(0, 4);
+  return [];
 }
