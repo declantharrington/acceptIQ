@@ -1,5 +1,6 @@
 // api/_lib/report/render/buildReplacements.js
-// Converts report state into template replacement tokens.
+// PIT-native template replacement builder.
+// This file maps PIT + narrative into report template tokens. It does not calculate intelligence.
 
 import { fmtD, fmtD0, fmtP, todayLong } from '../metrics/formatters.js';
 import { renderText } from './htmlHelpers.js';
@@ -10,61 +11,84 @@ import {
   highestPriorityLabel
 } from './components.js';
 
-export function buildReplacements({ report = {}, metrics = {}, narrative = {}, identity = {}, priorityOpportunities = [], pit = null }) {
-  const snapshot = buildSnapshot({ report, metrics, priorityOpportunities, pit });
+export function buildReplacements({
+  pit = null,
+  narrative = {},
+  identity = {},
+  // Backward-compatible fallback inputs only.
+  report = null,
+  metrics = null,
+  priorityOpportunities = null
+} = {}) {
+  const facts = pit?.facts || report || {};
+  const m = pit?.metrics || metrics || {};
+  const opportunities = getPriorityOpportunities({ pit, priorityOpportunities });
+  const snapshot = buildSnapshot({ pit, facts, metrics: m, priorityOpportunities: opportunities });
 
-  const alertReplacements = buildAlertReplacements(narrative, pit);
-  const stackReplacements = buildStackReplacements(narrative, pit);
+  const alertReplacements = buildAlertReplacements({ narrative, pit });
+  const stackReplacements = buildStackReplacements({ narrative, pit });
 
   return {
-    '{{provider}}': report.provider || '-',
-    '{{period}}': report.period || '-',
-    '{{effective_rate}}': fmtP(report.effectiveRate ?? metrics.effectiveRate),
-    '{{provider_rate}}': formatProviderRate(report.providerRate ?? pit?.commercialIntelligence?.providerMargin?.observed),
-    '{{total_fees}}': fmtD(report.totalFees ?? metrics.totalFees),
-    '{{volume}}': fmtD(report.volume ?? metrics.volume),
+    '{{provider}}': facts.provider || '-',
+    '{{period}}': facts.period || '-',
+    '{{effective_rate}}': fmtP(m.effectiveRate ?? facts.effectiveRate),
+    '{{provider_rate}}': formatProviderRate(
+      facts.providerRate ??
+      pit?.paymentsStack?.providerMargin ??
+      pit?.commercialIntelligence?.providerMargin?.observed
+    ),
+    '{{total_fees}}': fmtD(m.totalFees ?? facts.totalFees),
+    '{{volume}}': fmtD(m.volume ?? facts.volume),
     '{{potential_savings_annual}}': snapshot.totalAnnualOpportunity > 0 ? fmtD0(snapshot.totalAnnualOpportunity) : 'To be confirmed',
-    '{{highest_priority_label}}': highestPriorityLabel(priorityOpportunities),
+    '{{highest_priority_label}}': highestPriorityLabel(opportunities),
     '{{potential_savings_monthly}}': snapshot.totalMonthlyOpportunity > 0 ? fmtD(snapshot.totalMonthlyOpportunity) : '-',
-    '{{reform_savings_annual}}': metrics.reformSavings ? fmtD0(metrics.reformSavings.annual) : 'Not calculable',
-    '{{lcr_savings_annual}}': (!snapshot.lcrIsConfirmedOn && metrics.lcrSavings) ? fmtD0(metrics.lcrSavings.annual) : 'Not applicable',
-    '{{debit_volume_pct}}': snapshot.debitPct != null && !Number.isNaN(snapshot.debitPct) ? `${Number(snapshot.debitPct).toFixed(1)}%` : '-',
+    '{{reform_savings_annual}}': m.reformSavings ? fmtD0(m.reformSavings.annual) : 'Not calculable',
+    '{{lcr_savings_annual}}': (!snapshot.lcrIsConfirmedOn && m.lcrSavings) ? fmtD0(m.lcrSavings.annual) : 'Not applicable',
+    '{{debit_volume_pct}}': formatPct(snapshot.debitPct),
     '{{debit_volume_amount}}': snapshot.debitVolume != null ? fmtD0(snapshot.debitVolume) : '-',
-    '{{credit_volume_pct}}': snapshot.creditPct != null && !Number.isNaN(snapshot.creditPct) ? `${Number(snapshot.creditPct).toFixed(1)}%` : '-',
+    '{{credit_volume_pct}}': formatPct(snapshot.creditPct),
     '{{credit_volume_amount}}': snapshot.creditVolume != null ? fmtD0(snapshot.creditVolume) : '-',
-    '{{merchant_name}}': identity.companyName || 'Merchant',
-    '{{contact_name}}': identity.contactName || '-',
-    '{{merchant_email}}': identity.merchantEmail || '-',
+    '{{merchant_name}}': identity.companyName || pit?.merchantProfile?.name || 'Merchant',
+    '{{contact_name}}': identity.contactName || pit?.merchantProfile?.contactName || '-',
+    '{{merchant_email}}': identity.merchantEmail || pit?.merchantProfile?.contactEmail || '-',
     '{{report_date}}': todayLong(),
-    '{{transactions}}': report.transactions ? Number(report.transactions).toLocaleString('en-AU') : '-',
-    '{{avg_fee_per_txn}}': fmtD(metrics.averageFeePerTransaction ?? metrics.avgFeePerTxn),
-    '{{monthly_fee}}': fmtD(report.monthlyFee),
-    '{{terminal_fees}}': fmtD(report.terminalFees),
-    '{{pricing_model}}': report.pricingModel || pit?.commercialIntelligence?.pricingModel?.model || '-',
-    '{{lcr_status}}': report.lcrStatus || pit?.paymentsStack?.lcrStatus || '-',
-    '{{chargeback_ratio}}': (report.chargebacks && report.chargebacks.ratio != null) ? fmtP(report.chargebacks.ratio) : 'Not shown on statement',
-    '{{fee_composition}}': buildFeeCompositionHtml(metrics.feeComposition),
-    '{{benchmark_bars}}': buildBenchmarkBarsHtml(metrics.benchmarkBars || buildBenchmarkBarsFromPosition(metrics.benchmarkPosition)),
-    '{{landscape_preamble}}': renderText(narrative.landscapePreamble || ''),
+    '{{transactions}}': m.transactions ? Number(m.transactions).toLocaleString('en-AU') : (facts.transactions ? Number(facts.transactions).toLocaleString('en-AU') : '-'),
+    '{{avg_fee_per_txn}}': fmtD(m.averageFeePerTransaction ?? m.avgFeePerTxn),
+    '{{monthly_fee}}': fmtD(facts.monthlyFee),
+    '{{terminal_fees}}': fmtD(facts.terminalFees),
+    '{{pricing_model}}': pit?.commercialIntelligence?.pricingModel?.model || facts.pricingModel || pit?.paymentsStack?.pricingModel || '-',
+    '{{lcr_status}}': pit?.paymentsStack?.lcrStatus || facts.lcrStatus || '-',
+    '{{chargeback_ratio}}': (facts.chargebacks && facts.chargebacks.ratio != null) ? fmtP(facts.chargebacks.ratio) : 'Not shown on statement',
+    '{{fee_composition}}': buildFeeCompositionHtml(m.feeComposition),
+    '{{benchmark_bars}}': buildBenchmarkBarsHtml(m.benchmarkBars || buildBenchmarkBarsFromPosition(m.benchmarkPosition)),
+    '{{landscape_preamble}}': renderText(narrative.landscapePreamble || fallbackLandscapePreamble(pit)),
     '{{executive_summary}}': renderText(narrative.executiveSummary || ''),
-    '{{pricing_model_analysis}}': renderText(narrative.pricingModelAnalysis || ''),
-    '{{savings_opportunity}}': renderText(narrative.savingsOpportunity || ''),
-    '{{lcr_analysis}}': renderText(narrative.lcrAnalysis || ''),
-    '{{chargeback_analysis}}': renderText(narrative.chargebackAnalysis || ''),
-    '{{surcharge_analysis}}': renderText(narrative.surchargeAnalysis || ''),
-    '{{benchmark_comment}}': renderText(narrative.benchmarkComment || ''),
+    '{{pricing_model_analysis}}': renderText(narrative.pricingModelAnalysis || fallbackModuleText(pit, 'pricing')),
+    '{{savings_opportunity}}': renderText(narrative.savingsOpportunity || fallbackModuleText(pit, 'reform')),
+    '{{lcr_analysis}}': renderText(narrative.lcrAnalysis || fallbackModuleText(pit, 'lcr')),
+    '{{chargeback_analysis}}': renderText(narrative.chargebackAnalysis || fallbackModuleText(pit, 'chargebacks')),
+    '{{surcharge_analysis}}': renderText(narrative.surchargeAnalysis || fallbackModuleText(pit, 'surcharge')),
+    '{{benchmark_comment}}': renderText(narrative.benchmarkComment || fallbackModuleText(pit, 'benchmark')),
     '{{stack_assessment}}': renderText(narrative.stackAssessment || ''),
     '{{next_step_1}}': narrative.nextStep1 || '',
     '{{next_step_2}}': narrative.nextStep2 || '',
     '{{next_step_3}}': narrative.nextStep3 || '',
     '{{key_recommendation}}': narrative.keyRecommendation || pit?.commercialReasoning?.highestPriority?.rationale || '',
-    '{{priority_opportunities}}': buildPriorityOpportunitiesHtml(priorityOpportunities),
+    '{{priority_opportunities}}': buildPriorityOpportunitiesHtml(opportunities),
     ...alertReplacements,
     ...stackReplacements,
   };
 }
 
-function buildSnapshot({ report, metrics, priorityOpportunities, pit }) {
+function getPriorityOpportunities({ pit, priorityOpportunities }) {
+  if (Array.isArray(priorityOpportunities)) return priorityOpportunities;
+  if (Array.isArray(pit?.priorityOpportunities)) return pit.priorityOpportunities;
+  if (Array.isArray(pit?.caseSummary?.topOpportunities)) return pit.caseSummary.topOpportunities;
+  if (Array.isArray(pit?.opportunities)) return pit.opportunities.slice(0, 4);
+  return [];
+}
+
+function buildSnapshot({ pit, facts, metrics, priorityOpportunities }) {
   const totalAnnualOpportunity =
     Number(pit?.caseSummary?.quantifiedAnnualOpportunity) ||
     (priorityOpportunities || []).reduce((sum, o) => sum + (Number(o.estimatedAnnualValue) || 0), 0);
@@ -72,26 +96,31 @@ function buildSnapshot({ report, metrics, priorityOpportunities, pit }) {
   return {
     totalAnnualOpportunity,
     totalMonthlyOpportunity: totalAnnualOpportunity > 0 ? totalAnnualOpportunity / 12 : 0,
-    debitPct: metrics.cardMix?.debitPct ?? report.cardMix?.debit ?? null,
-    creditPct: metrics.cardMix?.creditPct ?? report.cardMix?.credit ?? null,
+    debitPct: metrics.cardMix?.debitPct ?? facts.cardMix?.debit ?? null,
+    creditPct: metrics.cardMix?.creditPct ?? facts.cardMix?.credit ?? null,
     debitVolume: metrics.cardVolumes?.debit ?? null,
     creditVolume: metrics.cardVolumes?.credit ?? null,
-    lcrIsConfirmedOn: /^(on|enabled|active|yes)$/i.test(report.lcrStatus || pit?.paymentsStack?.lcrStatus || '')
+    lcrIsConfirmedOn: /^(on|enabled|active|yes)$/i.test(facts.lcrStatus || pit?.paymentsStack?.lcrStatus || '')
   };
 }
 
 function buildBenchmarkBarsFromPosition(position) {
   if (!position || position.effectiveRate == null) return null;
   const refs = position.refs || { smallBlended: 1.4, smallUnblended: 0.9, largeStrategic: 0.6 };
-  const you = position.effectiveRate;
-  const ceiling = Math.max(you, refs.smallBlended || 1.4) * 1.15;
-  const pct = v => Math.max(2, Math.round((v / ceiling) * 1000) / 10);
+  const you = Number(position.effectiveRate);
+  const ceiling = Math.max(you || 0, refs.smallBlended || 1.4) * 1.15;
+  const pct = v => Math.max(2, Math.round((Number(v) / ceiling) * 1000) / 10);
   return {
     you: { value: you, pct: pct(you) },
     smallBlended: { value: refs.smallBlended, pct: pct(refs.smallBlended) },
     smallUnblended: { value: refs.smallUnblended, pct: pct(refs.smallUnblended) },
     large: { value: refs.largeStrategic, pct: pct(refs.largeStrategic) },
   };
+}
+
+function formatPct(value) {
+  if (value == null || Number.isNaN(Number(value))) return '-';
+  return `${Number(value).toFixed(1)}%`;
 }
 
 function formatProviderRate(value) {
@@ -103,13 +132,9 @@ function formatProviderRate(value) {
   return raw;
 }
 
-function buildAlertReplacements(narrative, pit) {
+function buildAlertReplacements({ narrative, pit }) {
   const alerts = Array.isArray(narrative.alerts) ? narrative.alerts : [];
-  const fallback = (pit?.findings || []).slice(0, 3).map(f => ({
-    type: f.confidence === 'Confirmed' ? 'good' : f.confidence === 'Needs validation' ? 'warn' : 'info',
-    heading: f.title,
-    body: f.observation
-  }));
+  const fallback = buildFallbackAlerts(pit);
   const finalAlerts = alerts.length ? alerts : fallback;
 
   const alertClass = t => t === 'good' ? 'alert-good' : t === 'warn' ? 'alert-warn' : 'alert-info';
@@ -123,7 +148,25 @@ function buildAlertReplacements(narrative, pit) {
   return out;
 }
 
-function buildStackReplacements(narrative, pit) {
+function buildFallbackAlerts(pit) {
+  const findings = Array.isArray(pit?.findings) ? pit.findings : [];
+  if (findings.length) {
+    return findings.slice(0, 3).map(f => ({
+      type: f.confidence === 'Confirmed' ? 'good' : f.confidence === 'Needs validation' ? 'warn' : 'info',
+      heading: f.title,
+      body: f.observation
+    }));
+  }
+
+  const opportunities = Array.isArray(pit?.opportunities) ? pit.opportunities : [];
+  return opportunities.slice(0, 3).map(o => ({
+    type: o.confidence === 'Confirmed' ? 'good' : o.confidence === 'Needs validation' ? 'warn' : 'info',
+    heading: o.title,
+    body: (o.evidence || []).join(' · ') || 'Opportunity identified from the available payments data.'
+  }));
+}
+
+function buildStackReplacements({ narrative, pit }) {
   const stackItems = Array.isArray(narrative.stackItems) ? narrative.stackItems : buildFallbackStackItems(pit);
   const statusLabel = { ok: '\u2713 OK', warn: '\u26A0 Review', gap: '\u2717 Gap' };
   const statusClass = { ok: 'td-status-ok', warn: 'td-status-warn', gap: 'td-status-gap' };
@@ -147,4 +190,20 @@ function buildFallbackStackItems(pit) {
     { label: 'Gateway visibility', value: pit.paymentsStack?.gateway || 'Not visible', status: pit.paymentsStack?.gateway ? 'ok' : 'gap' },
     { label: 'Chargeback visibility', value: pit.paymentsStack?.chargebackVisibility || 'Not visible', status: pit.paymentsStack?.chargebackVisibility === 'Visible' ? 'ok' : 'warn' },
   ];
+}
+
+function fallbackLandscapePreamble(pit) {
+  return pit?.industryIntelligence?.marketFacts?.map(f => f.fact).join('\n\n') || '';
+}
+
+function fallbackModuleText(pit, moduleId) {
+  if (!pit) return '';
+  const opp = (pit.opportunities || []).find(o => o.module === moduleId || o.id === moduleId);
+  if (opp) {
+    return `**What We Observed:** ${opp.evidence?.join(' ') || 'The PIT identified this area as relevant from the available data.'}\n\n**Commercial Relevance:** ${opp.title} is a ${opp.confidence || 'directional'} opportunity with ${opp.urgency || 'medium'} urgency.`;
+  }
+  if (moduleId === 'benchmark' && pit.metrics?.benchmarkPosition) {
+    return `**How You Compare:** ${pit.metrics.benchmarkPosition.position || 'Benchmark position available from the effective rate.'}`;
+  }
+  return '';
 }
