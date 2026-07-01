@@ -1,6 +1,5 @@
 // api/generate-report.js
 // Payments Intelligence Terminal (PIT) + Report Engine endpoint.
-// External contract remains unchanged: admin calls /api/generate-report with { submissionId, overrides }.
 
 import { PAYMENTS_KB } from './_lib/payments-knowledge-base.js';
 import { fetchSubmissionById, updateSubmissionAfterReport } from './_lib/report/data/submissions.js';
@@ -9,11 +8,9 @@ import { determineRevenueBand, toneGuideFor } from './_lib/report/core/audience.
 import { logFeeReconciliation } from './_lib/report/core/validation.js';
 import { buildPIT } from './_lib/pit/buildPIT.js';
 import { persistPIT } from './_lib/pit/persistPIT.js';
-import { upsertMerchant, linkSubmissionToMerchant } from './_lib/merchants.js';
 import { generateNarrative } from './_lib/report/narrative/generateNarrative.js';
 import { renderReport } from './_lib/report/render/renderReport.js';
 import { uploadReportHtml } from './_lib/report/storage/reportStorage.js';
-import { isAuthorizedAdminRequest } from './_lib/admin/session.js';
 
 export const config = { maxDuration: 120 };
 
@@ -28,15 +25,11 @@ export default async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    if (!isAuthorizedAdminRequest(req)) {
-      return res.status(401).json({ error: 'Not authenticated' });
-    }
-
     const { submissionId, overrides = {} } = req.body || {};
     if (!submissionId) return res.status(400).json({ error: 'submissionId required' });
 
     const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
     if (!supabaseUrl || !supabaseKey || !anthropicKey) {
@@ -56,22 +49,35 @@ export default async function handler(req, res) {
 
     logFeeReconciliation(report);
 
-    // The PIT is now the canonical intelligence object for this case.
-    // Everything downstream should consume PIT rather than re-building intelligence.
-    const pit = buildPIT({ report, programContext, overrides, adminNotes });
+    const pit = buildPIT({
+      report,
+      programContext,
+      overrides,
+      adminNotes
+    });
 
-    let merchantId = submission.merchant_id || null;
-    if (!merchantId) {
-      merchantId = await upsertMerchant({ supabaseUrl, supabaseKey, programContext });
-      if (merchantId) {
-        await linkSubmissionToMerchant({ supabaseUrl, supabaseKey, submissionId, merchantId });
-      }
-    }
+    const pitResultId = await persistPIT({
+      supabaseUrl,
+      supabaseKey,
+      submissionId,
+      merchantId: submission.merchant_id || null,
+      pit
+    });
 
-    await persistPIT({ supabaseUrl, supabaseKey, submissionId, merchantId, pit });
+    const facts = pit.facts || report;
+    const metrics = pit.metrics || {};
 
-    const selectedModules = getSelectedModules(pit);
-    const priorityOpportunities = getPriorityOpportunities(pit);
+    const selectedModules = Array.isArray(pit.selectedModules)
+      ? pit.selectedModules
+      : Array.isArray(pit.modulePlan)
+        ? pit.modulePlan.map(m => m.id)
+        : [];
+
+    const priorityOpportunities = Array.isArray(pit.priorityOpportunities)
+      ? pit.priorityOpportunities
+      : Array.isArray(pit.opportunities)
+        ? pit.opportunities.slice(0, 4)
+        : [];
 
     const revenueBand = determineRevenueBand(programContext);
     const toneGuide = toneGuideFor(revenueBand);
@@ -82,6 +88,8 @@ export default async function handler(req, res) {
       paymentsKb: PAYMENTS_KB,
       toneGuide,
       selectedModules,
+      report: facts,
+      metrics,
       priorityOpportunities,
       programContext,
       adminNotes,
@@ -89,48 +97,57 @@ export default async function handler(req, res) {
     });
 
     const identity = {
-      companyName: pit.merchantProfile?.name || 'Merchant',
-      contactName: pit.merchantProfile?.contactName || null,
-      merchantEmail: pit.merchantProfile?.contactEmail || null
+      companyName:
+        pit.merchantProfile?.name ||
+        pit.merchantProfile?.companyName ||
+        'Merchant',
+      contactName:
+        pit.merchantProfile?.contactName ||
+        null,
+      merchantEmail:
+        pit.merchantProfile?.contactEmail ||
+        pit.merchantProfile?.merchantEmail ||
+        null
     };
 
-    const html = renderReport({ pit, narrative, identity });
+    const html = renderReport({
+      report: facts,
+      metrics,
+      narrative,
+      identity,
+      selectedModules,
+      priorityOpportunities,
+      pit
+    });
 
     const htmlPath = await uploadReportHtml({
       supabaseUrl,
       supabaseKey,
       html,
       companyName: identity.companyName,
-      provider: pit.facts?.provider || 'Unknown'
+      provider: facts.provider || 'Unknown'
     });
 
     await updateSubmissionAfterReport({
       supabaseUrl,
       supabaseKey,
       submissionId,
-      report: pit.facts,
+      report: facts,
       narrative,
-      htmlPath
+      htmlPath,
+      pitResultId
     });
 
-    return res.status(200).json({ success: true, htmlPath });
+    return res.status(200).json({
+      success: true,
+      htmlPath,
+      pitResultId
+    });
+
   } catch (err) {
     const message = err && err.message ? err.message : String(err);
     console.error('generate-report error:', message);
     if (err && err.stack) console.error(err.stack);
     return res.status(500).json({ error: message });
   }
-}
-
-function getSelectedModules(pit) {
-  if (Array.isArray(pit?.selectedModules)) return pit.selectedModules;
-  if (Array.isArray(pit?.modulePlan)) return pit.modulePlan.map(m => m.id).filter(Boolean);
-  return [];
-}
-
-function getPriorityOpportunities(pit) {
-  if (Array.isArray(pit?.priorityOpportunities)) return pit.priorityOpportunities;
-  if (Array.isArray(pit?.caseSummary?.topOpportunities)) return pit.caseSummary.topOpportunities;
-  if (Array.isArray(pit?.opportunities)) return pit.opportunities.slice(0, 4);
-  return [];
 }
