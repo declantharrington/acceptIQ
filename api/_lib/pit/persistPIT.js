@@ -41,9 +41,10 @@ export async function persistPIT({ supabaseUrl, supabaseKey, submissionId, merch
       body: JSON.stringify({
         submission_id: submissionId,
         merchant_id:   merchantId || null,
-        pit_version:   pit.version || 'PIT v2',
-        pit_json:      pit,
-        generated_at:  pit.generatedAt || new Date().toISOString()
+pit_version:   pit.version || 'unknown',
+status:        'completed',
+pit_json:      pit,
+generated_at:  pit.generatedAt || new Date().toISOString()
       })
     });
 
