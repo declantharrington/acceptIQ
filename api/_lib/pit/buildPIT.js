@@ -1,6 +1,6 @@
 // api/_lib/pit/buildPIT.js
 // Payments Intelligence Terminal (PIT)
-// Central intelligence engine that turns payments data into reusable case intelligence.
+// Central intelligence engine that turns payments data into reusable commercial understanding.
 
 import { normaliseFacts } from './normaliseFacts.js';
 import { buildMerchantProfile } from './merchantProfile.js';
@@ -13,9 +13,16 @@ import { buildRiskIntelligence } from './riskIntelligence.js';
 import { identifyFindings } from './identifyFindings.js';
 import { identifyOpportunities } from './identifyOpportunities.js';
 import { assessDataQuality } from './dataQuality.js';
-import { selectModules } from './selectModules.js';
 import { buildCommercialReasoning } from './commercialReasoning.js';
 import { buildCaseSummary } from './buildCaseSummary.js';
+
+import { buildCommercialObservations } from './engines/observationEngine.js';
+import { buildCommercialUnderstanding } from './engines/understandingEngine.js';
+import { buildBusinessPriorities } from './engines/priorityEngine.js';
+import { buildConfidenceProfile } from './engines/confidenceEngine.js';
+import { createEvidenceGraph } from './engines/evidenceEngine.js';
+
+import { selectModules } from './selectModules.js';
 
 export function buildPIT({ report = {}, programContext = '', overrides = {}, adminNotes = '' } = {}) {
   const facts = normaliseFacts(report, programContext);
@@ -78,6 +85,49 @@ export function buildPIT({ report = {}, programContext = '', overrides = {}, adm
     riskIntelligence
   });
 
+  const commercialObservations = buildCommercialObservations({
+    facts,
+    merchantProfile,
+    paymentsStack,
+    metrics,
+    commercialIntelligence,
+    operationalIntelligence,
+    industryIntelligence,
+    riskIntelligence,
+    dataQuality,
+    findings,
+    opportunities
+  });
+
+  const commercialUnderstanding = buildCommercialUnderstanding({
+    observations: commercialObservations,
+    opportunities,
+    metrics,
+    commercialIntelligence
+  });
+
+  const businessPriorities = buildBusinessPriorities({
+    opportunities,
+    understandings: commercialUnderstanding,
+    risks: riskIntelligence.risks
+  });
+
+  const confidenceProfile = buildConfidenceProfile({
+    facts,
+    metrics,
+    paymentsStack,
+    dataQuality,
+    observations: commercialObservations,
+    understandings: commercialUnderstanding,
+    priorities: businessPriorities
+  });
+
+  const evidenceGraph = createEvidenceGraph(
+    commercialObservations,
+    commercialUnderstanding,
+    businessPriorities
+  );
+
   const commercialReasoning = buildCommercialReasoning({
     merchantProfile,
     paymentsStack,
@@ -96,7 +146,8 @@ export function buildPIT({ report = {}, programContext = '', overrides = {}, adm
     opportunities,
     riskIntelligence,
     dataQuality,
-    commercialReasoning
+    commercialReasoning,
+    businessPriorities
   });
 
   const caseSummary = buildCaseSummary({
@@ -116,7 +167,7 @@ export function buildPIT({ report = {}, programContext = '', overrides = {}, adm
   const priorityOpportunities = opportunities.slice(0, 4);
 
   return {
-    version: 'PIT v3-intelligence-layer',
+    version: 'PIT v4-commercial-understanding',
     generatedAt: new Date().toISOString(),
 
     facts,
@@ -131,13 +182,19 @@ export function buildPIT({ report = {}, programContext = '', overrides = {}, adm
 
     findings,
     opportunities,
+
+    commercialObservations,
+    commercialUnderstanding,
+    businessPriorities,
+    confidenceProfile,
+    evidenceGraph,
+
     dataQuality,
     commercialReasoning,
     modulePlan,
     selectedModules,
     priorityOpportunities,
 
-    // Backwards-compatible report plan while the Report Engine continues to evolve.
     reportPlan: {
       selectedModules,
       priorityOpportunities,

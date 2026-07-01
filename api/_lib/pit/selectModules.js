@@ -1,48 +1,65 @@
 // api/_lib/pit/selectModules.js
-// Module Selector: chooses report modules and assigns importance.
-// The ids returned here must match the ids consumed by reportTemplate.js.
+// Module Selector
+// Chooses report modules from business priorities and PIT intelligence.
 
-export function selectModules({ facts, metrics, findings, opportunities, riskIntelligence, dataQuality }) {
+export function selectModules({ facts, metrics, findings, opportunities, riskIntelligence, dataQuality, commercialReasoning, businessPriorities = [] }) {
   const modules = [
-    { id: 'landscape', type: 'foundation', priority: 'major', reason: 'Always sets Australian payments market context.' },
-    { id: 'takeaways', type: 'foundation', priority: 'major', reason: 'Always summarises key observations from merchant data.' },
-    { id: 'snapshot', type: 'foundation', priority: 'major', reason: 'Always establishes operating facts and fee drivers.' }
+    { id: 'landscape', type: 'foundation', priority: 'major', reason: 'Always sets market context.' },
+    { id: 'takeaways', type: 'foundation', priority: 'major', reason: 'Always summarises headline observations.' },
+    { id: 'snapshot', type: 'foundation', priority: 'major', reason: 'Always establishes merchant facts.' },
+    { id: 'fee-analysis', type: 'foundation', priority: metrics?.feeComposition ? 'major' : 'supporting', reason: 'Shows what the merchant is paying.' }
   ];
 
-  const hasModule = id => modules.some(m => m.id === id);
-  const addModule = module => { if (!hasModule(module.id)) modules.push(module); };
+  const source = businessPriorities.length ? businessPriorities : (opportunities || []).map((o, i) => ({
+    ...o,
+    rank: i + 1,
+    opportunityId: o.id
+  }));
 
-  // Stack review is useful whenever there are visible stack components or material data gaps.
-  if (facts?.setup?.length || riskIntelligence?.risks?.length || dataQuality?.gaps?.length) {
-    addModule({ id: 'stack', type: 'diagnostic', priority: 'supporting', reason: 'Shows visible and missing stack components.' });
-  }
+  for (const item of source) {
+    const opp = item.opportunityId
+      ? (opportunities || []).find(o => o.id === item.opportunityId) || item
+      : item;
 
-  for (const opp of opportunities || []) {
     const id = moduleIdForOpportunity(opp);
-    if (!id) continue;
+    if (!id || modules.some(m => m.id === id)) continue;
 
-    addModule({
+    modules.push({
       id,
       type: 'diagnostic',
-      priority: classifyPriority(opp),
-      reason: opp.title,
+      priority: classifyModulePriority(item, opp),
+      reason: item.rankReason || opp.title,
       opportunityId: opp.id,
       confidence: opp.confidence
     });
   }
 
-  // Benchmark is a useful diagnostic if an effective rate exists.
-  if (metrics?.effectiveRate != null) {
-    addModule({ id: 'benchmark', type: 'diagnostic', priority: 'supporting', reason: 'Positions the merchant against market benchmarks.' });
+  if (!modules.some(m => m.id === 'benchmark')) {
+    modules.push({
+      id: 'benchmark',
+      type: 'diagnostic',
+      priority: 'supporting',
+      reason: 'Benchmarking provides market position.'
+    });
   }
 
-  addModule({ id: 'priorities', type: 'summary', priority: 'major', reason: 'Always summarises opportunity value and validation priorities.' });
-  addModule({ id: 'cta', type: 'cta', priority: 'major', reason: 'Always closes with engagement path.' });
+  if ((riskIntelligence?.risks || []).length || (dataQuality?.gaps || []).length) {
+    modules.push({
+      id: 'data-gaps-risk',
+      type: 'diagnostic',
+      priority: 'minor',
+      reason: 'Data gaps and risks should be captured compactly.'
+    });
+  }
+
+  modules.push({ id: 'opportunity-summary', type: 'summary', priority: 'major', reason: 'Always summarises opportunity value and validation priorities.' });
+  modules.push({ id: 'cta', type: 'cta', priority: 'major', reason: 'Always closes with engagement path.' });
 
   return modules;
 }
 
-function classifyPriority(opp) {
+function classifyModulePriority(priority, opp) {
+  if (priority.priorityWeight >= 9) return 'major';
   if (Number(opp.estimatedAnnualValue) >= 10000 || opp.urgency === 'High') return 'major';
   if (opp.confidence === 'Confirmed' || opp.confidence === 'Likely') return 'supporting';
   return 'minor';
@@ -55,6 +72,7 @@ function moduleIdForOpportunity(opp) {
     lcr: 'lcr',
     surcharge: 'surcharge',
     chargebacks: 'chargebacks',
-    stack: 'stack'
+    stack: 'stack',
+    gateway: 'stack'
   }[opp.module] || opp.module;
 }
