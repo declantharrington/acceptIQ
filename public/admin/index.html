@@ -170,11 +170,9 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 .action-btn.green:hover { background: rgba(14,159,110,0.22); }
 
 /* ── MODAL ── */
-.modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; }
-.modal-overlay.open { display: flex; }
-.modal { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 18px; width: 100%; max-width: 800px; position: relative; margin: auto; overflow: hidden; box-shadow: 0 24px 64px rgba(15,20,30,0.18); }
-.modal-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; background: rgba(15,20,30,0.08); border: none; cursor: pointer; color: rgba(15,20,30,0.7); display: flex; align-items: center; justify-content: center; font-size: 14px; }
-.modal-close:hover { background: rgba(15,20,30,0.14); }
+.back-link { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600; color: rgba(15,20,30,0.55); cursor: pointer; padding: 6px 4px; margin-bottom: 16px; transition: color 0.12s; }
+.back-link:hover { color: #3654D6; }
+.mdet-card { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 18px; overflow: hidden; box-shadow: 0 1px 2px rgba(15,20,30,0.03), 0 8px 20px rgba(15,20,30,0.04); max-width: 1100px; }
 .modal-header { background: linear-gradient(135deg,#EEF1FE 0%,#F7F8FC 100%); padding: 26px 24px; border-bottom: 1px solid #ECEDF3; }
 .modal-header-top { display: flex; align-items: flex-start; gap: 14px; }
 .modal-avatar { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(160deg,#3654D6 0%,#2C46B8 100%); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; letter-spacing: 0.02em; flex-shrink: 0; box-shadow: 0 4px 10px rgba(54,84,214,0.28); }
@@ -601,22 +599,24 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
       </div>
     </div>
 
+    <!-- ══ MERCHANT DETAIL PAGE ══ -->
+    <div class="page" id="page-merchant-detail">
+      <button class="back-link" onclick="backToMerchants()">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back to Merchants
+      </button>
+      <div id="merchant-detail-content"></div>
+    </div>
+
   </div><!-- /content -->
 </div><!-- /shell -->
-
-<!-- ══ MODAL ══ -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
-  <div class="modal" id="modal">
-    <button class="modal-close" onclick="closeModalBtn()">✕</button>
-    <div id="modal-content"></div>
-  </div>
-</div>
 
 <script>
 /* ─────────────────────────────────────────────────────────────
    STATE
 ───────────────────────────────────────────────────────────── */
 let allMerchants = [];
+let currentMerchantId = null;
 let dashTimeline = [];
 let dashDeltas = null;
 let dashTopOpportunities = [];
@@ -847,6 +847,10 @@ function showPage(id, btn) {
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   if (btn) btn.classList.add('active');
+  if (id !== 'merchant-detail' && /^#\/merchants\/\d+$/.test(location.hash)) {
+    currentMerchantId = null;
+    history.replaceState({}, '', location.pathname + location.search);
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -923,7 +927,7 @@ function updateDashboard() {
           : m.latest_pit_id
             ? '<span style="color:rgba(15,20,30,0.62);font-size:11px">No opportunity quantified</span>'
             : '—';
-        return `<tr onclick="openMerchant(${m.id}); showPage('merchants', document.querySelectorAll('.nav-item')[1])">
+        return `<tr onclick="openMerchant(${m.id})">
           <td class="primary">${esc(m.company_name)}${m.industry ? `<br><span style="font-size:11px;color:rgba(15,20,30,0.62);font-weight:400">${esc(m.industry)}</span>` : ''}</td>
           <td>${esc(m.latest_provider||'—')}</td>
           <td>${m.latest_effective_rate ? `<span class="rate-pill ${ratePillClass(m.latest_effective_rate)}">${fmtP(m.latest_effective_rate)}</span>` : '—'}</td>
@@ -1074,27 +1078,40 @@ function exportMerchantsCSV() {
 /* ─────────────────────────────────────────────────────────────
    MERCHANT MODAL
 ───────────────────────────────────────────────────────────── */
-async function openMerchant(merchantId) {
+async function openMerchant(merchantId, opts) {
+  const pushHistory = !opts || opts.pushHistory !== false;
+  currentMerchantId = merchantId;
+  showPage('merchant-detail', document.querySelectorAll('.nav-item')[1]);
+  if (pushHistory) history.pushState({ merchantId }, '', '#/merchants/' + merchantId);
+
   // Show loading state immediately
-  document.getElementById('modal-content').innerHTML = `
-    <div class="modal-header" style="padding:40px 32px;text-align:center">
-      <div style="color:rgba(15,20,30,0.62);font-size:13px">Loading merchant PIT…</div>
+  document.getElementById('merchant-detail-content').innerHTML = `
+    <div class="mdet-card">
+      <div class="modal-header" style="padding:40px 32px;text-align:center">
+        <div style="color:rgba(15,20,30,0.62);font-size:13px">Loading merchant PIT…</div>
+      </div>
     </div>`;
-  document.getElementById('modal-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
 
   try {
     const data = await api('getMerchant', { merchantId });
     if (!data) return;
-    renderMerchantModal(data.merchant, data.submissions, data.latestPit);
+    renderMerchantDetail(data.merchant, data.submissions, data.latestPit);
   } catch(err) {
-    document.getElementById('modal-content').innerHTML = `
-      <div class="modal-header"><div class="modal-title" style="color:#DC2626">Error loading merchant</div>
-      <div class="modal-meta">${esc(err.message)}</div></div>`;
+    document.getElementById('merchant-detail-content').innerHTML = `
+      <div class="mdet-card">
+        <div class="modal-header"><div class="modal-title" style="color:#DC2626">Error loading merchant</div>
+        <div class="modal-meta">${esc(err.message)}</div></div>
+      </div>`;
   }
 }
 
-function renderMerchantModal(merchant, submissions, latestPit) {
+function backToMerchants() {
+  currentMerchantId = null;
+  history.pushState({}, '', location.pathname + location.search);
+  showPage('merchants', document.querySelectorAll('.nav-item')[1]);
+}
+
+function renderMerchantDetail(merchant, submissions, latestPit) {
   const latestSub = submissions[0] || null;
   const pit = latestPit?.pit_json || null;
   const facts = pit?.facts || (latestSub ? parseJSON(latestSub.report_json, {}) : {});
@@ -1130,7 +1147,8 @@ function renderMerchantModal(merchant, submissions, latestPit) {
   // Build submissions history tab
   const subsTab = buildSubmissionsTab(submissions, merchant);
 
-  document.getElementById('modal-content').innerHTML = `
+  document.getElementById('merchant-detail-content').innerHTML = `
+    <div class="mdet-card">
     <div class="modal-header">
       <div class="modal-header-top">
         <div class="modal-avatar">${esc(initials(merchant.company_name))}</div>
@@ -1161,10 +1179,9 @@ function renderMerchantModal(merchant, submissions, latestPit) {
       <div class="modal-tab-pane" id="mtab-submissions">${subsTab}</div>
       <div class="modal-tab-pane" id="mtab-report">${buildReportTab(latestSub, facts, merchant)}</div>
       <div class="modal-tab-pane" id="mtab-modules"><div style="padding:20px 0;color:rgba(15,20,30,0.62);font-size:12px">Loading modules…</div></div>
+    </div>
     </div>`;
-
-  document.getElementById('modal-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  window.scrollTo(0, 0);
 }
 
 function switchModalTab(tab, btn) {
@@ -1684,7 +1701,7 @@ async function updateStatus(id, status) {
   updateDashboard();
   applyMerchantFilter();
   updateSidebarBadge();
-  closeModalBtn();
+  if (currentMerchantId) openMerchant(currentMerchantId, { pushHistory: false });
 }
 
 async function approveAndGenerate(id) {
@@ -1722,9 +1739,7 @@ async function openReport(htmlPath) {
 /* ─────────────────────────────────────────────────────────────
    MODAL HELPERS
 ───────────────────────────────────────────────────────────── */
-function closeModal(e) { if (e.target === document.getElementById('modal-overlay')) closeModalBtn(); }
-function closeModalBtn() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModalBtn(); closeAvatarMenu(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAvatarMenu(); });
 
 /* ─────────────────────────────────────────────────────────────
    AVATAR MENU
@@ -1805,11 +1820,26 @@ function initDashboard() {
   dashboardInitialised = true;
   setInterval(loadMerchants, 60000);
 }
+
+function routeFromHash() {
+  const m = location.hash.match(/^#\/merchants\/(\d+)$/);
+  if (m) { openMerchant(Number(m[1]), { pushHistory: false }); return true; }
+  return false;
+}
+
+window.addEventListener('popstate', () => {
+  if (!routeFromHash()) {
+    currentMerchantId = null;
+    showPage('merchants', document.querySelectorAll('.nav-item')[1]);
+  }
+});
+
 (async function start() {
   const authenticated = await loadMerchants();
   if (authenticated) {
     showAppShell();
     initDashboard();
+    routeFromHash();
   }
 })();
 </script>
