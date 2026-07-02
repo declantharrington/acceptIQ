@@ -14,6 +14,13 @@ import { amexObservationRules } from '../rules/amexRules.js';
 import { disputeObservationRules } from '../rules/disputeRules.js';
 import { transactionObservationRules } from '../rules/transactionRules.js';
 import { digitalPaymentObservationRules } from '../rules/digitalPaymentRules.js';
+import { schemeFeeObservationRules } from '../rules/schemeFeeRules.js';
+import { acquirerTypeObservationRules } from '../rules/acquirerTypeRules.js';
+import { terminalObservationRules } from '../rules/terminalRules.js';
+import { acceptanceObservationRules } from '../rules/acceptanceRules.js';
+import { bnplObservationRules } from '../rules/bnplRules.js';
+import { recurringBillingObservationRules } from '../rules/recurringBillingRules.js';
+import { dccObservationRules } from '../rules/dccRules.js';
 
 export function buildCommercialObservations(ctx) {
   const ruleFactories = [
@@ -28,7 +35,14 @@ export function buildCommercialObservations(ctx) {
     amexObservationRules,
     disputeObservationRules,
     transactionObservationRules,
-    digitalPaymentObservationRules
+    digitalPaymentObservationRules,
+    schemeFeeObservationRules,
+    acquirerTypeObservationRules,
+    terminalObservationRules,
+    acceptanceObservationRules,
+    bnplObservationRules,
+    recurringBillingObservationRules,
+    dccObservationRules
   ];
 
   const observations = [];
