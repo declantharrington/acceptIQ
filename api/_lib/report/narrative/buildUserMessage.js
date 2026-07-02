@@ -27,6 +27,60 @@ function describeLcrSavings(lcrSavings) {
     : 'Not calculable - no usable debit-card-mix percentage and/or effective rate available. Do not state any specific dollar figure for this opportunity anywhere in the report; describe it qualitatively only.';
 }
 
+// Serialises commercial observations into readable text for Sonnet.
+// Each observation is evidence-backed and has a commercial implication already
+// computed by the PIT — Sonnet should use these as the basis for its writing
+// rather than re-deriving them from raw facts.
+function describeCommercialObservations(observations) {
+  if (!Array.isArray(observations) || !observations.length) return '-';
+  return observations.map(o =>
+    `[${o.id || ''}] ${o.title} (${o.category || 'General'} · ${o.severity || '-'} · ${o.confidence || '-'})
+  Observation: ${o.observation || '-'}
+  Commercial implication: ${o.commercialImplication || '-'}`
+  ).join('\n\n');
+}
+
+// Serialises commercial understandings — the PIT's higher-order synthesis.
+// These are not raw facts; they are conclusions the PIT has already drawn
+// by combining multiple observations. Sonnet should reflect these conclusions
+// in the report rather than independently re-reasoning from observations.
+function describeCommercialUnderstanding(understandings) {
+  if (!Array.isArray(understandings) || !understandings.length) return '-';
+  return understandings.map(u =>
+    `[${u.id || ''}] ${u.title} (confidence: ${u.confidence || '-'})
+  Conclusion: ${u.conclusion || '-'}
+  Business impact: ${u.businessImpact || '-'}`
+  ).join('\n\n');
+}
+
+// Serialises the confidence profile so Sonnet can calibrate its language.
+// High confidence areas can be written assertively; Medium/Low areas should
+// use conditional language ("appears to", "suggests", "subject to validation").
+// Do NOT surface these ratings directly in the report — use them to inform tone.
+function describeConfidenceProfile(profile) {
+  if (!profile || typeof profile !== 'object') return '-';
+  return Object.entries(profile)
+    .map(([area, level]) => `${labelise(area)}: ${level}`)
+    .join(' · ');
+}
+
+// Converts camelCase keys to readable labels for display in the prompt.
+function labelise(key) {
+  return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim();
+}
+
+// Serialises business priorities — the PIT's ranked action list.
+// The rank, rationale, and value are all computed by the PIT's priority engine.
+// Sonnet should frame the report around these priorities, not independently
+// re-rank the opportunities.
+function describeBusinessPriorities(priorities) {
+  if (!Array.isArray(priorities) || !priorities.length) return '-';
+  return priorities.map(p =>
+    `${p.rank || '?'}. ${p.title} | Value: ${p.estimatedAnnualValue ? fmtD(p.estimatedAnnualValue) + '/yr' : 'Strategic'} | Confidence: ${p.confidence || '-'} | Urgency: ${p.urgency || '-'}
+  Why this rank: ${p.rankReason || '-'}`
+  ).join('\n\n');
+}
+
 export function buildUserMessage({
   report = {},
   metrics = {},
@@ -121,6 +175,18 @@ ${modules.join(', ') || '-'}
 
 RANKED OPPORTUNITIES FROM THE PIT:
 ${opportunities.map((o, i) => `${i + 1}. ${o.title} | Category: ${o.category || '-'} | Estimated annual value: ${o.estimatedAnnualValue ? fmtD(o.estimatedAnnualValue) : 'Strategic / to be validated'} | Confidence: ${o.confidence || '-'} | Urgency: ${o.urgency || '-'} | Evidence: ${(o.evidence || []).join('; ')}`).join('\n') || '-'}
+
+BUSINESS PRIORITIES (PIT-ranked — use these to determine the report's emphasis and sequencing):
+${describeBusinessPriorities(pit?.businessPriorities)}
+
+COMMERCIAL UNDERSTANDING (higher-order conclusions the PIT has already drawn — reflect these in the report, do not re-derive them independently):
+${describeCommercialUnderstanding(pit?.commercialUnderstanding)}
+
+COMMERCIAL OBSERVATIONS (evidence-backed observations with commercial implications — use these as the factual basis for the diagnostic sections):
+${describeCommercialObservations(pit?.commercialObservations)}
+
+PIT CONFIDENCE PROFILE (use to calibrate language — High = write assertively, Medium = use conditional language, Low = signal data limitation. Do NOT quote these ratings directly in the report):
+${describeConfidenceProfile(pit?.confidenceProfile)}
 
 PIT OUTPUT / CASE INTELLIGENCE:
 ${pitSummary}
