@@ -8,6 +8,8 @@
 // so the admin can review before approving. The non-prescriptive report
 // philosophy applies to generate-report.js, NOT here.
 import { upsertMerchant, linkSubmissionToMerchant } from './_lib/merchants.js';
+import { buildPIT } from './_lib/pit/buildPIT.js';
+import { persistPIT, updateSubmissionPITMetadata } from './_lib/pit/persistPIT.js';
 export const config = {
   // File uploads (base64 statements) + DB insert + email can run long.
   maxDuration: 60,
@@ -245,10 +247,47 @@ const dbData = await dbRes.json();
     // Every submission must be linked to a merchant row so the PIT intelligence
     // layer can be scoped per merchant rather than per submission. Non-fatal if
     // it fails - the submission is already safely stored above.
+    let merchantId = null;
+    let pitResultId = null;
+
     if (submissionId) {
-      const merchantId = await upsertMerchant({ supabaseUrl, supabaseKey, programContext });
+      merchantId = await upsertMerchant({ supabaseUrl, supabaseKey, programContext });
       if (merchantId) {
         await linkSubmissionToMerchant({ supabaseUrl, supabaseKey, submissionId, merchantId });
+      }
+
+      // ── Build and persist the PIT immediately after data ingestion ────────
+      // The PIT is the canonical intelligence layer. It should exist before any
+      // report is generated so the admin can review the case intelligence first.
+      try {
+        const pit = buildPIT({
+          report,
+          programContext,
+          overrides: {},
+          adminNotes: ''
+        });
+
+        pitResultId = await persistPIT({
+          supabaseUrl,
+          supabaseKey,
+          submissionId,
+          merchantId,
+          pit
+        });
+
+        if (pitResultId) {
+          await updateSubmissionPITMetadata({
+            supabaseUrl,
+            supabaseKey,
+            submissionId,
+            pitResultId
+          });
+        }
+      } catch (pitErr) {
+        // PIT persistence should not block the customer submission. The admin can
+        // still generate the report later, where generate-report.js will rebuild
+        // and persist the PIT as a fallback.
+        console.error('submit: PIT build/persist failed:', pitErr.message);
       }
     }
 
@@ -455,7 +494,7 @@ tr:last-child td{border-bottom:none}
       }
     }
 
-    return res.status(200).json({ success: true, id: submissionId, filesUploaded: uploadedFiles.length });
+    return res.status(200).json({ success: true, id: submissionId, filesUploaded: uploadedFiles.length, pitResultId });
 
   } catch (err) {
     console.error('Submit error:', err.message);

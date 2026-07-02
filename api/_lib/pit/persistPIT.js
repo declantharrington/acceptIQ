@@ -1,33 +1,44 @@
 // api/_lib/pit/persistPIT.js
-// Persists a completed PIT object to the pit_results table.
+// Persists and retrieves the Payments Intelligence Terminal (PIT).
 //
-// Called from api/generate-report.js immediately after buildPIT() returns,
-// so the full intelligence object is permanently stored and available to
-// every future module (AI Analyst, Dashboard, etc.) without re-running
-// the PIT against the same source data.
-//
-// Design notes:
-// - This is intentionally a fire-and-forget-safe helper: it logs but does NOT
-//   throw if the insert fails, because a pit_results write failure should never
-//   block the report module from completing. The report itself is the
-//   customer-facing deliverable; the pit_results row is infrastructure.
-// - It does NOT deduplicate (one submission can have multiple pit_results rows
-//   if generate-report is called multiple times with different overrides).
-//   The most recent row (ordered by generated_at DESC) is always "current".
+// Design:
+// - pit_results stores ONE canonical PIT object in pit_json.
+// - The PIT is separate from the report. Reports, Abi, dashboards and future
+//   modules should consume the persisted PIT rather than rebuilding intelligence.
+// - One submission can have multiple PIT snapshots over time. The latest row
+//   by generated_at is treated as current.
 
-export async function persistPIT({ supabaseUrl, supabaseKey, submissionId, merchantId, pit }) {
+export async function persistPIT({
+  supabaseUrl,
+  supabaseKey,
+  submissionId,
+  merchantId = null,
+  pit,
+  status = 'completed'
+}) {
   if (!supabaseUrl || !supabaseKey) {
     console.warn('persistPIT: missing Supabase config - skipping persist');
     return null;
   }
+
   if (!submissionId) {
     console.warn('persistPIT: missing submissionId - skipping persist');
     return null;
   }
+
   if (!pit || typeof pit !== 'object') {
-    console.warn('persistPIT: invalid pit object - skipping persist');
+    console.warn('persistPIT: invalid PIT object - skipping persist');
     return null;
   }
+
+  const payload = {
+    submission_id: submissionId,
+    merchant_id: merchantId || null,
+    pit_version: pit.version || 'unknown',
+    status,
+    generated_at: pit.generatedAt || new Date().toISOString(),
+    pit_json: pit
+  };
 
   try {
     const res = await fetch(`${supabaseUrl}/rest/v1/pit_results`, {
@@ -38,14 +49,7 @@ export async function persistPIT({ supabaseUrl, supabaseKey, submissionId, merch
         Authorization: `Bearer ${supabaseKey}`,
         Prefer: 'return=representation'
       },
-      body: JSON.stringify({
-        submission_id: submissionId,
-        merchant_id:   merchantId || null,
-pit_version:   pit.version || 'unknown',
-status:        'completed',
-pit_json:      pit,
-generated_at:  pit.generatedAt || new Date().toISOString()
-      })
+      body: JSON.stringify(payload)
     });
 
     if (!res.ok) {
@@ -61,5 +65,75 @@ generated_at:  pit.generatedAt || new Date().toISOString()
   } catch (err) {
     console.error('persistPIT: unexpected error:', err.message);
     return null;
+  }
+}
+
+export async function fetchLatestPITForSubmission({
+  supabaseUrl,
+  supabaseKey,
+  submissionId
+}) {
+  if (!supabaseUrl || !supabaseKey || !submissionId) return null;
+
+  try {
+    const res = await fetch(
+      `${supabaseUrl}/rest/v1/pit_results?submission_id=eq.${encodeURIComponent(submissionId)}&order=generated_at.desc&limit=1&select=*`,
+      {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      }
+    );
+
+    if (!res.ok) {
+      const detail = await res.text();
+      console.error(`fetchLatestPITForSubmission failed ${res.status}:`, detail);
+      return null;
+    }
+
+    const rows = await res.json();
+    return Array.isArray(rows) ? rows[0] || null : null;
+  } catch (err) {
+    console.error('fetchLatestPITForSubmission unexpected error:', err.message);
+    return null;
+  }
+}
+
+export async function updateSubmissionPITMetadata({
+  supabaseUrl,
+  supabaseKey,
+  submissionId,
+  pitResultId
+}) {
+  if (!supabaseUrl || !supabaseKey || !submissionId || !pitResultId) return false;
+
+  try {
+    const res = await fetch(
+      `${supabaseUrl}/rest/v1/submissions?id=eq.${encodeURIComponent(submissionId)}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        },
+        body: JSON.stringify({
+          latest_pit_result_id: pitResultId,
+          pit_generated_at: new Date().toISOString()
+        })
+      }
+    );
+
+    if (!res.ok) {
+      const detail = await res.text();
+      console.error(`updateSubmissionPITMetadata failed ${res.status}:`, detail);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('updateSubmissionPITMetadata unexpected error:', err.message);
+    return false;
   }
 }
