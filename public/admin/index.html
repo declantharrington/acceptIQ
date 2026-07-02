@@ -662,7 +662,7 @@ async function openMerchant(merchantId) {
   // Show loading state immediately
   document.getElementById('modal-content').innerHTML = `
     <div class="modal-header" style="padding:40px 32px;text-align:center">
-      <div style="color:rgba(224,233,246,0.3);font-size:13px">Loading merchant intelligence…</div>
+      <div style="color:rgba(224,233,246,0.3);font-size:13px">Loading merchant PIT…</div>
     </div>`;
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -701,16 +701,14 @@ function renderMerchantModal(merchant, submissions, latestPit) {
       Extracted total fees (${fmtD(feeCheck.total)}) differ from the sum of the fee breakdown (${fmtD(feeCheck.sum)}) by ${fmtD(Math.abs(feeCheck.diff))} (${feeCheck.pct.toFixed(1)}%). Verify before generating report.
     </div>` : '';
 
-  // Build the PIT intelligence tab
-  const pitTab = pit ? buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportunities, dataQuality, riskIntel, metrics) : `
+  // Build the unified PIT tab.
+  // This folds the old Intelligence tab and detailed PIT Viewer into one source-of-truth view.
+  const pitTab = pit ? `
+    ${buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportunities, dataQuality, riskIntel, metrics)}
+    ${buildPITViewerTab(pit, latestPit)}
+  ` : `
     <div style="padding:40px;text-align:center;color:rgba(224,233,246,0.25)">
-      No PIT analysis yet. Generate a report to run the intelligence engine.
-    </div>`;
-
-  // Build detailed PIT viewer tab
-  const pitViewerTab = pit ? buildPITViewerTab(pit, latestPit) : `
-    <div style="padding:40px;text-align:center;color:rgba(224,233,246,0.25)">
-      No persisted PIT result yet. Generate a report to create a PIT snapshot.
+      No PIT analysis yet. The PIT now runs automatically after submission; if this is an older submission, generate the report to create a PIT snapshot.
     </div>`;
 
   // Build submissions history tab
@@ -730,16 +728,14 @@ function renderMerchantModal(merchant, submissions, latestPit) {
       </div>
     </div>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchModalTab('intelligence',this)">Intelligence</button>
-      <button class="modal-tab" onclick="switchModalTab('pit-viewer',this)">PIT Viewer</button>
+      <button class="modal-tab active" onclick="switchModalTab('pit',this)">PIT</button>
       <button class="modal-tab" onclick="switchModalTab('submissions',this)">Submissions (${submissions.length})</button>
       <button class="modal-tab" onclick="switchModalTab('report',this)">Report</button>
       <button class="modal-tab" onclick="switchModalTab('modules',this);loadModuleAccess(${merchant.id})">Modules</button>
     </div>
     <div class="modal-body">
       ${reconBanner}
-      <div class="modal-tab-pane active" id="mtab-intelligence">${pitTab}</div>
-      <div class="modal-tab-pane" id="mtab-pit-viewer">${pitViewerTab}</div>
+      <div class="modal-tab-pane active" id="mtab-pit">${pitTab}</div>
       <div class="modal-tab-pane" id="mtab-submissions">${subsTab}</div>
       <div class="modal-tab-pane" id="mtab-report">${buildReportTab(latestSub, facts, merchant)}</div>
       <div class="modal-tab-pane" id="mtab-modules"><div style="padding:20px 0;color:rgba(224,233,246,0.3);font-size:12px">Loading modules…</div></div>
