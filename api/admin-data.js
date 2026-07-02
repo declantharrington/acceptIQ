@@ -112,6 +112,66 @@ async function handleListMerchants(req, res, supabaseUrl, supabaseKey) {
   }
   const timeline = Object.values(timelineMap).sort((a, b) => a.month.localeCompare(b.month)).slice(-6);
 
+  // ── Real month-over-month deltas ──────────────────────────────────────────
+  // "This month" / "last month" bucketing reused across merchants and PITs,
+  // so the dashboard can show genuine vs-last-month deltas rather than
+  // decorative ones. All figures below are counted from actual created_at /
+  // generated_at timestamps on the records already fetched above.
+  const now = new Date();
+  const thisMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const lastMonthKey = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`;
+  const monthKeyOf = iso => { const d = new Date(iso); return isNaN(d) ? null : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; };
+
+  const merchantsThisMonth = merchants.filter(m => monthKeyOf(m.created_at) === thisMonthKey).length;
+  const merchantsLastMonth = merchants.filter(m => monthKeyOf(m.created_at) === lastMonthKey).length;
+
+  const pitsThisMonth = pitResults.filter(p => monthKeyOf(p.generated_at) === thisMonthKey);
+  const pitsLastMonth = pitResults.filter(p => monthKeyOf(p.generated_at) === lastMonthKey);
+  const oppThisMonth = pitsThisMonth.reduce((sum, p) => sum + (p.pit_json?.caseSummary?.quantifiedAnnualOpportunity || 0), 0);
+  const oppLastMonth = pitsLastMonth.reduce((sum, p) => sum + (p.pit_json?.caseSummary?.quantifiedAnnualOpportunity || 0), 0);
+
+  const volThisMonth = timelineMap[thisMonthKey]?.volume || 0;
+  const volLastMonth = timelineMap[lastMonthKey]?.volume || 0;
+
+  const pctDelta = (curr, prev) => prev > 0 ? Math.round(((curr - prev) / prev) * 1000) / 10 : (curr > 0 ? null : 0);
+
+  const deltas = {
+    merchants: { current: merchantsThisMonth, previous: merchantsLastMonth, pct: pctDelta(merchantsThisMonth, merchantsLastMonth) },
+    pitCount: { current: pitsThisMonth.length, previous: pitsLastMonth.length, pct: pctDelta(pitsThisMonth.length, pitsLastMonth.length) },
+    opportunity: { current: oppThisMonth, previous: oppLastMonth, pct: pctDelta(oppThisMonth, oppLastMonth) },
+    volume: { current: volThisMonth, previous: volLastMonth, pct: pctDelta(volThisMonth, volLastMonth) }
+  };
+
+  // ── Cross-merchant top opportunities ──────────────────────────────────────
+  // Aggregates each merchant's latest PIT opportunities (one contribution per
+  // merchant, using the same de-duped pitByMerchant map used elsewhere, so a
+  // merchant with several resubmissions doesn't get double-counted).
+  const oppAgg = {};
+  for (const merchantId of Object.keys(pitByMerchant)) {
+    const opps = pitByMerchant[merchantId]?.pit_json?.opportunities || [];
+    for (const o of opps) {
+      const key = (o.title || o.id || 'Untitled').trim();
+      if (!oppAgg[key]) oppAgg[key] = { title: key, merchantIds: new Set(), totalValue: 0 };
+      oppAgg[key].merchantIds.add(merchantId);
+      oppAgg[key].totalValue += Number(o.estimatedAnnualValue) || 0;
+    }
+  }
+  const topOpportunities = Object.values(oppAgg)
+    .map(o => ({ title: o.title, merchantCount: o.merchantIds.size, totalValue: Math.round(o.totalValue * 100) / 100 }))
+    .sort((a, b) => b.totalValue - a.totalValue)
+    .slice(0, 6);
+
+  // ── Recent activity feed ──────────────────────────────────────────────────
+  const merchantNameById = {};
+  for (const m of merchants) merchantNameById[m.id] = m.company_name;
+  const recentActivity = submissions.slice(0, 8).map(s => ({
+    merchantId: s.merchant_id,
+    merchantName: merchantNameById[s.merchant_id] || 'Unknown merchant',
+    status: s.status,
+    submittedAt: s.submitted_at
+  }));
+
   // Combine
   const result = merchants.map(m => {
     const latestSub = subsByMerchant[m.id] || null;
@@ -147,7 +207,7 @@ async function handleListMerchants(req, res, supabaseUrl, supabaseKey) {
     };
   });
 
-  return res.status(200).json({ merchants: result, timeline });
+  return res.status(200).json({ merchants: result, timeline, deltas, topOpportunities, recentActivity });
 }
 
 // ── Get single merchant with full PIT detail ──────────────────────────────────
