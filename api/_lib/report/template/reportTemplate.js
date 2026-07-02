@@ -159,6 +159,14 @@ const moduleDefinitions = {
     label: 'Market Benchmark',
     title: 'Your position against the market',
     body: '{{benchmark_bars}}<div class="section-body">{{benchmark_comment}}</div>'
+  },
+  // data-gaps-risk: surfaces alerts, data quality gaps, and risk flags from
+  // the PIT and narrative. Maps to the {{alerts_html}} token which is built
+  // from narrative.alerts (Sonnet-written) and PIT dataQuality/findings.
+  'data-gaps-risk': {
+    label: 'Data Gaps & Risk Flags',
+    title: 'What we could not confirm',
+    body: '{{alerts_html}}'
   }
 };
 
@@ -220,12 +228,12 @@ export function buildTemplate({ modules = [] } = {}) {
   if (has('snapshot')) pages.push(snapshotPage(pageNo++));
   if (has('stack')) pages.push(stackPage(pageNo++));
 
-  const diagnosticIds = ['pricing', 'reform', 'lcr', 'surcharge', 'chargebacks', 'benchmark'].filter(has);
+  const diagnosticIds = ['pricing', 'reform', 'lcr', 'surcharge', 'chargebacks', 'benchmark', 'data-gaps-risk'].filter(has);
   for (const inner of diagnosticPages(diagnosticIds)) {
     pages.push(contentPage(pageNo++, inner, 'diagnostic-page'));
   }
 
-  if (has('priorities')) pages.push(prioritiesPage(pageNo++));
+  if (has('priorities') || has('opportunity-summary')) pages.push(prioritiesPage(pageNo++));
   if (has('cta')) pages.push(ctaPage());
 
   return `<!DOCTYPE html>
