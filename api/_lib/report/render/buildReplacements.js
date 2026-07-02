@@ -75,6 +75,7 @@ export function buildReplacements({
     '{{next_step_3}}': narrative.nextStep3 || '',
     '{{key_recommendation}}': narrative.keyRecommendation || pit?.commercialReasoning?.highestPriority?.rationale || '',
     '{{priority_opportunities}}': buildPriorityOpportunitiesHtml(opportunities),
+    '{{alerts_html}}': buildAlertsHtml({ narrative, pit }),
     ...alertReplacements,
     ...stackReplacements,
   };
@@ -206,4 +207,33 @@ function fallbackModuleText(pit, moduleId) {
     return `**How You Compare:** ${pit.metrics.benchmarkPosition.position || 'Benchmark position available from the effective rate.'}`;
   }
   return '';
+}
+
+// Builds the full alerts/data-gaps section HTML for the data-gaps-risk module.
+// Combines narrative.alerts (Sonnet-written observations) with PIT data quality
+// gaps, rendered as a series of alert boxes plus a data quality summary.
+function buildAlertsHtml({ narrative, pit }) {
+  const alerts = Array.isArray(narrative?.alerts) ? narrative.alerts : [];
+  const dataQuality = pit?.dataQuality || null;
+  const gaps = Array.isArray(dataQuality?.gaps) ? dataQuality.gaps : [];
+
+  const alertClass = t => t === 'good' ? 'alert-good' : t === 'warn' ? 'alert-warn' : 'alert-info';
+
+  const alertsHtml = alerts.map(a => `
+    <div class="alert-card ${alertClass(a.type || 'info')}">
+      <div class="alert-heading">${a.heading || ''}</div>
+      <div class="alert-body">${a.body || ''}</div>
+    </div>`).join('');
+
+  const gapsHtml = gaps.length ? `
+    <div class="section-sub" style="margin-top:20px">
+      <p style="font-size:13px;font-weight:600;color:#555;margin-bottom:8px">Data limitations</p>
+      ${gaps.map(g => `<p style="font-size:13px;color:#666;margin-bottom:6px">· <strong>${g.label || g.field || 'Field'}</strong> — ${g.reason || 'Not visible on this statement.'}</p>`).join('')}
+    </div>` : '';
+
+  if (!alertsHtml && !gapsHtml) {
+    return '<p style="font-size:13px;color:#666">No significant data gaps or risk flags identified from the available data.</p>';
+  }
+
+  return alertsHtml + gapsHtml;
 }
