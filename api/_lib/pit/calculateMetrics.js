@@ -17,6 +17,11 @@ export function calculateMetrics(facts) {
     foreign: facts.volume && metrics.cardMix.foreignPct != null ? round(facts.volume * metrics.cardMix.foreignPct / 100, 2) : null,
   };
   metrics.feeComposition = calculateFeeComposition(facts);
+  // Annualised payments volume: extrapolates the statement-period volume out to a
+  // full year using the same monthly assumption already applied to every savings
+  // figure below (monthly × 12). Kept consistent with that existing convention
+  // rather than introducing a separate period-length detector.
+  metrics.annualisedVolume = facts.volume != null ? round(facts.volume * 12, 2) : null;
   metrics.reformSavings = calculateReformSavings(metrics, facts);
   metrics.lcrSavings = calculateLcrSavings(metrics, facts);
   metrics.benchmarkPosition = calculateBenchmarkPosition(metrics.effectiveRate);
