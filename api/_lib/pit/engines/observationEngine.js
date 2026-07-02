@@ -8,6 +8,12 @@ import { reformObservationRules } from '../rules/reformRules.js';
 import { stackObservationRules } from '../rules/stackRules.js';
 import { chargebackObservationRules } from '../rules/chargebackRules.js';
 import { contractObservationRules } from '../rules/contractRules.js';
+import { authenticationObservationRules } from '../rules/authenticationRules.js';
+import { internationalObservationRules } from '../rules/internationalRules.js';
+import { amexObservationRules } from '../rules/amexRules.js';
+import { disputeObservationRules } from '../rules/disputeRules.js';
+import { transactionObservationRules } from '../rules/transactionRules.js';
+import { digitalPaymentObservationRules } from '../rules/digitalPaymentRules.js';
 
 export function buildCommercialObservations(ctx) {
   const ruleFactories = [
@@ -16,7 +22,13 @@ export function buildCommercialObservations(ctx) {
     reformObservationRules,
     stackObservationRules,
     chargebackObservationRules,
-    contractObservationRules
+    contractObservationRules,
+    authenticationObservationRules,
+    internationalObservationRules,
+    amexObservationRules,
+    disputeObservationRules,
+    transactionObservationRules,
+    digitalPaymentObservationRules
   ];
 
   const observations = [];
