@@ -16,15 +16,36 @@ function describeChargebacks(facts) {
 }
 
 function describeReformSavings(reformSavings) {
-  return reformSavings
-    ? `Based on credit card turnover of ${fmtD(reformSavings.creditTurnover)} and the confirmed average-to-cap interchange reduction (0.47% average today -> 0.30% cap from 1 October 2026): approximately ${fmtD(reformSavings.monthly)} per month, or approximately ${fmtD(reformSavings.annual)} per year. Use this figure exactly, every time you cite a dollar size for this opportunity.`
-    : 'Not calculable - no usable credit-card-mix percentage available. Do not state any specific dollar figure for this opportunity anywhere in the report; describe it qualitatively only.';
+  if (!reformSavings) return 'Not calculable — no usable credit-card-mix percentage available. Do not state any specific dollar figure for this opportunity anywhere in the report; describe it qualitatively only.';
+
+  const confidence = reformSavings.confidence || 'Estimated';
+  const isLikely = confidence === 'Likely';
+  const rateNote = reformSavings.observedInterchangeRate
+    ? `merchant's own observed credit interchange rate (~${reformSavings.observedInterchangeRate.toFixed(2)}%) derived from the IC++ fee breakdown`
+    : `RBA-sourced average consumer credit interchange (0.47%)`;
+
+  return `Credit card turnover: ${fmtD(reformSavings.creditTurnover)}.
+Calculation basis: ${rateNote} → 0.30% cap from 1 October 2026 (delta: ${reformSavings.capDelta?.toFixed(3) || '0.17'}%).
+Result: approximately ${fmtD(reformSavings.monthly)} per month, or approximately ${fmtD(reformSavings.annual)} per year.
+Confidence: ${confidence}. ${isLikely ? 'This figure is derived from the merchant\'s own fee data — use it with appropriate precision.' : 'This is a directional estimate using a population average — frame it as approximately or up to.'}
+${reformSavings.consumerCardAssumption ? `Important caveat: ${reformSavings.consumerCardAssumption}` : ''}
+Use this figure exactly when citing a dollar size for this opportunity. Do not recompute or vary it.`;
 }
 
 function describeLcrSavings(lcrSavings) {
-  return lcrSavings
-    ? `Based on debit card turnover of ${fmtD(lcrSavings.debitTurnover)}, an estimated current debit fee cost of approximately ${fmtD(lcrSavings.estimatedDebitFees)} (debit turnover x this merchant's own blended effective rate, used as a stand-in since debit-specific fees may not be broken out), and the RBA's ~20% LCR debit-cost reduction estimate: approximately ${fmtD(lcrSavings.monthly)} per month, or approximately ${fmtD(lcrSavings.annual)} per year. This is an ESTIMATE - say so if you state the figure. Only present this as a live opportunity if LCR status is not confirmed "On".`
-    : 'Not calculable - no usable debit-card-mix percentage and/or effective rate available. Do not state any specific dollar figure for this opportunity anywhere in the report; describe it qualitatively only.';
+  if (!lcrSavings) return 'Not calculable — no usable debit-card-mix percentage and/or effective rate available. Do not state any specific dollar figure for this opportunity anywhere in the report; describe it qualitatively only.';
+
+  const confidence = lcrSavings.confidence || 'Estimated';
+  const isLikely = confidence === 'Likely';
+  const basisNote = isLikely
+    ? `debit proportion of visible interchange fees (${fmtD(lcrSavings.estimatedDebitFees)}) — derived from the IC++ fee breakdown`
+    : `estimated debit fees of ${fmtD(lcrSavings.estimatedDebitFees)} (debit turnover × blended effective rate — debit-specific fees not separately visible)`;
+
+  return `Debit card turnover: ${fmtD(lcrSavings.debitTurnover)}.
+Calculation basis: ${basisNote} × ${((lcrSavings.lcrReductionRate || 0.20) * 100).toFixed(0)}% LCR reduction (RBA midpoint; range 15–25%).
+Result: approximately ${fmtD(lcrSavings.monthly)} per month, or approximately ${fmtD(lcrSavings.annual)} per year.
+Confidence: ${confidence}. ${isLikely ? 'This figure uses merchant-specific interchange data.' : 'This is a directional estimate — frame it as approximately or up to.'}
+Only present this as a live opportunity if LCR status is not confirmed "On". Use this figure exactly — do not recompute.`;
 }
 
 // Serialises commercial observations into readable text for Sonnet.
