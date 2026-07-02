@@ -183,6 +183,36 @@ body { font-family: 'Inter', sans-serif; background: #0F1218; color: #E6EBF6; -w
 .pit-quality-fill.med { background: #E7B27A; }
 .pit-quality-fill.low { background: #E88A8A; }
 
+
+/* ── DETAILED PIT VIEWER ── */
+.pitv-hero { background: linear-gradient(135deg, rgba(63,119,214,0.10), rgba(224,233,246,0.03)); border: 1px solid rgba(63,119,214,0.18); padding: 18px; margin-bottom: 16px; }
+.pitv-version { font-family:'JetBrains Mono', monospace; font-size:11px; color:rgba(169,204,242,.8); margin-bottom:8px; }
+.pitv-title { font-size:18px; font-weight:600; color:rgba(224,233,246,.92); margin-bottom:8px; }
+.pitv-sub { font-size:13px; line-height:1.7; color:rgba(224,233,246,.50); }
+.pitv-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.pitv-section { margin:18px 0; }
+.pitv-section-title { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:rgba(224,233,246,.28); margin-bottom:10px; }
+.pitv-card { background:rgba(224,233,246,.025); border:1px solid rgba(224,233,246,.08); padding:14px; margin-bottom:9px; }
+details.pitv-card { cursor:pointer; }
+details.pitv-card summary { list-style:none; }
+details.pitv-card summary::-webkit-details-marker { display:none; }
+.pitv-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.pitv-card-title { font-size:13px; font-weight:600; color:rgba(224,233,246,.85); line-height:1.45; }
+.pitv-card-meta { margin-top:4px; font-size:11px; color:rgba(224,233,246,.32); }
+.pitv-card-body { margin-top:10px; padding-top:10px; border-top:1px solid rgba(224,233,246,.06); font-size:12.2px; line-height:1.7; color:rgba(224,233,246,.55); }
+.pitv-badges { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+.pitv-badge { font-size:10px; font-weight:700; letter-spacing:.03em; padding:3px 7px; border:1px solid rgba(224,233,246,.10); background:rgba(224,233,246,.04); color:rgba(224,233,246,.55); white-space:nowrap; }
+.pitv-badge.high, .pitv-badge.confirmed, .pitv-badge.positive { color:#9FD9B4; background:rgba(159,217,180,.10); border-color:rgba(159,217,180,.18); }
+.pitv-badge.medium, .pitv-badge.estimated, .pitv-badge.likely { color:#E7B27A; background:rgba(231,178,122,.10); border-color:rgba(231,178,122,.18); }
+.pitv-badge.low, .pitv-badge.needs-validation { color:#E88A8A; background:rgba(232,138,138,.10); border-color:rgba(232,138,138,.18); }
+.pitv-evidence { margin-top:8px; }
+.pitv-evidence-item { display:flex; gap:8px; padding:6px 0; border-bottom:1px solid rgba(224,233,246,.045); font-size:11.5px; color:rgba(224,233,246,.45); }
+.pitv-evidence-item:last-child { border-bottom:none; }
+.pitv-evidence-source { min-width:120px; color:rgba(169,204,242,.65); font-family:'JetBrains Mono', monospace; font-size:10.5px; }
+.pitv-code { white-space:pre-wrap; max-height:420px; overflow:auto; background:rgba(0,0,0,.24); border:1px solid rgba(224,233,246,.08); padding:14px; font-family:'JetBrains Mono', monospace; font-size:11px; line-height:1.6; color:rgba(224,233,246,.55); }
+@media(max-width:800px){ .pitv-grid{grid-template-columns:1fr;} }
+
+
 /* ── REPORT BANNER + ACTIONS ── */
 .report-ready-banner { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: rgba(159,217,180,0.1); border: 1px solid rgba(159,217,180,0.25); padding: 14px 16px; margin-bottom: 16px; }
 .report-ready-banner .rb-text { font-size: 13px; color: #9FD9B4; font-weight: 500; }
@@ -677,6 +707,12 @@ function renderMerchantModal(merchant, submissions, latestPit) {
       No PIT analysis yet. Generate a report to run the intelligence engine.
     </div>`;
 
+  // Build detailed PIT viewer tab
+  const pitViewerTab = pit ? buildPITViewerTab(pit, latestPit) : `
+    <div style="padding:40px;text-align:center;color:rgba(224,233,246,0.25)">
+      No persisted PIT result yet. Generate a report to create a PIT snapshot.
+    </div>`;
+
   // Build submissions history tab
   const subsTab = buildSubmissionsTab(submissions, merchant);
 
@@ -695,6 +731,7 @@ function renderMerchantModal(merchant, submissions, latestPit) {
     </div>
     <div class="modal-tabs">
       <button class="modal-tab active" onclick="switchModalTab('intelligence',this)">Intelligence</button>
+      <button class="modal-tab" onclick="switchModalTab('pit-viewer',this)">PIT Viewer</button>
       <button class="modal-tab" onclick="switchModalTab('submissions',this)">Submissions (${submissions.length})</button>
       <button class="modal-tab" onclick="switchModalTab('report',this)">Report</button>
       <button class="modal-tab" onclick="switchModalTab('modules',this);loadModuleAccess(${merchant.id})">Modules</button>
@@ -702,6 +739,7 @@ function renderMerchantModal(merchant, submissions, latestPit) {
     <div class="modal-body">
       ${reconBanner}
       <div class="modal-tab-pane active" id="mtab-intelligence">${pitTab}</div>
+      <div class="modal-tab-pane" id="mtab-pit-viewer">${pitViewerTab}</div>
       <div class="modal-tab-pane" id="mtab-submissions">${subsTab}</div>
       <div class="modal-tab-pane" id="mtab-report">${buildReportTab(latestSub, facts, merchant)}</div>
       <div class="modal-tab-pane" id="mtab-modules"><div style="padding:20px 0;color:rgba(224,233,246,0.3);font-size:12px">Loading modules…</div></div>
@@ -896,6 +934,200 @@ function buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportu
     </div>`;
 
   return `${headlineSummary}${oppsHtml}${commercialHtml}${findingsHtml}${risksHtml}${dqHtml}${factsHtml}`;
+}
+
+
+function buildPITViewerTab(pit, latestPit) {
+  const observations = pit.commercialObservations || [];
+  const understandings = pit.commercialUnderstanding || [];
+  const priorities = pit.businessPriorities || [];
+  const confidence = pit.confidenceProfile || {};
+  const evidenceGraph = pit.evidenceGraph || null;
+  const modulePlan = pit.modulePlan || [];
+  const risks = pit.riskIntelligence?.risks || [];
+  const gaps = pit.dataQuality?.gaps || [];
+
+  const generated = latestPit?.generated_at || pit.generatedAt || null;
+
+  return `
+    <div class="pitv-hero">
+      <div class="pitv-version">${esc(pit.version || latestPit?.pit_version || 'PIT')} ${generated ? '· ' + esc(new Date(generated).toLocaleString('en-AU')) : ''}</div>
+      <div class="pitv-title">${esc(pit.caseSummary?.headline || 'Payments Intelligence Terminal result')}</div>
+      <div class="pitv-sub">${esc(pit.caseSummary?.summary || 'This is the persisted PIT snapshot for this merchant. It shows what the engine understood, why it reached those conclusions, and which priorities it created.')}</div>
+    </div>
+
+    <div class="pitv-grid">
+      <div class="pit-panel">
+        <div class="pit-panel-title">Confidence Profile</div>
+        ${Object.entries(confidence).map(([k,v]) => renderPitRow(labelise(k), v)).join('') || renderPitRow('Confidence', 'Not available')}
+      </div>
+      <div class="pit-panel">
+        <div class="pit-panel-title">Case Intelligence</div>
+        ${renderPitRow('Provider', pit.paymentsStack?.acquirerOrProvider || pit.facts?.provider || '—')}
+        ${renderPitRow('Pricing model', pit.paymentsStack?.pricingModel || pit.facts?.pricingModel || '—')}
+        ${renderPitRow('Effective rate', pit.metrics?.effectiveRate != null ? fmtP(pit.metrics.effectiveRate) : '—')}
+        ${renderPitRow('Annual opportunity', pit.caseSummary?.quantifiedAnnualOpportunity ? fmtK(pit.caseSummary.quantifiedAnnualOpportunity) : 'To be confirmed')}
+      </div>
+    </div>
+
+    ${renderPitPrioritySection(priorities)}
+    ${renderPitUnderstandingSection(understandings)}
+    ${renderPitObservationSection(observations)}
+    ${renderPitRiskGapSection(risks, gaps)}
+    ${renderPitModulePlanSection(modulePlan)}
+    ${renderPitEvidenceGraphSection(evidenceGraph)}
+    ${renderPitRawSection(pit)}
+  `;
+}
+
+function renderPitPrioritySection(priorities) {
+  if (!priorities.length) return '';
+  return `<div class="pitv-section">
+    <div class="pitv-section-title">Business Priorities</div>
+    ${priorities.map(p => `<details class="pitv-card" open>
+      <summary>
+        <div class="pitv-card-head">
+          <div>
+            <div class="pitv-card-title">${p.rank ? p.rank + '. ' : ''}${esc(p.title || p.id)}</div>
+            <div class="pitv-card-meta">${esc(p.category || '')}${p.estimatedAnnualValue ? ' · ' + fmtK(p.estimatedAnnualValue) + '/yr' : ''}</div>
+          </div>
+          <div class="pitv-badges">
+            ${badge(p.confidence)}${badge(p.urgency)}${badge('Weight ' + (p.priorityWeight ?? '—'))}
+          </div>
+        </div>
+      </summary>
+      <div class="pitv-card-body">
+        ${esc(p.rankReason || '')}
+        ${p.dependsOn?.length ? `<div style="margin-top:8px;color:rgba(224,233,246,.38)">Depends on: ${p.dependsOn.map(esc).join(', ')}</div>` : ''}
+        ${renderEvidence(p.evidence)}
+      </div>
+    </details>`).join('')}
+  </div>`;
+}
+
+function renderPitUnderstandingSection(items) {
+  if (!items.length) return '';
+  return `<div class="pitv-section">
+    <div class="pitv-section-title">Commercial Understanding</div>
+    ${items.map(u => `<details class="pitv-card" open>
+      <summary>
+        <div class="pitv-card-head">
+          <div>
+            <div class="pitv-card-title">${esc(u.title || u.id)}</div>
+            <div class="pitv-card-meta">${esc(u.businessImpact || '')}</div>
+          </div>
+          <div class="pitv-badges">${badge(u.confidence)}</div>
+        </div>
+      </summary>
+      <div class="pitv-card-body">
+        ${esc(u.conclusion || '')}
+        ${u.dependsOn?.length ? `<div style="margin-top:8px;color:rgba(224,233,246,.38)">Built from: ${u.dependsOn.map(esc).join(', ')}</div>` : ''}
+        ${renderEvidence(u.evidence)}
+      </div>
+    </details>`).join('')}
+  </div>`;
+}
+
+function renderPitObservationSection(observations) {
+  if (!observations.length) return '';
+  return `<div class="pitv-section">
+    <div class="pitv-section-title">Commercial Observations</div>
+    ${observations.map(o => `<details class="pitv-card">
+      <summary>
+        <div class="pitv-card-head">
+          <div>
+            <div class="pitv-card-title">${esc(o.title || o.id)}</div>
+            <div class="pitv-card-meta">${esc(o.category || '')} · ${esc(o.id || '')}</div>
+          </div>
+          <div class="pitv-badges">${badge(o.confidence)}${badge(o.severity)}</div>
+        </div>
+      </summary>
+      <div class="pitv-card-body">
+        <div>${esc(o.observation || '')}</div>
+        ${o.commercialImplication ? `<div style="margin-top:8px;color:rgba(224,233,246,.62)"><strong style="color:rgba(224,233,246,.78)">Implication:</strong> ${esc(o.commercialImplication)}</div>` : ''}
+        ${renderEvidence(o.evidence)}
+      </div>
+    </details>`).join('')}
+  </div>`;
+}
+
+function renderPitRiskGapSection(risks, gaps) {
+  if (!risks.length && !gaps.length) return '';
+  return `<div class="pitv-grid">
+    <div class="pit-panel">
+      <div class="pit-panel-title">Risk Intelligence</div>
+      ${risks.length ? risks.map(r => `<div class="pit-finding-item"><div><div class="pit-finding-title">${esc(r.type || r.title || r.id)}</div><div class="pit-opp-meta">${esc(r.severity || '')} · ${esc(r.confidence || '')}</div><div style="font-size:11.5px;color:rgba(224,233,246,.42);margin-top:3px">${esc(r.implication || r.observation || '')}</div></div></div>`).join('') : '<div class="modal-section-text">No major risks visible.</div>'}
+    </div>
+    <div class="pit-panel">
+      <div class="pit-panel-title">Data Gaps</div>
+      ${gaps.length ? gaps.map(g => `<div class="pit-finding-item"><div><div class="pit-finding-title">${esc(g.label || g.missingData || g.id)}</div><div class="pit-opp-meta">${esc(g.severity || '')}</div><div style="font-size:11.5px;color:rgba(224,233,246,.42);margin-top:3px">${esc(g.reason || g.implication || '')}</div></div></div>`).join('') : '<div class="modal-section-text">No major data gaps visible.</div>'}
+    </div>
+  </div>`;
+}
+
+function renderPitModulePlanSection(modulePlan) {
+  if (!modulePlan.length) return '';
+  return `<div class="pitv-section">
+    <div class="pitv-section-title">Selected Module Plan</div>
+    <div class="pitv-grid">
+      ${modulePlan.map(m => `<div class="pit-panel">
+        <div class="pit-row"><span class="pit-row-label">Module</span><span class="pit-row-val">${esc(m.id)}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Type</span><span class="pit-row-val">${esc(m.type || '—')}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Priority</span><span class="pit-row-val">${esc(m.priority || '—')}</span></div>
+        <div style="font-size:11.5px;color:rgba(224,233,246,.4);line-height:1.6;margin-top:8px">${esc(m.reason || '')}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderPitEvidenceGraphSection(graph) {
+  if (!graph) return '';
+  const counts = {
+    observations: graph.observations?.length || 0,
+    understandings: graph.understandings?.length || 0,
+    priorities: graph.priorities?.length || 0
+  };
+  return `<div class="pitv-section">
+    <div class="pitv-section-title">Evidence Graph</div>
+    <div class="pitv-grid">
+      ${renderPitPanel('Observations', counts.observations)}
+      ${renderPitPanel('Understandings', counts.understandings)}
+      ${renderPitPanel('Priorities', counts.priorities)}
+      ${renderPitPanel('Evidence mode', 'Explainable')}
+    </div>
+  </div>`;
+}
+
+function renderPitRawSection(pit) {
+  return `<details class="pitv-card" style="margin-top:18px">
+    <summary><div class="pitv-card-head"><div><div class="pitv-card-title">Raw PIT JSON</div><div class="pitv-card-meta">Developer view</div></div><div class="pitv-badges">${badge('JSON')}</div></div></summary>
+    <div class="pitv-card-body"><pre class="pitv-code">${esc(JSON.stringify(pit, null, 2))}</pre></div>
+  </details>`;
+}
+
+function renderPitPanel(label, value) {
+  return `<div class="pit-panel"><div class="pit-panel-title">${esc(label)}</div><div style="font-size:22px;font-weight:600;color:rgba(224,233,246,.85)">${esc(value)}</div></div>`;
+}
+
+function renderPitRow(label, value) {
+  return `<div class="pit-row"><span class="pit-row-label">${esc(label)}</span><span class="pit-row-val">${esc(value ?? '—')}</span></div>`;
+}
+
+function renderEvidence(evidence) {
+  if (!Array.isArray(evidence) || !evidence.length) return '';
+  return `<div class="pitv-evidence">
+    ${evidence.map(e => `<div class="pitv-evidence-item"><span class="pitv-evidence-source">${esc(e.source || e.type || 'evidence')}</span><span>${esc(e.label || '')}${e.value != null ? ': ' + esc(e.value) : ''}${e.detail ? ' · ' + esc(e.detail) : ''}</span></div>`).join('')}
+  </div>`;
+}
+
+function badge(value) {
+  if (value == null || value === '') return '';
+  const cls = String(value).toLowerCase().replace(/\s+/g,'-');
+  return `<span class="pitv-badge ${escA(cls)}">${esc(value)}</span>`;
+}
+
+function labelise(str) {
+  return String(str || '').replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
 }
 
 function buildSubmissionsTab(submissions, merchant) {
