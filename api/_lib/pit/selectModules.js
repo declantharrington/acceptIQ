@@ -6,8 +6,7 @@ export function selectModules({ facts, metrics, findings, opportunities, riskInt
   const modules = [
     { id: 'landscape', type: 'foundation', priority: 'major', reason: 'Always sets market context.' },
     { id: 'takeaways', type: 'foundation', priority: 'major', reason: 'Always summarises headline observations.' },
-    { id: 'snapshot', type: 'foundation', priority: 'major', reason: 'Always establishes merchant facts.' },
-    { id: 'fee-analysis', type: 'foundation', priority: metrics?.feeComposition ? 'major' : 'supporting', reason: 'Shows what the merchant is paying.' }
+    { id: 'snapshot', type: 'foundation', priority: 'major', reason: 'Always establishes merchant facts.' }
   ];
 
   const source = businessPriorities.length ? businessPriorities : (opportunities || []).map((o, i) => ({
