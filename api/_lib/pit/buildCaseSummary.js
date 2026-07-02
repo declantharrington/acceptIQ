@@ -29,6 +29,7 @@ export function buildCaseSummary({
       pricingModel: paymentsStack.pricingModel || null,
       effectiveRate: metrics.effectiveRate ?? null,
       cardVolume: metrics.volume ?? null,
+      annualisedCardVolume: metrics.annualisedVolume ?? null,
       totalFees: metrics.totalFees ?? null,
       transactions: metrics.transactions ?? null,
       debitMix: metrics.cardMix?.debitPct ?? null,
