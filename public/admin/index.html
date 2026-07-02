@@ -26,12 +26,12 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 .nav-word b { font-weight: 700; color: #3654D6; }
 .nav-right { display: flex; align-items: center; gap: 16px; }
 .nav-search-wrap { position: relative; flex: 1; max-width: 380px; margin: 0 auto; }
-.nav-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: rgba(15,20,30,0.32); pointer-events: none; }
+.nav-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: rgba(15,20,30,0.64); pointer-events: none; }
 .nav-search-input { width: 100%; font-family: 'Inter', sans-serif; font-size: 13px; padding: 8px 46px 8px 34px; background: #F7F8FC; border: 1px solid #ECEDF3; border-radius: 9px; color: #12141C; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; }
-.nav-search-input::placeholder { color: rgba(15,20,30,0.35); }
+.nav-search-input::placeholder { color: rgba(15,20,30,0.65); }
 .nav-search-input:focus { outline: none; border-color: #3654D6; background: #FFFFFF; box-shadow: 0 0 0 3px rgba(54,84,214,0.1); }
-.nav-search-kbd { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 10.5px; font-weight: 600; color: rgba(15,20,30,0.35); background: rgba(15,20,30,0.06); padding: 2px 6px; border-radius: 5px; pointer-events: none; }
-.nav-system { display: flex; align-items: center; gap: 7px; font-size: 11px; color: rgba(15,20,30,0.4); }
+.nav-search-kbd { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 10.5px; font-weight: 600; color: rgba(15,20,30,0.65); background: rgba(15,20,30,0.06); padding: 2px 6px; border-radius: 5px; pointer-events: none; }
+.nav-system { display: flex; align-items: center; gap: 7px; font-size: 11px; color: rgba(15,20,30,0.66); }
 .sys-dot { width: 6px; height: 6px; border-radius: 50%; background: #0E9F6E; animation: syspulse 2.5s ease-in-out infinite; }
 @keyframes syspulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 .nav-badge-count { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(54,84,214,0.15); color: #3654D6; padding: 4px 10px; border-radius: 100px; }
@@ -46,17 +46,17 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 /* ── SIDEBAR ── */
 .sidebar { background: #FFFFFF; border-right: 1px solid #ECEDF3; display: flex; flex-direction: column; padding: 16px 12px; overflow-y: auto; gap: 2px; }
 .sidebar::-webkit-scrollbar { width: 0; }
-.sidebar-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(15,20,30,0.2); padding: 0 8px; margin: 16px 0 6px; }
+.sidebar-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(15,20,30,0.6); padding: 0 8px; margin: 16px 0 6px; }
 .sidebar-section-label:first-child { margin-top: 0; }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 1px solid transparent; background: transparent; color: rgba(15,20,30,0.45); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500; transition: all 0.12s; width: 100%; text-align: left; border-radius: 9px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 1px solid transparent; background: transparent; color: rgba(15,20,30,0.68); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500; transition: all 0.12s; width: 100%; text-align: left; border-radius: 9px; }
 .nav-item:hover { background: rgba(15,20,30,0.045); color: rgba(15,20,30,0.85); border-color: transparent; }
 .nav-item.active { background: #3654D6; color: #FFFFFF; border-color: transparent; box-shadow: 0 4px 12px rgba(54,84,214,0.28); }
-.nav-item-icon { font-size: 14px; width: 16px; text-align: center; flex-shrink: 0; color: rgba(15,20,30,0.32); transition: color 0.12s; }
+.nav-item-icon { font-size: 14px; width: 16px; text-align: center; flex-shrink: 0; color: rgba(15,20,30,0.64); transition: color 0.12s; }
 .nav-item.active .nav-item-icon { color: #FFFFFF; }
 .nav-item-badge { margin-left: auto; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 100px; background: rgba(180,83,9,0.15); color: #B45309; }
 .nav-item.active .nav-item-badge { background: rgba(255,255,255,0.25); color: #FFFFFF; }
 .nav-spacer { flex: 1; }
-.sidebar-footer { padding: 12px 10px; border-top: 1px solid rgba(15,20,30,0.08); font-size: 11px; color: rgba(15,20,30,0.2); }
+.sidebar-footer { padding: 12px 10px; border-top: 1px solid rgba(15,20,30,0.08); font-size: 11px; color: rgba(15,20,30,0.6); }
 
 /* ── CONTENT ── */
 .content { overflow-y: auto; background: #F3F4F9; }
@@ -72,7 +72,7 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 .export-btn:hover { background: #F7F8FC; border-color: #D9DCEA; color: #12141C; }
 .row-check { width: 15px; height: 15px; accent-color: #3654D6; cursor: pointer; }
 .page-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: rgba(15,20,30,.92); margin-bottom: 4px; }
-.page-sub { font-size: 13.5px; color: rgba(15,20,30,0.5); margin-top: 2px; }
+.page-sub { font-size: 13.5px; color: rgba(15,20,30,0.7); margin-top: 2px; }
 
 /* ── STAT CARDS ── */
 .stats-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 16px; }
@@ -81,7 +81,7 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 .stat-card-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
 .stat-card-icon svg { width: 17px; height: 17px; }
 .stat-card-val { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: #12141C; margin-bottom: 4px; }
-.stat-card-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(15,20,30,0.33); }
+.stat-card-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(15,20,30,0.64); }
 .stat-card-delta { font-size: 11px; margin-top: 8px; color: rgba(14,159,110,0.9); }
 .stat-card-highlight { background: linear-gradient(160deg,#3654D6 0%,#2C46B8 100%); border-color: transparent; box-shadow: 0 8px 24px rgba(54,84,214,0.28); }
 .stat-card-highlight:hover { box-shadow: 0 10px 28px rgba(54,84,214,0.34); }
@@ -97,36 +97,36 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 .chart-card:hover { box-shadow: 0 4px 10px rgba(15,20,30,0.05), 0 14px 28px rgba(15,20,30,0.06); }
 .chart-card-head { display: flex; align-items: center; justify-content: space-between; }
 .chart-card-title { font-size: 13px; font-weight: 700; color: rgba(15,20,30,0.85); }
-.chart-card-sub { font-size: 11.5px; color: rgba(15,20,30,0.4); margin-top: 2px; }
+.chart-card-sub { font-size: 11.5px; color: rgba(15,20,30,0.66); margin-top: 2px; }
 .chart-canvas-wrap { height: 210px; margin-top: 14px; }
 @media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
 
 /* ── MERCHANTS TABLE ── */
 .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .search-wrap { position: relative; flex: 1; min-width: 200px; }
-.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; color: rgba(15,20,30,0.3); pointer-events: none; }
+.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; color: rgba(15,20,30,0.62); pointer-events: none; }
 .search-input { width: 100%; font-family: 'Inter', sans-serif; font-size: 12.5px; padding: 9px 10px 9px 32px; background: #FFFFFF; border: 1px solid #E4E6EF; color: #12141C; border-radius: 9px; }
-.search-input::placeholder { color: rgba(15,20,30,0.3); }
+.search-input::placeholder { color: rgba(15,20,30,0.62); }
 .search-input:focus { outline: none; border-color: rgba(54,84,214,0.4); background: rgba(54,84,214,0.04); }
 .filter-pills { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
-.fpill { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 100px; border: 1px solid rgba(15,20,30,0.1); background: none; color: rgba(15,20,30,0.4); cursor: pointer; transition: all 0.12s; }
+.fpill { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 100px; border: 1px solid rgba(15,20,30,0.1); background: none; color: rgba(15,20,30,0.66); cursor: pointer; transition: all 0.12s; }
 .fpill.active { background: rgba(54,84,214,0.12); border-color: rgba(54,84,214,0.35); color: #3654D6; }
-.fpill:hover:not(.active) { border-color: rgba(15,20,30,0.2); color: rgba(15,20,30,0.65); }
-.results-count { font-size: 12px; color: rgba(15,20,30,0.45); margin-bottom: 10px; }
+.fpill:hover:not(.active) { border-color: rgba(15,20,30,0.6); color: rgba(15,20,30,0.65); }
+.results-count { font-size: 12px; color: rgba(15,20,30,0.68); margin-bottom: 10px; }
 .table-wrap { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(15,20,30,0.03), 0 8px 20px rgba(15,20,30,0.04); }
 .rtable { width: 100%; border-collapse: collapse; }
-.rtable th { padding: 12px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(15,20,30,0.4); text-align: left; border-bottom: 1px solid #ECEDF3; background: #FAFAFD; white-space: nowrap; user-select: none; }
+.rtable th { padding: 12px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(15,20,30,0.66); text-align: left; border-bottom: 1px solid #ECEDF3; background: #FAFAFD; white-space: nowrap; user-select: none; }
 .rtable td { padding: 14px 16px; border-top: 1px solid #F1F2F7; font-size: 12.5px; color: rgba(15,20,30,0.7); vertical-align: middle; }
 .rtable tr:hover td { background: rgba(15,20,30,0.05); cursor: pointer; }
 .rtable td.primary { font-weight: 500; color: rgba(15,20,30,0.85); }
 .rtable td.mono { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
-.loading-row td { text-align: center; padding: 60px 20px; color: rgba(15,20,30,0.3); font-size: 13px; }
-.empty-row td { text-align: center; padding: 50px 20px; color: rgba(15,20,30,0.25); font-size: 13px; }
+.loading-row td { text-align: center; padding: 60px 20px; color: rgba(15,20,30,0.62); font-size: 13px; }
+.empty-row td { text-align: center; padding: 50px 20px; color: rgba(15,20,30,0.6); font-size: 13px; }
 
 /* ── STATUS PILLS ── */
 .status-badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 100px; }
 .status-badge.pending  { background: rgba(180,83,9,0.15); color: #B45309; }
-.status-badge.reviewed { background: rgba(15,20,30,0.08); color: rgba(15,20,30,0.5); }
+.status-badge.reviewed { background: rgba(15,20,30,0.08); color: rgba(15,20,30,0.7); }
 .status-badge.approved { background: rgba(14,159,110,0.15); color: #0E9F6E; }
 .status-badge.sent     { background: rgba(54,84,214,0.15); color: #3654D6; }
 .report-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #0E9F6E; margin-left: 6px; box-shadow: 0 0 6px rgba(14,159,110,0.5); vertical-align: middle; }
@@ -142,7 +142,7 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 
 /* ── ACTION BUTTONS ── */
 .action-btn { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; padding: 5px 10px; border: none; cursor: pointer; transition: background 0.12s; border-radius: 9px; }
-.action-btn.ghost { background: rgba(15,20,30,0.08); color: rgba(15,20,30,0.55); }
+.action-btn.ghost { background: rgba(15,20,30,0.08); color: rgba(15,20,30,0.7); }
 .action-btn.ghost:hover { background: rgba(15,20,30,0.1); color: rgba(15,20,30,0.85); }
 .action-btn.blue  { background: rgba(54,84,214,0.12); color: #3654D6; border: 1px solid rgba(54,84,214,0.25); }
 .action-btn.blue:hover { background: rgba(54,84,214,0.22); }
@@ -153,36 +153,39 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 .modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; }
 .modal-overlay.open { display: flex; }
 .modal { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 18px; width: 100%; max-width: 800px; position: relative; margin: auto; overflow: hidden; box-shadow: 0 24px 64px rgba(15,20,30,0.18); }
-.modal-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; background: rgba(15,20,30,0.08); border: none; cursor: pointer; color: rgba(15,20,30,0.5); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.modal-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; background: rgba(15,20,30,0.08); border: none; cursor: pointer; color: rgba(15,20,30,0.7); display: flex; align-items: center; justify-content: center; font-size: 14px; }
 .modal-close:hover { background: rgba(15,20,30,0.14); }
-.modal-header { background: linear-gradient(135deg,#EEF1FE 0%,#F7F8FC 100%); padding: 28px 32px; border-bottom: 1px solid #ECEDF3; }
-.modal-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(15,20,30,0.28); margin-bottom: 8px; }
+.modal-header { background: linear-gradient(135deg,#EEF1FE 0%,#F7F8FC 100%); padding: 26px 24px; border-bottom: 1px solid #ECEDF3; }
+.modal-header-top { display: flex; align-items: flex-start; gap: 14px; }
+.modal-avatar { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(160deg,#3654D6 0%,#2C46B8 100%); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; letter-spacing: 0.02em; flex-shrink: 0; box-shadow: 0 4px 10px rgba(54,84,214,0.28); }
+.modal-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(15,20,30,0.62); margin-bottom: 8px; }
 .modal-title { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: #12141C; margin-bottom: 4px; }
-.modal-meta { font-size: 12px; color: rgba(15,20,30,0.3); }
-.modal-contact { font-size: 12.5px; color: rgba(15,20,30,0.55); margin-top: 8px; line-height: 1.6; }
+.modal-meta { font-size: 12px; color: rgba(15,20,30,0.62); }
+.modal-contact { font-size: 12.5px; color: rgba(15,20,30,0.7); margin-top: 8px; line-height: 1.6; }
 .modal-contact a { color: #3654D6; text-decoration: none; }
 .modal-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 18px; }
 .modal-stat { padding: 12px; background: #F7F8FC; border-radius: 10px; text-align: center; }
 .modal-stat-val { font-size: 16px; font-weight: 600; color: #12141C; display: block; margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; }
-.modal-stat-lbl { font-size: 10px; color: rgba(15,20,30,0.28); text-transform: uppercase; letter-spacing: 0.09em; }
+.modal-stat-lbl { font-size: 10px; color: rgba(15,20,30,0.62); text-transform: uppercase; letter-spacing: 0.09em; }
 
 /* ── MODAL BODY TABS ── */
-.modal-tabs { display: flex; border-bottom: 1px solid rgba(15,20,30,0.08); padding: 0 32px; }
-.modal-tab { padding: 12px 0; margin-right: 24px; font-size: 12px; font-weight: 500; color: rgba(15,20,30,0.4); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.12s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Inter', sans-serif; }
-.modal-tab:hover { color: rgba(15,20,30,0.7); }
-.modal-tab.active { color: #3654D6; border-bottom-color: #3654D6; }
-.modal-body { padding: 24px 32px 32px; }
+.modal-tabs { display: flex; border-bottom: 1px solid rgba(15,20,30,0.08); padding: 0 24px; background: #FAFAFC; }
+.modal-tab { padding: 12px 14px; margin: 6px 2px 0; font-size: 12px; font-weight: 500; color: rgba(15,20,30,0.6); cursor: pointer; border-bottom: 2px solid transparent; border-radius: 8px 8px 0 0; transition: all 0.12s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Inter', sans-serif; }
+.modal-tab:hover { color: rgba(15,20,30,0.88); background: rgba(15,20,30,0.045); }
+.modal-tab.active { color: #3654D6; border-bottom-color: #3654D6; background: rgba(54,84,214,0.06); }
+.modal-tab.active:hover { background: rgba(54,84,214,0.09); }
+.modal-body { padding: 20px 24px 28px; background: #FAFAFC; }
 .modal-tab-pane { display: none; }
 .modal-tab-pane.active { display: block; }
 
 /* ── MODAL SECTIONS ── */
-.modal-section { padding: 16px 0; border-bottom: 1px solid rgba(15,20,30,0.08); }
-.modal-section:last-child { border-bottom: none; }
-.modal-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(15,20,30,0.28); margin-bottom: 10px; }
-.modal-section-text { font-size: 13px; line-height: 1.72; color: rgba(15,20,30,0.55); }
+.modal-section { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 14px; padding: 18px 20px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(15,20,30,0.03); }
+.modal-section:last-child { margin-bottom: 0; }
+.modal-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(15,20,30,0.62); margin-bottom: 10px; }
+.modal-section-text { font-size: 13px; line-height: 1.72; color: rgba(15,20,30,0.7); }
 .modal-table { width: 100%; border-collapse: collapse; }
 .modal-table td { padding: 9px 0; border-bottom: 1px solid rgba(15,20,30,0.08); font-size: 13px; }
-.modal-table td:first-child { color: rgba(15,20,30,0.4); width: 50%; }
+.modal-table td:first-child { color: rgba(15,20,30,0.66); width: 50%; }
 .modal-table td:last-child { text-align: right; font-weight: 500; color: rgba(15,20,30,0.8); }
 .modal-table tr:last-child td { border-bottom: none; }
 .modal-alert { padding: 12px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; border-radius: 0 8px 8px 0; }
@@ -191,27 +194,28 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 .modal-alert.info { background: rgba(54,84,214,0.1); border-left: 3px solid #3654D6; color: rgba(15,20,30,0.65); }
 .modal-alert strong { font-weight: 600; display: block; margin-bottom: 3px; color: rgba(15,20,30,0.85); }
 .obs-list { margin: 0; padding-left: 18px; }
-.obs-list li { font-size: 13px; color: rgba(15,20,30,0.55); line-height: 1.7; margin-bottom: 4px; }
+.obs-list li { font-size: 13px; color: rgba(15,20,30,0.7); line-height: 1.7; margin-bottom: 4px; }
 .program-box { background: #F7F8FC; border-radius: 10px; padding: 14px; font-size: 13px; line-height: 1.7; color: rgba(15,20,30,0.6); }
 
 /* ── PIT INTELLIGENCE PANELS ── */
-.pit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.pit-panel { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 14px; padding: 16px; box-shadow: 0 1px 2px rgba(15,20,30,0.03); }
-.pit-panel-title { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(15,20,30,0.28); margin-bottom: 12px; }
+.pit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.pit-panel { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 14px; padding: 16px; box-shadow: 0 1px 2px rgba(15,20,30,0.03); transition: box-shadow 0.15s ease; }
+.pit-panel:hover { box-shadow: 0 4px 12px rgba(15,20,30,0.06); }
+.pit-panel-title { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(15,20,30,0.62); margin-bottom: 12px; }
 .pit-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(15,20,30,0.07); font-size: 12.5px; }
 .pit-row:last-child { border-bottom: none; }
-.pit-row-label { color: rgba(15,20,30,0.45); flex: 1; }
+.pit-row-label { color: rgba(15,20,30,0.68); flex: 1; }
 .pit-row-val { color: rgba(15,20,30,0.85); font-weight: 500; text-align: right; }
 .pit-opp-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(15,20,30,0.07); }
 .pit-opp-item:last-child { border-bottom: none; }
 .pit-opp-title { font-size: 12.5px; font-weight: 500; color: rgba(15,20,30,0.8); margin-bottom: 2px; }
-.pit-opp-meta { font-size: 11px; color: rgba(15,20,30,0.35); }
+.pit-opp-meta { font-size: 11px; color: rgba(15,20,30,0.65); }
 .pit-opp-value { font-size: 13px; font-weight: 600; color: #0E9F6E; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
 .pit-finding-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(15,20,30,0.07); }
 .pit-finding-item:last-child { border-bottom: none; }
 .pit-finding-title { font-size: 12.5px; color: rgba(15,20,30,0.7); }
-.pit-quality-bar { height: 4px; background: rgba(15,20,30,0.08); margin-top: 6px; }
-.pit-quality-fill { height: 100%; background: #0E9F6E; transition: width 0.4s ease; }
+.pit-quality-bar { height: 5px; background: rgba(15,20,30,0.08); margin-top: 6px; border-radius: 3px; overflow: hidden; }
+.pit-quality-fill { height: 100%; background: #0E9F6E; transition: width 0.4s ease; border-radius: 3px; }
 .pit-quality-fill.med { background: #B45309; }
 .pit-quality-fill.low { background: #DC2626; }
 
@@ -220,25 +224,26 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 .pitv-hero { background: linear-gradient(135deg, rgba(54,84,214,0.08), rgba(54,84,214,0.02)); border: 1px solid rgba(54,84,214,0.18); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
 .pitv-version { font-family:'JetBrains Mono', monospace; font-size:11px; color:rgba(54,84,214,.8); margin-bottom:8px; }
 .pitv-title { font-size:18px; font-weight:600; color:rgba(15,20,30,0.92); margin-bottom:8px; }
-.pitv-sub { font-size:13px; line-height:1.7; color:rgba(15,20,30,0.5); }
+.pitv-sub { font-size:13px; line-height:1.7; color:rgba(15,20,30,0.7); }
 .pitv-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
 .pitv-section { margin:18px 0; }
-.pitv-section-title { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:rgba(15,20,30,0.28); margin-bottom:10px; }
-.pitv-card { background:#FFFFFF; border:1px solid #ECEDF3; border-radius:12px; padding:14px; margin-bottom:9px; box-shadow: 0 1px 2px rgba(15,20,30,0.03); }
+.pitv-section-title { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:rgba(15,20,30,0.62); margin-bottom:10px; }
+.pitv-card { background:#FFFFFF; border:1px solid #ECEDF3; border-radius:12px; padding:14px; margin-bottom:9px; box-shadow: 0 1px 2px rgba(15,20,30,0.03); transition: box-shadow 0.15s ease, border-color 0.15s ease; }
 details.pitv-card { cursor:pointer; }
+details.pitv-card:hover { box-shadow: 0 4px 12px rgba(15,20,30,0.07); border-color: rgba(54,84,214,0.2); }
 details.pitv-card summary { list-style:none; }
 details.pitv-card summary::-webkit-details-marker { display:none; }
 .pitv-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
 .pitv-card-title { font-size:13px; font-weight:600; color:rgba(15,20,30,0.85); line-height:1.45; }
-.pitv-card-meta { margin-top:4px; font-size:11px; color:rgba(15,20,30,0.32); }
-.pitv-card-body { margin-top:10px; padding-top:10px; border-top:1px solid rgba(15,20,30,0.08); font-size:12.2px; line-height:1.7; color:rgba(15,20,30,0.55); }
+.pitv-card-meta { margin-top:4px; font-size:11px; color:rgba(15,20,30,0.64); }
+.pitv-card-body { margin-top:10px; padding-top:10px; border-top:1px solid rgba(15,20,30,0.08); font-size:12.2px; line-height:1.7; color:rgba(15,20,30,0.7); }
 .pitv-badges { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
-.pitv-badge { font-size:10px; font-weight:700; letter-spacing:.03em; padding:3px 7px; border:1px solid rgba(15,20,30,0.1); background:rgba(15,20,30,0.06); color:rgba(15,20,30,0.55); white-space:nowrap; }
+.pitv-badge { font-size:10px; font-weight:700; letter-spacing:.03em; padding:3px 8px; border-radius:100px; border:1px solid rgba(15,20,30,0.1); background:rgba(15,20,30,0.06); color:rgba(15,20,30,0.7); white-space:nowrap; }
 .pitv-badge.high, .pitv-badge.confirmed, .pitv-badge.positive { color:#0E9F6E; background:rgba(14,159,110,.10); border-color:rgba(14,159,110,.18); }
 .pitv-badge.medium, .pitv-badge.estimated, .pitv-badge.likely { color:#B45309; background:rgba(180,83,9,.10); border-color:rgba(180,83,9,.18); }
 .pitv-badge.low, .pitv-badge.needs-validation { color:#DC2626; background:rgba(220,38,38,.10); border-color:rgba(220,38,38,.18); }
 .pitv-evidence { margin-top:8px; }
-.pitv-evidence-item { display:flex; gap:8px; padding:6px 0; border-bottom:1px solid rgba(15,20,30,0.065); font-size:11.5px; color:rgba(15,20,30,0.45); }
+.pitv-evidence-item { display:flex; gap:8px; padding:6px 0; border-bottom:1px solid rgba(15,20,30,0.065); font-size:11.5px; color:rgba(15,20,30,0.68); }
 .pitv-evidence-item:last-child { border-bottom:none; }
 .pitv-evidence-source { min-width:120px; color:rgba(54,84,214,.65); font-family:'JetBrains Mono', monospace; font-size:10.5px; }
 .pitv-code { white-space:pre-wrap; max-height:420px; overflow:auto; background:#181B22; border-radius:10px; border:1px solid rgba(15,20,30,0.08); padding:14px; font-family:'JetBrains Mono', monospace; font-size:11px; line-height:1.6; color:rgba(224,233,246,0.75); }
@@ -267,30 +272,30 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
 .edit-panel { display: none; margin-top: 12px; background: #F7F8FC; border: 1px solid #ECEDF3; border-radius: 14px; padding: 20px; gap: 16px; flex-direction: column; }
 .edit-panel.open { display: flex; }
 .edit-field { display: flex; flex-direction: column; gap: 6px; }
-.edit-field-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(15,20,30,0.3); }
-.edit-field-hint { font-size: 11px; color: rgba(15,20,30,0.2); margin-top: -3px; }
+.edit-field-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(15,20,30,0.62); }
+.edit-field-hint { font-size: 11px; color: rgba(15,20,30,0.6); margin-top: -3px; }
 .edit-textarea { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.65; background: rgba(15,20,30,0.06); border: 1px solid rgba(15,20,30,0.09); color: rgba(15,20,30,0.75); padding: 10px 12px; resize: vertical; min-height: 72px; border-radius: 9px; }
 .edit-textarea:focus { outline: none; border-color: rgba(54,84,214,0.4); }
 .edit-input, .edit-select { font-family: 'Inter', sans-serif; font-size: 13px; background: rgba(15,20,30,0.06); border: 1px solid rgba(15,20,30,0.09); color: rgba(15,20,30,0.75); padding: 9px 12px; width: 100%; border-radius: 9px; }
 .edit-input:focus, .edit-select:focus { outline: none; border-color: rgba(54,84,214,0.4); }
 .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .edit-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-.edit-panel-note { font-size: 11px; color: rgba(15,20,30,0.45); line-height: 1.6; padding: 10px 12px; background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 9px; }
+.edit-panel-note { font-size: 11px; color: rgba(15,20,30,0.68); line-height: 1.6; padding: 10px 12px; background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 9px; }
 
 /* ── MODULE ACCESS TOGGLES ── */
 .module-row { display: flex; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid rgba(15,20,30,0.08); }
 .module-row:last-child { border-bottom: none; }
 .module-info { flex: 1; }
 .module-name { font-size: 13px; font-weight: 500; color: rgba(15,20,30,0.85); margin-bottom: 2px; }
-.module-desc { font-size: 11.5px; color: rgba(15,20,30,0.35); line-height: 1.5; }
-.module-meta { font-size: 10px; color: rgba(15,20,30,0.25); margin-top: 3px; }
+.module-desc { font-size: 11.5px; color: rgba(15,20,30,0.65); line-height: 1.5; }
+.module-meta { font-size: 10px; color: rgba(15,20,30,0.6); margin-top: 3px; }
 .module-status-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 100px; white-space: nowrap; }
 .module-status-badge.active  { background: rgba(14,159,110,0.12); color: #0E9F6E; }
-.module-status-badge.planned { background: rgba(15,20,30,0.08); color: rgba(15,20,30,0.3); }
+.module-status-badge.planned { background: rgba(15,20,30,0.08); color: rgba(15,20,30,0.62); }
 .module-toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
 .module-toggle input { opacity: 0; width: 0; height: 0; }
 .module-toggle-slider { position: absolute; cursor: pointer; inset: 0; background: rgba(15,20,30,0.1); border: 1px solid rgba(15,20,30,0.15); transition: .2s; border-radius: 22px; }
-.module-toggle-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background: rgba(15,20,30,0.4); transition: .2s; border-radius: 50%; }
+.module-toggle-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background: rgba(15,20,30,0.66); transition: .2s; border-radius: 50%; }
 .module-toggle input:checked + .module-toggle-slider { background: rgba(54,84,214,0.3); border-color: rgba(54,84,214,0.5); }
 .module-toggle input:checked + .module-toggle-slider:before { transform: translateX(18px); background: #3654D6; }
 .module-toggle input:disabled + .module-toggle-slider { cursor: not-allowed; opacity: 0.5; }
@@ -298,11 +303,11 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
 /* ── SETTINGS ── */
 .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .settings-card { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 16px; padding: 22px; box-shadow: 0 1px 2px rgba(15,20,30,0.03), 0 8px 20px rgba(15,20,30,0.04); }
-.settings-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(15,20,30,0.28); margin-bottom: 16px; }
+.settings-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(15,20,30,0.62); margin-bottom: 16px; }
 .settings-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(15,20,30,0.07); }
 .settings-row:last-of-type { border-bottom: none; }
 .settings-label { font-size: 12.5px; color: rgba(15,20,30,0.6); }
-.settings-hint { font-size: 11px; color: rgba(15,20,30,0.25); margin-top: 2px; }
+.settings-hint { font-size: 11px; color: rgba(15,20,30,0.6); margin-top: 2px; }
 .settings-input { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 10px; background: rgba(15,20,30,0.06); border: 1px solid rgba(15,20,30,0.1); color: rgba(15,20,30,0.7); width: 200px; border-radius: 9px; }
 .settings-input:focus { outline: none; border-color: rgba(54,84,214,0.4); }
 .save-btn { margin-top: 16px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; padding: 8px 16px; background: rgba(54,84,214,0.15); color: #3654D6; border: 1px solid rgba(54,84,214,0.3); cursor: pointer; transition: background 0.12s; border-radius: 9px; }
@@ -311,7 +316,7 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
 .int-row:last-child { border-bottom: none; }
 .int-icon { width: 34px; height: 34px; background: #F7F8FC; border: 1px solid #ECEDF3; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
 .int-name { font-size: 12.5px; font-weight: 500; color: rgba(15,20,30,0.7); }
-.int-sub { font-size: 11px; color: rgba(15,20,30,0.3); }
+.int-sub { font-size: 11px; color: rgba(15,20,30,0.62); }
 .int-badge { margin-left: auto; font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 100px; }
 .int-badge.connected { background: rgba(14,159,110,0.12); color: #0E9F6E; }
 .int-badge.error { background: rgba(220,38,38,0.12); color: #DC2626; }
@@ -326,7 +331,7 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
       <div class="nav-mark"><span></span><span></span></div>
       <span class="nav-word" style="font-size:17px">acceptor<b>IQ</b></span>
     </div>
-    <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:center;margin-bottom:20px">Operations Portal</div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(15,20,30,0.62);text-align:center;margin-bottom:20px">Operations Portal</div>
     <input type="password" id="login-password" class="edit-input" placeholder="Password" autocomplete="current-password" style="text-align:center;margin-bottom:12px" autofocus>
     <button type="submit" id="login-submit-btn" class="save-btn" style="width:100%;padding:11px;text-align:center;margin-top:0">Sign in</button>
     <div id="login-error" style="margin-top:14px;font-size:12px;color:#DC2626;text-align:center;min-height:16px"></div>
@@ -389,7 +394,7 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
       </div>
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-card-icon" style="background:rgba(15,20,30,0.06);color:rgba(15,20,30,0.5)">
+          <div class="stat-card-icon" style="background:rgba(15,20,30,0.06);color:rgba(15,20,30,0.7)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
           </div>
           <div class="stat-card-val" id="dash-merchants">—</div>
@@ -462,7 +467,7 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
             </tr>
           </thead>
           <tbody id="dash-merchants-tbody">
-            <tr><td colspan="6"><div style="text-align:center;padding:40px;color:rgba(15,20,30,0.3)">Loading…</div></td></tr>
+            <tr><td colspan="6"><div style="text-align:center;padding:40px;color:rgba(15,20,30,0.62)">Loading…</div></td></tr>
           </tbody>
         </table>
       </div>
@@ -536,8 +541,8 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
           <div class="settings-card-title">Platform</div>
           <div class="settings-row"><div><div class="settings-label">PIT Version</div><div class="settings-hint">Current intelligence engine</div></div><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#3654D6">PIT v2</span></div>
           <div class="settings-row"><div><div class="settings-label">Report module</div><div class="settings-hint">PDF-style narrative report</div></div><span style="font-size:11px;color:#0E9F6E;font-weight:600">Active</span></div>
-          <div class="settings-row"><div><div class="settings-label">AI Analyst</div><div class="settings-hint">Chat interface — coming Step 5</div></div><span style="font-size:11px;color:rgba(15,20,30,0.25);font-weight:600">Not yet built</span></div>
-          <div class="settings-row"><div><div class="settings-label">Merchant dashboard</div><div class="settings-hint">Customer-facing — coming Step 6</div></div><span style="font-size:11px;color:rgba(15,20,30,0.25);font-weight:600">Not yet built</span></div>
+          <div class="settings-row"><div><div class="settings-label">AI Analyst</div><div class="settings-hint">Chat interface — coming Step 5</div></div><span style="font-size:11px;color:rgba(15,20,30,0.6);font-weight:600">Not yet built</span></div>
+          <div class="settings-row"><div><div class="settings-label">Merchant dashboard</div><div class="settings-hint">Customer-facing — coming Step 6</div></div><span style="font-size:11px;color:rgba(15,20,30,0.6);font-weight:600">Not yet built</span></div>
         </div>
       </div>
     </div>
@@ -574,7 +579,7 @@ const fmtP = n => (n != null && n !== '') ? Number(n).toFixed(2) + '%' : '—';
 ───────────────────────────────────────────────────────────── */
 function buildVolumeTimelineChart(timeline) {
   if (!timeline || !timeline.length) {
-    return `<div style="padding:44px 20px;text-align:center;color:rgba(15,20,30,0.32);font-size:13px">No submissions yet — volume will appear here once merchants submit statements.</div>`;
+    return `<div style="padding:44px 20px;text-align:center;color:rgba(15,20,30,0.64);font-size:13px">No submissions yet — volume will appear here once merchants submit statements.</div>`;
   }
 
   const monthLabel = key => { const [y, mo] = key.split('-'); return new Date(Number(y), Number(mo) - 1, 1).toLocaleDateString('en-AU', { month: 'long' }); };
@@ -595,9 +600,9 @@ function buildVolumeTimelineChart(timeline) {
       const tileStyle = isCurrent
         ? 'background:linear-gradient(160deg,#3654D6 0%,#2C46B8 100%);border:1px solid transparent;box-shadow:0 8px 20px rgba(54,84,214,0.22)'
         : 'background:#F7F8FC;border:1px solid #ECEDF3';
-      const labelColor = isCurrent ? 'rgba(255,255,255,0.7)' : 'rgba(15,20,30,0.4)';
+      const labelColor = isCurrent ? 'rgba(255,255,255,0.7)' : 'rgba(15,20,30,0.66)';
       const valColor = isCurrent ? '#FFFFFF' : '#12141C';
-      const subColor = isCurrent ? 'rgba(255,255,255,0.68)' : 'rgba(15,20,30,0.45)';
+      const subColor = isCurrent ? 'rgba(255,255,255,0.68)' : 'rgba(15,20,30,0.68)';
       return `
         <div style="flex:1;min-width:140px;border-radius:12px;padding:16px 18px;${tileStyle}">
           <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:${labelColor};margin-bottom:8px">${esc(monthLabel(t.month))}${isCurrent ? ' · Current' : ''}</div>
@@ -625,8 +630,8 @@ function buildVolumeTimelineChart(timeline) {
     const y = H - padB - h;
     const isCurrent = i === n - 1;
     const fill = isCurrent ? 'url(#volGrad)' : '#E7E9F2';
-    const labelColor = isCurrent ? 'rgba(15,20,30,0.8)' : 'rgba(15,20,30,0.4)';
-    const monthColor = isCurrent ? '#3654D6' : 'rgba(15,20,30,0.4)';
+    const labelColor = isCurrent ? 'rgba(15,20,30,0.8)' : 'rgba(15,20,30,0.66)';
+    const monthColor = isCurrent ? '#3654D6' : 'rgba(15,20,30,0.66)';
     const monthWeight = isCurrent ? '700' : '400';
     return `
       <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(h,3).toFixed(1)}" rx="8" fill="${fill}"/>
@@ -650,7 +655,7 @@ function buildStatusDonut(counts) {
     { label: 'No submissions',            color: '#E4E6EF', value: counts.none || 0 }
   ].filter(s => s.value > 0);
   const total = segments.reduce((a, s) => a + s.value, 0);
-  if (!total) return `<div style="padding:30px 10px;text-align:center;color:rgba(15,20,30,0.32);font-size:13px">No merchants yet</div>`;
+  if (!total) return `<div style="padding:30px 10px;text-align:center;color:rgba(15,20,30,0.64);font-size:13px">No merchants yet</div>`;
 
   const R = 58, C = 2 * Math.PI * R, cx = 80, cy = 80;
   let offset = 0;
@@ -673,13 +678,14 @@ function buildStatusDonut(counts) {
     <svg width="130" height="130" viewBox="0 0 160 160" style="flex-shrink:0">
       ${rings}
       <text x="80" y="76" text-anchor="middle" font-size="22" font-weight="700" fill="#12141C" font-family="Inter,sans-serif">${total}</text>
-      <text x="80" y="93" text-anchor="middle" font-size="9" fill="rgba(15,20,30,0.4)" font-family="Inter,sans-serif" letter-spacing="0.06em">MERCHANTS</text>
+      <text x="80" y="93" text-anchor="middle" font-size="9" fill="rgba(15,20,30,0.66)" font-family="Inter,sans-serif" letter-spacing="0.06em">MERCHANTS</text>
     </svg>
     <div style="flex:1;min-width:0">${legend}</div>
   </div>`;
 }
 const esc  = v => (v == null ? '' : String(v)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const escA = v => esc(v).replace(/"/g,'&quot;');
+const initials = name => { if (!name) return '?'; const words = String(name).trim().split(/\s+/).filter(Boolean); if (!words.length) return '?'; return words.length === 1 ? words[0].slice(0,2).toUpperCase() : (words[0][0] + words[1][0]).toUpperCase(); };
 function parseJSON(str, fallback) { try { return str ? JSON.parse(str) : fallback; } catch { return fallback; } }
 function ratePillClass(r) { if (!r) return ''; return r > 1.7 ? 'rate-hi' : r > 1.3 ? 'rate-mid' : 'rate-lo'; }
 
@@ -790,14 +796,14 @@ function updateDashboard() {
         const oppCell = m.quantified_annual_opportunity
           ? `<span class="opp-pill">${fmtK(m.quantified_annual_opportunity)}</span>`
           : m.latest_pit_id
-            ? '<span style="color:rgba(15,20,30,0.3);font-size:11px">No opportunity quantified</span>'
+            ? '<span style="color:rgba(15,20,30,0.62);font-size:11px">No opportunity quantified</span>'
             : '—';
         return `<tr onclick="openMerchant(${m.id}); showPage('merchants', document.querySelectorAll('.nav-item')[1])">
-          <td class="primary">${esc(m.company_name)}${m.industry ? `<br><span style="font-size:11px;color:rgba(15,20,30,0.3);font-weight:400">${esc(m.industry)}</span>` : ''}</td>
+          <td class="primary">${esc(m.company_name)}${m.industry ? `<br><span style="font-size:11px;color:rgba(15,20,30,0.62);font-weight:400">${esc(m.industry)}</span>` : ''}</td>
           <td>${esc(m.latest_provider||'—')}</td>
           <td>${m.latest_effective_rate ? `<span class="rate-pill ${ratePillClass(m.latest_effective_rate)}">${fmtP(m.latest_effective_rate)}</span>` : '—'}</td>
           <td>${oppCell}</td>
-          <td style="font-size:11.5px;color:rgba(15,20,30,0.55)">${topFind ? esc(topFind.title) : '—'}</td>
+          <td style="font-size:11.5px;color:rgba(15,20,30,0.7)">${topFind ? esc(topFind.title) : '—'}</td>
           <td><span class="status-badge ${sc}">${sl}</span></td>
         </tr>`;
       }).join('')
@@ -857,13 +863,13 @@ function renderMerchants(merchants) {
       <td onclick="event.stopPropagation()"><input type="checkbox" class="row-check merchant-row-check" value="${m.id}" onchange="updateExportButtonLabel()"></td>
       <td class="primary">
         ${esc(m.company_name)}${reconFlag}
-        ${(m.contact_name || m.contact_email) ? `<br><span style="font-size:11px;color:rgba(15,20,30,0.3);font-weight:400">${esc(m.contact_name||'')}${m.contact_email ? ' · ' + esc(m.contact_email) : ''}</span>` : ''}
+        ${(m.contact_name || m.contact_email) ? `<br><span style="font-size:11px;color:rgba(15,20,30,0.62);font-weight:400">${esc(m.contact_name||'')}${m.contact_email ? ' · ' + esc(m.contact_email) : ''}</span>` : ''}
       </td>
-      <td>${esc(m.latest_provider||'—')}${m.latest_period ? `<br><span style="font-size:10px;color:rgba(15,20,30,0.3)">${esc(m.latest_period)}</span>` : ''}</td>
+      <td>${esc(m.latest_provider||'—')}${m.latest_period ? `<br><span style="font-size:10px;color:rgba(15,20,30,0.62)">${esc(m.latest_period)}</span>` : ''}</td>
       <td>${m.latest_effective_rate ? `<span class="rate-pill ${ratePillClass(m.latest_effective_rate)}">${fmtP(m.latest_effective_rate)}</span>` : '—'}</td>
-      <td class="mono">${fmtK(m.annualised_volume)}<br><span style="font-size:10px;color:rgba(15,20,30,0.3);font-family:'Inter',sans-serif">${fmtK(m.latest_volume)} / period</span></td>
-      <td>${m.quantified_annual_opportunity ? `<span class="opp-pill">${fmtK(m.quantified_annual_opportunity)}</span>` : hasPit ? '<span style="color:rgba(15,20,30,0.25);font-size:11px">No opportunity quantified</span>' : '—'}</td>
-      <td style="color:rgba(15,20,30,0.5)">${m.submission_count}</td>
+      <td class="mono">${fmtK(m.annualised_volume)}<br><span style="font-size:10px;color:rgba(15,20,30,0.62);font-family:'Inter',sans-serif">${fmtK(m.latest_volume)} / period</span></td>
+      <td>${m.quantified_annual_opportunity ? `<span class="opp-pill">${fmtK(m.quantified_annual_opportunity)}</span>` : hasPit ? '<span style="color:rgba(15,20,30,0.6);font-size:11px">No opportunity quantified</span>' : '—'}</td>
+      <td style="color:rgba(15,20,30,0.7)">${m.submission_count}</td>
       <td><span class="status-badge ${sc}">${sl}</span>${m.latest_report_html_path ? '<span class="report-dot"></span>' : ''}</td>
       <td style="text-align:right">
         <div style="display:flex;gap:6px;justify-content:flex-end">
@@ -938,7 +944,7 @@ async function openMerchant(merchantId) {
   // Show loading state immediately
   document.getElementById('modal-content').innerHTML = `
     <div class="modal-header" style="padding:40px 32px;text-align:center">
-      <div style="color:rgba(15,20,30,0.3);font-size:13px">Loading merchant PIT…</div>
+      <div style="color:rgba(15,20,30,0.62);font-size:13px">Loading merchant PIT…</div>
     </div>`;
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -983,7 +989,7 @@ function renderMerchantModal(merchant, submissions, latestPit) {
     ${buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportunities, dataQuality, riskIntel, metrics)}
     ${buildPITViewerTab(pit, latestPit)}
   ` : `
-    <div style="padding:40px;text-align:center;color:rgba(15,20,30,0.25)">
+    <div style="padding:40px;text-align:center;color:rgba(15,20,30,0.6)">
       No PIT analysis yet. The PIT now runs automatically after submission; if this is an older submission, generate the report to create a PIT snapshot.
     </div>`;
 
@@ -992,9 +998,14 @@ function renderMerchantModal(merchant, submissions, latestPit) {
 
   document.getElementById('modal-content').innerHTML = `
     <div class="modal-header">
-      <div class="modal-eyebrow">Merchant · ${esc(merchant.industry||'Unknown industry')} · <span class="status-badge ${sc}" style="font-size:10px">${sl}</span></div>
-      <div class="modal-title">${esc(merchant.company_name)}</div>
-      <div class="modal-meta">${esc(latestSub?.provider||'No submissions yet')}${latestSub?.period ? ' — ' + esc(latestSub.period) : ''}</div>
+      <div class="modal-header-top">
+        <div class="modal-avatar">${esc(initials(merchant.company_name))}</div>
+        <div style="flex:1;min-width:0">
+          <div class="modal-eyebrow">Merchant · ${esc(merchant.industry||'Unknown industry')} · <span class="status-badge ${sc}" style="font-size:10px">${sl}</span></div>
+          <div class="modal-title">${esc(merchant.company_name)}</div>
+          <div class="modal-meta">${esc(latestSub?.provider||'No submissions yet')}${latestSub?.period ? ' — ' + esc(latestSub.period) : ''}</div>
+        </div>
+      </div>
       ${merchant.contact_name || merchant.contact_email ? `<div class="modal-contact">${[merchant.contact_name, merchant.contact_email ? `<a href="mailto:${escA(merchant.contact_email)}">${esc(merchant.contact_email)}</a>` : '', merchant.contact_phone].filter(Boolean).join(' &nbsp;·&nbsp; ')}</div>` : ''}
       <div class="modal-stats" style="grid-template-columns:repeat(5,1fr)">
         <div class="modal-stat"><span class="modal-stat-val">${fmtP(latestSub?.effective_rate)}</span><span class="modal-stat-lbl">Eff. rate</span></div>
@@ -1015,7 +1026,7 @@ function renderMerchantModal(merchant, submissions, latestPit) {
       <div class="modal-tab-pane active" id="mtab-pit">${pitTab}</div>
       <div class="modal-tab-pane" id="mtab-submissions">${subsTab}</div>
       <div class="modal-tab-pane" id="mtab-report">${buildReportTab(latestSub, facts, merchant)}</div>
-      <div class="modal-tab-pane" id="mtab-modules"><div style="padding:20px 0;color:rgba(15,20,30,0.3);font-size:12px">Loading modules…</div></div>
+      <div class="modal-tab-pane" id="mtab-modules"><div style="padding:20px 0;color:rgba(15,20,30,0.62);font-size:12px">Loading modules…</div></div>
     </div>`;
 
   document.getElementById('modal-overlay').classList.add('open');
@@ -1035,7 +1046,7 @@ function switchModalTab(tab, btn) {
 async function loadModuleAccess(merchantId) {
   const pane = document.getElementById('mtab-modules');
   if (!pane) return;
-  pane.innerHTML = '<div style="padding:20px 0;color:rgba(15,20,30,0.3);font-size:12px">Loading modules…</div>';
+  pane.innerHTML = '<div style="padding:20px 0;color:rgba(15,20,30,0.62);font-size:12px">Loading modules…</div>';
 
   try {
     const data = await api('getModuleAccess', { merchantId });
@@ -1047,7 +1058,7 @@ async function loadModuleAccess(merchantId) {
 }
 
 function renderModuleAccess(merchantId, modules) {
-  if (!modules.length) return '<div style="padding:20px 0;color:rgba(15,20,30,0.25)">No modules configured.</div>';
+  if (!modules.length) return '<div style="padding:20px 0;color:rgba(15,20,30,0.6)">No modules configured.</div>';
 
   const rows = modules.map(m => {
     const isPlanned = m.status === 'planned';
@@ -1073,7 +1084,7 @@ function renderModuleAccess(merchantId, modules) {
 
   return `
     <div style="margin-bottom:12px">
-      <div style="font-size:11px;color:rgba(15,20,30,0.3);line-height:1.6">
+      <div style="font-size:11px;color:rgba(15,20,30,0.62);line-height:1.6">
         Toggle modules on or off for this merchant. Active modules are available immediately; planned modules can be enabled now and will become accessible once built.
       </div>
     </div>
@@ -1138,7 +1149,7 @@ function buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportu
         <div class="pit-panel-title">Cost Drivers</div>
         ${(commercialIntel.costDrivers||[]).map(d => `
           <div class="pit-row"><span class="pit-row-label">${esc(d.label)}</span><span class="pit-row-val">${d.pct}% · ${fmtK(d.amount)}</span></div>`).join('')}
-        ${commercialIntel.commercialRead?.length ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(15,20,30,0.08)">${commercialIntel.commercialRead.map(r => `<div style="font-size:11.5px;color:rgba(15,20,30,0.45);margin-bottom:6px">· ${esc(r)}</div>`).join('')}</div>` : ''}
+        ${commercialIntel.commercialRead?.length ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(15,20,30,0.08)">${commercialIntel.commercialRead.map(r => `<div style="font-size:11.5px;color:rgba(15,20,30,0.68);margin-bottom:6px">· ${esc(r)}</div>`).join('')}</div>` : ''}
       </div>
     </div>` : '';
 
@@ -1151,7 +1162,7 @@ function buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportu
           ${confidenceDot(f.confidence)}
           <div>
             <div class="pit-finding-title">${esc(f.title||f.id)}</div>
-            ${f.summary ? `<div style="font-size:11px;color:rgba(15,20,30,0.35);margin-top:2px">${esc(f.summary)}</div>` : ''}
+            ${f.summary ? `<div style="font-size:11px;color:rgba(15,20,30,0.65);margin-top:2px">${esc(f.summary)}</div>` : ''}
           </div>
         </div>`).join('')}
     </div>` : '';
@@ -1180,7 +1191,7 @@ function buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportu
           <div style="flex:1"><div class="pit-quality-bar"><div class="pit-quality-fill ${cls}" style="width:${pct}%"></div></div></div>
           <div style="font-size:12px;font-weight:600;color:rgba(15,20,30,0.7);white-space:nowrap">${esc(level)}</div>
         </div>
-        ${gaps.map(g => `<div style="font-size:12px;color:rgba(15,20,30,0.45);margin-bottom:4px">· ${esc(g.label)} — ${esc(g.reason||'')}</div>`).join('')}
+        ${gaps.map(g => `<div style="font-size:12px;color:rgba(15,20,30,0.68);margin-bottom:4px">· ${esc(g.label)} — ${esc(g.reason||'')}</div>`).join('')}
       </div>`;
   })() : '';
 
@@ -1271,7 +1282,7 @@ function renderPitPrioritySection(priorities) {
       </summary>
       <div class="pitv-card-body">
         ${esc(p.rankReason || '')}
-        ${p.dependsOn?.length ? `<div style="margin-top:8px;color:rgba(15,20,30,0.38)">Depends on: ${p.dependsOn.map(esc).join(', ')}</div>` : ''}
+        ${p.dependsOn?.length ? `<div style="margin-top:8px;color:rgba(15,20,30,0.66)">Depends on: ${p.dependsOn.map(esc).join(', ')}</div>` : ''}
         ${renderEvidence(p.evidence)}
       </div>
     </details>`).join('')}
@@ -1294,7 +1305,7 @@ function renderPitUnderstandingSection(items) {
       </summary>
       <div class="pitv-card-body">
         ${esc(u.conclusion || '')}
-        ${u.dependsOn?.length ? `<div style="margin-top:8px;color:rgba(15,20,30,0.38)">Built from: ${u.dependsOn.map(esc).join(', ')}</div>` : ''}
+        ${u.dependsOn?.length ? `<div style="margin-top:8px;color:rgba(15,20,30,0.66)">Built from: ${u.dependsOn.map(esc).join(', ')}</div>` : ''}
         ${renderEvidence(u.evidence)}
       </div>
     </details>`).join('')}
@@ -1329,11 +1340,11 @@ function renderPitRiskGapSection(risks, gaps) {
   return `<div class="pitv-grid">
     <div class="pit-panel">
       <div class="pit-panel-title">Risk Intelligence</div>
-      ${risks.length ? risks.map(r => `<div class="pit-finding-item"><div><div class="pit-finding-title">${esc(r.type || r.title || r.id)}</div><div class="pit-opp-meta">${esc(r.severity || '')} · ${esc(r.confidence || '')}</div><div style="font-size:11.5px;color:rgba(15,20,30,0.42);margin-top:3px">${esc(r.implication || r.observation || '')}</div></div></div>`).join('') : '<div class="modal-section-text">No major risks visible.</div>'}
+      ${risks.length ? risks.map(r => `<div class="pit-finding-item"><div><div class="pit-finding-title">${esc(r.type || r.title || r.id)}</div><div class="pit-opp-meta">${esc(r.severity || '')} · ${esc(r.confidence || '')}</div><div style="font-size:11.5px;color:rgba(15,20,30,0.68);margin-top:3px">${esc(r.implication || r.observation || '')}</div></div></div>`).join('') : '<div class="modal-section-text">No major risks visible.</div>'}
     </div>
     <div class="pit-panel">
       <div class="pit-panel-title">Data Gaps</div>
-      ${gaps.length ? gaps.map(g => `<div class="pit-finding-item"><div><div class="pit-finding-title">${esc(g.label || g.missingData || g.id)}</div><div class="pit-opp-meta">${esc(g.severity || '')}</div><div style="font-size:11.5px;color:rgba(15,20,30,0.42);margin-top:3px">${esc(g.reason || g.implication || '')}</div></div></div>`).join('') : '<div class="modal-section-text">No major data gaps visible.</div>'}
+      ${gaps.length ? gaps.map(g => `<div class="pit-finding-item"><div><div class="pit-finding-title">${esc(g.label || g.missingData || g.id)}</div><div class="pit-opp-meta">${esc(g.severity || '')}</div><div style="font-size:11.5px;color:rgba(15,20,30,0.68);margin-top:3px">${esc(g.reason || g.implication || '')}</div></div></div>`).join('') : '<div class="modal-section-text">No major data gaps visible.</div>'}
     </div>
   </div>`;
 }
@@ -1347,7 +1358,7 @@ function renderPitModulePlanSection(modulePlan) {
         <div class="pit-row"><span class="pit-row-label">Module</span><span class="pit-row-val">${esc(m.id)}</span></div>
         <div class="pit-row"><span class="pit-row-label">Type</span><span class="pit-row-val">${esc(m.type || '—')}</span></div>
         <div class="pit-row"><span class="pit-row-label">Priority</span><span class="pit-row-val">${esc(m.priority || '—')}</span></div>
-        <div style="font-size:11.5px;color:rgba(15,20,30,0.4);line-height:1.6;margin-top:8px">${esc(m.reason || '')}</div>
+        <div style="font-size:11.5px;color:rgba(15,20,30,0.66);line-height:1.6;margin-top:8px">${esc(m.reason || '')}</div>
       </div>`).join('')}
     </div>
   </div>`;
@@ -1404,16 +1415,16 @@ function labelise(str) {
 }
 
 function buildSubmissionsTab(submissions, merchant) {
-  if (!submissions.length) return '<div style="padding:40px;text-align:center;color:rgba(15,20,30,0.25)">No submissions yet.</div>';
+  if (!submissions.length) return '<div style="padding:40px;text-align:center;color:rgba(15,20,30,0.6)">No submissions yet.</div>';
 
   return `<table class="modal-table" style="margin-top:8px">
     <thead><tr style="border-bottom:1px solid rgba(15,20,30,0.08)">
-      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:left">Date</th>
-      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:left">Provider</th>
-      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:left">Period</th>
-      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:right">Volume</th>
-      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:right">Rate</th>
-      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:left">Status</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.62);text-align:left">Date</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.62);text-align:left">Provider</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.62);text-align:left">Period</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.62);text-align:right">Volume</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.62);text-align:right">Rate</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.62);text-align:left">Status</th>
     </tr></thead>
     <tbody>
     ${submissions.map(s => {
@@ -1434,7 +1445,7 @@ function buildSubmissionsTab(submissions, merchant) {
 }
 
 function buildReportTab(latestSub, facts, merchant) {
-  if (!latestSub) return '<div style="padding:40px;text-align:center;color:rgba(15,20,30,0.25)">No submissions yet.</div>';
+  if (!latestSub) return '<div style="padding:40px;text-align:center;color:rgba(15,20,30,0.6)">No submissions yet.</div>';
 
   const hasReport = !!latestSub.report_html_path;
   const approveLabel = hasReport ? 'Regenerate report' : 'Approve &amp; generate report';
@@ -1461,7 +1472,7 @@ function buildReportTab(latestSub, facts, merchant) {
         </button>
         <button class="btn-mark-sent" onclick="updateStatus(${latestSub.id},'sent')">→ Mark as sent to client</button>
       </div>
-      <div id="report-status-${latestSub.id}" style="margin-top:10px;font-size:12px;color:rgba(15,20,30,0.4)"></div>
+      <div id="report-status-${latestSub.id}" style="margin-top:10px;font-size:12px;color:rgba(15,20,30,0.66)"></div>
     </div>`;
 }
 
