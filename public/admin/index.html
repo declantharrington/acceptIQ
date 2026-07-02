@@ -533,35 +533,43 @@ function buildVolumeTimelineChart(timeline) {
   if (!timeline || !timeline.length) {
     return `<div style="padding:44px 20px;text-align:center;color:rgba(15,20,30,0.32);font-size:13px">No submissions yet — volume will appear here once merchants submit statements.</div>`;
   }
-  const W = 600, H = 210, padL = 10, padR = 10, padB = 26, padT = 16;
+  const W = 600, H = 210, padT = 30, padB = 26;
   const n = timeline.length;
-  const slot = (W - padL - padR) / n;
-  const barW = Math.min(46, slot * 0.5);
+  // Cap how wide each bar's slot can get so a handful of early data points
+  // don't spread out across the full canvas with huge gaps between them —
+  // the cluster is capped and centred instead of force-stretched to fill W.
+  const maxSlot = 92;
+  const barW = 40;
+  const usedWidth = Math.min(n * maxSlot, W);
+  const startX = (W - usedWidth) / 2;
+  const slot = usedWidth / n;
   const maxV = Math.max(...timeline.map(t => t.volume), 1);
   const monthLabel = key => { const [y, mo] = key.split('-'); return new Date(Number(y), Number(mo) - 1, 1).toLocaleDateString('en-AU', { month: 'short' }); };
 
   const bars = timeline.map((t, i) => {
     const h = maxV > 0 ? (t.volume / maxV) * (H - padT - padB) : 0;
-    const x = padL + i * slot + (slot - barW) / 2;
+    const x = startX + i * slot + (slot - barW) / 2;
     const y = H - padB - h;
     return `
-      <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(h,2).toFixed(1)}" rx="7" fill="url(#volGrad)"/>
+      <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(h,3).toFixed(1)}" rx="8" fill="url(#volGrad)"/>
+      <text x="${(x + barW / 2).toFixed(1)}" y="${(y - 9).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(15,20,30,0.72)" font-family="Inter,sans-serif">${esc(fmtK(t.volume))}</text>
       <text x="${(x + barW / 2).toFixed(1)}" y="${H - 7}" text-anchor="middle" font-size="10.5" fill="rgba(15,20,30,0.42)" font-family="Inter,sans-serif">${esc(monthLabel(t.month))}</text>`;
   }).join('');
 
   return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:100%" preserveAspectRatio="none">
     <defs><linearGradient id="volGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3654D6"/><stop offset="100%" stop-color="#8DA0EE"/></linearGradient></defs>
+    <line x1="0" y1="${H - padB}" x2="${W}" y2="${H - padB}" stroke="#EEEFF4" stroke-width="1.5"/>
     ${bars}
   </svg>`;
 }
 
 function buildStatusDonut(counts) {
   const segments = [
-    { label: 'Sent to client',     color: '#3654D6', value: counts.sent || 0 },
-    { label: 'Report generated',   color: '#0E9F6E', value: counts.approved || 0 },
-    { label: 'Reviewed',           color: '#8DA0EE', value: counts.reviewed || 0 },
-    { label: 'Pending review',     color: '#B45309', value: counts.pending_review || 0 },
-    { label: 'No submission yet',  color: '#E4E6EF', value: counts.none || 0 }
+    { label: STATUS_LABEL.sent,           color: '#3654D6', value: counts.sent || 0 },
+    { label: STATUS_LABEL.approved,       color: '#0E9F6E', value: counts.approved || 0 },
+    { label: STATUS_LABEL.reviewed,       color: '#8DA0EE', value: counts.reviewed || 0 },
+    { label: STATUS_LABEL.pending_review, color: '#B45309', value: counts.pending_review || 0 },
+    { label: 'No submission yet',         color: '#E4E6EF', value: counts.none || 0 }
   ].filter(s => s.value > 0);
   const total = segments.reduce((a, s) => a + s.value, 0);
   if (!total) return `<div style="padding:30px 10px;text-align:center;color:rgba(15,20,30,0.32);font-size:13px">No merchants yet</div>`;
