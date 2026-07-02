@@ -106,44 +106,6 @@ export async function updateSubmissionPITMetadata({
   submissionId,
   pitResultId
 }) {
-  if (!supabaseUrl || !supabaseKey || !submissionId || !pitResultId) return false;
-
-  try {
-    const res = await fetch(
-      `${supabaseUrl}/rest/v1/submissions?id=eq.${encodeURIComponent(submissionId)}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`
-        },
-        body: JSON.stringify({
-          latest_pit_result_id: pitResultId,
-          pit_generated_at: new Date().toISOString()
-        })
-      }
-    );
-
-    if (!res.ok) {
-      const detail = await res.text();
-      console.error(`updateSubmissionPITMetadata failed ${res.status}:`, detail);
-      return false;
-    }
-
-    return true;
-  } catch (err) {
-    console.error('updateSubmissionPITMetadata unexpected error:', err.message);
-    return false;
-  }
-}
-
-export async function updateSubmissionPITMetadata({
-  supabaseUrl,
-  supabaseKey,
-  submissionId,
-  pitResultId
-}) {
   if (!supabaseUrl || !supabaseKey || !submissionId || !pitResultId) {
     console.warn('updateSubmissionPITMetadata: missing required input');
     return false;
