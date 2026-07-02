@@ -97,11 +97,32 @@ async function handleListMerchants(req, res, supabaseUrl, supabaseKey) {
     if (!pitByMerchant[p.merchant_id]) pitByMerchant[p.merchant_id] = p;
   }
 
+  // Monthly timeline (last 6 months) of submission count + total period volume
+  // submitted, computed from the full submissions list fetched above (not just
+  // the latest-per-merchant rows). Powers the dashboard overview charts.
+  const timelineMap = {};
+  for (const s of submissions) {
+    if (!s.submitted_at) continue;
+    const d = new Date(s.submitted_at);
+    if (isNaN(d)) continue;
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    if (!timelineMap[key]) timelineMap[key] = { month: key, submissions: 0, volume: 0 };
+    timelineMap[key].submissions += 1;
+    timelineMap[key].volume += Number(s.volume) || 0;
+  }
+  const timeline = Object.values(timelineMap).sort((a, b) => a.month.localeCompare(b.month)).slice(-6);
+
   // Combine
   const result = merchants.map(m => {
     const latestSub = subsByMerchant[m.id] || null;
     const latestPit = pitByMerchant[m.id] || null;
     const pitSummary = latestPit?.pit_json?.caseSummary || null;
+
+    // Prefer the PIT's annualised figure (consistent with how savings are
+    // annualised); fall back to a straight ×12 of the latest submission's
+    // period volume if no PIT has run yet for this merchant.
+    const annualisedVolume = pitSummary?.currentPosition?.annualisedCardVolume
+      ?? (latestSub?.volume != null ? Math.round(Number(latestSub.volume) * 12 * 100) / 100 : null);
 
     return {
       ...m,
@@ -112,6 +133,7 @@ async function handleListMerchants(req, res, supabaseUrl, supabaseKey) {
       latest_provider: latestSub?.provider || null,
       latest_period: latestSub?.period || null,
       latest_volume: latestSub?.volume || null,
+      annualised_volume: annualisedVolume,
       latest_total_fees: latestSub?.total_fees || null,
       latest_effective_rate: latestSub?.effective_rate || null,
       latest_pricing_model: latestSub?.pricing_model || null,
@@ -125,7 +147,7 @@ async function handleListMerchants(req, res, supabaseUrl, supabaseKey) {
     };
   });
 
-  return res.status(200).json({ merchants: result });
+  return res.status(200).json({ merchants: result, timeline });
 }
 
 // ── Get single merchant with full PIT detail ──────────────────────────────────
