@@ -228,7 +228,7 @@ function buildAlertsHtml({ narrative, pit }) {
   const gapsHtml = gaps.length ? `
     <div class="section-sub" style="margin-top:20px">
       <p style="font-size:13px;font-weight:600;color:#555;margin-bottom:8px">Data limitations</p>
-      ${gaps.map(g => `<p style="font-size:13px;color:#666;margin-bottom:6px">· <strong>${g.label || g.field || 'Field'}</strong> — ${g.reason || 'Not visible on this statement.'}</p>`).join('')}
+      ${gaps.filter(g => g.label).map(g => `<p style="font-size:13px;color:#666;margin-bottom:6px">· <strong>${g.label}</strong> — ${g.reason || 'Not visible on this statement.'}</p>`).join('')}
     </div>` : '';
 
   if (!alertsHtml && !gapsHtml) {
