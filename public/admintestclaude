@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>acceptorIQ — Operations Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -webkit-font-smoothing: antialiased; font-size: 13.5px; font-weight: 400; }
+
+/* ── SHELL ── */
+.shell { display: grid; grid-template-columns: 220px 1fr; grid-template-rows: 56px 1fr; height: 100vh; }
+
+/* ── NAV ── */
+.nav { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding: 0 24px 0 0; background: #FFFFFF; border-bottom: 1px solid #ECEDF3; z-index: 10; }
+.nav-brand { display: flex; align-items: center; height: 56px; width: 220px; padding: 0 20px; }
+.nav-logo { height: 24px; width: auto; display: block; }
+.nav-mark { position: relative; width: 18px; height: 16px; display: inline-block; flex-shrink: 0; margin-right: 10px; }
+.nav-mark span { position: absolute; bottom: 0; width: 6px; height: 16px; border-radius: 2px; background: #12141C; }
+.nav-mark span:first-child { left: 3px; transform: skewX(-30deg); }
+.nav-mark span:last-child  { right: 3px; height: 11px; transform: skewX(30deg); }
+.nav-word { font-weight: 600; letter-spacing: -0.03em; color: rgba(15,20,30,.92); font-size: 15px; }
+.nav-word b { font-weight: 700; color: #3654D6; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-system { display: flex; align-items: center; gap: 7px; font-size: 11px; color: rgba(15,20,30,0.4); }
+.sys-dot { width: 6px; height: 6px; border-radius: 50%; background: #0E9F6E; animation: syspulse 2.5s ease-in-out infinite; }
+@keyframes syspulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.nav-badge-count { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(54,84,214,0.15); color: #3654D6; padding: 4px 10px; border-radius: 100px; }
+.nav-avatar { width: 28px; height: 28px; border-radius: 50%; background: rgba(54,84,214,0.2); border: 1px solid rgba(54,84,214,0.3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #3654D6; cursor: pointer; }
+.nav-avatar-wrap { position: relative; }
+.nav-avatar-menu { display: none; position: absolute; top: 38px; right: 0; min-width: 140px; background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 10px; z-index: 50; box-shadow: 0 8px 24px rgba(15,20,30,0.12); overflow: hidden; }
+.nav-avatar-menu.open { display: block; }
+.nav-avatar-menu-item { width: 100%; text-align: left; padding: 10px 14px; background: none; border: none; color: rgba(15,20,30,0.6); font-family: 'Inter', sans-serif; font-size: 12.5px; cursor: pointer; transition: background 0.12s, color 0.12s; }
+.nav-avatar-menu-item:hover { background: rgba(15,20,30,0.07); color: rgba(15,20,30,0.9); }
+.nav-avatar-menu-item.danger:hover { background: rgba(220,38,38,0.1); color: #DC2626; }
+
+/* ── SIDEBAR ── */
+.sidebar { background: #FFFFFF; border-right: 1px solid #ECEDF3; display: flex; flex-direction: column; padding: 16px 12px; overflow-y: auto; gap: 2px; }
+.sidebar::-webkit-scrollbar { width: 0; }
+.sidebar-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(15,20,30,0.2); padding: 0 8px; margin: 16px 0 6px; }
+.sidebar-section-label:first-child { margin-top: 0; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 1px solid transparent; background: transparent; color: rgba(15,20,30,0.45); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500; transition: all 0.12s; width: 100%; text-align: left; border-radius: 9px; }
+.nav-item:hover { background: rgba(15,20,30,0.045); color: rgba(15,20,30,0.85); border-color: transparent; }
+.nav-item.active { background: #3654D6; color: #FFFFFF; border-color: transparent; box-shadow: 0 4px 12px rgba(54,84,214,0.28); }
+.nav-item-icon { font-size: 14px; width: 16px; text-align: center; flex-shrink: 0; color: rgba(15,20,30,0.32); transition: color 0.12s; }
+.nav-item.active .nav-item-icon { color: #FFFFFF; }
+.nav-item-badge { margin-left: auto; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 100px; background: rgba(180,83,9,0.15); color: #B45309; }
+.nav-item.active .nav-item-badge { background: rgba(255,255,255,0.25); color: #FFFFFF; }
+.nav-spacer { flex: 1; }
+.sidebar-footer { padding: 12px 10px; border-top: 1px solid rgba(15,20,30,0.08); font-size: 11px; color: rgba(15,20,30,0.2); }
+
+/* ── CONTENT ── */
+.content { overflow-y: auto; background: #F3F4F9; }
+.content::-webkit-scrollbar { width: 5px; }
+.content::-webkit-scrollbar-thumb { background: rgba(15,20,30,0.08); border-radius: 2px; }
+.page { display: none; padding: 32px 36px; min-height: 100%; }
+.page.active { display: block; }
+.page-head { margin-bottom: 28px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.page-head-left { flex: 1; }
+.page-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: rgba(15,20,30,.92); margin-bottom: 4px; }
+.page-sub { font-size: 13.5px; color: rgba(15,20,30,0.5); margin-top: 2px; }
+
+/* ── STAT CARDS ── */
+.stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 16px; padding: 20px; box-shadow: 0 1px 2px rgba(15,20,30,0.03), 0 8px 20px rgba(15,20,30,0.04); }
+.stat-card-val { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: #12141C; margin-bottom: 4px; }
+.stat-card-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(15,20,30,0.3); }
+.stat-card-delta { font-size: 11px; margin-top: 8px; color: rgba(14,159,110,0.8); }
+
+/* ── MERCHANTS TABLE ── */
+.toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.search-wrap { position: relative; flex: 1; min-width: 200px; }
+.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; color: rgba(15,20,30,0.3); pointer-events: none; }
+.search-input { width: 100%; font-family: 'Inter', sans-serif; font-size: 12.5px; padding: 9px 10px 9px 32px; background: #FFFFFF; border: 1px solid #E4E6EF; color: #12141C; border-radius: 9px; }
+.search-input::placeholder { color: rgba(15,20,30,0.3); }
+.search-input:focus { outline: none; border-color: rgba(54,84,214,0.4); background: rgba(54,84,214,0.04); }
+.filter-pills { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.fpill { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 100px; border: 1px solid rgba(15,20,30,0.1); background: none; color: rgba(15,20,30,0.4); cursor: pointer; transition: all 0.12s; }
+.fpill.active { background: rgba(54,84,214,0.12); border-color: rgba(54,84,214,0.35); color: #3654D6; }
+.fpill:hover:not(.active) { border-color: rgba(15,20,30,0.2); color: rgba(15,20,30,0.65); }
+.results-count { font-size: 12px; color: rgba(15,20,30,0.45); margin-bottom: 10px; }
+.table-wrap { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(15,20,30,0.03), 0 8px 20px rgba(15,20,30,0.04); }
+.rtable { width: 100%; border-collapse: collapse; }
+.rtable th { padding: 12px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(15,20,30,0.4); text-align: left; border-bottom: 1px solid #ECEDF3; background: #FAFAFD; white-space: nowrap; user-select: none; }
+.rtable td { padding: 14px 16px; border-top: 1px solid #F1F2F7; font-size: 12.5px; color: rgba(15,20,30,0.7); vertical-align: middle; }
+.rtable tr:hover td { background: rgba(15,20,30,0.05); cursor: pointer; }
+.rtable td.primary { font-weight: 500; color: rgba(15,20,30,0.85); }
+.rtable td.mono { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+.loading-row td { text-align: center; padding: 60px 20px; color: rgba(15,20,30,0.3); font-size: 13px; }
+.empty-row td { text-align: center; padding: 50px 20px; color: rgba(15,20,30,0.25); font-size: 13px; }
+
+/* ── STATUS PILLS ── */
+.status-badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 100px; }
+.status-badge.pending  { background: rgba(180,83,9,0.15); color: #B45309; }
+.status-badge.reviewed { background: rgba(15,20,30,0.08); color: rgba(15,20,30,0.5); }
+.status-badge.approved { background: rgba(14,159,110,0.15); color: #0E9F6E; }
+.status-badge.sent     { background: rgba(54,84,214,0.15); color: #3654D6; }
+.report-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #0E9F6E; margin-left: 6px; box-shadow: 0 0 6px rgba(14,159,110,0.5); vertical-align: middle; }
+.rate-pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
+.rate-hi  { background: rgba(220,38,38,0.12); color: #DC2626; }
+.rate-mid { background: rgba(180,83,9,0.12); color: #B45309; }
+.rate-lo  { background: rgba(14,159,110,0.12); color: #0E9F6E; }
+.opp-pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; background: rgba(54,84,214,0.12); color: #3654D6; font-family: 'JetBrains Mono', monospace; }
+.confidence-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; }
+.conf-confirmed { background: #0E9F6E; }
+.conf-likely    { background: #3654D6; }
+.conf-estimated { background: #B45309; }
+
+/* ── ACTION BUTTONS ── */
+.action-btn { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; padding: 5px 10px; border: none; cursor: pointer; transition: background 0.12s; border-radius: 9px; }
+.action-btn.ghost { background: rgba(15,20,30,0.08); color: rgba(15,20,30,0.55); }
+.action-btn.ghost:hover { background: rgba(15,20,30,0.1); color: rgba(15,20,30,0.85); }
+.action-btn.blue  { background: rgba(54,84,214,0.12); color: #3654D6; border: 1px solid rgba(54,84,214,0.25); }
+.action-btn.blue:hover { background: rgba(54,84,214,0.22); }
+.action-btn.green { background: rgba(14,159,110,0.12); color: #0E9F6E; border: 1px solid rgba(14,159,110,0.25); }
+.action-btn.green:hover { background: rgba(14,159,110,0.22); }
+
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; }
+.modal-overlay.open { display: flex; }
+.modal { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 18px; width: 100%; max-width: 800px; position: relative; margin: auto; overflow: hidden; box-shadow: 0 24px 64px rgba(15,20,30,0.18); }
+.modal-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; background: rgba(15,20,30,0.08); border: none; cursor: pointer; color: rgba(15,20,30,0.5); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.modal-close:hover { background: rgba(15,20,30,0.14); }
+.modal-header { background: linear-gradient(135deg,#EEF1FE 0%,#F7F8FC 100%); padding: 28px 32px; border-bottom: 1px solid #ECEDF3; }
+.modal-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(15,20,30,0.28); margin-bottom: 8px; }
+.modal-title { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: #12141C; margin-bottom: 4px; }
+.modal-meta { font-size: 12px; color: rgba(15,20,30,0.3); }
+.modal-contact { font-size: 12.5px; color: rgba(15,20,30,0.55); margin-top: 8px; line-height: 1.6; }
+.modal-contact a { color: #3654D6; text-decoration: none; }
+.modal-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 18px; }
+.modal-stat { padding: 12px; background: #F7F8FC; border-radius: 10px; text-align: center; }
+.modal-stat-val { font-size: 16px; font-weight: 600; color: #12141C; display: block; margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; }
+.modal-stat-lbl { font-size: 10px; color: rgba(15,20,30,0.28); text-transform: uppercase; letter-spacing: 0.09em; }
+
+/* ── MODAL BODY TABS ── */
+.modal-tabs { display: flex; border-bottom: 1px solid rgba(15,20,30,0.08); padding: 0 32px; }
+.modal-tab { padding: 12px 0; margin-right: 24px; font-size: 12px; font-weight: 500; color: rgba(15,20,30,0.4); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.12s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Inter', sans-serif; }
+.modal-tab:hover { color: rgba(15,20,30,0.7); }
+.modal-tab.active { color: #3654D6; border-bottom-color: #3654D6; }
+.modal-body { padding: 24px 32px 32px; }
+.modal-tab-pane { display: none; }
+.modal-tab-pane.active { display: block; }
+
+/* ── MODAL SECTIONS ── */
+.modal-section { padding: 16px 0; border-bottom: 1px solid rgba(15,20,30,0.08); }
+.modal-section:last-child { border-bottom: none; }
+.modal-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(15,20,30,0.28); margin-bottom: 10px; }
+.modal-section-text { font-size: 13px; line-height: 1.72; color: rgba(15,20,30,0.55); }
+.modal-table { width: 100%; border-collapse: collapse; }
+.modal-table td { padding: 9px 0; border-bottom: 1px solid rgba(15,20,30,0.08); font-size: 13px; }
+.modal-table td:first-child { color: rgba(15,20,30,0.4); width: 50%; }
+.modal-table td:last-child { text-align: right; font-weight: 500; color: rgba(15,20,30,0.8); }
+.modal-table tr:last-child td { border-bottom: none; }
+.modal-alert { padding: 12px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; border-radius: 0 8px 8px 0; }
+.modal-alert.warn { background: rgba(180,83,9,0.1); border-left: 3px solid #B45309; color: rgba(15,20,30,0.65); }
+.modal-alert.good { background: rgba(14,159,110,0.1); border-left: 3px solid #0E9F6E; color: rgba(15,20,30,0.65); }
+.modal-alert.info { background: rgba(54,84,214,0.1); border-left: 3px solid #3654D6; color: rgba(15,20,30,0.65); }
+.modal-alert strong { font-weight: 600; display: block; margin-bottom: 3px; color: rgba(15,20,30,0.85); }
+.obs-list { margin: 0; padding-left: 18px; }
+.obs-list li { font-size: 13px; color: rgba(15,20,30,0.55); line-height: 1.7; margin-bottom: 4px; }
+.program-box { background: #F7F8FC; border-radius: 10px; padding: 14px; font-size: 13px; line-height: 1.7; color: rgba(15,20,30,0.6); }
+
+/* ── PIT INTELLIGENCE PANELS ── */
+.pit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.pit-panel { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 14px; padding: 16px; box-shadow: 0 1px 2px rgba(15,20,30,0.03); }
+.pit-panel-title { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(15,20,30,0.28); margin-bottom: 12px; }
+.pit-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(15,20,30,0.07); font-size: 12.5px; }
+.pit-row:last-child { border-bottom: none; }
+.pit-row-label { color: rgba(15,20,30,0.45); flex: 1; }
+.pit-row-val { color: rgba(15,20,30,0.85); font-weight: 500; text-align: right; }
+.pit-opp-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(15,20,30,0.07); }
+.pit-opp-item:last-child { border-bottom: none; }
+.pit-opp-title { font-size: 12.5px; font-weight: 500; color: rgba(15,20,30,0.8); margin-bottom: 2px; }
+.pit-opp-meta { font-size: 11px; color: rgba(15,20,30,0.35); }
+.pit-opp-value { font-size: 13px; font-weight: 600; color: #0E9F6E; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+.pit-finding-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(15,20,30,0.07); }
+.pit-finding-item:last-child { border-bottom: none; }
+.pit-finding-title { font-size: 12.5px; color: rgba(15,20,30,0.7); }
+.pit-quality-bar { height: 4px; background: rgba(15,20,30,0.08); margin-top: 6px; }
+.pit-quality-fill { height: 100%; background: #0E9F6E; transition: width 0.4s ease; }
+.pit-quality-fill.med { background: #B45309; }
+.pit-quality-fill.low { background: #DC2626; }
+
+
+/* ── DETAILED PIT VIEWER ── */
+.pitv-hero { background: linear-gradient(135deg, rgba(54,84,214,0.08), rgba(54,84,214,0.02)); border: 1px solid rgba(54,84,214,0.18); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+.pitv-version { font-family:'JetBrains Mono', monospace; font-size:11px; color:rgba(54,84,214,.8); margin-bottom:8px; }
+.pitv-title { font-size:18px; font-weight:600; color:rgba(15,20,30,0.92); margin-bottom:8px; }
+.pitv-sub { font-size:13px; line-height:1.7; color:rgba(15,20,30,0.5); }
+.pitv-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.pitv-section { margin:18px 0; }
+.pitv-section-title { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:rgba(15,20,30,0.28); margin-bottom:10px; }
+.pitv-card { background:#FFFFFF; border:1px solid #ECEDF3; border-radius:12px; padding:14px; margin-bottom:9px; box-shadow: 0 1px 2px rgba(15,20,30,0.03); }
+details.pitv-card { cursor:pointer; }
+details.pitv-card summary { list-style:none; }
+details.pitv-card summary::-webkit-details-marker { display:none; }
+.pitv-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.pitv-card-title { font-size:13px; font-weight:600; color:rgba(15,20,30,0.85); line-height:1.45; }
+.pitv-card-meta { margin-top:4px; font-size:11px; color:rgba(15,20,30,0.32); }
+.pitv-card-body { margin-top:10px; padding-top:10px; border-top:1px solid rgba(15,20,30,0.08); font-size:12.2px; line-height:1.7; color:rgba(15,20,30,0.55); }
+.pitv-badges { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+.pitv-badge { font-size:10px; font-weight:700; letter-spacing:.03em; padding:3px 7px; border:1px solid rgba(15,20,30,0.1); background:rgba(15,20,30,0.06); color:rgba(15,20,30,0.55); white-space:nowrap; }
+.pitv-badge.high, .pitv-badge.confirmed, .pitv-badge.positive { color:#0E9F6E; background:rgba(14,159,110,.10); border-color:rgba(14,159,110,.18); }
+.pitv-badge.medium, .pitv-badge.estimated, .pitv-badge.likely { color:#B45309; background:rgba(180,83,9,.10); border-color:rgba(180,83,9,.18); }
+.pitv-badge.low, .pitv-badge.needs-validation { color:#DC2626; background:rgba(220,38,38,.10); border-color:rgba(220,38,38,.18); }
+.pitv-evidence { margin-top:8px; }
+.pitv-evidence-item { display:flex; gap:8px; padding:6px 0; border-bottom:1px solid rgba(15,20,30,0.065); font-size:11.5px; color:rgba(15,20,30,0.45); }
+.pitv-evidence-item:last-child { border-bottom:none; }
+.pitv-evidence-source { min-width:120px; color:rgba(54,84,214,.65); font-family:'JetBrains Mono', monospace; font-size:10.5px; }
+.pitv-code { white-space:pre-wrap; max-height:420px; overflow:auto; background:#181B22; border-radius:10px; border:1px solid rgba(15,20,30,0.08); padding:14px; font-family:'JetBrains Mono', monospace; font-size:11px; line-height:1.6; color:rgba(224,233,246,0.75); }
+@media(max-width:800px){ .pitv-grid{grid-template-columns:1fr;} }
+
+
+/* ── REPORT BANNER + ACTIONS ── */
+.report-ready-banner { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: rgba(14,159,110,0.1); border: 1px solid rgba(14,159,110,0.25); padding: 14px 16px; margin-bottom: 16px; }
+.report-ready-banner .rb-text { font-size: 13px; color: #0E9F6E; font-weight: 500; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.btn-mark-reviewed { background: rgba(14,159,110,0.15); color: #0E9F6E; border: 1px solid rgba(14,159,110,0.3); padding: 10px 18px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s; border-radius: 9px; }
+.btn-mark-reviewed:hover { background: rgba(14,159,110,0.25); }
+.btn-approve { background: rgba(54,84,214,0.15); color: #3654D6; border: 1px solid rgba(54,84,214,0.3); padding: 10px 18px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 7px; border-radius: 9px; }
+.btn-approve:hover { background: rgba(54,84,214,0.25); }
+.btn-approve:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-mark-sent { background: rgba(54,84,214,0.15); color: #3654D6; border: 1px solid rgba(54,84,214,0.3); padding: 10px 18px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s; border-radius: 9px; }
+.btn-mark-sent:hover { background: rgba(54,84,214,0.25); }
+.btn-open-report { display: inline-flex; align-items: center; gap: 7px; background: rgba(54,84,214,0.15); color: #3654D6; border: 1px solid rgba(54,84,214,0.3); padding: 10px 18px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; border-radius: 9px; }
+.btn-open-report:hover { background: rgba(54,84,214,0.25); color: #12141C; }
+
+/* ── EDIT PANEL ── */
+.edit-panel-toggle { display: flex; align-items: center; gap: 8px; width: 100%; background: rgba(180,83,9,0.06); border: 1px solid rgba(180,83,9,0.18); padding: 11px 16px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: rgba(180,83,9,0.85); transition: background 0.15s; border-radius: 9px; }
+.edit-panel-toggle:hover { background: rgba(180,83,9,0.1); }
+.edit-panel-toggle .toggle-icon { margin-left: auto; font-size: 11px; transition: transform 0.2s; color: rgba(180,83,9,0.5); }
+.edit-panel-toggle.open .toggle-icon { transform: rotate(180deg); }
+.edit-panel { display: none; margin-top: 12px; background: #F7F8FC; border: 1px solid #ECEDF3; border-radius: 14px; padding: 20px; gap: 16px; flex-direction: column; }
+.edit-panel.open { display: flex; }
+.edit-field { display: flex; flex-direction: column; gap: 6px; }
+.edit-field-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(15,20,30,0.3); }
+.edit-field-hint { font-size: 11px; color: rgba(15,20,30,0.2); margin-top: -3px; }
+.edit-textarea { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.65; background: rgba(15,20,30,0.06); border: 1px solid rgba(15,20,30,0.09); color: rgba(15,20,30,0.75); padding: 10px 12px; resize: vertical; min-height: 72px; border-radius: 9px; }
+.edit-textarea:focus { outline: none; border-color: rgba(54,84,214,0.4); }
+.edit-input, .edit-select { font-family: 'Inter', sans-serif; font-size: 13px; background: rgba(15,20,30,0.06); border: 1px solid rgba(15,20,30,0.09); color: rgba(15,20,30,0.75); padding: 9px 12px; width: 100%; border-radius: 9px; }
+.edit-input:focus, .edit-select:focus { outline: none; border-color: rgba(54,84,214,0.4); }
+.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.edit-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.edit-panel-note { font-size: 11px; color: rgba(15,20,30,0.45); line-height: 1.6; padding: 10px 12px; background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 9px; }
+
+/* ── MODULE ACCESS TOGGLES ── */
+.module-row { display: flex; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid rgba(15,20,30,0.08); }
+.module-row:last-child { border-bottom: none; }
+.module-info { flex: 1; }
+.module-name { font-size: 13px; font-weight: 500; color: rgba(15,20,30,0.85); margin-bottom: 2px; }
+.module-desc { font-size: 11.5px; color: rgba(15,20,30,0.35); line-height: 1.5; }
+.module-meta { font-size: 10px; color: rgba(15,20,30,0.25); margin-top: 3px; }
+.module-status-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 100px; white-space: nowrap; }
+.module-status-badge.active  { background: rgba(14,159,110,0.12); color: #0E9F6E; }
+.module-status-badge.planned { background: rgba(15,20,30,0.08); color: rgba(15,20,30,0.3); }
+.module-toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+.module-toggle input { opacity: 0; width: 0; height: 0; }
+.module-toggle-slider { position: absolute; cursor: pointer; inset: 0; background: rgba(15,20,30,0.1); border: 1px solid rgba(15,20,30,0.15); transition: .2s; border-radius: 22px; }
+.module-toggle-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background: rgba(15,20,30,0.4); transition: .2s; border-radius: 50%; }
+.module-toggle input:checked + .module-toggle-slider { background: rgba(54,84,214,0.3); border-color: rgba(54,84,214,0.5); }
+.module-toggle input:checked + .module-toggle-slider:before { transform: translateX(18px); background: #3654D6; }
+.module-toggle input:disabled + .module-toggle-slider { cursor: not-allowed; opacity: 0.5; }
+
+/* ── SETTINGS ── */
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.settings-card { background: #FFFFFF; border: 1px solid #ECEDF3; border-radius: 16px; padding: 22px; box-shadow: 0 1px 2px rgba(15,20,30,0.03), 0 8px 20px rgba(15,20,30,0.04); }
+.settings-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(15,20,30,0.28); margin-bottom: 16px; }
+.settings-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(15,20,30,0.07); }
+.settings-row:last-of-type { border-bottom: none; }
+.settings-label { font-size: 12.5px; color: rgba(15,20,30,0.6); }
+.settings-hint { font-size: 11px; color: rgba(15,20,30,0.25); margin-top: 2px; }
+.settings-input { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 10px; background: rgba(15,20,30,0.06); border: 1px solid rgba(15,20,30,0.1); color: rgba(15,20,30,0.7); width: 200px; border-radius: 9px; }
+.settings-input:focus { outline: none; border-color: rgba(54,84,214,0.4); }
+.save-btn { margin-top: 16px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; padding: 8px 16px; background: rgba(54,84,214,0.15); color: #3654D6; border: 1px solid rgba(54,84,214,0.3); cursor: pointer; transition: background 0.12s; border-radius: 9px; }
+.save-btn:hover { background: rgba(54,84,214,0.25); }
+.int-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid rgba(15,20,30,0.07); }
+.int-row:last-child { border-bottom: none; }
+.int-icon { width: 34px; height: 34px; background: #F7F8FC; border: 1px solid #ECEDF3; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.int-name { font-size: 12.5px; font-weight: 500; color: rgba(15,20,30,0.7); }
+.int-sub { font-size: 11px; color: rgba(15,20,30,0.3); }
+.int-badge { margin-left: auto; font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 100px; }
+.int-badge.connected { background: rgba(14,159,110,0.12); color: #0E9F6E; }
+.int-badge.error { background: rgba(220,38,38,0.12); color: #DC2626; }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="login-screen" style="position:fixed;inset:0;z-index:1000;background:#F3F4F9;display:none;align-items:center;justify-content:center;font-family:'Inter',sans-serif">
+  <form id="login-form" onsubmit="return handleLogin(event)" style="width:100%;max-width:340px;padding:0 24px">
+    <div style="display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:32px">
+      <div class="nav-mark"><span></span><span></span></div>
+      <span class="nav-word" style="font-size:17px">acceptor<b>IQ</b></span>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:center;margin-bottom:20px">Operations Portal</div>
+    <input type="password" id="login-password" class="edit-input" placeholder="Password" autocomplete="current-password" style="text-align:center;margin-bottom:12px" autofocus>
+    <button type="submit" id="login-submit-btn" class="save-btn" style="width:100%;padding:11px;text-align:center;margin-top:0">Sign in</button>
+    <div id="login-error" style="margin-top:14px;font-size:12px;color:#DC2626;text-align:center;min-height:16px"></div>
+  </form>
+</div>
+
+<div class="shell" id="app-shell" style="display:none">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <img src="/images/acceptorIQ-full-black.png" alt="acceptorIQ" class="nav-logo">
+    </div>
+    <div class="nav-right">
+      <div class="nav-system"><div class="sys-dot"></div>All systems operational</div>
+      <div class="nav-badge-count" id="nav-pending-count">— pending</div>
+      <div class="nav-avatar-wrap">
+        <div class="nav-avatar" onclick="toggleAvatarMenu(event)" title="Account">DH</div>
+        <div class="nav-avatar-menu" id="nav-avatar-menu">
+          <button class="nav-avatar-menu-item danger" onclick="handleLogout()">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section-label">Overview</div>
+    <button class="nav-item active" onclick="showPage('dashboard',this)">
+      <span class="nav-item-icon">◈</span> Dashboard
+    </button>
+    <div class="sidebar-section-label">Operations</div>
+    <button class="nav-item" onclick="showPage('merchants',this)">
+      <span class="nav-item-icon">⊞</span> Merchants
+      <span class="nav-item-badge" id="sidebar-pending">—</span>
+    </button>
+    <div class="sidebar-section-label">System</div>
+    <button class="nav-item" onclick="showPage('settings',this)">
+      <span class="nav-item-icon">◎</span> Settings
+    </button>
+    <div class="nav-spacer"></div>
+    <div class="sidebar-footer">acceptorIQ · Declan Harrington</div>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-head">
+        <div class="page-head-left">
+          <div class="page-title">Dashboard</div>
+          <div class="page-sub">Intelligence overview across all merchants</div>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-val" id="dash-merchants">—</div>
+          <div class="stat-card-lbl">Merchants</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-val" style="color:#B45309" id="dash-pending">—</div>
+          <div class="stat-card-lbl">Pending review</div>
+          <div class="stat-card-delta" id="dash-pending-note"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-val" style="color:#0E9F6E" id="dash-opportunity">—</div>
+          <div class="stat-card-lbl">Total opportunity identified</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-val" style="color:#3654D6" id="dash-pit-count">—</div>
+          <div class="stat-card-lbl">PIT analyses run</div>
+        </div>
+      </div>
+      <!-- Recent merchants table on dashboard -->
+      <div class="table-wrap">
+        <table class="rtable">
+          <thead>
+            <tr>
+              <th>Merchant</th>
+              <th>Provider</th>
+              <th>Eff. Rate</th>
+              <th>Annual Opportunity</th>
+              <th>Top Finding</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="dash-merchants-tbody">
+            <tr><td colspan="6"><div style="text-align:center;padding:40px;color:rgba(15,20,30,0.3)">Loading…</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ MERCHANTS ══ -->
+    <div class="page" id="page-merchants">
+      <div class="page-head">
+        <div class="page-head-left">
+          <div class="page-title">Merchants</div>
+          <div class="page-sub">All merchants · click to view PIT intelligence and manage reports</div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="merchant-search" class="search-input" placeholder="Search merchant, provider, email…" oninput="applyMerchantFilter()">
+        </div>
+      </div>
+      <div class="filter-pills">
+        <button class="fpill active" data-mfilter="all" onclick="setMerchantFilter('all',this)">All</button>
+        <button class="fpill" data-mfilter="pending_review" onclick="setMerchantFilter('pending_review',this)">Pending review</button>
+        <button class="fpill" data-mfilter="approved" onclick="setMerchantFilter('approved',this)">Report generated</button>
+        <button class="fpill" data-mfilter="sent" onclick="setMerchantFilter('sent',this)">Sent to client</button>
+      </div>
+      <div class="results-count" id="merchant-count"></div>
+      <div class="table-wrap">
+        <table class="rtable">
+          <thead>
+            <tr>
+              <th>Merchant</th>
+              <th>Provider</th>
+              <th>Eff. Rate</th>
+              <th>Volume</th>
+              <th>Annual Opportunity</th>
+              <th>Submissions</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="merchants-tbody">
+            <tr class="loading-row"><td colspan="8">Loading merchants…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div class="page" id="page-settings">
+      <div class="page-head">
+        <div class="page-head-left">
+          <div class="page-title">Settings</div>
+          <div class="page-sub">API credentials, integrations, and pipeline configuration.</div>
+        </div>
+      </div>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <div class="settings-card-title">Integrations</div>
+          <div class="int-row"><div class="int-icon">🤖</div><div><div class="int-name">Anthropic / Claude</div><div class="int-sub">Haiku (extraction) · Sonnet (reports)</div></div><span class="int-badge connected">Connected</span></div>
+          <div class="int-row"><div class="int-icon">🗄️</div><div><div class="int-name">Supabase</div><div class="int-sub">submissions · merchants · pit_results</div></div><span class="int-badge connected">Connected</span></div>
+          <div class="int-row"><div class="int-icon">📨</div><div><div class="int-name">Resend</div><div class="int-sub">Triage notifications</div></div><span class="int-badge connected">Connected</span></div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-title">Platform</div>
+          <div class="settings-row"><div><div class="settings-label">PIT Version</div><div class="settings-hint">Current intelligence engine</div></div><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#3654D6">PIT v2</span></div>
+          <div class="settings-row"><div><div class="settings-label">Report module</div><div class="settings-hint">PDF-style narrative report</div></div><span style="font-size:11px;color:#0E9F6E;font-weight:600">Active</span></div>
+          <div class="settings-row"><div><div class="settings-label">AI Analyst</div><div class="settings-hint">Chat interface — coming Step 5</div></div><span style="font-size:11px;color:rgba(15,20,30,0.25);font-weight:600">Not yet built</span></div>
+          <div class="settings-row"><div><div class="settings-label">Merchant dashboard</div><div class="settings-hint">Customer-facing — coming Step 6</div></div><span style="font-size:11px;color:rgba(15,20,30,0.25);font-weight:600">Not yet built</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /shell -->
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+/* ─────────────────────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────────────────────── */
+let allMerchants = [];
+let currentMerchantFilter = 'all';
+let currentMerchantSearch = '';
+
+/* ─────────────────────────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────────────────────────── */
+const fmtD = n => (n != null && n !== '') ? '$' + Number(n).toLocaleString('en-AU', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
+const fmtK = n => { if (n == null || n === '') return '—'; const v = Number(n); return v >= 1000000 ? '$' + (v/1000000).toFixed(1) + 'M' : v >= 1000 ? '$' + (v/1000).toFixed(0) + 'k' : fmtD(v); };
+const fmtP = n => (n != null && n !== '') ? Number(n).toFixed(2) + '%' : '—';
+const esc  = v => (v == null ? '' : String(v)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const escA = v => esc(v).replace(/"/g,'&quot;');
+function parseJSON(str, fallback) { try { return str ? JSON.parse(str) : fallback; } catch { return fallback; } }
+function ratePillClass(r) { if (!r) return ''; return r > 1.7 ? 'rate-hi' : r > 1.3 ? 'rate-mid' : 'rate-lo'; }
+
+const STATUS_LABEL = { pending_review:'Pending review', reviewed:'Reviewed', approved:'Report ready', sent:'Sent to client' };
+const STATUS_CLASS = { pending_review:'pending', reviewed:'reviewed', approved:'approved', sent:'sent' };
+
+function confidenceDot(c) {
+  const cls = c === 'Confirmed' ? 'conf-confirmed' : c === 'Likely' ? 'conf-likely' : 'conf-estimated';
+  return `<span class="confidence-dot ${cls}"></span>`;
+}
+
+function checkFeeReconciliation(f) {
+  const total = Number(f?.totalFees);
+  const items = Array.isArray(f?.feeBreakdown) ? f.feeBreakdown : [];
+  if (!total || !items.length) return null;
+  const sum = items.reduce((a, b) => a + (Number(b.amount) || 0), 0);
+  const pct = Math.abs(sum - total) / total * 100;
+  if (pct <= 5) return null;
+  return { total, sum, diff: sum - total, pct };
+}
+
+/* ─────────────────────────────────────────────────────────────
+   API HELPER
+───────────────────────────────────────────────────────────── */
+async function api(action, params = {}) {
+  const res = await fetch('/api/admin-data', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, ...params })
+  });
+  if (res.status === 401) { showLoginScreen(); return null; }
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error || ('HTTP ' + res.status));
+  }
+  return res.json();
+}
+
+/* ─────────────────────────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────────────────────────── */
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LOAD DATA
+───────────────────────────────────────────────────────────── */
+async function loadMerchants() {
+  try {
+    const data = await api('listMerchants');
+    if (!data) return false;
+    allMerchants = data.merchants || [];
+    updateDashboard();
+    applyMerchantFilter();
+    updateSidebarBadge();
+    return true;
+  } catch(err) {
+    document.getElementById('merchants-tbody').innerHTML =
+      `<tr class="empty-row"><td colspan="8">Could not load merchants: ${esc(err.message)}</td></tr>`;
+    return false;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DASHBOARD
+───────────────────────────────────────────────────────────── */
+function updateDashboard() {
+  const total   = allMerchants.length;
+  const pending = allMerchants.filter(m => m.latest_status === 'pending_review').length;
+  const pitCount = allMerchants.filter(m => m.latest_pit_id).length;
+  const totalOpp = allMerchants.reduce((sum, m) => sum + (m.quantified_annual_opportunity || 0), 0);
+
+  document.getElementById('dash-merchants').textContent = total;
+  document.getElementById('dash-pending').textContent   = pending;
+  document.getElementById('dash-pit-count').textContent = pitCount;
+  document.getElementById('dash-opportunity').textContent = totalOpp > 0 ? fmtK(totalOpp) : '—';
+  if (pending > 0) document.getElementById('dash-pending-note').textContent = 'Needs attention';
+
+  // Recent merchants table on dashboard
+  const recent = allMerchants.slice(0, 8);
+  document.getElementById('dash-merchants-tbody').innerHTML = recent.length
+    ? recent.map(m => {
+        const topOpp = m.top_opportunities?.[0];
+        const topFind = m.key_findings?.[0];
+        const sc = STATUS_CLASS[m.latest_status] || 'pending';
+        const sl = STATUS_LABEL[m.latest_status] || 'No submissions';
+        return `<tr onclick="openMerchant(${m.id}); showPage('merchants', document.querySelectorAll('.nav-item')[1])">
+          <td class="primary">${esc(m.company_name)}<br><span style="font-size:11px;color:rgba(15,20,30,0.3);font-weight:400">${esc(m.industry||'')}</span></td>
+          <td>${esc(m.latest_provider||'—')}</td>
+          <td>${m.latest_effective_rate ? `<span class="rate-pill ${ratePillClass(m.latest_effective_rate)}">${fmtP(m.latest_effective_rate)}</span>` : '—'}</td>
+          <td>${m.quantified_annual_opportunity ? `<span class="opp-pill">${fmtK(m.quantified_annual_opportunity)}</span>` : '—'}</td>
+          <td style="font-size:11.5px;color:rgba(15,20,30,0.55)">${topFind ? esc(topFind.title) : '—'}</td>
+          <td><span class="status-badge ${sc}">${sl}</span></td>
+        </tr>`;
+      }).join('')
+    : `<tr class="empty-row"><td colspan="6">No merchants yet. Submit a statement to get started.</td></tr>`;
+}
+
+function updateSidebarBadge() {
+  const n = allMerchants.filter(m => m.latest_status === 'pending_review').length;
+  document.getElementById('sidebar-pending').textContent = n || '';
+  document.getElementById('nav-pending-count').textContent = n + ' pending';
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MERCHANT LIST
+───────────────────────────────────────────────────────────── */
+function setMerchantFilter(filter, btn) {
+  currentMerchantFilter = filter;
+  document.querySelectorAll('.fpill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyMerchantFilter();
+}
+
+function applyMerchantFilter() {
+  currentMerchantSearch = document.getElementById('merchant-search').value.trim().toLowerCase();
+  let list = allMerchants;
+
+  if (currentMerchantFilter !== 'all') {
+    list = list.filter(m => m.latest_status === currentMerchantFilter);
+  }
+  if (currentMerchantSearch) {
+    list = list.filter(m =>
+      [m.company_name, m.contact_name, m.contact_email, m.latest_provider, m.industry]
+        .filter(Boolean).join(' ').toLowerCase().includes(currentMerchantSearch)
+    );
+  }
+
+  document.getElementById('merchant-count').textContent =
+    `${list.length} merchant${list.length === 1 ? '' : 's'}${currentMerchantSearch || currentMerchantFilter !== 'all' ? ' (filtered)' : ''}`;
+
+  renderMerchants(list);
+}
+
+function renderMerchants(merchants) {
+  if (!merchants.length) {
+    document.getElementById('merchants-tbody').innerHTML =
+      `<tr class="empty-row"><td colspan="8">${allMerchants.length ? 'No matching merchants.' : 'No merchants yet.'}</td></tr>`;
+    return;
+  }
+
+  document.getElementById('merchants-tbody').innerHTML = merchants.map(m => {
+    const sc = STATUS_CLASS[m.latest_status] || 'pending';
+    const sl = STATUS_LABEL[m.latest_status] || 'No submissions';
+    const reconFlag = ''; // checked inside modal
+    const hasPit = !!m.latest_pit_id;
+
+    return `<tr onclick="openMerchant(${m.id})">
+      <td class="primary">
+        ${esc(m.company_name)}${reconFlag}
+        <br><span style="font-size:11px;color:rgba(15,20,30,0.3);font-weight:400">${esc(m.contact_name||'')}${m.contact_email ? ' · ' + esc(m.contact_email) : ''}</span>
+      </td>
+      <td>${esc(m.latest_provider||'—')}<br><span style="font-size:10px;color:rgba(15,20,30,0.3)">${esc(m.latest_period||'')}</span></td>
+      <td>${m.latest_effective_rate ? `<span class="rate-pill ${ratePillClass(m.latest_effective_rate)}">${fmtP(m.latest_effective_rate)}</span>` : '—'}</td>
+      <td class="mono">${fmtK(m.latest_volume)}</td>
+      <td>${m.quantified_annual_opportunity ? `<span class="opp-pill">${fmtK(m.quantified_annual_opportunity)}</span>` : hasPit ? '<span style="color:rgba(15,20,30,0.25);font-size:11px">No opportunity quantified</span>' : '—'}</td>
+      <td style="color:rgba(15,20,30,0.5)">${m.submission_count}</td>
+      <td><span class="status-badge ${sc}">${sl}</span>${m.latest_report_html_path ? '<span class="report-dot"></span>' : ''}</td>
+      <td style="text-align:right">
+        <div style="display:flex;gap:6px;justify-content:flex-end">
+          ${m.latest_report_html_path ? `<button class="action-btn blue" onclick="event.stopPropagation();openReport('${escA(m.latest_report_html_path)}')">Report ↗</button>` : ''}
+          <button class="action-btn ghost" onclick="event.stopPropagation();openMerchant(${m.id})">View →</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MERCHANT MODAL
+───────────────────────────────────────────────────────────── */
+async function openMerchant(merchantId) {
+  // Show loading state immediately
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header" style="padding:40px 32px;text-align:center">
+      <div style="color:rgba(15,20,30,0.3);font-size:13px">Loading merchant PIT…</div>
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  try {
+    const data = await api('getMerchant', { merchantId });
+    if (!data) return;
+    renderMerchantModal(data.merchant, data.submissions, data.latestPit);
+  } catch(err) {
+    document.getElementById('modal-content').innerHTML = `
+      <div class="modal-header"><div class="modal-title" style="color:#DC2626">Error loading merchant</div>
+      <div class="modal-meta">${esc(err.message)}</div></div>`;
+  }
+}
+
+function renderMerchantModal(merchant, submissions, latestPit) {
+  const latestSub = submissions[0] || null;
+  const pit = latestPit?.pit_json || null;
+  const facts = pit?.facts || (latestSub ? parseJSON(latestSub.report_json, {}) : {});
+  const caseSummary = pit?.caseSummary || null;
+  const commercialIntel = pit?.commercialIntelligence || null;
+  const findings = pit?.findings || [];
+  const opportunities = pit?.opportunities || [];
+  const dataQuality = pit?.dataQuality || null;
+  const riskIntel = pit?.riskIntelligence || null;
+  const metrics = pit?.metrics || {};
+
+  const sl = STATUS_LABEL[latestSub?.status] || 'No submissions';
+  const sc = STATUS_CLASS[latestSub?.status] || 'pending';
+
+  // Fee reconciliation check
+  const feeCheck = checkFeeReconciliation(facts);
+  const reconBanner = feeCheck ? `
+    <div class="modal-alert warn" style="margin-bottom:16px">
+      <strong>⚠ Fee reconciliation mismatch</strong>
+      Extracted total fees (${fmtD(feeCheck.total)}) differ from the sum of the fee breakdown (${fmtD(feeCheck.sum)}) by ${fmtD(Math.abs(feeCheck.diff))} (${feeCheck.pct.toFixed(1)}%). Verify before generating report.
+    </div>` : '';
+
+  // Build the unified PIT tab.
+  // This folds the old Intelligence tab and detailed PIT Viewer into one source-of-truth view.
+  const pitTab = pit ? `
+    ${buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportunities, dataQuality, riskIntel, metrics)}
+    ${buildPITViewerTab(pit, latestPit)}
+  ` : `
+    <div style="padding:40px;text-align:center;color:rgba(15,20,30,0.25)">
+      No PIT analysis yet. The PIT now runs automatically after submission; if this is an older submission, generate the report to create a PIT snapshot.
+    </div>`;
+
+  // Build submissions history tab
+  const subsTab = buildSubmissionsTab(submissions, merchant);
+
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header">
+      <div class="modal-eyebrow">Merchant · ${esc(merchant.industry||'Unknown industry')} · <span class="status-badge ${sc}" style="font-size:10px">${sl}</span></div>
+      <div class="modal-title">${esc(merchant.company_name)}</div>
+      <div class="modal-meta">${esc(latestSub?.provider||'No submissions yet')}${latestSub?.period ? ' — ' + esc(latestSub.period) : ''}</div>
+      ${merchant.contact_name || merchant.contact_email ? `<div class="modal-contact">${[merchant.contact_name, merchant.contact_email ? `<a href="mailto:${escA(merchant.contact_email)}">${esc(merchant.contact_email)}</a>` : '', merchant.contact_phone].filter(Boolean).join(' &nbsp;·&nbsp; ')}</div>` : ''}
+      <div class="modal-stats">
+        <div class="modal-stat"><span class="modal-stat-val">${fmtP(latestSub?.effective_rate)}</span><span class="modal-stat-lbl">Eff. rate</span></div>
+        <div class="modal-stat"><span class="modal-stat-val">${fmtK(latestSub?.volume)}</span><span class="modal-stat-lbl">Card volume</span></div>
+        <div class="modal-stat"><span class="modal-stat-val">${caseSummary?.quantifiedAnnualOpportunity ? fmtK(caseSummary.quantifiedAnnualOpportunity) : '—'}</span><span class="modal-stat-lbl">Annual opportunity</span></div>
+        <div class="modal-stat"><span class="modal-stat-val">${submissions.length}</span><span class="modal-stat-lbl">Submissions</span></div>
+      </div>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchModalTab('pit',this)">PIT</button>
+      <button class="modal-tab" onclick="switchModalTab('submissions',this)">Submissions (${submissions.length})</button>
+      <button class="modal-tab" onclick="switchModalTab('report',this)">Report</button>
+      <button class="modal-tab" onclick="switchModalTab('modules',this);loadModuleAccess(${merchant.id})">Modules</button>
+    </div>
+    <div class="modal-body">
+      ${reconBanner}
+      <div class="modal-tab-pane active" id="mtab-pit">${pitTab}</div>
+      <div class="modal-tab-pane" id="mtab-submissions">${subsTab}</div>
+      <div class="modal-tab-pane" id="mtab-report">${buildReportTab(latestSub, facts, merchant)}</div>
+      <div class="modal-tab-pane" id="mtab-modules"><div style="padding:20px 0;color:rgba(15,20,30,0.3);font-size:12px">Loading modules…</div></div>
+    </div>`;
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function switchModalTab(tab, btn) {
+  document.querySelectorAll('.modal-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.modal-tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('mtab-' + tab).classList.add('active');
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MODULE ACCESS
+───────────────────────────────────────────────────────────── */
+async function loadModuleAccess(merchantId) {
+  const pane = document.getElementById('mtab-modules');
+  if (!pane) return;
+  pane.innerHTML = '<div style="padding:20px 0;color:rgba(15,20,30,0.3);font-size:12px">Loading modules…</div>';
+
+  try {
+    const data = await api('getModuleAccess', { merchantId });
+    if (!data) return;
+    pane.innerHTML = renderModuleAccess(merchantId, data.modules);
+  } catch(err) {
+    pane.innerHTML = `<div style="padding:20px 0;color:#DC2626;font-size:12px">Error: ${esc(err.message)}</div>`;
+  }
+}
+
+function renderModuleAccess(merchantId, modules) {
+  if (!modules.length) return '<div style="padding:20px 0;color:rgba(15,20,30,0.25)">No modules configured.</div>';
+
+  const rows = modules.map(m => {
+    const isPlanned = m.status === 'planned';
+    const enabledAt = m.enabled_at ? new Date(m.enabled_at).toLocaleDateString('en-AU', {day:'numeric',month:'short',year:'numeric'}) : null;
+
+    return `<div class="module-row">
+      <div class="module-info">
+        <div class="module-name">${esc(m.name)} <span class="module-status-badge ${m.status}">${esc(m.status)}</span></div>
+        <div class="module-desc">${esc(m.description||'')}</div>
+        ${m.enabled && enabledAt ? `<div class="module-meta">Enabled ${enabledAt}${m.enabled_by && m.enabled_by !== 'admin' ? ' · by ' + esc(m.enabled_by) : ''}</div>` : ''}
+        ${isPlanned ? `<div class="module-meta" style="color:rgba(180,83,9,0.5)">Not yet built — enable when available</div>` : ''}
+      </div>
+      <label class="module-toggle" title="${isPlanned ? 'Module not yet built' : (m.enabled ? 'Disable for this merchant' : 'Enable for this merchant')}">
+        <input
+          type="checkbox"
+          ${m.enabled ? 'checked' : ''}
+          onchange="toggleModule(${merchantId}, '${escA(m.id)}', this.checked, this)"
+        >
+        <span class="module-toggle-slider"></span>
+      </label>
+    </div>`;
+  }).join('');
+
+  return `
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;color:rgba(15,20,30,0.3);line-height:1.6">
+        Toggle modules on or off for this merchant. Active modules are available immediately; planned modules can be enabled now and will become accessible once built.
+      </div>
+    </div>
+    ${rows}`;
+}
+
+async function toggleModule(merchantId, moduleId, enable, checkbox) {
+  // Optimistic UI — disable the checkbox during the request to prevent double-clicks
+  checkbox.disabled = true;
+  try {
+    const data = await api('toggleModuleAccess', { merchantId, moduleId, enable });
+    if (!data) {
+      // Auth expired — revert checkbox
+      checkbox.checked = !enable;
+      return;
+    }
+    // Success — reload the module list to show updated enabled_at timestamp
+    await loadModuleAccess(merchantId);
+  } catch(err) {
+    // Revert checkbox on error
+    checkbox.checked = !enable;
+    checkbox.disabled = false;
+    alert('Could not update module access: ' + err.message);
+  }
+}
+
+function buildPITTab(pit, facts, caseSummary, commercialIntel, findings, opportunities, dataQuality, riskIntel, metrics) {
+  // Headline summary
+  const headlineSummary = caseSummary ? `
+    <div class="modal-section">
+      <div class="modal-section-label">Intelligence Summary</div>
+      <div style="font-size:14px;font-weight:500;color:rgba(15,20,30,0.85);margin-bottom:6px">${esc(caseSummary.headline||'')}</div>
+      <div class="modal-section-text">${esc(caseSummary.summary||'')}</div>
+    </div>` : '';
+
+  // Opportunities
+  const oppsHtml = opportunities.length ? `
+    <div class="modal-section">
+      <div class="modal-section-label">Quantified Opportunities</div>
+      ${opportunities.map(o => `
+        <div class="pit-opp-item">
+          <div style="flex:1">
+            <div class="pit-opp-title">${confidenceDot(o.confidence)}${esc(o.title||o.id)}</div>
+            <div class="pit-opp-meta">${esc(o.confidence)} · ${esc(o.urgency||'')} urgency</div>
+          </div>
+          <div class="pit-opp-value">${o.estimatedAnnualValue ? fmtK(o.estimatedAnnualValue) + '/yr' : 'Strategic'}</div>
+        </div>`).join('')}
+    </div>` : '';
+
+  // Commercial intelligence
+  const commercialHtml = commercialIntel ? `
+    <div class="pit-grid">
+      <div class="pit-panel">
+        <div class="pit-panel-title">Pricing Analysis</div>
+        <div class="pit-row"><span class="pit-row-label">Pricing model</span><span class="pit-row-val">${esc(commercialIntel.pricingModel?.model||'—')}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Transparency</span><span class="pit-row-val">${esc(commercialIntel.pricingModel?.transparency||'—')}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Provider margin</span><span class="pit-row-val">${esc(commercialIntel.providerMargin?.observed||'—')}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Margin position</span><span class="pit-row-val">${esc(commercialIntel.providerMargin?.position||'—')}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Benchmark position</span><span class="pit-row-val" style="font-size:11px">${esc(commercialIntel.benchmark?.position||'—')}</span></div>
+      </div>
+      <div class="pit-panel">
+        <div class="pit-panel-title">Cost Drivers</div>
+        ${(commercialIntel.costDrivers||[]).map(d => `
+          <div class="pit-row"><span class="pit-row-label">${esc(d.label)}</span><span class="pit-row-val">${d.pct}% · ${fmtK(d.amount)}</span></div>`).join('')}
+        ${commercialIntel.commercialRead?.length ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(15,20,30,0.08)">${commercialIntel.commercialRead.map(r => `<div style="font-size:11.5px;color:rgba(15,20,30,0.45);margin-bottom:6px">· ${esc(r)}</div>`).join('')}</div>` : ''}
+      </div>
+    </div>` : '';
+
+  // Findings
+  const findingsHtml = findings.length ? `
+    <div class="modal-section">
+      <div class="modal-section-label">Key Findings</div>
+      ${findings.filter(f => f.title || f.id).map(f => `
+        <div class="pit-finding-item">
+          ${confidenceDot(f.confidence)}
+          <div>
+            <div class="pit-finding-title">${esc(f.title||f.id)}</div>
+            ${f.summary ? `<div style="font-size:11px;color:rgba(15,20,30,0.35);margin-top:2px">${esc(f.summary)}</div>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>` : '';
+
+  // Risks
+  const risks = riskIntel?.risks || [];
+  const risksHtml = risks.length ? `
+    <div class="modal-section">
+      <div class="modal-section-label">Risk Flags</div>
+      ${risks.map(r => `
+        <div class="modal-alert warn" style="margin-bottom:6px">
+          <strong>${esc(r.title||r.id)}</strong>${r.detail ? esc(r.detail) : ''}
+        </div>`).join('')}
+    </div>` : '';
+
+  // Data quality
+  const dqHtml = dataQuality ? (() => {
+    const level = dataQuality.qualityLevel || dataQuality.level || 'Unknown';
+    const pct = level === 'High' ? 100 : level === 'Medium' ? 60 : 30;
+    const cls = level === 'High' ? '' : level === 'Medium' ? 'med' : 'low';
+    const gaps = dataQuality.gaps || [];
+    return `
+      <div class="modal-section">
+        <div class="modal-section-label">Data Quality</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="flex:1"><div class="pit-quality-bar"><div class="pit-quality-fill ${cls}" style="width:${pct}%"></div></div></div>
+          <div style="font-size:12px;font-weight:600;color:rgba(15,20,30,0.7);white-space:nowrap">${esc(level)}</div>
+        </div>
+        ${gaps.map(g => `<div style="font-size:12px;color:rgba(15,20,30,0.45);margin-bottom:4px">· ${esc(g.label)} — ${esc(g.reason||'')}</div>`).join('')}
+      </div>`;
+  })() : '';
+
+  // Raw facts
+  const factsHtml = `
+    <div class="modal-section">
+      <div class="modal-section-label">Statement Data</div>
+      <table class="modal-table">
+        <tr><td>Card volume</td><td>${fmtD(facts.volume)}</td></tr>
+        <tr><td>Total fees</td><td>${fmtD(facts.totalFees)}</td></tr>
+        <tr><td>Effective rate</td><td>${fmtP(facts.effectiveRate)}</td></tr>
+        <tr><td>Provider rate</td><td>${esc(facts.providerRate||'—')}</td></tr>
+        <tr><td>Transactions</td><td>${facts.transactions != null ? Number(facts.transactions).toLocaleString('en-AU') : '—'}</td></tr>
+        <tr><td>LCR status</td><td>${esc(facts.lcrStatus||'—')}</td></tr>
+        <tr><td>Pricing model</td><td>${esc(facts.pricingModel||'—')}</td></tr>
+        <tr><td>Debit mix</td><td>${facts.cardMix?.debit != null ? facts.cardMix.debit + '%' : '—'}</td></tr>
+        <tr><td>Credit mix</td><td>${facts.cardMix?.credit != null ? facts.cardMix.credit + '%' : '—'}</td></tr>
+      </table>
+      ${Array.isArray(facts.observations) && facts.observations.length ? `
+        <div style="margin-top:12px">
+          <div class="modal-section-label">Observations</div>
+          <ul class="obs-list">${facts.observations.map(o => `<li>${esc(o)}</li>`).join('')}</ul>
+        </div>` : ''}
+    </div>`;
+
+  return `${headlineSummary}${oppsHtml}${commercialHtml}${findingsHtml}${risksHtml}${dqHtml}${factsHtml}`;
+}
+
+
+function buildPITViewerTab(pit, latestPit) {
+  const observations = pit.commercialObservations || [];
+  const understandings = pit.commercialUnderstanding || [];
+  const priorities = pit.businessPriorities || [];
+  const confidence = pit.confidenceProfile || {};
+  const evidenceGraph = pit.evidenceGraph || null;
+  const modulePlan = pit.modulePlan || [];
+  const risks = pit.riskIntelligence?.risks || [];
+  const gaps = pit.dataQuality?.gaps || [];
+
+  const generated = latestPit?.generated_at || pit.generatedAt || null;
+
+  return `
+    <div class="pitv-hero">
+      <div class="pitv-version">${esc(pit.version || latestPit?.pit_version || 'PIT')} ${generated ? '· ' + esc(new Date(generated).toLocaleString('en-AU')) : ''}</div>
+      <div class="pitv-title">${esc(pit.caseSummary?.headline || 'Payments Intelligence Terminal result')}</div>
+      <div class="pitv-sub">${esc(pit.caseSummary?.summary || 'This is the persisted PIT snapshot for this merchant. It shows what the engine understood, why it reached those conclusions, and which priorities it created.')}</div>
+    </div>
+
+    <div class="pitv-grid">
+      <div class="pit-panel">
+        <div class="pit-panel-title">Confidence Profile</div>
+        ${Object.entries(confidence).map(([k,v]) => renderPitRow(labelise(k), v)).join('') || renderPitRow('Confidence', 'Not available')}
+      </div>
+      <div class="pit-panel">
+        <div class="pit-panel-title">Case Intelligence</div>
+        ${renderPitRow('Provider', pit.paymentsStack?.acquirerOrProvider || pit.facts?.provider || '—')}
+        ${renderPitRow('Pricing model', pit.paymentsStack?.pricingModel || pit.facts?.pricingModel || '—')}
+        ${renderPitRow('Effective rate', pit.metrics?.effectiveRate != null ? fmtP(pit.metrics.effectiveRate) : '—')}
+        ${renderPitRow('Annual opportunity', pit.caseSummary?.quantifiedAnnualOpportunity ? fmtK(pit.caseSummary.quantifiedAnnualOpportunity) : 'To be confirmed')}
+      </div>
+    </div>
+
+    ${renderPitPrioritySection(priorities)}
+    ${renderPitUnderstandingSection(understandings)}
+    ${renderPitObservationSection(observations)}
+    ${renderPitRiskGapSection(risks, gaps)}
+    ${renderPitModulePlanSection(modulePlan)}
+    ${renderPitEvidenceGraphSection(evidenceGraph)}
+    ${renderPitRawSection(pit)}
+  `;
+}
+
+function renderPitPrioritySection(priorities) {
+  if (!priorities.length) return '';
+  return `<div class="pitv-section">
+    <div class="pitv-section-title">Business Priorities</div>
+    ${priorities.map(p => `<details class="pitv-card" open>
+      <summary>
+        <div class="pitv-card-head">
+          <div>
+            <div class="pitv-card-title">${p.rank ? p.rank + '. ' : ''}${esc(p.title || p.id)}</div>
+            <div class="pitv-card-meta">${esc(p.category || '')}${p.estimatedAnnualValue ? ' · ' + fmtK(p.estimatedAnnualValue) + '/yr' : ''}</div>
+          </div>
+          <div class="pitv-badges">
+            ${badge(p.confidence)}${badge(p.urgency)}${badge('Weight ' + (p.priorityWeight ?? '—'))}
+          </div>
+        </div>
+      </summary>
+      <div class="pitv-card-body">
+        ${esc(p.rankReason || '')}
+        ${p.dependsOn?.length ? `<div style="margin-top:8px;color:rgba(15,20,30,0.38)">Depends on: ${p.dependsOn.map(esc).join(', ')}</div>` : ''}
+        ${renderEvidence(p.evidence)}
+      </div>
+    </details>`).join('')}
+  </div>`;
+}
+
+function renderPitUnderstandingSection(items) {
+  if (!items.length) return '';
+  return `<div class="pitv-section">
+    <div class="pitv-section-title">Commercial Understanding</div>
+    ${items.map(u => `<details class="pitv-card" open>
+      <summary>
+        <div class="pitv-card-head">
+          <div>
+            <div class="pitv-card-title">${esc(u.title || u.id)}</div>
+            <div class="pitv-card-meta">${esc(u.businessImpact || '')}</div>
+          </div>
+          <div class="pitv-badges">${badge(u.confidence)}</div>
+        </div>
+      </summary>
+      <div class="pitv-card-body">
+        ${esc(u.conclusion || '')}
+        ${u.dependsOn?.length ? `<div style="margin-top:8px;color:rgba(15,20,30,0.38)">Built from: ${u.dependsOn.map(esc).join(', ')}</div>` : ''}
+        ${renderEvidence(u.evidence)}
+      </div>
+    </details>`).join('')}
+  </div>`;
+}
+
+function renderPitObservationSection(observations) {
+  if (!observations.length) return '';
+  return `<div class="pitv-section">
+    <div class="pitv-section-title">Commercial Observations</div>
+    ${observations.map(o => `<details class="pitv-card">
+      <summary>
+        <div class="pitv-card-head">
+          <div>
+            <div class="pitv-card-title">${esc(o.title || o.id)}</div>
+            <div class="pitv-card-meta">${esc(o.category || '')} · ${esc(o.id || '')}</div>
+          </div>
+          <div class="pitv-badges">${badge(o.confidence)}${badge(o.severity)}</div>
+        </div>
+      </summary>
+      <div class="pitv-card-body">
+        <div>${esc(o.observation || '')}</div>
+        ${o.commercialImplication ? `<div style="margin-top:8px;color:rgba(15,20,30,0.62)"><strong style="color:rgba(15,20,30,0.78)">Implication:</strong> ${esc(o.commercialImplication)}</div>` : ''}
+        ${renderEvidence(o.evidence)}
+      </div>
+    </details>`).join('')}
+  </div>`;
+}
+
+function renderPitRiskGapSection(risks, gaps) {
+  if (!risks.length && !gaps.length) return '';
+  return `<div class="pitv-grid">
+    <div class="pit-panel">
+      <div class="pit-panel-title">Risk Intelligence</div>
+      ${risks.length ? risks.map(r => `<div class="pit-finding-item"><div><div class="pit-finding-title">${esc(r.type || r.title || r.id)}</div><div class="pit-opp-meta">${esc(r.severity || '')} · ${esc(r.confidence || '')}</div><div style="font-size:11.5px;color:rgba(15,20,30,0.42);margin-top:3px">${esc(r.implication || r.observation || '')}</div></div></div>`).join('') : '<div class="modal-section-text">No major risks visible.</div>'}
+    </div>
+    <div class="pit-panel">
+      <div class="pit-panel-title">Data Gaps</div>
+      ${gaps.length ? gaps.map(g => `<div class="pit-finding-item"><div><div class="pit-finding-title">${esc(g.label || g.missingData || g.id)}</div><div class="pit-opp-meta">${esc(g.severity || '')}</div><div style="font-size:11.5px;color:rgba(15,20,30,0.42);margin-top:3px">${esc(g.reason || g.implication || '')}</div></div></div>`).join('') : '<div class="modal-section-text">No major data gaps visible.</div>'}
+    </div>
+  </div>`;
+}
+
+function renderPitModulePlanSection(modulePlan) {
+  if (!modulePlan.length) return '';
+  return `<div class="pitv-section">
+    <div class="pitv-section-title">Selected Module Plan</div>
+    <div class="pitv-grid">
+      ${modulePlan.map(m => `<div class="pit-panel">
+        <div class="pit-row"><span class="pit-row-label">Module</span><span class="pit-row-val">${esc(m.id)}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Type</span><span class="pit-row-val">${esc(m.type || '—')}</span></div>
+        <div class="pit-row"><span class="pit-row-label">Priority</span><span class="pit-row-val">${esc(m.priority || '—')}</span></div>
+        <div style="font-size:11.5px;color:rgba(15,20,30,0.4);line-height:1.6;margin-top:8px">${esc(m.reason || '')}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderPitEvidenceGraphSection(graph) {
+  if (!graph) return '';
+  const counts = {
+    observations: graph.observations?.length || 0,
+    understandings: graph.understandings?.length || 0,
+    priorities: graph.priorities?.length || 0
+  };
+  return `<div class="pitv-section">
+    <div class="pitv-section-title">Evidence Graph</div>
+    <div class="pitv-grid">
+      ${renderPitPanel('Observations', counts.observations)}
+      ${renderPitPanel('Understandings', counts.understandings)}
+      ${renderPitPanel('Priorities', counts.priorities)}
+      ${renderPitPanel('Evidence mode', 'Explainable')}
+    </div>
+  </div>`;
+}
+
+function renderPitRawSection(pit) {
+  return `<details class="pitv-card" style="margin-top:18px">
+    <summary><div class="pitv-card-head"><div><div class="pitv-card-title">Raw PIT JSON</div><div class="pitv-card-meta">Developer view</div></div><div class="pitv-badges">${badge('JSON')}</div></div></summary>
+    <div class="pitv-card-body"><pre class="pitv-code">${esc(JSON.stringify(pit, null, 2))}</pre></div>
+  </details>`;
+}
+
+function renderPitPanel(label, value) {
+  return `<div class="pit-panel"><div class="pit-panel-title">${esc(label)}</div><div style="font-size:22px;font-weight:600;color:rgba(15,20,30,0.85)">${esc(value)}</div></div>`;
+}
+
+function renderPitRow(label, value) {
+  return `<div class="pit-row"><span class="pit-row-label">${esc(label)}</span><span class="pit-row-val">${esc(value ?? '—')}</span></div>`;
+}
+
+function renderEvidence(evidence) {
+  if (!Array.isArray(evidence) || !evidence.length) return '';
+  return `<div class="pitv-evidence">
+    ${evidence.map(e => `<div class="pitv-evidence-item"><span class="pitv-evidence-source">${esc(e.source || e.type || 'evidence')}</span><span>${esc(e.label || '')}${e.value != null ? ': ' + esc(e.value) : ''}${e.detail ? ' · ' + esc(e.detail) : ''}</span></div>`).join('')}
+  </div>`;
+}
+
+function badge(value) {
+  if (value == null || value === '') return '';
+  const cls = String(value).toLowerCase().replace(/\s+/g,'-');
+  return `<span class="pitv-badge ${escA(cls)}">${esc(value)}</span>`;
+}
+
+function labelise(str) {
+  return String(str || '').replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
+}
+
+function buildSubmissionsTab(submissions, merchant) {
+  if (!submissions.length) return '<div style="padding:40px;text-align:center;color:rgba(15,20,30,0.25)">No submissions yet.</div>';
+
+  return `<table class="modal-table" style="margin-top:8px">
+    <thead><tr style="border-bottom:1px solid rgba(15,20,30,0.08)">
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:left">Date</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:left">Provider</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:left">Period</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:right">Volume</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:right">Rate</th>
+      <th style="padding:8px 0;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(15,20,30,0.28);text-align:left">Status</th>
+    </tr></thead>
+    <tbody>
+    ${submissions.map(s => {
+      const dateStr = new Date(s.submitted_at).toLocaleDateString('en-AU', {day:'numeric',month:'short',year:'numeric'});
+      const sc = STATUS_CLASS[s.status] || 'pending';
+      const sl = STATUS_LABEL[s.status] || 'Unknown';
+      return `<tr>
+        <td style="color:rgba(15,20,30,0.6)">${dateStr}</td>
+        <td style="color:rgba(15,20,30,0.6)">${esc(s.provider||'—')}</td>
+        <td style="color:rgba(15,20,30,0.6)">${esc(s.period||'—')}</td>
+        <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:11.5px">${fmtK(s.volume)}</td>
+        <td style="text-align:right">${s.effective_rate ? `<span class="rate-pill ${ratePillClass(s.effective_rate)}">${fmtP(s.effective_rate)}</span>` : '—'}</td>
+        <td><span class="status-badge ${sc}">${sl}</span></td>
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table>`;
+}
+
+function buildReportTab(latestSub, facts, merchant) {
+  if (!latestSub) return '<div style="padding:40px;text-align:center;color:rgba(15,20,30,0.25)">No submissions yet.</div>';
+
+  const hasReport = !!latestSub.report_html_path;
+  const approveLabel = hasReport ? 'Regenerate report' : 'Approve &amp; generate report';
+
+  const reportBanner = hasReport ? `
+    <div class="report-ready-banner">
+      <span class="rb-text">✓ Report generated</span>
+      <button class="btn-open-report" onclick="openReport('${escA(latestSub.report_html_path)}')">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Open report
+      </button>
+    </div>` : '';
+
+  return `
+    ${reportBanner}
+    ${buildEditPanel(latestSub.id, facts)}
+    <div class="modal-section">
+      <div class="modal-section-label">Actions</div>
+      <div class="modal-actions">
+        <button class="btn-mark-reviewed" onclick="updateStatus(${latestSub.id},'reviewed')">✓ Mark as reviewed</button>
+        <button class="btn-approve" id="btn-approve-${latestSub.id}" onclick="approveAndGenerate(${latestSub.id})">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          ${approveLabel}
+        </button>
+        <button class="btn-mark-sent" onclick="updateStatus(${latestSub.id},'sent')">→ Mark as sent to client</button>
+      </div>
+      <div id="report-status-${latestSub.id}" style="margin-top:10px;font-size:12px;color:rgba(15,20,30,0.4)"></div>
+    </div>`;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   EDIT PANEL (for report corrections)
+───────────────────────────────────────────────────────────── */
+const PRICING_OPTS=['','Single-rate','Blended','Interchange-plus','Interchange-plus-plus','Subscription','Unknown'];
+const LCR_OPTS=['','On','Off','Partial','Unknown'];
+function selectHtml(field,value,opts){return`<select class="edit-select" data-field="${field}">`+opts.map(o=>`<option value="${escA(o)}" ${String(value||'')=== o?'selected':''}>${esc(o)||'—'}</option>`).join('')+`</select>`;}
+
+function buildEditPanel(id, f) {
+  const num = v => (v==null||v==='')?'':v;
+  const obs = Array.isArray(f.observations) ? f.observations.join('\n') : '';
+  return `<div class="modal-section" style="padding-top:16px">
+    <button class="edit-panel-toggle" id="edit-toggle-${id}" onclick="toggleEditPanel('${id}')">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Review &amp; correct extracted data before generating
+      <span class="toggle-icon">▼</span>
+    </button>
+    <div class="edit-panel" id="edit-panel-${id}">
+      <div class="edit-grid">
+        <div class="edit-field"><div class="edit-field-label">Provider</div><input class="edit-input" type="text" data-field="provider" value="${escA(f.provider||'')}"></div>
+        <div class="edit-field"><div class="edit-field-label">Period</div><input class="edit-input" type="text" data-field="period" value="${escA(f.period||'')}"></div>
+      </div>
+      <div class="edit-grid">
+        <div class="edit-field"><div class="edit-field-label">Card volume (AUD)</div><input class="edit-input" type="number" step="any" data-field="volume" value="${num(f.volume)}"></div>
+        <div class="edit-field"><div class="edit-field-label">Total fees (AUD, GST incl.)</div><div class="edit-field-hint">Effective rate recalculated from volume &amp; fees.</div><input class="edit-input" type="number" step="any" data-field="totalFees" value="${num(f.totalFees)}"></div>
+      </div>
+      <div class="edit-grid-3">
+        <div class="edit-field"><div class="edit-field-label">Transactions</div><input class="edit-input" type="number" step="1" data-field="transactions" value="${num(f.transactions)}"></div>
+        <div class="edit-field"><div class="edit-field-label">Monthly fee</div><input class="edit-input" type="number" step="any" data-field="monthlyFee" value="${num(f.monthlyFee)}"></div>
+        <div class="edit-field"><div class="edit-field-label">Terminal fees</div><input class="edit-input" type="number" step="any" data-field="terminalFees" value="${num(f.terminalFees)}"></div>
+      </div>
+      <div class="edit-grid-3">
+        <div class="edit-field"><div class="edit-field-label">Provider rate</div><input class="edit-input" type="text" data-field="providerRate" value="${escA(f.providerRate||'')}" placeholder="e.g. 0.12%"></div>
+        <div class="edit-field"><div class="edit-field-label">Pricing model</div>${selectHtml('pricingModel',f.pricingModel,PRICING_OPTS)}</div>
+        <div class="edit-field"><div class="edit-field-label">LCR status</div>${selectHtml('lcrStatus',f.lcrStatus,LCR_OPTS)}</div>
+      </div>
+      <div class="edit-field"><div class="edit-field-label">Factual observations</div><div class="edit-field-hint">One per line.</div><textarea class="edit-textarea" data-field="observations">${esc(obs)}</textarea></div>
+      <div class="edit-field"><div class="edit-field-label">Admin notes (internal only)</div><textarea class="edit-textarea" data-field="adminNotes" placeholder="Extra context for Claude — won't appear in report."></textarea></div>
+      <div class="edit-panel-note">✦ Corrections are applied before the report is written and saved back to the submission.</div>
+    </div>
+  </div>`;
+}
+
+function toggleEditPanel(id) {
+  document.getElementById('edit-toggle-'+id).classList.toggle('open');
+  document.getElementById('edit-panel-'+id).classList.toggle('open');
+}
+
+function readEditOverrides(id) {
+  const panel = document.getElementById('edit-panel-'+id); if (!panel) return {};
+  const get = sel => { const el = panel.querySelector(sel); return el ? el.value.trim() : ''; };
+  const ov = {};
+  ['provider','period','providerRate','pricingModel','lcrStatus'].forEach(k => { const v = get(`[data-field="${k}"]`); if(v) ov[k]=v; });
+  ['volume','totalFees','transactions','monthlyFee','terminalFees'].forEach(k => { const v = get(`[data-field="${k}"]`); if(v!=='') ov[k]=Number(v); });
+  const obs = get('[data-field="observations"]'); if(obs) ov.observations = obs.split('\n').map(l=>l.trim()).filter(Boolean);
+  const notes = get('[data-field="adminNotes"]'); if(notes) ov.adminNotes = notes;
+  return ov;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STATUS & REPORT ACTIONS
+───────────────────────────────────────────────────────────── */
+async function updateStatus(id, status) {
+  const data = await api('updateStatus', { id, status });
+  if (!data) return;
+  // Update local state
+  allMerchants = allMerchants.map(m => {
+    if (m.latest_submission_id == id) return { ...m, latest_status: status };
+    return m;
+  });
+  updateDashboard();
+  applyMerchantFilter();
+  updateSidebarBadge();
+  closeModalBtn();
+}
+
+async function approveAndGenerate(id) {
+  const btn = document.getElementById('btn-approve-'+id);
+  const statusEl = document.getElementById('report-status-'+id);
+  const overrides = readEditOverrides(id);
+  if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Generating report…'; }
+  if (statusEl) statusEl.textContent = 'Claude is writing the personalised report…';
+  try {
+    const res = await fetch('/api/generate-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ submissionId: id, overrides })
+    });
+    if (res.status === 401) { showLoginScreen(); return; }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Generation failed');
+    if (statusEl) statusEl.innerHTML = `<span style="color:#0E9F6E;font-weight:600">✓ Report generated.</span> <button class="btn-open-report" style="padding:6px 14px;margin-left:8px" onclick="openReport('${escA(data.htmlPath)}')">Open report</button>`;
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Regenerate report'; }
+    await loadMerchants();
+  } catch(err) {
+    if (statusEl) statusEl.innerHTML = `<span style="color:#DC2626">Error: ${esc(err.message)}</span>`;
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Approve &amp; generate report'; }
+  }
+}
+
+async function openReport(htmlPath) {
+  try {
+    const data = await api('getReportHtml', { htmlPath });
+    if (!data) return;
+    window.open(URL.createObjectURL(new Blob([data.html], {type:'text/html'})), '_blank');
+  } catch(err) { alert('Could not open report: ' + err.message); }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MODAL HELPERS
+───────────────────────────────────────────────────────────── */
+function closeModal(e) { if (e.target === document.getElementById('modal-overlay')) closeModalBtn(); }
+function closeModalBtn() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModalBtn(); closeAvatarMenu(); } });
+
+/* ─────────────────────────────────────────────────────────────
+   AVATAR MENU
+───────────────────────────────────────────────────────────── */
+function toggleAvatarMenu(e) { e.stopPropagation(); document.getElementById('nav-avatar-menu').classList.toggle('open'); }
+function closeAvatarMenu() { document.getElementById('nav-avatar-menu').classList.remove('open'); }
+document.addEventListener('click', () => closeAvatarMenu());
+
+/* ─────────────────────────────────────────────────────────────
+   AUTH / LOGIN
+───────────────────────────────────────────────────────────── */
+function showLoginScreen() {
+  document.getElementById('app-shell').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-password').focus();
+}
+function showAppShell() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-shell').style.display = 'grid';
+}
+async function handleLogin(e) {
+  e.preventDefault();
+  const pwInput = document.getElementById('login-password');
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-submit-btn');
+  errEl.textContent = '';
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try {
+    const res = await fetch('/api/admin-login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwInput.value })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Sign in failed');
+    pwInput.value = '';
+    showAppShell();
+    initDashboard();
+  } catch(err) {
+    errEl.textContent = err.message;
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign in';
+  }
+  return false;
+}
+async function handleLogout() {
+  try { await fetch('/api/admin-logout', { method: 'POST' }); } catch {}
+  showLoginScreen();
+}
+
+/* ─────────────────────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────────────────────── */
+let dashboardInitialised = false;
+function initDashboard() {
+  if (dashboardInitialised) return;
+  dashboardInitialised = true;
+  setInterval(loadMerchants, 60000);
+}
+(async function start() {
+  const authenticated = await loadMerchants();
+  if (authenticated) {
+    showAppShell();
+    initDashboard();
+  }
+})();
+</script>
+</body>
+</html>
