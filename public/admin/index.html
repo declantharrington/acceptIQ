@@ -25,6 +25,12 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 .nav-word { font-weight: 600; letter-spacing: -0.03em; color: rgba(15,20,30,.92); font-size: 15px; }
 .nav-word b { font-weight: 700; color: #3654D6; }
 .nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-search-wrap { position: relative; flex: 1; max-width: 380px; margin: 0 auto; }
+.nav-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: rgba(15,20,30,0.32); pointer-events: none; }
+.nav-search-input { width: 100%; font-family: 'Inter', sans-serif; font-size: 13px; padding: 8px 46px 8px 34px; background: #F7F8FC; border: 1px solid #ECEDF3; border-radius: 9px; color: #12141C; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; }
+.nav-search-input::placeholder { color: rgba(15,20,30,0.35); }
+.nav-search-input:focus { outline: none; border-color: #3654D6; background: #FFFFFF; box-shadow: 0 0 0 3px rgba(54,84,214,0.1); }
+.nav-search-kbd { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 10.5px; font-weight: 600; color: rgba(15,20,30,0.35); background: rgba(15,20,30,0.06); padding: 2px 6px; border-radius: 5px; pointer-events: none; }
 .nav-system { display: flex; align-items: center; gap: 7px; font-size: 11px; color: rgba(15,20,30,0.4); }
 .sys-dot { width: 6px; height: 6px; border-radius: 50%; background: #0E9F6E; animation: syspulse 2.5s ease-in-out infinite; }
 @keyframes syspulse { 0%,100%{opacity:1} 50%{opacity:.4} }
@@ -60,6 +66,11 @@ body { font-family: 'Inter', sans-serif; background: #F3F4F9; color: #12141C; -w
 .page.active { display: block; }
 .page-head { margin-bottom: 28px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .page-head-left { flex: 1; }
+.page-head-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.export-btn { display: inline-flex; align-items: center; gap: 7px; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600; padding: 9px 15px; background: #FFFFFF; border: 1px solid #E4E6EF; color: rgba(15,20,30,0.7); border-radius: 9px; cursor: pointer; transition: background 0.12s, border-color 0.12s, color 0.12s; box-shadow: 0 1px 2px rgba(15,20,30,0.03); }
+.export-btn svg { width: 14px; height: 14px; }
+.export-btn:hover { background: #F7F8FC; border-color: #D9DCEA; color: #12141C; }
+.row-check { width: 15px; height: 15px; accent-color: #3654D6; cursor: pointer; }
 .page-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: rgba(15,20,30,.92); margin-bottom: 4px; }
 .page-sub { font-size: 13.5px; color: rgba(15,20,30,0.5); margin-top: 2px; }
 
@@ -329,6 +340,11 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
     <div class="nav-brand">
       <img src="/images/acceptorIQ-full-black.png" alt="acceptorIQ" class="nav-logo">
     </div>
+    <div class="nav-search-wrap">
+      <svg class="nav-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="nav-search" class="nav-search-input" placeholder="Search merchants, providers…" onkeydown="handleNavSearchKey(event)">
+      <span class="nav-search-kbd">⌘K</span>
+    </div>
     <div class="nav-right">
       <div class="nav-system"><div class="sys-dot"></div>All systems operational</div>
       <div class="nav-badge-count" id="nav-pending-count">— pending</div>
@@ -459,6 +475,12 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
           <div class="page-title">Merchants</div>
           <div class="page-sub">All merchants · click to view PIT intelligence and manage reports</div>
         </div>
+        <div class="page-head-right">
+          <button class="export-btn" id="merchant-export-btn" onclick="exportMerchantsCSV()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+        </div>
       </div>
       <div class="toolbar">
         <div class="search-wrap">
@@ -477,6 +499,7 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
         <table class="rtable">
           <thead>
             <tr>
+              <th style="width:36px"><input type="checkbox" class="row-check" id="merchant-select-all" onchange="toggleSelectAllMerchants(this)"></th>
               <th>Merchant</th>
               <th>Provider</th>
               <th>Eff. Rate</th>
@@ -488,7 +511,7 @@ details.pitv-card summary::-webkit-details-marker { display:none; }
             </tr>
           </thead>
           <tbody id="merchants-tbody">
-            <tr class="loading-row"><td colspan="8">Loading merchants…</td></tr>
+            <tr class="loading-row"><td colspan="9">Loading merchants…</td></tr>
           </tbody>
         </table>
       </div>
@@ -568,11 +591,18 @@ function buildVolumeTimelineChart(timeline) {
       const delta = prev && prev.volume > 0 ? ((t.volume - prev.volume) / prev.volume) * 100 : null;
       const deltaHtml = delta == null ? ''
         : `<span style="font-size:11.5px;font-weight:600;color:${delta >= 0 ? '#0E9F6E' : '#DC2626'}">${delta >= 0 ? '↑' : '↓'} ${Math.abs(delta).toFixed(0)}% vs ${esc(monthLabel(prev.month))}</span>`;
+      const isCurrent = i === timeline.length - 1;
+      const tileStyle = isCurrent
+        ? 'background:linear-gradient(160deg,#3654D6 0%,#2C46B8 100%);border:1px solid transparent;box-shadow:0 8px 20px rgba(54,84,214,0.22)'
+        : 'background:#F7F8FC;border:1px solid #ECEDF3';
+      const labelColor = isCurrent ? 'rgba(255,255,255,0.7)' : 'rgba(15,20,30,0.4)';
+      const valColor = isCurrent ? '#FFFFFF' : '#12141C';
+      const subColor = isCurrent ? 'rgba(255,255,255,0.68)' : 'rgba(15,20,30,0.45)';
       return `
-        <div style="flex:1;min-width:140px;background:#F7F8FC;border:1px solid #ECEDF3;border-radius:12px;padding:16px 18px">
-          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:rgba(15,20,30,0.4);margin-bottom:8px">${esc(monthLabel(t.month))}</div>
-          <div style="font-size:24px;font-weight:700;letter-spacing:-0.02em;color:#12141C;margin-bottom:6px">${esc(fmtK(t.volume))}</div>
-          <div style="font-size:11.5px;color:rgba(15,20,30,0.45)">${t.submissions} submission${t.submissions === 1 ? '' : 's'}</div>
+        <div style="flex:1;min-width:140px;border-radius:12px;padding:16px 18px;${tileStyle}">
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:${labelColor};margin-bottom:8px">${esc(monthLabel(t.month))}${isCurrent ? ' · Current' : ''}</div>
+          <div style="font-size:24px;font-weight:700;letter-spacing:-0.02em;color:${valColor};margin-bottom:6px">${esc(fmtK(t.volume))}</div>
+          <div style="font-size:11.5px;color:${subColor}">${t.submissions} submission${t.submissions === 1 ? '' : 's'}</div>
           ${deltaHtml ? `<div style="margin-top:8px">${deltaHtml}</div>` : ''}
         </div>`;
     }).join('');
@@ -593,10 +623,15 @@ function buildVolumeTimelineChart(timeline) {
     const h = maxV > 0 ? (t.volume / maxV) * (H - padT - padB) : 0;
     const x = startX + i * slot + (slot - barW) / 2;
     const y = H - padB - h;
+    const isCurrent = i === n - 1;
+    const fill = isCurrent ? 'url(#volGrad)' : '#E7E9F2';
+    const labelColor = isCurrent ? 'rgba(15,20,30,0.8)' : 'rgba(15,20,30,0.4)';
+    const monthColor = isCurrent ? '#3654D6' : 'rgba(15,20,30,0.4)';
+    const monthWeight = isCurrent ? '700' : '400';
     return `
-      <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(h,3).toFixed(1)}" rx="8" fill="url(#volGrad)"/>
-      <text x="${(x + barW / 2).toFixed(1)}" y="${(y - 9).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(15,20,30,0.72)" font-family="Inter,sans-serif">${esc(fmtK(t.volume))}</text>
-      <text x="${(x + barW / 2).toFixed(1)}" y="${H - 7}" text-anchor="middle" font-size="10.5" fill="rgba(15,20,30,0.42)" font-family="Inter,sans-serif">${esc(monthLabelShort(t.month))}</text>`;
+      <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(h,3).toFixed(1)}" rx="8" fill="${fill}"/>
+      <text x="${(x + barW / 2).toFixed(1)}" y="${(y - 9).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="${labelColor}" font-family="Inter,sans-serif">${esc(fmtK(t.volume))}</text>
+      <text x="${(x + barW / 2).toFixed(1)}" y="${H - 7}" text-anchor="middle" font-size="10.5" font-weight="${monthWeight}" fill="${monthColor}" font-family="Inter,sans-serif">${esc(monthLabelShort(t.month))}</text>`;
   }).join('');
 
   return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:100%" preserveAspectRatio="none">
@@ -708,7 +743,7 @@ async function loadMerchants() {
     return true;
   } catch(err) {
     document.getElementById('merchants-tbody').innerHTML =
-      `<tr class="empty-row"><td colspan="8">Could not load merchants: ${esc(err.message)}</td></tr>`;
+      `<tr class="empty-row"><td colspan="9">Could not load merchants: ${esc(err.message)}</td></tr>`;
     return false;
   }
 }
@@ -808,7 +843,7 @@ function applyMerchantFilter() {
 function renderMerchants(merchants) {
   if (!merchants.length) {
     document.getElementById('merchants-tbody').innerHTML =
-      `<tr class="empty-row"><td colspan="8">${allMerchants.length ? 'No matching merchants.' : 'No merchants yet.'}</td></tr>`;
+      `<tr class="empty-row"><td colspan="9">${allMerchants.length ? 'No matching merchants.' : 'No merchants yet.'}</td></tr>`;
     return;
   }
 
@@ -819,6 +854,7 @@ function renderMerchants(merchants) {
     const hasPit = !!m.latest_pit_id;
 
     return `<tr onclick="openMerchant(${m.id})">
+      <td onclick="event.stopPropagation()"><input type="checkbox" class="row-check merchant-row-check" value="${m.id}" onchange="updateExportButtonLabel()"></td>
       <td class="primary">
         ${esc(m.company_name)}${reconFlag}
         ${(m.contact_name || m.contact_email) ? `<br><span style="font-size:11px;color:rgba(15,20,30,0.3);font-weight:400">${esc(m.contact_name||'')}${m.contact_email ? ' · ' + esc(m.contact_email) : ''}</span>` : ''}
@@ -837,6 +873,62 @@ function renderMerchants(merchants) {
       </td>
     </tr>`;
   }).join('');
+
+  document.getElementById('merchant-select-all').checked = false;
+  updateExportButtonLabel();
+}
+
+function toggleSelectAllMerchants(checkbox) {
+  document.querySelectorAll('.merchant-row-check').forEach(cb => { cb.checked = checkbox.checked; });
+  updateExportButtonLabel();
+}
+
+function updateExportButtonLabel() {
+  const total = document.querySelectorAll('.merchant-row-check').length;
+  const selected = document.querySelectorAll('.merchant-row-check:checked').length;
+  const btn = document.getElementById('merchant-export-btn');
+  if (!btn) return;
+  btn.lastChild.textContent = selected > 0 ? ` Export ${selected} selected` : ' Export CSV';
+  const allBox = document.getElementById('merchant-select-all');
+  if (allBox) allBox.checked = total > 0 && selected === total;
+}
+
+// Exports whatever is currently selected, or the full currently-filtered/searched
+// list if nothing is checked — same fields as the visible table columns.
+function exportMerchantsCSV() {
+  const selectedIds = Array.from(document.querySelectorAll('.merchant-row-check:checked')).map(cb => Number(cb.value));
+  const source = selectedIds.length
+    ? allMerchants.filter(m => selectedIds.includes(m.id))
+    : allMerchants.filter(m => {
+        if (currentMerchantFilter !== 'all' && m.latest_status !== currentMerchantFilter) return false;
+        if (currentMerchantSearch) {
+          const hay = [m.company_name, m.contact_name, m.contact_email, m.latest_provider, m.industry].filter(Boolean).join(' ').toLowerCase();
+          if (!hay.includes(currentMerchantSearch)) return false;
+        }
+        return true;
+      });
+
+  if (!source.length) return;
+
+  const headers = ['Merchant', 'Provider', 'Statement period', 'Effective rate (%)', 'Volume / period', 'Volume / year (annualised)', 'Annual opportunity', 'Submissions', 'Status'];
+  const csvEscape = v => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const rows = source.map(m => [
+    m.company_name, m.latest_provider || '', m.latest_period || '',
+    m.latest_effective_rate ?? '', m.latest_volume ?? '', m.annualised_volume ?? '',
+    m.quantified_annual_opportunity ?? '', m.submission_count ?? 0,
+    STATUS_LABEL[m.latest_status] || 'No submissions'
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(csvEscape).join(',')).join('\r\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `merchants-export-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -1491,6 +1583,23 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal
    AVATAR MENU
 ───────────────────────────────────────────────────────────── */
 function toggleAvatarMenu(e) { e.stopPropagation(); document.getElementById('nav-avatar-menu').classList.toggle('open'); }
+
+function handleNavSearchKey(e) {
+  if (e.key !== 'Enter') return;
+  const q = e.target.value.trim();
+  showPage('merchants', document.querySelectorAll('.nav-item')[1]);
+  const fieldSearch = document.getElementById('merchant-search');
+  fieldSearch.value = q;
+  applyMerchantFilter();
+  e.target.blur();
+}
+
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    document.getElementById('nav-search')?.focus();
+  }
+});
 function closeAvatarMenu() { document.getElementById('nav-avatar-menu').classList.remove('open'); }
 document.addEventListener('click', () => closeAvatarMenu());
 
